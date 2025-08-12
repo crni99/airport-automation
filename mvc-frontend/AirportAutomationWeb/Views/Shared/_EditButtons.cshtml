@@ -1,0 +1,13 @@
+﻿<nav aria-label="Page navigation">
+	<ul class="pagination pagination-container pagination-container-absolute">
+		<li class="page-item">
+			<a href="@Url.Action("Edit" , new { id=Model.Id })" class="page-link text-success">Edit</a>
+		</li>
+		<li class="page-item">
+			<a href="@Url.Action("Delete", new { id = Model.Id })" class="page-link text-danger">Delete</a>
+		</li>
+		<li class="page-item">
+			<a asp-action="Index" class="page-link">Back to List</a>
+		</li>
+	</ul>
+</nav>

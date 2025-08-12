@@ -1,0 +1,54 @@
+﻿@{
+	ViewBag.Title = "Flights";
+	string typeName = "Flight";
+}
+
+<div class="container container-spacing-top">
+	<div class="row justify-content-between">
+		<div class="col-md-12">
+			<div class="d-flex justify-content-between align-items-center" style="width: 100%;">
+				@if (ViewBag.ApiUserRole != "User")
+				{
+					@await Html.PartialAsync("Index/_CreateButtonIndex", typeName)
+				}
+				<div class="d-flex">
+					<div class="input-group me-3">
+						<label for="startDate" class="input-group-text">Start Date:</label>
+						<input type="date" class="form-control" id="startDate" name="startDate">
+					</div>
+					<div class="input-group me-3">
+						<label for="endDate" class="input-group-text">End Date:</label>
+						<input type="date" class="form-control" id="endDate" name="endDate">
+					</div>
+					<div class="me-3">
+						@await Html.PartialAsync("_SearchButton")
+					</div>
+					@await Html.PartialAsync("_ClearInputsButton")
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<br />
+<div id="alert">
+	@if (TempData["AlertMessage"] != null)
+	{
+		@await Html.PartialAsync("_AlertPartial", TempData)
+	}
+</div>
+
+@await Html.PartialAsync("Index/_FormContainer")
+
+@section Scripts {
+	<script src="~/js/CommonFetch.js"> </script>
+	<script>
+		var typeName = '@typeName';
+		var fetchUrl = '@Url.Action("GetFlights", typeName, new { area = "", name = "" })';
+
+		initFetchControls(typeName, fetchUrl);
+	</script>
+	<script src="~/js/GetHelper.js"></script>
+	<script src="~/js/OpenHelper.js"></script>
+	<script src="~/js/AlertHelper.js"></script>
+	<script src="~/js/ClearHelper.js"></script>
+}

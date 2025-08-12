@@ -1,0 +1,18 @@
+﻿<div class="form-horizontal">
+	<div id="loadingSpinnerContainer">
+		@await Html.PartialAsync("_LoadingSpinner")
+	</div>
+	<div class="form-group" id="dataForm" style="display:none;">
+		<hr />
+		@await Html.PartialAsync("_TableLayout")
+	</div>
+	<div id="paginationInfo" style="display:none;">
+		@await Html.PartialAsync("_PaginationInfo")
+	</div>
+	<div id="paginationContainer" style="display:none;">
+		@await Html.PartialAsync("_Pagination")
+	</div>
+	<div id="dataNotFoundContainer" style="display:none;">
+		@await Html.PartialAsync("_DataNotFound")
+	</div>
+</div>

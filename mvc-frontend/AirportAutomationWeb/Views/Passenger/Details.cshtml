@@ -1,0 +1,82 @@
+﻿@model AirportAutomation.Web.Models.Passenger.PassengerViewModel;
+
+@{
+	ViewBag.Title = "Passenger Details";
+	var address = Model.Address;
+	ViewData["MapAddress"] = address;
+}
+
+<div>
+	<h4>Passenger Details</h4>
+	<div class="container">
+		<div class="row">
+			<hr />
+			<div class="col-md-6">
+				<dl class="row">
+					<dt class="col-sm-4 mt-2">
+						@Html.DisplayNameFor(model => model.Id)
+					</dt>
+					<dd class="col-sm-8 mt-2">
+						@Html.DisplayFor(model => model.Id)
+					</dd>
+					<dt class="col-sm-4 mt-2">
+						@Html.DisplayNameFor(model => model.FirstName)
+					</dt>
+					<dd class="col-sm-8 mt-2">
+						@Html.DisplayFor(model => model.FirstName)
+					</dd>
+					<dt class="col-sm-4 mt-2">
+						@Html.DisplayNameFor(model => model.LastName)
+					</dt>
+					<dd class="col-sm-8 mt-2">
+						@Html.DisplayFor(model => model.LastName)
+					</dd>
+					<dt class="col-sm-4 mt-2">
+						@Html.DisplayNameFor(model => model.UPRN)
+					</dt>
+					<dd class="col-sm-8 mt-2">
+						@Html.DisplayFor(model => model.UPRN)
+					</dd>
+					<dt class="col-sm-4 mt-2">
+						@Html.DisplayNameFor(model => model.Passport)
+					</dt>
+					<dd class="col-sm-8 mt-2">
+						@Html.DisplayFor(model => model.Passport)
+					</dd>
+					<dt class="col-sm-4 mt-2">
+						@Html.DisplayNameFor(model => model.Address)
+					</dt>
+					<dd class="col-sm-8 mt-2 link-primary clickable-row" onclick="openMap('@Model.Address')">
+						<span data-bs-toggle="tooltip"
+							  data-bs-placement="right"
+							  title="Open Map">
+							@Html.DisplayFor(model => model.Address)
+						</span>
+					</dd>
+					<dt class="col-sm-4 mt-2">
+						@Html.DisplayNameFor(model => model.Phone)
+					</dt>
+					<dd class="col-sm-8 mt-2">
+						@Html.DisplayFor(model => model.Phone)
+					</dd>
+				</dl>
+			</div>
+			<div class="col-md-6">
+				@await Html.PartialAsync("_MapEmbedPartial")
+			</div>
+		</div>
+	</div>
+</div>
+@if (TempData["AlertMessage"] != null)
+{
+	@await Html.PartialAsync("_AlertPartial", TempData)
+}
+@if (ViewBag.ApiUserRole != "User")
+{
+	<div>
+		@await Html.PartialAsync("_EditButtons", Model)
+	</div>
+}
+@section Scripts {
+	<script src="~/js/OpenHelper.js"></script>
+}

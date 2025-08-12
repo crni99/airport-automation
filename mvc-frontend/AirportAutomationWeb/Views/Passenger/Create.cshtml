@@ -1,0 +1,67 @@
+﻿@model AirportAutomation.Web.Models.Passenger.PassengerCreateViewModel;
+
+@{
+	ViewBag.Title = "Create Passenger";
+}
+
+@if (ViewBag.ApiUserRole != "User")
+{
+	<h4>Create Passenger</h4>
+	<hr />
+	<div class="row">
+		<div class="col-md-4">
+			<form asp-action="CreatePassenger" method="post">
+				@Html.AntiForgeryToken()
+				<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+				<div class="form-group pb-3">
+					<label asp-for="FirstName" class="control-label"></label>
+					<input asp-for="FirstName" class="form-control" />
+					<span asp-validation-for="FirstName" class="text-danger"></span>
+				</div>
+				<div class="form-group pb-3">
+					<label asp-for="LastName" class="control-label"></label>
+					<input asp-for="LastName" class="form-control" />
+					<span asp-validation-for="LastName" class="text-danger"></span>
+				</div>
+				<div class="form-group pb-3">
+					<label asp-for="UPRN" class="control-label"></label>
+					<input asp-for="UPRN" class="form-control" />
+					<span asp-validation-for="UPRN" class="text-danger"></span>
+				</div>
+				<div class="form-group pb-3">
+					<label asp-for="Passport" class="control-label"></label>
+					<input asp-for="Passport" class="form-control" />
+					<span asp-validation-for="Passport" class="text-danger"></span>
+				</div>
+				<div class="form-group pb-3">
+					<label asp-for="Address" class="control-label"></label>
+					<input asp-for="Address" class="form-control" />
+					<span asp-validation-for="Address" class="text-danger"></span>
+				</div>
+				<div class="form-group pb-4">
+					<label asp-for="Phone" class="control-label"></label>
+					<input asp-for="Phone" class="form-control" />
+					<span asp-validation-for="Phone" class="text-danger"></span>
+				</div>
+				<div class="form-group">
+					<input type="submit" value="Create" class="btn btn-success" />
+				</div>
+			</form>
+		</div>
+	</div>
+
+	@if (TempData["AlertMessage"] != null)
+	{
+		@await Html.PartialAsync("_AlertPartial", TempData)
+	}
+	@section Scripts {
+	@{
+			await Html.RenderPartialAsync("_ValidationScriptsPartial");
+		}
+	}
+}
+else
+{
+	@await Html.PartialAsync("_ForbiddenAccess")
+}
+@await Html.PartialAsync("_BackToListPartial")

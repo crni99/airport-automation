@@ -1,0 +1,107 @@
+html {
+  font-size: 14px;
+  position: relative;
+  min-height: 100%;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 60px;
+  line-height: 3.5;
+}
+
+.pagination-container {
+  padding: 10px 0;
+  text-align: center;
+}
+
+.footer-text {
+  text-align: center;
+}
+
+tr {
+  height: 50px;
+}
+
+body {
+  padding-bottom: 60px;
+}
+
+@media (min-width: 769px) {
+  .form-column-align {
+    margin-top: 5rem;
+  }
+}
+
+.clickable-row {
+  cursor: pointer;
+}
+
+.table {
+  box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.1), 0 2px 4px 0 rgba(0, 0, 0, 0.3) !important;
+}
+
+.container-spacing-top {
+  margin-top: 2.5rem;
+}
+
+.custom-icon {
+  color: #e0e0e0;
+  transition: color 0.3s ease;
+}
+
+.custom-icon:hover {
+  color: #3459e6;
+}
+
+.custom-icon:active,
+.custom-icon:focus {
+  color: #3459e6;
+}
+
+.btn-icon-open i {
+  color: #287bb5 !important;
+  transition: color 0.3s ease;
+}
+
+.btn-icon-open:hover i {
+  color: #1b4e6b !important;
+}
+
+.btn-icon-edit i {
+  color: #2fb380 !important;
+  transition: color 0.3s ease;
+}
+
+.btn-icon-edit:hover i {
+  color: #20785a !important;
+}
+
+.btn-icon-delete i {
+  color: #da292e !important;
+  transition: color 0.3s ease;
+}
+
+.btn-icon-delete:hover i {
+  color: #a21e22 !important;
+}
+
+#rowsPerPage {
+  height: 41.6px;
+  padding: 8px 16px;
+  box-sizing: border-box;
+  border-radius: 6px;
+  vertical-align: middle;
+}

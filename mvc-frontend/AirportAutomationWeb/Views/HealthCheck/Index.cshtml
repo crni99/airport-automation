@@ -1,0 +1,89 @@
+﻿@model AirportAutomation.Web.Models.HealthCheck.HealthCheckViewModel;
+
+@{
+	ViewBag.Title = "Health Checks";
+}
+
+<div class="container mt-5">
+	<div class="row justify-content-between">
+		<div class="col-md-6">
+		</div>
+	</div>
+</div>
+
+<div class="form-horizontal">
+	<div class="form-group">
+		@if (Model != null)
+		{
+			<div>
+				<dl class="row">
+					<dt class="col-sm-2">
+						Status
+					</dt>
+					<dd class="col-sm-4">
+						@if (Model.Status == "Healthy")
+						{
+							<h5><span class="badge text-bg-success">@Model.Status</span></h5>
+						}
+						else
+						{
+							<h5><span class="badge text-bg-danger">@Model.Status</span></h5>
+						}
+					</dd>
+					<dt class="col-sm-2">
+						Total Duration
+					</dt>
+					<dd class="col-sm-4">
+						@Model.TotalDuration
+					</dd>
+				</dl>
+				<hr />
+				<br>
+				<dl class="row">
+					<dt class="col-sm-3">
+						Name
+					</dt>
+					<dt class="col-sm-3">
+						Description
+					</dt>
+					<dt class="col-sm-3">
+						Duration
+					</dt>
+					<dt class="col-sm-3">
+						Status
+					</dt>
+				</dl>
+				<hr />
+				@foreach (var entry in Model.Entries)
+				{
+					<dl class="row">
+						<dd class="col-sm-3">
+							@entry.Key
+						</dd>
+						<dd class="col-sm-3">
+							@entry.Value.Description
+						</dd>
+						<dd class="col-sm-3">
+							@entry.Value.Duration
+						</dd>
+						<dd class="col-sm-3">
+							@if (@entry.Value.Status == "Healthy")
+							{
+								<h5><span class="badge text-bg-success">@entry.Value.Status</span></h5>
+							}
+							else
+							{
+								<h5><span class="badge text-bg-danger">@entry.Value.Status</span></h5>
+							}
+						</dd>
+					</dl>
+					<hr />
+				}
+			</div>
+		}
+		else
+		{
+			@await Html.PartialAsync("_DataNotFound")
+		}
+	</div>
+</div>

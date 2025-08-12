@@ -1,0 +1,47 @@
+﻿@model AirportAutomation.Web.Models.Destination.DestinationCreateViewModel;
+
+@{
+	ViewBag.Title = "Create Destination";
+}
+
+@if (ViewBag.ApiUserRole != "User")
+{
+	<h4>Create Destination</h4>
+	<hr />
+	<div class="row">
+		<div class="col-md-4">
+			<form asp-action="CreateDestination" method="post">
+				@Html.AntiForgeryToken()
+				<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+				<div class="form-group pb-3">
+					<label asp-for="City" class="control-label"></label>
+					<input asp-for="City" class="form-control" />
+					<span asp-validation-for="City" class="text-danger"></span>
+				</div>
+				<div class="form-group pb-4">
+					<label asp-for="Airport" class="control-label"></label>
+					<input asp-for="Airport" class="form-control" />
+					<span asp-validation-for="Airport" class="text-danger"></span>
+				</div>
+				<div class="form-group">
+					<input type="submit" value="Create" class="btn btn-success" />
+				</div>
+			</form>
+		</div>
+	</div>
+
+	@if (TempData["AlertMessage"] != null)
+	{
+		@await Html.PartialAsync("_AlertPartial", TempData)
+	}
+	@section Scripts {
+	@{
+			await Html.RenderPartialAsync("_ValidationScriptsPartial");
+		}
+	}
+}
+else
+{
+	@await Html.PartialAsync("_ForbiddenAccess")
+}
+@await Html.PartialAsync("_BackToListPartial")

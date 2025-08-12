@@ -1,0 +1,136 @@
+﻿@model AirportAutomation.Web.Models.PlaneTicket.PlaneTicketViewModel;
+
+@{
+	ViewBag.Title = "Plane Ticket Details";
+}
+
+<div>
+	<h4>Plane Ticket Details</h4>
+	<hr />
+	<dl class="row">
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Id)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Id)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Price)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Price)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.PurchaseDate)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.PurchaseDate)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.SeatNumber)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.SeatNumber)
+		</dd>
+	</dl>
+	<hr />
+	<dl class="row">
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Passenger)
+		</dt>
+		<dd class="col-sm-10">
+			<a href="@Url.Action("Details", "Passenger", new { id = Model.Passenger.Id })"
+			   target="_blank"
+			   class="btn-icon-open"
+			   data-bs-toggle="tooltip"
+			   data-bs-placement="right"
+			   title="Click for more details">
+				<i class="fa-solid fa-square-up-right fa-xl"></i>
+			</a>
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Passenger.Id)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Passenger.Id)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Passenger.FirstName)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Passenger.FirstName)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Passenger.LastName)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Passenger.LastName)
+		</dd>
+	</dl>
+	<hr />
+	<dl class="row">
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.TravelClass)
+		</dt>
+		<dd class="col-sm-10">
+			&nbsp;
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.TravelClass.Id)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.TravelClass.Id)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.TravelClass.Type)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.TravelClass.Type)
+		</dd>
+	</dl>
+	<hr />
+	<dl class="row">
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Flight)
+		</dt>
+		<dd class="col-sm-10">
+			<a href="@Url.Action("Details", "Flight", new { id = Model.Flight.Id })"
+			   target="_blank"
+			   class="btn-icon-open"
+			   data-bs-toggle="tooltip"
+			   data-bs-placement="right"
+			   title="Click for more details">
+				<i class="fa-solid fa-square-up-right fa-xl"></i>
+			</a>
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Flight.Id)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Flight.Id)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Flight.DepartureDate)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Flight.DepartureDate)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Flight.DepartureTime)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Flight.DepartureTime)
+		</dd>
+	</dl>
+</div>
+<br />
+@if (TempData["AlertMessage"] != null)
+{
+	@await Html.PartialAsync("_AlertPartial", TempData)
+}
+@if (ViewBag.ApiUserRole != "User")
+{
+	<div>
+		@await Html.PartialAsync("_EditButtons", Model)
+	</div>
+}

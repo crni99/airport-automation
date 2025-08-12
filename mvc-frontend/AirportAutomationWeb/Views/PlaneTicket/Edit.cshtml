@@ -1,0 +1,75 @@
+﻿@model AirportAutomation.Web.Models.PlaneTicket.PlaneTicketViewModel;
+
+@{
+	ViewBag.Title = "Edit Plane Ticket";
+}
+
+@if (ViewBag.ApiUserRole != "User")
+{
+	<h4>Edit Plane Ticket</h4>
+	<hr />
+	<form asp-action="EditPlaneTicket" method="post">
+		@Html.AntiForgeryToken()
+		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+		<div class="row">
+			<div class="col-md-4">
+				<div class="form-group pb-3">
+					<label asp-for="Id" class="control-label"></label>
+					<input asp-for="Id" class="form-control" id="Id" readonly />
+					<span asp-validation-for="Id" class="text-danger"></span>
+				</div>
+				<div class="form-group pb-3">
+					<label asp-for="Price" class="control-label"></label>
+					<input asp-for="Price" class="form-control" id="SeatNumber" />
+					<span asp-validation-for="Price" class="text-danger"></span>
+				</div>
+				<div class="form-group pb-3">
+					<label asp-for="PurchaseDate" class="control-label"></label>
+					<input asp-for="PurchaseDate" class="form-control" id="PurchaseDate" />
+					<span asp-validation-for="PurchaseDate" class="text-danger"></span>
+				</div>
+				<div class="form-group pb-4">
+					<label asp-for="SeatNumber" class="control-label"></label>
+					<input asp-for="SeatNumber" class="form-control" id="SeatNumber" />
+					<span asp-validation-for="SeatNumber" class="text-danger"></span>
+				</div>
+
+				<div class="form-group">
+					<input type="submit" value="Save" class="btn btn-success" />
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="form-group pb-3">
+					<label asp-for="PassengerId" class="control-label"></label>
+					<input asp-for="PassengerId" class="form-control" id="PassengerId" readonly />
+					<span asp-validation-for="PassengerId" class="text-danger"></span>
+				</div>
+				<div class="form-group pb-3">
+					<label asp-for="TravelClassId" class="control-label"></label>
+					<input asp-for="TravelClassId" class="form-control" id="TravelClassId" readonly />
+					<span asp-validation-for="TravelClassId" class="text-danger"></span>
+				</div>
+				<div class="form-group pb-3">
+					<label asp-for="FlightId" class="control-label"></label>
+					<input asp-for="FlightId" class="form-control" id="FlightId" readonly />
+					<span asp-validation-for="FlightId" class="text-danger"></span>
+				</div>
+			</div>
+		</div>
+	</form>
+
+	@if (TempData["AlertMessage"] != null)
+	{
+		@await Html.PartialAsync("_AlertPartial", TempData)
+	}
+	@section Scripts {
+	@{
+			await Html.RenderPartialAsync("_ValidationScriptsPartial");
+		}
+	}
+}
+else
+{
+	@await Html.PartialAsync("_ForbiddenAccess")
+}
+@await Html.PartialAsync("_BackToListPartial")

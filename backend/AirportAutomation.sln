@@ -1,0 +1,60 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33815.320
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AirportАutomation.Api", "AirportАutomationApi\AirportАutomation.Api.csproj", "{3D77E634-D40E-45B6-94A6-A02C9D657A43}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AirportAutomationApi.Test", "AirportAutomationApi.Test\AirportAutomationApi.Test.csproj", "{8B49CBE3-C4FD-46AF-9C30-68645539C5A2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AirportAutomation.Application", "AirportAutomationApplication\AirportAutomation.Application.csproj", "{EB447C02-A913-4B4A-91FB-BEF6B9F04D40}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AirportAutomation.Core", "AirportAutomationDomain\AirportAutomation.Core.csproj", "{9DE2992A-4BE4-472D-B36E-BD3D062F9421}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AirportAutomation.Infrastructure", "AirportAutomationInfrastructure\AirportAutomation.Infrastructure.csproj", "{1C01C855-BD46-4CBD-85BA-498CB0648254}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EF8F4484-96F5-466B-8A55-421B04E497D5}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirportAutomation.Web", "..\mvc-frontend\AirportAutomationWeb\AirportAutomation.Web.csproj", "{FF60E96A-6565-1F4D-4BFA-2F02A334DC9B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3D77E634-D40E-45B6-94A6-A02C9D657A43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D77E634-D40E-45B6-94A6-A02C9D657A43}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D77E634-D40E-45B6-94A6-A02C9D657A43}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D77E634-D40E-45B6-94A6-A02C9D657A43}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B49CBE3-C4FD-46AF-9C30-68645539C5A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B49CBE3-C4FD-46AF-9C30-68645539C5A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B49CBE3-C4FD-46AF-9C30-68645539C5A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B49CBE3-C4FD-46AF-9C30-68645539C5A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB447C02-A913-4B4A-91FB-BEF6B9F04D40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB447C02-A913-4B4A-91FB-BEF6B9F04D40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB447C02-A913-4B4A-91FB-BEF6B9F04D40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB447C02-A913-4B4A-91FB-BEF6B9F04D40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DE2992A-4BE4-472D-B36E-BD3D062F9421}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DE2992A-4BE4-472D-B36E-BD3D062F9421}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DE2992A-4BE4-472D-B36E-BD3D062F9421}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DE2992A-4BE4-472D-B36E-BD3D062F9421}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C01C855-BD46-4CBD-85BA-498CB0648254}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C01C855-BD46-4CBD-85BA-498CB0648254}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C01C855-BD46-4CBD-85BA-498CB0648254}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C01C855-BD46-4CBD-85BA-498CB0648254}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF60E96A-6565-1F4D-4BFA-2F02A334DC9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF60E96A-6565-1F4D-4BFA-2F02A334DC9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF60E96A-6565-1F4D-4BFA-2F02A334DC9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF60E96A-6565-1F4D-4BFA-2F02A334DC9B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4D531723-CCDF-4E76-8A73-2C6134400DEB}
+	EndGlobalSection
+EndGlobal

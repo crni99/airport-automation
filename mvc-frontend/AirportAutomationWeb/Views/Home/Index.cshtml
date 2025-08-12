@@ -1,0 +1,63 @@
+﻿@model AirportAutomation.Web.Models.ApiUser.UserViewModel;
+
+@{
+	ViewBag.Title = "Home";
+}
+
+<br />
+<br />
+<br />
+
+<div class="form-horizontal">
+	<div class="form-group">
+		<h1>Airport Automation Web</h1>
+		<p id="currentDateTime"></p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-4">
+		<form id="loginForm" asp-action="Authenticate" method="post">
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+			<div class="form-group pb-3">
+				<label asp-for="UserName" class="control-label"></label>
+				<input asp-for="UserName" class="form-control" required />
+				<span asp-validation-for="UserName" class="text-danger"></span>
+			</div>
+			<div class="form-group pb-4">
+				<label asp-for="Password" class="control-label"></label>
+				<input asp-for="Password" type="password" class="form-control" required />
+				<span asp-validation-for="Password" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<input type="submit" value="Sign In" class="btn btn-primary" />
+			</div>
+		</form>
+	</div>
+	<div class="col-md-4">
+		@await Html.PartialAsync("_LoadingSpinner")
+	</div>
+</div>
+<br />
+@if (TempData["AlertMessage"] != null)
+{
+	@await Html.PartialAsync("_AlertPartial", TempData)
+}
+@section Scripts {
+	<script type="text/javascript">
+		function updateDateTime() {
+			var now = new Date();
+			var dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+			var timeOptions = { hour12: false };
+			document.getElementById("currentDateTime").innerHTML = now.toLocaleDateString([], dateOptions) + " - " + now.toLocaleTimeString([], timeOptions);
+		}
+		window.onload = function () {
+			updateDateTime();
+			setInterval(updateDateTime, 1000);
+
+			document.getElementById("loginForm").addEventListener("submit", function () {
+			document.getElementById("loadingSpinner").style.display = "block";
+		});
+		};
+	</script>
+}

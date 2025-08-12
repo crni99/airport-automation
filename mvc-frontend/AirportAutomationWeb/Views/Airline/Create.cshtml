@@ -1,0 +1,42 @@
+﻿@model AirportAutomation.Web.Models.Airline.AirlineCreateViewModel;
+
+@{
+	ViewBag.Title = "Create Airline";
+}
+
+@if (ViewBag.ApiUserRole != "User")
+{
+	<h4>Create Airline</h4>
+	<hr />
+	<div class="row">
+		<div class="col-md-4">
+			<form asp-action="CreateAirline" method="post">
+				@Html.AntiForgeryToken()
+				<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+				<div class="form-group pb-4">
+					<label asp-for="Name" class="control-label"></label>
+					<input asp-for="Name" class="form-control" />
+					<span asp-validation-for="Name" class="text-danger"></span>
+				</div>
+				<div class="form-group">
+					<input type="submit" value="Create" class="btn btn-success" />
+				</div>
+			</form>
+		</div>
+	</div>
+
+	@if (TempData["AlertMessage"] != null)
+	{
+		@await Html.PartialAsync("_AlertPartial", TempData)
+	}
+	@section Scripts {
+	@{
+			await Html.RenderPartialAsync("_ValidationScriptsPartial");
+		}
+	}
+}
+else
+{
+	@await Html.PartialAsync("_ForbiddenAccess")
+}
+@await Html.PartialAsync("_BackToListPartial")

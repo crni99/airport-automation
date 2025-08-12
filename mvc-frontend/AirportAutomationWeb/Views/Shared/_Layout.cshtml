@@ -1,0 +1,216 @@
+﻿@using System
+@inject IHttpContextAccessor _httpContextAccessor
+@{
+	string token = _httpContextAccessor.HttpContext.Session.GetString("AccessToken");
+}
+
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>AirportAutomationWeb</title>
+	<meta name="description" content="AirportAutomationWeb - Manage airlines, destinations, flights, passengers, pilots, plane tickets, and more." />
+	<meta name="keywords" content="airport, automation, web, airlines, destinations, flights, passengers, pilots, plane tickets, travel, management" />
+	<meta name="author" content="Ognjen Andjelic" />
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+	<link rel="stylesheet" href="~/lib/fontawesome/css/all.min.css" />
+	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+</head>
+<body>
+
+	<header>
+		<nav class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3">
+			<div class="container-fluid">
+				<a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">AirportAutomationWeb</a>
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+				aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+					<ul class="navbar-nav flex-grow-1">
+						@if (!string.IsNullOrEmpty(ViewBag.ApiUserRole))
+						{
+							<li class="nav-item">
+								<div class="btn-group">
+									<a class="nav-link" asp-area="" asp-controller="Passenger" asp-action="Index">Passenger</a>
+									<button type="button" class="btn btn-link dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										<span class="visually-hidden">Toggle Dropdown</span>
+									</button>
+									<ul class="dropdown-menu">
+										<li><a class="dropdown-item" asp-area="" asp-controller="Passenger" asp-action="Index">All Passengers</a></li>
+										@if (ViewBag.ApiUserRole != "User")
+										{
+											<li><a class="dropdown-item" asp-area="" asp-controller="Passenger" asp-action="Create">Add Passenger</a></li>
+										}
+									</ul>
+								</div>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" asp-area="" asp-controller="TravelClass" asp-action="Index">Travel Class</a>
+							</li>
+							<li class="nav-item">
+								<div class="btn-group">
+									<a class="nav-link" asp-area="" asp-controller="Destination" asp-action="Index">Destination</a>
+									<button type="button" class="btn btn-link dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										<span class="visually-hidden">Toggle Dropdown</span>
+									</button>
+									<ul class="dropdown-menu">
+										<li><a class="dropdown-item" asp-area="" asp-controller="Destination" asp-action="Index">All Destinations</a></li>
+										@if (ViewBag.ApiUserRole != "User")
+										{
+											<li><a class="dropdown-item" asp-area="" asp-controller="Destination" asp-action="Create">Add Destination</a></li>
+										}
+									</ul>
+								</div>
+							</li>
+							<li class="nav-item">
+								<div class="btn-group">
+									<a class="nav-link" asp-area="" asp-controller="Pilot" asp-action="Index">Pilot</a>
+									<button type="button" class="btn btn-link dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										<span class="visually-hidden">Toggle Dropdown</span>
+									</button>
+									<ul class="dropdown-menu">
+										<li><a class="dropdown-item" asp-area="" asp-controller="Pilot" asp-action="Index">All Pilots</a></li>
+										@if (ViewBag.ApiUserRole != "User")
+										{
+											<li><a class="dropdown-item" asp-area="" asp-controller="Pilot" asp-action="Create">Add Pilot</a></li>
+										}
+									</ul>
+								</div>
+							</li>
+							<li class="nav-item">
+								<div class="btn-group">
+									<a class="nav-link" asp-area="" asp-controller="Airline" asp-action="Index">Airline</a>
+									<button type="button" class="btn btn-link dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										<span class="visually-hidden">Toggle Dropdown</span>
+									</button>
+									<ul class="dropdown-menu">
+										<li><a class="dropdown-item" asp-area="" asp-controller="Airline" asp-action="Index">All Airlines</a></li>
+										@if (ViewBag.ApiUserRole != "User")
+										{
+											<li><a class="dropdown-item" asp-area="" asp-controller="Airline" asp-action="Create">Add Airline</a></li>
+										}
+									</ul>
+								</div>
+							</li>
+							<li class="nav-item">
+								<div class="btn-group">
+									<a class="nav-link" asp-area="" asp-controller="Flight" asp-action="Index">Flight</a>
+									<button type="button" class="btn btn-link dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										<span class="visually-hidden">Toggle Dropdown</span>
+									</button>
+									<ul class="dropdown-menu">
+										<li><a class="dropdown-item" asp-area="" asp-controller="Flight" asp-action="Index">All Flights</a></li>
+										@if (ViewBag.ApiUserRole != "User")
+										{
+											<li><a class="dropdown-item" asp-area="" asp-controller="Flight" asp-action="Create">Add Flight</a></li>
+										}
+									</ul>
+								</div>
+							</li>
+							<li class="nav-item">
+								<div class="btn-group">
+									<a class="nav-link" asp-area="" asp-controller="PlaneTicket" asp-action="Index">Plane Ticket</a>
+									<button type="button" class="btn btn-link dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										<span class="visually-hidden">Toggle Dropdown</span>
+									</button>
+									<ul class="dropdown-menu">
+										<li><a class="dropdown-item" asp-area="" asp-controller="PlaneTicket" asp-action="Index">All Plane Tickets</a></li>
+										@if (ViewBag.ApiUserRole != "User")
+										{
+											<li><a class="dropdown-item" asp-area="" asp-controller="PlaneTicket" asp-action="Create">Add Plane Ticket</a></li>
+										}
+									</ul>
+								</div>
+							</li>
+						}
+						@if (ViewBag.ApiUserRole == "SuperAdmin")
+						{
+							<li class="nav-item">
+								<a class="nav-link" asp-area="" asp-controller="ApiUser" asp-action="Index">Api User</a>
+							</li>
+						}
+					</ul>
+					<ul class="navbar-nav">
+						@if (!string.IsNullOrEmpty(ViewBag.ApiUserRole))
+						{
+							<li class="nav-item">
+								<a class="nav-link" asp-area="" asp-controller="HealthCheck" asp-action="Index">Status Check</a>
+							</li>
+						}
+						<li>
+							<button id="darkModeToggle" class="btn btn-secondary">Dark Mode</button>
+						</li>
+						@if (!string.IsNullOrEmpty(token))
+						{
+							<li class="nav-item">
+								<a id="signOut" class="nav-link" asp-area="" asp-controller="Home" asp-action="SignOut">Sign Out</a>
+							</li>
+						}
+					</ul>
+				</div>
+			</div>
+		</nav>
+	</header>
+
+	<div class="container">
+		<main role="main" class="pb-3">
+			@RenderBody()
+		</main>
+	</div>
+
+	<footer class="border-top footer text-muted fixed-bottom">
+		<div class="container footer-text d-flex justify-content-between align-items-center">
+			<span>@DateTime.Now.Year &copy; Airport Automation Web</span>
+			<div>
+				<a href="https://github.com/crni99" target="_blank" rel="noopener noreferrer">
+					<i class="fa-brands fa-github fa-lg custom-icon" title="GitHub"></i>
+				</a>
+				<a href="https://www.linkedin.com/in/ognj3n" target="_blank" rel="noopener noreferrer">
+					<i class="fa-brands fa-linkedin fa-lg custom-icon" title="LinkedIn"></i>
+				</a>
+				<a href="mailto:andjelicb.ognjen@gmail.com" target="_blank" rel="noopener noreferrer">
+					<i class="fa-solid fa-envelope fa-lg custom-icon" title="Email"></i>
+				</a>
+			</div>
+		</div>
+	</footer>
+
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="~/lib/popper/popper.js"></script>
+	<script src="~/lib/popper/enaglePopper.js"></script>
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			enableTooltips();
+		});
+	</script>
+	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="~/js/site.js" asp-append-version="true"></script>
+	<script src="~/js/Signout.js"></script>
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			const toggleButton = document.getElementById('darkModeToggle');
+			const htmlElement = document.documentElement;
+			const DARK_MODE = 'dark';
+			const LIGHT_MODE = 'light';
+			const darkModeEnabled = localStorage.getItem('dark-mode') === 'true';
+
+			htmlElement.setAttribute('data-bs-theme', darkModeEnabled ? DARK_MODE : LIGHT_MODE);
+			toggleButton.textContent = darkModeEnabled === null ? '' : (darkModeEnabled ? 'Light Mode' : 'Dark Mode');
+
+			toggleButton.addEventListener('click', function () {
+				const newTheme = htmlElement.getAttribute('data-bs-theme') === DARK_MODE ? LIGHT_MODE : DARK_MODE;
+				htmlElement.setAttribute('data-bs-theme', newTheme);
+				localStorage.setItem('dark-mode', newTheme === DARK_MODE);
+				toggleButton.textContent = newTheme === DARK_MODE ? 'Light Mode' : 'Dark Mode';
+			});
+		});
+	</script>
+	<script>
+		const currentUserRole = '@ViewBag.ApiUserRole';
+	</script>
+	@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

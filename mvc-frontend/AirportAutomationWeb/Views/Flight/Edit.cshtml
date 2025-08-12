@@ -1,0 +1,69 @@
+﻿@model AirportAutomation.Web.Models.Flight.FlightViewModel;
+
+@{
+	ViewBag.Title = "Edit Flight";
+}
+
+@if (ViewBag.ApiUserRole != "User")
+{
+	<h4>Edit Flight</h4>
+	<hr />
+	<form asp-action="EditFlight" method="post">
+		@Html.AntiForgeryToken()
+		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+		<div class="row">
+			<div class="col-md-4">
+				<div class="form-group pb-3">
+					<label asp-for="Id" class="control-label"></label>
+					<input asp-for="Id" class="form-control" id="Id" readonly />
+					<span asp-validation-for="Id" class="text-danger"></span>
+				</div>
+				<div class="form-group pb-3">
+					<label asp-for="DepartureDate" class="control-label"></label>
+					<input asp-for="DepartureDate" class="form-control" id="DepartureDate" />
+					<span asp-validation-for="DepartureDate" class="text-danger"></span>
+				</div>
+				<div class="form-group pb-4">
+					<label asp-for="DepartureTime" class="control-label"></label>
+					<input asp-for="DepartureTime" class="form-control" id="DepartureTime" />
+					<span asp-validation-for="DepartureTime" class="text-danger"></span>
+				</div>
+				<div class="form-group">
+					<input type="submit" value="Save" class="btn btn-success" />
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="form-group pb-3">
+					<label asp-for="AirlineId" class="control-label"></label>
+					<input asp-for="AirlineId" class="form-control" id="AirlineId" readonly />
+					<span asp-validation-for="AirlineId" class="text-danger"></span>
+				</div>
+				<div class="form-group pb-3">
+					<label asp-for="DestinationId" class="control-label"></label>
+					<input asp-for="DestinationId" class="form-control" id="DestinationId" readonly />
+					<span asp-validation-for="DestinationId" class="text-danger"></span>
+				</div>
+				<div class="form-group pb-3">
+					<label asp-for="PilotId" class="control-label"></label>
+					<input asp-for="PilotId" class="form-control" id="PilotId" readonly />
+					<span asp-validation-for="PilotId" class="text-danger"></span>
+				</div>
+			</div>
+		</div>
+	</form>
+
+	@if (TempData["AlertMessage"] != null)
+	{
+		@await Html.PartialAsync("_AlertPartial", TempData)
+	}
+	@section Scripts {
+	@{
+			await Html.RenderPartialAsync("_ValidationScriptsPartial");
+		}
+	}
+}
+else
+{
+	@await Html.PartialAsync("_ForbiddenAccess")
+}
+@await Html.PartialAsync("_BackToListPartial")

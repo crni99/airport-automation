@@ -1,0 +1,52 @@
+﻿@model AirportAutomation.Web.Models.Destination.DestinationViewModel;
+
+@{
+	ViewBag.Title = "Edit Destination";
+}
+
+@if (ViewBag.ApiUserRole != "User")
+{
+	<h4>Edit Destination</h4>
+	<hr />
+	<div class="row">
+		<div class="col-md-4">
+			<form asp-action="EditDestination" method="post">
+				@Html.AntiForgeryToken()
+				<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+				<div class="form-group pb-3">
+					<label asp-for="Id" class="control-label"></label>
+					<input asp-for="Id" class="form-control" id="Id" readonly />
+					<span asp-validation-for="Id" class="text-danger"></span>
+				</div>
+				<div class="form-group pb-3">
+					<label asp-for="City" class="control-label"></label>
+					<input asp-for="City" class="form-control" id="City" />
+					<span asp-validation-for="City" class="text-danger"></span>
+				</div>
+				<div class="form-group pb-4">
+					<label asp-for="Airport" class="control-label"></label>
+					<input asp-for="Airport" class="form-control" id="Airport" />
+					<span asp-validation-for="Airport" class="text-danger"></span>
+				</div>
+				<div class="form-group">
+					<input type="submit" value="Save" class="btn btn-success" />
+				</div>
+			</form>
+		</div>
+	</div>
+
+	@if (TempData["AlertMessage"] != null)
+	{
+		@await Html.PartialAsync("_AlertPartial", TempData)
+	}
+	@section Scripts {
+	@{
+			await Html.RenderPartialAsync("_ValidationScriptsPartial");
+		}
+	}
+}
+else
+{
+	@await Html.PartialAsync("_ForbiddenAccess")
+}
+@await Html.PartialAsync("_BackToListPartial")

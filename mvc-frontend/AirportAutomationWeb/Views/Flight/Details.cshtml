@@ -1,0 +1,160 @@
+﻿@model AirportAutomation.Web.Models.Flight.FlightViewModel;
+
+@{
+	ViewBag.Title = "Flight Details";
+}
+
+<div>
+	<h4>Flight Details</h4>
+	<hr />
+	<dl class="row">
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Id)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Id)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.DepartureDate)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.DepartureDate)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.DepartureTime)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.DepartureTime)
+		</dd>
+	</dl>
+	<hr />
+	<dl class="row">
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Airline)
+		</dt>
+		<dd class="col-sm-10">
+			<a href="@Url.Action("Details", "Airline", new { id = Model.Airline.Id })"
+			   target="_blank"
+			   class="btn-icon-open"
+			   data-bs-toggle="tooltip"
+			   data-bs-placement="right"
+			   title="Click for more details">
+				<i class="fa-solid fa-square-up-right fa-xl"></i>
+			</a>
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Airline.Id)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Airline.Id)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Airline.Name)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Airline.Name)
+		</dd>
+	</dl>
+	<hr />
+	<dl class="row">
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Destination)
+		</dt>
+		<dd class="col-sm-10">
+			<a href="@Url.Action("Details", "Destination", new { id = Model.Destination.Id })"
+			   target="_blank"
+			   class="btn-icon-open"
+			   data-bs-toggle="tooltip"
+			   data-bs-placement="right"
+			   title="Click for more details">
+				<i class="fa-solid fa-square-up-right fa-xl"></i>
+			</a>
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Destination.Id)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Destination.Id)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Destination.City)
+		</dt>
+		<dd class="col-sm-10 link-primary clickable-row" onclick="openMap('@Model.Destination.City')">
+			<span data-bs-toggle="tooltip"
+				  data-bs-placement="right"
+				  title="Open Map">
+				@Html.DisplayFor(model => model.Destination.City)
+			</span>
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Destination.Airport)
+		</dt>
+		<dd class="col-sm-10 link-primary clickable-row" onclick="openMap('@Model.Destination.Airport')">
+			<span data-bs-toggle="tooltip"
+				  data-bs-placement="right"
+				  title="Open Map">
+				@Html.DisplayFor(model => model.Destination.Airport)
+			</span>
+		</dd>
+	</dl>
+	<hr />
+	<dl class="row">
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Pilot)
+		</dt>
+		<dd class="col-sm-10">
+			<a href="@Url.Action("Details", "Pilot", new { id = Model.Pilot.Id })"
+			   target="_blank"
+			   class="btn-icon-open"
+			   data-bs-toggle="tooltip"
+			   data-bs-placement="right"
+			   title="Click for more details">
+				<i class="fa-solid fa-square-up-right fa-xl"></i>
+			</a>
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Pilot.Id)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Pilot.Id)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Pilot.FirstName)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Pilot.FirstName)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Pilot.LastName)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Pilot.LastName)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Pilot.UPRN)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Pilot.UPRN)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Pilot.FlyingHours)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Pilot.FlyingHours)
+		</dd>
+	</dl>
+</div>
+<br />
+@if (TempData["AlertMessage"] != null)
+{
+	@await Html.PartialAsync("_AlertPartial", TempData)
+}
+@if (ViewBag.ApiUserRole != "User")
+{
+	<div>
+		@await Html.PartialAsync("_EditButtons", Model)
+	</div>
+}
+@section Scripts {
+	<script src="~/js/OpenHelper.js"></script>
+}

@@ -1,0 +1,19 @@
+﻿@{
+	ViewBag.Title = "Travel Class";
+	string typeName = "TravelClass";
+}
+
+<br />
+
+@await Html.PartialAsync("Index/_FormContainer")
+
+@section Scripts {
+	<script src="~/js/CommonFetch.js"> </script>
+	<script>
+		var typeName = '@typeName';
+		var fetchUrl = '@Url.Action("GetTravelClasses", typeName, new { area = "", name = "" })';
+
+		initFetchControls(typeName, fetchUrl);
+	</script>
+	<script src="~/js/GetHelper.js"></script>
+}

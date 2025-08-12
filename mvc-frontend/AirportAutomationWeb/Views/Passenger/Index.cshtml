@@ -1,0 +1,84 @@
+﻿@{
+	ViewBag.Title = "Passengers";
+	string typeName = "Passenger";
+}
+
+<div class="container container-spacing-top">
+	<div class="row mb-3">
+		<div class="col d-flex justify-content-between align-items-center">
+			@if (ViewBag.ApiUserRole != "User")
+			{
+				@await Html.PartialAsync("Index/_CreateButtonIndex", typeName)
+			}
+		</div>
+	</div>
+	<div class="row mb-3">
+		<div class="col-md-3 mb-2">
+			<div class="input-group">
+				<label for="firstName" class="input-group-text">First Name:</label>
+				<input type="text" class="form-control" id="firstName" name="firstName">
+			</div>
+		</div>
+		<div class="col-md-3 mb-2">
+			<div class="input-group">
+				<label for="lastName" class="input-group-text">Last Name:</label>
+				<input type="text" class="form-control" id="lastName" name="lastName">
+			</div>
+		</div>
+		<div class="col-md-3 mb-2">
+			<div class="input-group">
+				<label for="uprn" class="input-group-text">UPRN:</label>
+				<input type="number" class="form-control" id="uprn" name="uprn">
+			</div>
+		</div>
+		<div class="col-md-3 mb-2">
+			@await Html.PartialAsync("_ClearInputsButton")
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-3 mb-2">
+			<div class="input-group">
+				<label for="passport" class="input-group-text">Passport:</label>
+				<input type="text" class="form-control" id="passport" name="passport">
+			</div>
+		</div>
+		<div class="col-md-3 mb-2">
+			<div class="input-group">
+				<label for="address" class="input-group-text">Address:</label>
+				<input type="text" class="form-control" id="address" name="address">
+			</div>
+		</div>
+		<div class="col-md-3 mb-2">
+			<div class="input-group">
+				<label for="phone" class="input-group-text">Phone:</label>
+				<input type="number" class="form-control" id="phone" name="phone">
+			</div>
+		</div>
+		<div class="col-md-3 mb-2">
+			@await Html.PartialAsync("_SearchButton")
+		</div>
+	</div>
+</div>
+<br />
+<div id="alert">
+	@if (TempData["AlertMessage"] != null)
+	{
+		@await Html.PartialAsync("_AlertPartial", TempData)
+	}
+</div>
+
+@await Html.PartialAsync("Index/_FormContainer")
+
+@section Scripts {
+	<script src="~/js/CommonFetch.js"> </script>
+	<script>
+		var typeName = '@typeName';
+		var fetchUrl = '@Url.Action("GetPassengers", typeName, new { area = "", name = "" })';
+
+		initFetchControls(typeName, fetchUrl);
+	</script>
+	<script src="~/js/GetHelper.js"></script>
+	<script src="~/js/OpenHelper.js"></script>
+	<script src="~/js/AlertHelper.js"></script>
+	<script src="~/js/ClearHelper.js"></script>
+}

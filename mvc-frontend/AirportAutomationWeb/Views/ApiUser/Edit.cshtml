@@ -1,0 +1,59 @@
+﻿@model AirportAutomation.Web.Models.ApiUser.ApiUserViewModel;
+
+@{
+	ViewBag.Title = "Edit Api User";
+}
+
+@if (ViewBag.ApiUserRole == "SuperAdmin")
+{
+	<h4>Edit Api User</h4>
+	<hr />
+	<div class="row">
+		<div class="col-md-4">
+			<form asp-action="EditApiUser" method="post">
+				@Html.AntiForgeryToken()
+				<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+				<div class="form-group pb-3">
+					<label asp-for="Id" class="control-label"></label>
+					<input asp-for="Id" class="form-control" id="Id" readonly />
+					<span asp-validation-for="Id" class="text-danger"></span>
+				</div>
+				<div class="form-group pb-3">
+					<label asp-for="UserName" class="control-label"></label>
+					<input asp-for="UserName" class="form-control" id="UserName" />
+					<span asp-validation-for="UserName" class="text-danger"></span>
+				</div>
+				<div class="form-group pb-3">
+					<label asp-for="Password" class="control-label"></label>
+					<input asp-for="Password" class="form-control" id="Password" />
+					<span asp-validation-for="Password" class="text-danger"></span>
+				</div>
+				<div class="form-group pb-4">
+					<label asp-for="Roles" class="control-label"></label>
+					<input asp-for="Roles" class="form-control" id="Roles" />
+					<span asp-validation-for="Roles" class="text-danger"></span>
+				</div>
+				<div class="form-group">
+					<input type="submit" value="Save" class="btn btn-success" />
+				</div>
+			</form>
+		</div>
+	</div>
+}
+else
+{
+	@await Html.PartialAsync("_ForbiddenAccess")
+}
+
+@if (TempData["AlertMessage"] != null)
+{
+	@await Html.PartialAsync("_AlertPartial", TempData)
+}
+
+@await Html.PartialAsync("_BackToListPartial")
+
+@section Scripts {
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+}

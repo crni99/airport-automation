@@ -1,0 +1,75 @@
+﻿@model AirportAutomation.Web.Models.Flight.FlightCreateViewModel;
+
+@{
+	ViewBag.Title = "Create Flight";
+}
+
+@if (ViewBag.ApiUserRole != "User")
+{
+	<h4>Create Flight</h4>
+	<hr />
+	<form asp-action="CreateFlight">
+		@Html.AntiForgeryToken()
+		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+		<div class="row">
+			<div class="col-md-4">
+				<div class="form-group pb-3">
+					<label asp-for="DepartureDate" class="control-label">Departure Date</label>
+					<input asp-for="DepartureDate" class="form-control" type="date" />
+					<span asp-validation-for="DepartureDate" class="text-danger"></span>
+				</div>
+				<div class="form-group pb-3">
+					<label asp-for="AirlineId" class="control-label">Airline</label>
+					<select asp-for="AirlineId" class="form-control" id="airlineSelect"
+							onmousedown="if(this.options.length>6){this.size=10;}" onchange='this.size=0;' onblur="this.size=0;"></select>
+					<span asp-validation-for="AirlineId" class="text-danger"></span>
+				</div>
+				<div class="form-group pb-3">
+					<input type="submit" value="Create" class="btn btn-success" />
+				</div>
+				<div class="form-group">
+					<input type="button" value="Load More" class="btn btn-primary" id="loadMoreButton" onclick="populateSelectFlight();" />
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="form-group pb-3">
+					<label asp-for="DepartureTime" class="control-label">Departure Time</label>
+					<input asp-for="DepartureTime" class="form-control" type="time" />
+					<span asp-validation-for="DepartureTime" class="text-danger"></span>
+				</div>
+				<div class="form-group">
+					<label asp-for="DestinationId" class="control-label">Destination</label>
+					<select asp-for="DestinationId" class="form-control" id="destinationSelect"
+							onmousedown="if(this.options.length>6){this.size=10;}" onchange='this.size=0;' onblur="this.size=0;"></select>
+					<span asp-validation-for="DestinationId" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="form-group">
+					<div class="mb-3 form-column-align">
+					</div>
+					<label asp-for="PilotId" class="control-label">Pilot</label>
+					<select asp-for="PilotId" class="form-control" id="pilotSelect"
+							onmousedown="if(this.options.length>6){this.size=10;}" onchange='this.size=0;' onblur="this.size=0;"></select>
+					<span asp-validation-for="PilotId" class="text-danger"></span>
+				</div>
+			</div>
+		</div>
+	</form>
+
+	@if (TempData["AlertMessage"] != null)
+	{
+		@await Html.PartialAsync("_AlertPartial", TempData)
+	}
+	@section Scripts {
+	@{
+			await Html.RenderPartialAsync("_ValidationScriptsPartial");
+		}
+		<script src="~/js/FetchDataForFlight.js"></script>
+	}
+}
+else
+{
+	@await Html.PartialAsync("_ForbiddenAccess")
+}
+@await Html.PartialAsync("_BackToListPartial")

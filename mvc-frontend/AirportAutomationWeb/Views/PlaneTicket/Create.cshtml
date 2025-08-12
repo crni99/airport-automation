@@ -1,0 +1,78 @@
+﻿@model AirportAutomation.Web.Models.PlaneTicket.PlaneTicketCreateViewModel;
+
+@{
+	ViewBag.Title = "Create Plane Ticket";
+}
+
+@if (ViewBag.ApiUserRole != "User")
+{
+	<h4>Create Plane Ticket</h4>
+	<hr />
+	<form asp-action="CreatePlaneTicket">
+		@Html.AntiForgeryToken()
+		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+		<div class="row">
+			<div class="col-md-4">
+				<div class="form-group pb-3">
+					<label asp-for="Price" class="control-label">Price</label>
+					<input asp-for="Price" class="form-control" type="number" />
+					<span asp-validation-for="Price" class="text-danger"></span>
+				</div>
+				<div class="form-group pb-3">
+					<label asp-for="PassengerId" class="control-label">Passenger</label>
+					<select asp-for="PassengerId" class="form-control" id="passengerSelect"
+							onmousedown="if(this.options.length>6){this.size=10;}" onchange='this.size=0;' onblur="this.size=0;"></select>
+					<span asp-validation-for="PassengerId" class="text-danger"></span>
+				</div>
+				<div class="form-group pb-3">
+					<input type="submit" value="Create" class="btn btn-success" />
+				</div>
+				<div class="col-md-4">
+					<input type="button" value="Load More" class="btn btn-primary" id="loadMoreButton" onclick="populateSelectPlaneTicket();" />
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="form-group pb-3">
+					<label asp-for="PurchaseDate" class="control-label">Purchase Date</label>
+					<input asp-for="PurchaseDate" class="form-control" type="date" />
+					<span asp-validation-for="PurchaseDate" class="text-danger"></span>
+				</div>
+				<div class="form-group pb-3">
+					<label asp-for="TravelClassId" class="control-label">Travel Class</label>
+					<select asp-for="TravelClassId" class="form-control" id="classSelect"
+							onmousedown="if(this.options.length>6){this.size=6;}" onchange='this.size=0;' onblur="this.size=0;"></select>
+					<span asp-validation-for="TravelClassId" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="form-group pb-3">
+					<label asp-for="SeatNumber" class="control-label">Seat Number</label>
+					<input asp-for="SeatNumber" class="form-control" type="number" />
+					<span asp-validation-for="SeatNumber" class="text-danger"></span>
+				</div>
+				<div class="form-group pb-3">
+					<label asp-for="FlightId" class="control-label">Flight</label>
+					<select asp-for="FlightId" class="form-control" id="flightSelect"
+							onmousedown="if(this.options.length>6){this.size=10;}" onchange='this.size=0;' onblur="this.size=0;"></select>
+					<span asp-validation-for="FlightId" class="text-danger"></span>
+				</div>
+			</div>
+		</div>
+	</form>
+
+	@if (TempData["AlertMessage"] != null)
+	{
+		@await Html.PartialAsync("_AlertPartial", TempData)
+	}
+	@section Scripts {
+	@{
+			await Html.RenderPartialAsync("_ValidationScriptsPartial");
+		}
+		<script src="~/js/FetchDataForPlaneTicket.js"></script>
+	}
+}
+else
+{
+	@await Html.PartialAsync("_ForbiddenAccess")
+}
+@await Html.PartialAsync("_BackToListPartial")
