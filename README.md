@@ -1,9 +1,8 @@
+# Airport Automation <br /> [![.NET](https://github.com/crni99/AirportAutomation/actions/workflows/dotnet.yml/badge.svg)](https://github.com/crni99/AirportAutomation/actions/workflows/dotnet.yml) [![Node.js CI](https://github.com/crni99/AirportAutomationReact/actions/workflows/node.js.yml/badge.svg)](https://github.com/crni99/AirportAutomationReact/actions/workflows/node.js.yml) [![CodeQL](https://github.com/crni99/AirportAutomationReact/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/crni99/AirportAutomationReact/actions/workflows/github-code-scanning/codeql) [![Vercel](https://img.shields.io/badge/Vercel-Deploy-success?logo=vercel&logoColor=white)](https://airport-automation-react.vercel.app/) [![Netlify Status](https://api.netlify.com/api/v1/badges/8a260e13-1391-41a7-b0f0-17fdfad59a40/deploy-status)](https://airport-automation-react.netlify.app/)
 
-# AirportAutomation <br /> [![.NET](https://github.com/crni99/AirportAutomation/actions/workflows/dotnet.yml/badge.svg)](https://github.com/crni99/AirportAutomation/actions/workflows/dotnet.yml) [![CodeQL](https://github.com/crni99/AirportAutomation/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/crni99/AirportAutomation/actions/workflows/github-code-scanning/codeql)
+This project demonstrates a complete full-stack solution featuring a robust ASP.NET Core Web API backend, an MVC web frontend, and a modern React single-page application — all working together to deliver a secure, scalable, and responsive airport automation system.
 
-In this project, I have designed and implemented a robust Web API as part of a full-stack application that includes both MVC and React frontends. Here's a brief overview of what you can expect to find in this project:
-
-## 🔧 Backend: [AirportAutomationAPI](https://github.com/crni99/AirportAutomation/tree/main/AirportAutomation/Airport%D0%90utomationApi)
+## 📡 [Backend - ASP.NET Core Web API](https://github.com/crni99/airport-automation/tree/main/backend/Airport%D0%90utomationApi) 🡥
 
 ### Creating the API and Returning Resources:
 - Establishing the foundation of the Web API and defining endpoints.
@@ -62,7 +61,7 @@ In this project, I have designed and implemented a robust Web API as part of a f
 - Configuring health check endpoints to offer insights into the overall well-being of the application, and integrating these checks into the Swagger documentation for visibility and ease of access.
 ___
 
-## 🌐 Web Frontend (MVC): [AirportAutomationWEB](https://github.com/crni99/AirportAutomation/tree/main/AirportAutomation/AirportAutomationWeb)
+## 🌐 [MVC Web Frontend](https://github.com/crni99/airport-automation/tree/main/mvc-frontend/AirportAutomationWeb) 🡥
 
 ### Consuming APIs with HttpClientFactory:
 - Implementing efficient API calls using HttpClientFactory for improved performance and resource management, ensuring seamless integration with external APIs while maintaining optimal usage of resources.
@@ -80,22 +79,36 @@ ___
 - Implementing security measures to protect against common web vulnerabilities, enforcing HTTPS, securing data transmission, and safeguarding against threats like Cross-Site Scripting (XSS), Cross-Site Request Forgery (CSRF) and Cross-Origin Resource Sharing (CORS).
 ___
 
-## ⚛️ React Frontend: [AirportAutomationReact](https://github.com/crni99/AirportAutomationReact)  
-[![Node.js CI](https://github.com/crni99/AirportAutomationReact/actions/workflows/node.js.yml/badge.svg)](https://github.com/crni99/AirportAutomationReact/actions/workflows/node.js.yml)
-[![CodeQL](https://github.com/crni99/AirportAutomationReact/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/crni99/AirportAutomationReact/actions/workflows/github-code-scanning/codeql)
-[![Vercel](https://img.shields.io/badge/Vercel-Deploy-success?logo=vercel&logoColor=white)](https://airport-automation-react.vercel.app/)
-[![Netlify Status](https://api.netlify.com/api/v1/badges/8a260e13-1391-41a7-b0f0-17fdfad59a40/deploy-status)](https://airport-automation-react.netlify.app/)
+## ⚛️ [React Frontend](https://github.com/crni99/airport-automation/tree/main/react-frontend/src) 🡥
 
-This React application provides a modern, responsive frontend that communicates directly with the [AirportAutomationAPI](https://github.com/crni99/AirportAutomation). It is designed to enhance user experience and facilitate intuitive interactions for flight booking, airport data management, and more.
+### User Interface Design
+- Built with functional components and React Hooks.
+- Responsive, mobile-friendly layout using modern styling techniques.
 
-### Highlights:
-- Built with modern React (hooks, functional components).
-- State management with Context API or Redux.
-- API integration for live data fetching and updates.
-- Secure authentication with JWT and role-based access.
-- Dynamic routing with `React Router`.
-- Form handling with React Hook Form and validation.
-- Deployed on **[Vercel](https://airport-automation-react.vercel.app/)** and **[Netlify](https://airport-automation-react.netlify.app/)**.
-___
+### State Management
+- Application state is managed via Context API or Redux.
+- Efficient handling of asynchronous operations using the native `fetch` API and middleware when necessary.
 
-This project represents my commitment to learning and mastering various facets of web development, particularly in the realm of Web APIs. I hope that the knowledge and insights shared here prove valuable to fellow developers and enthusiasts who are embarking on similar journeys.
+### Data Fetching and Integration
+- Full integration with the backend API to retrieve and manage data such as flights, passengers, and airport operations.
+- Dynamic rendering of components based on API responses and user interaction.
+
+### Form Handling and Validation
+- Form inputs (e.g., bookings, user data) managed with **React Hook Form**.
+- Real-time validation with user-friendly error handling and feedback.
+
+### Routing and Navigation
+- Navigation handled via **React Router**, including dynamic and nested routes for scalability.
+- Seamless page transitions without full reloads.
+
+### Security and Authentication
+- Secure user login with **JWT-based authentication**.
+- Role-based access control for restricting features based on user permissions.
+
+### Performance Optimization
+- Performance improvements through **lazy loading**, **code splitting**, and **memoization**.
+- Optimized re-renders using React best practices to enhance responsiveness.
+
+### Deployment and Monitoring
+- Deployed to both **[Vercel](https://airport-automation-react.vercel.app/)** and **[Netlify](https://airport-automation-react.netlify.app/)** for high availability.
+- Integrated basic logging and monitoring to track app health and errors in production environments.
