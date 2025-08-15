@@ -111,5 +111,5 @@ ___
 - Optimized re-renders using React best practices to enhance responsiveness.
 
 ### Deployment and Monitoring
-- Deployed to both **<a href="https://airport-automation.vercel.app/" target="_blank">Vercel</a>** and **<a href="https://airport-automation.netlify.app/" target="_blank">Netlify</a>** for high availability.
+- Deployed to both <strong><a href="https://airport-automation.vercel.app/" target="_blank">Vercel</a></strong> and <strong><a href="https://airport-automation.netlify.app/" target="_blank">Netlify</a></strong> for high availability.
 - Integrated basic logging and monitoring to track app health and errors in production environments.
