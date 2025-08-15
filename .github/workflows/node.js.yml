@@ -4,9 +4,11 @@ on:
   push:
     branches: [ "main" ]
     paths:
+    - 'react-frontend/**'
   pull_request:
     branches: [ "main" ]
     paths:
+    - 'react-frontend/**'
 
 jobs:
   build:
