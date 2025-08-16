@@ -1,0 +1,31 @@
+name: React CodeQL Analysis
+
+on:
+  push:
+    paths:
+      - 'react-frontend/**/*'
+  pull_request:
+    paths:
+      - 'react-frontend/**/*'
+
+jobs:
+  analyze-react:
+    name: Analyze React Code with CodeQL
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL for React
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+          build-mode: none
+
+      - name: Perform CodeQL Analysis for React
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:javascript-typescript"
