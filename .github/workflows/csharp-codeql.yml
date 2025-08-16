@@ -39,7 +39,11 @@ jobs:
 
       - name: Build the project
         working-directory: ./backend
-        run: dotnet build AirportAutomation.sln --no-restore --verbosity detailed
+        run: dotnet build AirportAutomation.sln --no-restore --output ./backend/bin --verbosity detailed
+
+      - name: List build directory contents (macOS)
+        if: runner.os == 'macOS'
+        run: ls -R ./backend/bin
 
       - name: List build directory contents (Ubuntu)
         if: runner.os == 'Linux'
@@ -48,10 +52,6 @@ jobs:
       - name: List build directory contents (Windows)
         if: runner.os == 'Windows'
         run: dir .\backend\bin
-
-      - name: List build directory contents (macOS)
-        if: runner.os == 'macOS'
-        run: ls -R ./backend/bin
 
       - name: Initialize CodeQL for C#
         uses: github/codeql-action/init@v3
