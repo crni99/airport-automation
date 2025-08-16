@@ -34,9 +34,11 @@ jobs:
             6.0.x
 
       - name: Restore dependencies
+        working-directory: ./backend
         run: dotnet restore AirportAutomation.sln
 
       - name: Build the project
+        working-directory: ./backend
         run: dotnet build AirportAutomation.sln --no-restore
 
       - name: Initialize CodeQL for C#
