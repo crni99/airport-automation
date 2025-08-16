@@ -5,11 +5,11 @@ This project demonstrates a complete full-stack solution featuring a robust ASP.
 <br />
 
 ## 📖 Table of Contents
-- [📡 Backend - ASP.NET Core Web API](#backend---aspnet-core-web-api)
-- [🌐 MVC Web Frontend](#mvc-web-frontend)
-- [⚛️ React Frontend](#react-frontend)
-- [🚀 Deployment](#deployment-and-monitoring)
-- [🔐 Demo Credentials](#demo-credentials)
+- [📡 Backend - ASP.NET Core Web API]()
+- [🌐 MVC Web Frontend]()
+- [⚛️ React Frontend]()
+- [🚀 Deployment]()
+- [🔐 Demo Credentials]()
 <br />
 
 ## 📡 [Backend - ASP.NET Core Web API](https://github.com/crni99/airport-automation/tree/main/backend/Airport%D0%90utomationApi) 🡥
