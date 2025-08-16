@@ -35,11 +35,11 @@ jobs:
 
       - name: Restore dependencies
         working-directory: ./backend
-        run: dotnet restore AirportAutomation.sln
+        run: dotnet restore AirportAutomation.sln --verbosity detailed
 
       - name: Build the project
         working-directory: ./backend
-        run: dotnet build AirportAutomation.sln --no-restore
+        run: dotnet build AirportAutomation.sln --no-restore --verbosity detailed
 
       - name: Initialize CodeQL for C#
         uses: github/codeql-action/init@v3
