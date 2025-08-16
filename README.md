@@ -1,7 +1,14 @@
 # Airport Automation <br /> [![Build and Test .NET](https://github.com/crni99/airport-automation/actions/workflows/dotnet.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/dotnet.yml) [![React Frontend CI](https://github.com/crni99/airport-automation/actions/workflows/node.js.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/node.js.yml) [![CodeQL](https://github.com/crni99/airport-automation/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/github-code-scanning/codeql) [![Vercel - deploy](https://img.shields.io/badge/Vercel-deployed-30c352?logo=vercel&labelColor=2f353b)](https://airport-automation.vercel.app/) [![Netlify Status](https://api.netlify.com/api/v1/badges/f68f50c9-da24-4df3-a645-973662999506/deploy-status)](https://app.netlify.com/projects/airport-automation/deploys)
 
-
 This project demonstrates a complete full-stack solution featuring a robust ASP.NET Core Web API backend, an MVC web frontend, and a modern React single-page application — all working together to deliver a secure, scalable, and responsive airport automation system.
+
+## 📖 Table of Contents
+
+- [📡 Backend - ASP.NET Core Web API](#backend---aspnet-core-web-api)
+- [🌐 MVC Web Frontend](#mvc-web-frontend)
+- [⚛️ React Frontend](#⚛react-frontend)
+- [🚀 Deployment](#deployment-and-monitoring)
+- [🔐 Demo Credentials](#demo-credentials)
 
 ## 📡 [Backend - ASP.NET Core Web API](https://github.com/crni99/airport-automation/tree/main/backend/Airport%D0%90utomationApi) 🡥
 
@@ -113,3 +120,12 @@ ___
 ### Deployment and Monitoring
 - Deployed to both <strong><a href="https://airport-automation.vercel.app/" target="_blank">Vercel</a></strong> and <strong><a href="https://airport-automation.netlify.app/" target="_blank">Netlify</a></strong> for high availability.
 - Integrated basic logging and monitoring to track app health and errors in production environments.
+___
+
+## 🔐 Demo Credentials
+
+| Role        | Username             | Password |
+|-------------|----------------------|----------|
+| SuperAdmin  | og                   | og       |
+| Admin       | aa                   | aa       |
+| User        | uu                   | uu       |
