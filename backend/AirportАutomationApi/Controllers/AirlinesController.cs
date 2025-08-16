@@ -99,7 +99,7 @@ namespace AirportАutomation.Api.Controllers
 		}
 
 		/// <summary>
-		/// Endpoint for retrieving a single airline.
+		/// Endpoint for retrieving a single airline. 
 		/// </summary>
 		/// <param name="id">The ID of the airline to retrieve.</param>
 		/// <returns>A single airline that matches the specified ID.</returns>
