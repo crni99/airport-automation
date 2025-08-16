@@ -1,14 +1,16 @@
-# Airport Automation <br /> [![Build and Test .NET](https://github.com/crni99/airport-automation/actions/workflows/dotnet.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/dotnet.yml) [![React Frontend CI](https://github.com/crni99/airport-automation/actions/workflows/node.js.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/node.js.yml) [![CodeQL](https://github.com/crni99/airport-automation/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/github-code-scanning/codeql) [![Vercel - deploy](https://img.shields.io/badge/Vercel-deployed-30c352?logo=vercel&labelColor=2f353b)](https://airport-automation.vercel.app/) [![Netlify Status](https://api.netlify.com/api/v1/badges/f68f50c9-da24-4df3-a645-973662999506/deploy-status)](https://app.netlify.com/projects/airport-automation/deploys)
+# Airport Automation <br /> [![Build and Test .NET](https://github.com/crni99/airport-automation/actions/workflows/dotnet.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/dotnet.yml) [![React Frontend CI](https://github.com/crni99/airport-automation/actions/workflows/node.js.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/node.js.yml) [![CodeQL](https://github.com/crni99/airport-automation/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/github-code-scanning/codeql) [![Vercel - deploy](https://img.shields.io/badge/Vercel-deployed-30c352?logo=vercel&labelColor=2f353b)](https://airport-automation.vercel.app/) [![Netlify Status](https://api.netlify.com/api/v1/badges/f68f50c9-da24-4df3-a645-973662999506/deploy-status)](https://airport-automation.netlify.app/)
 
 This project demonstrates a complete full-stack solution featuring a robust ASP.NET Core Web API backend, an MVC web frontend, and a modern React single-page application — all working together to deliver a secure, scalable, and responsive airport automation system.
+<br />
+<br />
 
 ## 📖 Table of Contents
-
 - [📡 Backend - ASP.NET Core Web API](#backend---aspnet-core-web-api)
 - [🌐 MVC Web Frontend](#mvc-web-frontend)
-- [⚛️ React Frontend](#⚛react-frontend)
+- [⚛️ React Frontend](#react-frontend)
 - [🚀 Deployment](#deployment-and-monitoring)
 - [🔐 Demo Credentials](#demo-credentials)
+<br />
 
 ## 📡 [Backend - ASP.NET Core Web API](https://github.com/crni99/airport-automation/tree/main/backend/Airport%D0%90utomationApi) 🡥
 
@@ -68,6 +70,7 @@ This project demonstrates a complete full-stack solution featuring a robust ASP.
 - Monitoring the health of critical components, such as databases and external dependencies, to proactively identify and address potential issues.
 - Configuring health check endpoints to offer insights into the overall well-being of the application, and integrating these checks into the Swagger documentation for visibility and ease of access.
 ___
+<br />
 
 ## 🌐 [MVC Web Frontend](https://github.com/crni99/airport-automation/tree/main/mvc-frontend/AirportAutomationWeb) 🡥
 
@@ -86,6 +89,7 @@ ___
 ### Ensuring Web Application Security:
 - Implementing security measures to protect against common web vulnerabilities, enforcing HTTPS, securing data transmission, and safeguarding against threats like Cross-Site Scripting (XSS), Cross-Site Request Forgery (CSRF) and Cross-Origin Resource Sharing (CORS).
 ___
+<br />
 
 ## ⚛️ [React Frontend](https://github.com/crni99/airport-automation/tree/main/react-frontend/src) 🡥
 
@@ -116,16 +120,19 @@ ___
 ### Performance Optimization
 - Performance improvements through **lazy loading**, **code splitting**, and **memoization**.
 - Optimized re-renders using React best practices to enhance responsiveness.
+___
+<br />
 
-### Deployment and Monitoring
-- Deployed to both <strong><a href="https://airport-automation.vercel.app/" target="_blank">Vercel</a></strong> and <strong><a href="https://airport-automation.netlify.app/" target="_blank">Netlify</a></strong> for high availability.
+## 🚀 Deployment and Monitoring
+- Deployed to both [Vercel](https://airport-automation.vercel.app/) and [Netlify](https://airport-automation.netlify.app/) for high availability.
 - Integrated basic logging and monitoring to track app health and errors in production environments.
 ___
+<br />
 
-## 🔐 Demo Credentials
+## 🔐 [Demo Credentials](https://github.com/crni99/airport-automation/blob/main/backend/AirportAutomationInfrastructure/Data/createDB.sql#L213-L218) 🡥
 
-| Role        | Username             | Password |
-|-------------|----------------------|----------|
-| SuperAdmin  | og                   | og       |
-| Admin       | aa                   | aa       |
-| User        | uu                   | uu       |
+| Role        | Username             | Password | Description                                    |
+|-------------|----------------------|----------|------------------------------------------------|
+| SuperAdmin  | og                   | og       | CRUD operations + managing other roles         |
+| Admin       | aa                   | aa       | CRUD operations                                |
+| User        | uu                   | uu       | Read and filter data only                      |
