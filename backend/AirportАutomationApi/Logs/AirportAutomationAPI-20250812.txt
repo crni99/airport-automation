@@ -1,1 +1,0 @@
-2025-08-12 16:44:12 [Error] 8000000a-0000-fe00-b63f-84710c7967bb HTTP "GET" "/api/v1/HealthCheck" responded 500 in 383.5175 ms
