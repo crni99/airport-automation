@@ -31,7 +31,7 @@ jobs:
         with:
           dotnet-version: |
             8.0.x
-            6.0.x  # Specify the versions of .NET you're using
+            6.0.x
 
       - name: Restore dependencies
         run: dotnet restore AirportAutomation.sln
