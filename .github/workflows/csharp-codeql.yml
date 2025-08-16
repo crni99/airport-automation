@@ -35,17 +35,11 @@ jobs:
 
       - name: Restore dependencies
         working-directory: ./backend
-        run: dotnet restore AirportAutomation.sln --verbosity detailed
+        run: dotnet restore AirportAutomation.sln
 
-      - name: Build the project (with debug)
+      - name: Build
         working-directory: ./backend
-        run: dotnet build AirportAutomation.sln --configuration Debug --no-restore --output ./backend/bin --verbosity detailed
-
-      - name: List build directory contents (Ubuntu)
-        if: runner.os == 'Linux'
-        run: |
-          echo "Checking build directory"
-          ls -R ./backend/bin || echo "No files in ./backend/bin"
+        run: dotnet build AirportAutomation.sln --no-restore
 
       - name: Initialize CodeQL for C#
         uses: github/codeql-action/init@v3
