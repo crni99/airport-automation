@@ -1,0 +1,51 @@
+name: C# CodeQL Analysis
+
+permissions:
+  security-events: write
+  contents: read
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'backend/**/*'
+      - 'mvc-frontend/**/*'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'backend/**/*'
+      - 'mvc-frontend/**/*'
+
+jobs:
+  analyze:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            6.0.x  # Specify the versions of .NET you're using
+
+      - name: Restore dependencies
+        run: dotnet restore AirportAutomation.sln
+
+      - name: Build the project
+        run: dotnet build AirportAutomation.sln --no-restore
+
+      - name: Initialize CodeQL for C#
+        uses: github/codeql-action/init@v3
+        with:
+          languages: csharp
+          build-mode: manual
+
+      - name: Perform CodeQL Analysis for C#
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:csharp"
