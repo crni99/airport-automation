@@ -11,7 +11,12 @@ on:
 jobs:
   analyze-react:
     name: Analyze React Code with CodeQL
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node-version: [18.x, 20.x, 22.x]
+
     permissions:
       security-events: write
 
