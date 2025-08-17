@@ -6,10 +6,16 @@ This project demonstrates a complete full-stack solution featuring a robust ASP.
 
 ## 📖 Table of Contents
 - [📡 Backend - ASP.NET Core Web API](#-backend-aspnet-core-web-api)
+  
 - [🌐 MVC Web Frontend](#-mvc-web-frontend)
+  
 - [⚛️ React Frontend](#-react-frontend)
+  
 - [🚀 Deployment](#-deployment)
+  
 - [🔐 Demo Credentials](#-demo-credentials)
+
+___
 <br />
 
 <a name="-backend-aspnet-core-web-api"></a>
@@ -128,7 +134,7 @@ ___
 
 <a name="-deployment"></a>
 ## 🚀 Deployment and Monitoring
-- Deployed to both [Vercel](https://airport-automation.vercel.app/) and [Netlify](https://airport-automation.netlify.app/) for high availability.
+- Deployed to both **[Vercel](https://airport-automation.vercel.app/)** and **[Netlify](https://airport-automation.netlify.app/)** for high availability.
 - Integrated basic logging and monitoring to track app health and errors in production environments.
 ___
 <br />
