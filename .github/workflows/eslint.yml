@@ -36,7 +36,7 @@ jobs:
         run: |
           cd react-frontend
           npx eslint . \
-            --config eslint.config.mjs \
+            --config eslint.config.js \
             --ext .js,.jsx,.ts,.tsx \
             --format @microsoft/eslint-formatter-sarif \
             --output-file eslint-results.sarif  # Generating SARIF file here
