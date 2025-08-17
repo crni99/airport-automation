@@ -24,7 +24,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install ESLint
+      - name: Install dependencies
+        run: |
+          cd react-frontend
+          npm install
+
+      - name: Install ESLint and Formatter
         run: |
           cd react-frontend
           npm install eslint@8.10.0
@@ -40,6 +45,10 @@ jobs:
             --ext .js,.jsx,.ts,.tsx \
             --format @microsoft/eslint-formatter-sarif \
             --output-file eslint-results.sarif
+
+      - name: Dump ESLint results (for debugging)
+        run: |
+          cat react-frontend/eslint-results.sarif
 
       - name: Upload analysis results to GitHub
         uses: github/codeql-action/upload-sarif@v3
