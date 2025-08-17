@@ -40,12 +40,18 @@ jobs:
         env:
           SARIF_ESLINT_IGNORE_SUPPRESSED: "true"
         run: |
-          cd react-frontend
-          npx eslint . \
-            --config eslint.config.js \
-            --ext .js,.jsx,.ts,.tsx \
-            --format @microsoft/eslint-formatter-sarif \
-            --output-file eslint-results.sarif
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+            cd react-frontend
+            npx eslint . --config eslint.config.js --ext .js,.jsx,.ts,.tsx --format @microsoft/eslint-formatter-sarif --output-file eslint-results.sarif
+          else
+            cd react-frontend
+            npx eslint . \
+              --config eslint.config.js \
+              --ext .js,.jsx,.ts,.tsx \
+              --format @microsoft/eslint-formatter-sarif \
+              --output-file eslint-results.sarif
+          fi
+        shell: bash
 
       - name: Upload analysis results to GitHub
         uses: github/codeql-action/upload-sarif@v3
