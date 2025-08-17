@@ -1,5 +1,5 @@
 import { getAuthToken } from '../utils/auth.js';
-import { generateErrorMessage, handleNetworkError } from '../utils/errorUtils.js';
+// import { generateErrorMessage, handleNetworkError } from '../utils/errorUtils.js';
 
 async function searchAirlinesByName(searchTerm, apiUrl) {
     const headers = buildHeaders();

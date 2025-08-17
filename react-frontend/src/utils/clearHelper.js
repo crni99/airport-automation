@@ -1,3 +1,4 @@
+/* global $ */
 $(document).ready(function () {
     $('#clearButton').on('click', function () {
         $('.container').find('input, select, textarea').each(function () {
