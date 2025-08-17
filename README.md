@@ -5,13 +5,14 @@ This project demonstrates a complete full-stack solution featuring a robust ASP.
 <br />
 
 ## 📖 Table of Contents
-- [📡 Backend - ASP.NET Core Web API]
-- [🌐 MVC Web Frontend]()
+- [📡 Backend - ASP.NET Core Web API](#-backend-aspnet-core-web-api)
+- [🌐 MVC Web Frontend](#-mvc-web-frontend)
 - [⚛️ React Frontend](#-react-frontend)
-- [🚀 Deployment]()
-- [🔐 Demo Credentials]()
+- [🚀 Deployment](#-deployment)
+- [🔐 Demo Credentials](#-demo-credentials)
 <br />
 
+<a name="-backend-aspnet-core-web-api"></a>
 ## 📡 [Backend - ASP.NET Core Web API](https://github.com/crni99/airport-automation/tree/main/backend/Airport%D0%90utomationApi) 🡥
 
 ### Creating the API and Returning Resources:
@@ -72,6 +73,7 @@ This project demonstrates a complete full-stack solution featuring a robust ASP.
 ___
 <br />
 
+<a name="-mvc-web-frontend"></a>
 ## 🌐 [MVC Web Frontend](https://github.com/crni99/airport-automation/tree/main/mvc-frontend/AirportAutomationWeb) 🡥
 
 ### Consuming APIs with HttpClientFactory:
@@ -91,8 +93,8 @@ ___
 ___
 <br />
 
-## ⚛️ [React Frontend](https://github.com/crni99/airport-automation/tree/main/react-frontend/src) 🡥
 <a name="-react-frontend"></a>
+## ⚛️ [React Frontend](https://github.com/crni99/airport-automation/tree/main/react-frontend/src) 🡥
 
 ### User Interface Design
 - Built with functional components and React Hooks.
@@ -124,12 +126,14 @@ ___
 ___
 <br />
 
+<a name="-deployment"></a>
 ## 🚀 Deployment and Monitoring
 - Deployed to both [Vercel](https://airport-automation.vercel.app/) and [Netlify](https://airport-automation.netlify.app/) for high availability.
 - Integrated basic logging and monitoring to track app health and errors in production environments.
 ___
 <br />
 
+<a name="-demo-credentials"></a>
 ## 🔐 [Demo Credentials](https://github.com/crni99/airport-automation/blob/main/backend/AirportAutomationInfrastructure/Data/createDB.sql#L213-L218) 🡥
 
 | Role        | Username             | Password | Description                                    |
