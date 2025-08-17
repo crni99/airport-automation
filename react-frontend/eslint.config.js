@@ -1,7 +1,3 @@
-const js = require('@eslint/js');
-const globals = require('globals');
-const pluginReact = require('eslint-plugin-react');
-const pluginReactHooks = require('eslint-plugin-react-hooks');
 
 module.exports = {
   parserOptions: {
