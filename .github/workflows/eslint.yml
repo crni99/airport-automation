@@ -1,0 +1,51 @@
+name: ESLint
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'react-frontend/**'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'react-frontend/**'
+  schedule:
+    - cron: '31 4 * * 2'
+
+jobs:
+  eslint:
+    name: Run eslint scanning
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install ESLint
+        run: |
+          # Navigate to the 'react-frontend' folder
+          cd react-frontend
+          npm install eslint@8.10.0
+          npm install @microsoft/eslint-formatter-sarif@3.1.0
+
+      - name: Run ESLint
+        env:
+          SARIF_ESLINT_IGNORE_SUPPRESSED: "true"
+        run: |
+          # Navigate to the 'react-frontend' folder and run ESLint
+          cd react-frontend
+          npx eslint . \
+            --config .eslintrc.js \
+            --ext .js,.jsx,.ts,.tsx \
+            --format @microsoft/eslint-formatter-sarif \
+            --output-file eslint-results.sarif  # This is where the SARIF file will be created
+        continue-on-error: true
+
+      - name: Upload analysis results to GitHub
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: react-frontend/eslint-results.sarif
+          wait-for-processing: true
