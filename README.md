@@ -5,9 +5,9 @@ This project demonstrates a complete full-stack solution featuring a robust ASP.
 <br />
 
 ## 📖 Table of Contents
-- [📡 Backend - ASP.NET Core Web API]()
+- [📡 Backend - ASP.NET Core Web API]
 - [🌐 MVC Web Frontend]()
-- [⚛️ React Frontend]()
+- [⚛️ React Frontend](#-react-frontend)
 - [🚀 Deployment]()
 - [🔐 Demo Credentials]()
 <br />
@@ -92,6 +92,7 @@ ___
 <br />
 
 ## ⚛️ [React Frontend](https://github.com/crni99/airport-automation/tree/main/react-frontend/src) 🡥
+<a name="-react-frontend"></a>
 
 ### User Interface Design
 - Built with functional components and React Hooks.
