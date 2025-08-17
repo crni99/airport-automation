@@ -1,9 +1,9 @@
-import js from "@eslint/js";
-import globals from "globals";
-import pluginReact from "eslint-plugin-react";
-import pluginReactHooks from "eslint-plugin-react-hooks";
+const js = require("@eslint/js");
+const globals = require("globals");
+const pluginReact = require("eslint-plugin-react");
+const pluginReactHooks = require("eslint-plugin-react-hooks");
 
-export default [
+module.exports = [
   {
     files: ["**/*.{js,mjs,cjs,jsx,ts,tsx}"],
     plugins: {
