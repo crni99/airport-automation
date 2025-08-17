@@ -41,7 +41,7 @@ jobs:
         run: |
           npx eslint 'mvc-frontend/**/*' \
             'react-frontend/**/*' \
-            --config .eslintrc.js \
+            --config react-frontend/.eslintrc.js \
             --ext .js,.jsx,.ts,.tsx \
             --format @microsoft/eslint-formatter-sarif \
             --output-file eslint-results.sarif
