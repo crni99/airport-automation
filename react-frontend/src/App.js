@@ -22,6 +22,7 @@ such as memoizing context values or using React's useMemo hook to prevent unnece
 */
 
 function App() {
+  
   const dataContext = useContext(DataContext);
 
   return (
