@@ -14,7 +14,7 @@ on:
 
 jobs:
   eslint:
-    name: Run ESLint scanning
+    name: Run eslint scanning
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -24,7 +24,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install ESLint and dependencies
+      - name: Install ESLint
         run: |
           cd react-frontend
           npm install eslint@8.10.0
@@ -36,10 +36,11 @@ jobs:
         run: |
           cd react-frontend
           npx eslint . \
-            --config eslint.config.mjs \
+            --config eslint.config.js \
             --ext .js,.jsx,.ts,.tsx \
             --format @microsoft/eslint-formatter-sarif \
-            --output-file eslint-results.sarif  # Generating SARIF file here
+            --output-file eslint-results.sarif
+        continue-on-error: false
 
       - name: Upload analysis results to GitHub
         uses: github/codeql-action/upload-sarif@v3
