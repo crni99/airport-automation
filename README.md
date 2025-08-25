@@ -145,30 +145,31 @@ ___
 <table>
   <thead>
     <tr>
-      <th>Role</th>
       <th>Username</th>
       <th>Password</th>
+      <th>Role</th>
       <th>Description</th>
     </tr>
   </thead>
   <tbody>
     <tr>
+      <td>og</td>
+      <td>og</td>
       <td>SuperAdmin</td>
-      <td>og</td>
-      <td>og</td>
       <td>CRUD operations + managing other roles</td>
     </tr>
     <tr>
+      <td>aa</td>
+      <td>aa</td>
       <td>Admin</td>
-      <td>aa</td>
-      <td>aa</td>
       <td>CRUD operations</td>
     </tr>
     <tr>
+      <td>uu</td>
+      <td>uu</td>
       <td>User</td>
-      <td>uu</td>
-      <td>uu</td>
       <td>Read and filter data only</td>
     </tr>
   </tbody>
 </table>
+
