@@ -142,8 +142,33 @@ ___
 <a name="-demo-credentials"></a>
 ## 🔐 [Demo Credentials](https://github.com/crni99/airport-automation/blob/main/backend/AirportAutomationInfrastructure/Data/createDB.sql#L213-L218) 🡥
 
-| Role        | Username             | Password | Description                                    |
-|-------------|----------------------|----------|------------------------------------------------|
-| SuperAdmin  | og                   | og       | CRUD operations + managing other roles         |
-| Admin       | aa                   | aa       | CRUD operations                                |
-| User        | uu                   | uu       | Read and filter data only                      |
+<table>
+  <thead>
+    <tr>
+      <th>Role</th>
+      <th>Username</th>
+      <th>Password</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>SuperAdmin</td>
+      <td>og</td>
+      <td>og</td>
+      <td>CRUD operations + managing other roles</td>
+    </tr>
+    <tr>
+      <td>Admin</td>
+      <td>aa</td>
+      <td>aa</td>
+      <td>CRUD operations</td>
+    </tr>
+    <tr>
+      <td>User</td>
+      <td>uu</td>
+      <td>uu</td>
+      <td>Read and filter data only</td>
+    </tr>
+  </tbody>
+</table>
