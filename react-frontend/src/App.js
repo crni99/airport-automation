@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import AirlineRoutes from './routes/airlineRoutes';
 import DestinationsRoutes from './routes/destinationRoutes';
@@ -11,22 +11,13 @@ import Home from './components/common/Home';
 import Header from './components/common/header/Header';
 import HealthCheck from './components/common/HealthCheck';
 import Footer from './components/common/Footer';
-import { DataContext } from './store/data-context';
 import Unauthorized from './components/common/Unauthorized';
 import ApiUsersRoutes from './routes/apiUserRoutes';
 
-/*
-Optimization: 
-Look for opportunities to optimize performance, 
-such as memoizing context values or using React's useMemo hook to prevent unnecessary re-renders.
-*/
-
 function App() {
   
-  const dataContext = useContext(DataContext);
-
   return (
-    <DataContext.Provider value={dataContext}>
+    <>
       <Header />
       <div className="container">
         <div className="row">
@@ -48,7 +39,7 @@ function App() {
         </div>
       </div>
       <Footer />
-    </DataContext.Provider>
+    </>
   );
 }
 
