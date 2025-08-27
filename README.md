@@ -42,6 +42,12 @@ ___
 ### Searching, Filtering, and Paging Resources:
 - Implementing advanced features like searching, filtering, and paging to enhance the API's usability and performance.
 
+### Exporting Data to PDF and Excel:
+- Implemented endpoints for exporting data in PDF and Excel formats to support reporting and offline data analysis.
+- Ensured the exported documents preserve formatting and reflect applied filters or search criteria.
+- Used QuestPDF for generating high-quality, customizable PDF documents.
+- Used ClosedXML for creating Excel files with structured data, formatting, and support for advanced Excel features.
+
 ### Securing API and CORS Implementation:
 - Ensuring API security involves robust authentication and authorization mechanisms.
 - CORS is carefully configured to permit legitimate cross-origin requests while maintaining security against unauthorized access.
@@ -60,6 +66,7 @@ ___
 ### Versioning and Documenting API with Swagger:
 - Managing API versions to maintain backward compatibility.
 - Documenting the API endpoints for easy consumption by developers.
+- Customized Swagger UI with a toggleable dark/light mode, improving usability and aligning with user preferences.
 
 ### Logging and Exception Handling for Error Management:
 - Integrated Serilog for structured, centralized logging with configuration read from app settings.
