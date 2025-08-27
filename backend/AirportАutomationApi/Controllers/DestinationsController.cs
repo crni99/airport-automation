@@ -2,6 +2,7 @@
 using AirportAutomation.Application.Dtos.Destination;
 using AirportAutomation.Application.Dtos.Response;
 using AirportAutomation.Core.Entities;
+using AirportAutomation.Core.Enums;
 using AirportAutomation.Core.FilterExtensions;
 using AirportAutomation.Core.Filters;
 using AirportAutomation.Core.Interfaces.IServices;
@@ -10,6 +11,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace AirportАutomation.Api.Controllers
 {
@@ -70,7 +72,7 @@ namespace AirportАutomation.Api.Controllers
 		/// <response code="200">Returns a list of destinations wrapped in a <see cref="PagedResponse{DestinationDto}"/>.</response>
 		/// <response code="204">If no destinations are found.</response>
 		/// <response code="400">If the request is invalid or if there's a validation error.</response>
-		/// <response code="401">If user do not have permission to access the requested resource.</response>
+		/// <response code="401">If the user is not authenticated.</response>
 		[HttpGet]
 		[ProducesResponseType(200, Type = typeof(PagedResponse<DestinationDto>))]
 		[ProducesResponseType(204)]
@@ -106,7 +108,7 @@ namespace AirportАutomation.Api.Controllers
 		/// <response code="200">Returns a single destination if found.</response>
 		/// <response code="400">If the request is invalid or if there's a validation error.</response>
 		/// <response code="404">If no destination is found.</response>
-		/// <response code="401">If user do not have permission to access the requested resource.</response>
+		/// <response code="401">If the user is not authenticated.</response>
 		[HttpGet("{id}")]
 		[ProducesResponseType(200, Type = typeof(DestinationDto))]
 		[ProducesResponseType(400)]
@@ -141,7 +143,7 @@ namespace AirportАutomation.Api.Controllers
 		/// <response code="200">Returns a paged list of destinations if found.</response>
 		/// <response code="400">If the request is invalid or if there's a validation error.</response>
 		/// <response code="404">If no destinations are found.</response>
-		/// <response code="401">If user does not have permission to access the requested resource.</response>
+		/// <response code="401">If the user is not authenticated.</response>
 		[HttpGet("search/")]
 		[ProducesResponseType(200, Type = typeof(PagedResponse<DestinationDto>))]
 		[ProducesResponseType(400, Type = typeof(string))]
@@ -187,7 +189,7 @@ namespace AirportАutomation.Api.Controllers
 		/// <response code="200">Returns a paged list of destinations if found.</response>
 		/// <response code="400">If the request is invalid or the filter criteria are missing or invalid.</response>
 		/// <response code="404">If no destinations matching the filter criteria are found.</response>
-		/// <response code="401">If the user does not have permission to access the requested resource.</response>
+		/// <response code="401">If the user is not authenticated.</response>
 		[HttpGet("byFilter")]
 		[ProducesResponseType(200, Type = typeof(PagedResponse<DestinationDto>))]
 		[ProducesResponseType(400, Type = typeof(string))]
@@ -228,8 +230,8 @@ namespace AirportАutomation.Api.Controllers
 		/// <returns>The created destination.</returns>
 		/// <response code="201">Returns the created destination if successful.</response>
 		/// <response code="400">If the request is invalid or if there's a validation error.</response>
-		/// <response code="401">If user do not have permission to access the requested resource.</response>
-		/// <response code="403">If the user does not have permission to access the requested resource.</response>
+		/// <response code="401">If the user is not authenticated.</response>
+		/// <response code="403">If the authenticated user does not have permission to access the requested resource.</response>
 		[HttpPost]
 		[Authorize(Policy = "RequireAdminRole")]
 		[ProducesResponseType(201, Type = typeof(DestinationDto))]
@@ -253,8 +255,8 @@ namespace AirportАutomation.Api.Controllers
 		/// <response code="204">Returns no content if successful.</response>
 		/// <response code="400">If the request is invalid or if there's a validation error.</response>
 		/// <response code="404">If no destination is found.</response>
-		/// <response code="401">If user do not have permission to access the requested resource.</response>
-		/// <response code="403">If the user does not have permission to access the requested resource.</response>
+		/// <response code="401">If the user is not authenticated.</response>
+		/// <response code="403">If the authenticated user does not have permission to access the requested resource.</response>
 		[HttpPut("{id}")]
 		[Authorize(Policy = "RequireAdminRole")]
 		[ProducesResponseType(204)]
@@ -302,8 +304,8 @@ namespace AirportАutomation.Api.Controllers
 		/// <response code="200">Returns the updated destination if successful.</response>
 		/// <response code="400">If the request is invalid or if there's a validation error.</response>
 		/// <response code="404">If the destination with the specified ID is not found.</response>
-		/// <response code="401">If user do not have permission to access the requested resource.</response>
-		/// <response code="403">If the user does not have permission to access the requested resource.</response>
+		/// <response code="401">If the user is not authenticated.</response>
+		/// <response code="403">If the authenticated user does not have permission to access the requested resource.</response>
 		[HttpPatch("{id}")]
 		[Authorize(Policy = "RequireAdminRole")]
 		[ProducesResponseType(200, Type = typeof(DestinationDto))]
@@ -336,8 +338,8 @@ namespace AirportАutomation.Api.Controllers
 		/// <response code="204">Returns no content if successful.</response>
 		/// <response code="400">If the request is invalid or if there's a validation error.</response>
 		/// <response code="404">If no destination is found.</response>
-		/// <response code="401">If user do not have permission to access the requested resource.</response>
-		/// <response code="403">If the user does not have permission to access the requested resource.</response>
+		/// <response code="401">If the user is not authenticated.</response>
+		/// <response code="403">If the authenticated user does not have permission to access the requested resource.</response>
 		/// <response code="409">Conflict. If the passenger cannot be deleted because it is being referenced by other entities.</response>
 		[HttpDelete("{id}")]
 		[Authorize(Policy = "RequireAdminRole")]
@@ -375,29 +377,32 @@ namespace AirportАutomation.Api.Controllers
 		/// Endpoint for exporting destination data to PDF.
 		/// </summary>
 		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
+		/// <param name="filter">The search filter containing destination fields to filter by.</param>
 		/// <param name="page">The page number for pagination (optional, default is 1).</param>
 		/// <param name="pageSize">The page size for pagination (optional, default is 10).</param>
 		/// <param name="getAll">Flag indicating whether to retrieve all data (optional, default is false).</param>
-		/// <param name="city">The city name to search for (optional, default is null).</param>
-		/// <param name="airport">The airport name to search for (optional, default is null).</param>
 		/// <returns>Returns the generated PDF document.</returns>
 		/// <response code="200">Returns the generated PDF document.</response>
+		/// <response code="204">No destinations found.</response>
 		/// <response code="400">If the request is invalid or if there's a validation error.</response>
-		/// <response code="401">If user do not have permission to access the requested resource.</response>
-		/// <response code="403">If the user does not have permission to access the requested resource.</response>
+		/// <response code="401">If the user is not authenticated.</response>
+		/// <response code="403">If the authenticated user does not have permission to access the requested resource.</response>
+		/// <response code="500">If an unexpected server error occurs, such as a failure during PDF generation.</response>
 		[HttpGet("export/pdf")]
 		[Authorize(Policy = "RequireAdminRole")]
+		[Produces("application/pdf")]
 		[ProducesResponseType(200)]
+		[ProducesResponseType(204)]
 		[ProducesResponseType(400)]
 		[ProducesResponseType(401)]
 		[ProducesResponseType(403)]
+		[ProducesResponseType(500)]
 		public async Task<ActionResult> ExportToPdf(
 			CancellationToken cancellationToken,
+			[FromQuery] DestinationSearchFilter filter,
 			[FromQuery] int page = 1,
 			[FromQuery] int pageSize = 10,
-			[FromQuery] bool getAll = false,
-			[FromQuery] string? city = null,
-			[FromQuery] string? airport = null)
+			[FromQuery] bool getAll = false)
 		{
 			IList<DestinationEntity> destinations;
 			if (getAll)
@@ -411,23 +416,97 @@ namespace AirportАutomation.Api.Controllers
 				{
 					return result;
 				}
-				if (string.IsNullOrEmpty(city) && string.IsNullOrEmpty(airport))
+				if (filter.IsEmpty())
 				{
 					destinations = await _destinationService.GetDestinations(cancellationToken, page, correctedPageSize);
 				}
 				else
 				{
-					destinations = await _destinationService.GetDestinationsByCityOrAirport(cancellationToken, page, correctedPageSize, city, airport);
+					destinations = await _destinationService.GetDestinationsByFilter(cancellationToken, page, correctedPageSize, filter);
 				}
 			}
 			if (destinations is null || !destinations.Any())
 			{
-				_logger.LogInformation("Destinations not found.");
+				_logger.LogInformation("No destinations found for page {Page}, pageSize {PageSize}, getAll {GetAll}, filter {Filter}.",
+					page, pageSize, getAll, JsonConvert.SerializeObject(filter));
 				return NoContent();
 			}
 			var pdf = _exportService.ExportToPDF("Destinations", destinations);
-			string fileName = _utilityService.GenerateUniqueFileName("Destinations");
+			if (pdf == null)
+			{
+				_logger.LogError("PDF generation failed.");
+				return StatusCode(500, "Failed to generate PDF.");
+			}
+			string fileName = _utilityService.GenerateUniqueFileName("Destinations", FileExtension.Pdf);
 			return File(pdf, "application/pdf", fileName);
+		}
+
+		/// <summary>
+		/// Endpoint for exporting destination data to Excel.
+		/// </summary>
+		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
+		/// <param name="filter">The search filter containing destination fields to filter by.</param>
+		/// <param name="page">The page number for pagination (optional, default is 1).</param>
+		/// <param name="pageSize">The page size for pagination (optional, default is 10).</param>
+		/// <param name="getAll">Flag indicating whether to retrieve all data (optional, default is false).</param>
+		/// <returns>Returns the generated Excel document.</returns>
+		/// <response code="200">Returns the generated Excel document.</response>
+		/// <response code="204">No destinations found.</response>
+		/// <response code="400">If the request is invalid or if there's a validation error.</response>
+		/// <response code="401">If the user is not authenticated.</response>
+		/// <response code="403">If the authenticated user does not have permission to access the requested resource.</response>
+		/// <response code="500">If an unexpected server error occurs, such as a failure during Excel generation.</response>
+		[HttpGet("export/excel")]
+		[Authorize(Policy = "RequireAdminRole")]
+		[Produces("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")]
+		[ProducesResponseType(200)]
+		[ProducesResponseType(204)]
+		[ProducesResponseType(400)]
+		[ProducesResponseType(401)]
+		[ProducesResponseType(403)]
+		[ProducesResponseType(500)]
+		public async Task<ActionResult> ExportToExcel(
+			CancellationToken cancellationToken,
+			[FromQuery] DestinationSearchFilter filter,
+			[FromQuery] int page = 1,
+			[FromQuery] int pageSize = 10,
+			[FromQuery] bool getAll = false)
+		{
+			IList<DestinationEntity> destinations;
+			if (getAll)
+			{
+				destinations = await _destinationService.GetAllDestinations(cancellationToken);
+			}
+			else
+			{
+				var (isValid, correctedPageSize, result) = _paginationValidationService.ValidatePaginationParameters(page, pageSize, maxPageSize);
+				if (!isValid)
+				{
+					return result;
+				}
+				if (filter.IsEmpty())
+				{
+					destinations = await _destinationService.GetDestinations(cancellationToken, page, correctedPageSize);
+				}
+				else
+				{
+					destinations = await _destinationService.GetDestinationsByFilter(cancellationToken, page, correctedPageSize, filter);
+				}
+			}
+			if (destinations is null || !destinations.Any())
+			{
+				_logger.LogInformation("No destinations found for page {Page}, pageSize {PageSize}, getAll {GetAll}, filter {Filter}.",
+					page, pageSize, getAll, JsonConvert.SerializeObject(filter));
+				return NoContent();
+			}
+			var excel = _exportService.ExportToExcel("Destinations", destinations);
+			if (excel == null || excel.Length == 0)
+			{
+				_logger.LogError("Excel generation failed.");
+				return StatusCode(500, "Failed to generate Excel file.");
+			}
+			string fileName = _utilityService.GenerateUniqueFileName("Destinations", FileExtension.Xlsx);
+			return File(excel, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
 		}
 
 	}

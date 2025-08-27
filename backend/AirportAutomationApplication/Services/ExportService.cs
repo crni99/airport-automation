@@ -1,8 +1,11 @@
 ﻿using AirportAutomation.Core.Entities;
 using AirportAutomation.Core.Interfaces.IServices;
+using ClosedXML.Excel;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
+using System.Data;
+using System.Reflection;
 
 namespace AirportAutomation.Application.Services
 {
@@ -10,6 +13,46 @@ namespace AirportAutomation.Application.Services
 	{
 		private const float CELL_PADDING = 6f;
 
+		#region Excel Export
+		public byte[] ExportToExcel<T>(string name, IList<T> data)
+		{
+			using var workbook = new XLWorkbook();
+			var worksheet = workbook.Worksheets.Add($"{name} Report");
+
+			if (data == null || data.Count == 0)
+				throw new ArgumentException("No data to export.");
+
+			var properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+			for (int col = 0; col < properties.Length; col++)
+			{
+				var cell = worksheet.Cell(1, col + 1);
+				cell.Value = properties[col].Name;
+				cell.Style.Font.Bold = true;
+			}
+
+			for (int row = 0; row < data.Count; row++)
+			{
+				for (int col = 0; col < properties.Length; col++)
+				{
+					var value = properties[col].GetValue(data[row]);
+					worksheet.Cell(row + 2, col + 1).Value = value?.ToString() ?? string.Empty;
+				}
+			}
+
+			for (int col = 1; col <= properties.Length; col++)
+			{
+				worksheet.Column(col).AdjustToContents();
+				worksheet.Column(col).Width += 1;
+			}
+
+			using var stream = new MemoryStream();
+			workbook.SaveAs(stream);
+			return stream.ToArray();
+		}
+		#endregion
+
+		#region PDF Export
 		public byte[] ExportToPDF<T>(string name, IList<T> data)
 		{
 			var doc = Document.Create(container =>
@@ -341,6 +384,7 @@ namespace AirportAutomation.Application.Services
 				}
 			});
 		}
+		#endregion
 
 	}
 }

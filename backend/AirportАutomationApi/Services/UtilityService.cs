@@ -1,4 +1,5 @@
-﻿using AirportАutomation.Api.Interfaces;
+﻿using AirportAutomation.Core.Enums;
+using AirportАutomation.Api.Interfaces;
 
 namespace AirportАutomation.Api.Services
 {
@@ -7,15 +8,20 @@ namespace AirportАutomation.Api.Services
 		public string GetCurrentTime()
 		{
 			DateTime currentTime = DateTime.Now;
-			string timeString = currentTime.ToString("HHmmss");
+			string timeString = currentTime.ToString("yyyy-MM-dd_HH-mm-ss");
 			return timeString;
 		}
 
-		public string GenerateUniqueFileName(string baseName)
+		public string GenerateUniqueFileName(string baseName, FileExtension extension)
 		{
 			string timeStamp = GetCurrentTime();
-			string fileName = $"{baseName}-{timeStamp}.pdf";
-			return fileName;
+			string fileExt = extension switch
+			{
+				FileExtension.Pdf => ".pdf",
+				FileExtension.Xlsx => ".xlsx",
+				_ => throw new ArgumentOutOfRangeException(nameof(extension), extension, "Unsupported file extension")
+			};
+			return $"{baseName}-{timeStamp}{fileExt}";
 		}
 	}
 }

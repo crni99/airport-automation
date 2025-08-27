@@ -2,12 +2,14 @@
 using AirportAutomation.Application.Dtos.Flight;
 using AirportAutomation.Application.Dtos.Response;
 using AirportAutomation.Core.Entities;
+using AirportAutomation.Core.Enums;
 using AirportAutomation.Core.Interfaces.IServices;
 using AirportАutomation.Api.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace AirportАutomation.Api.Controllers
 {
@@ -68,7 +70,7 @@ namespace AirportАutomation.Api.Controllers
 		/// <response code="200">Returns a list of flights wrapped in a <see cref="PagedResponse{FlightDto}"/>.</response>
 		/// <response code="204">If no flights are found.</response>
 		/// <response code="400">If the request is invalid or if there's a validation error.</response>
-		/// <response code="401">If user do not have permission to access the requested resource.</response>
+		/// <response code="401">If the user is not authenticated.</response>
 		[HttpGet]
 		[ProducesResponseType(200, Type = typeof(PagedResponse<FlightDto>))]
 		[ProducesResponseType(204)]
@@ -104,7 +106,7 @@ namespace AirportАutomation.Api.Controllers
 		/// <response code="200">Returns a single flight if found.</response>
 		/// <response code="400">If the request is invalid or if there's a validation error.</response>
 		/// <response code="404">If no flight is found.</response>
-		/// <response code="401">If user do not have permission to access the requested resource.</response>
+		/// <response code="401">If the user is not authenticated.</response>
 		[HttpGet("{id}")]
 		[ProducesResponseType(200, Type = typeof(FlightDto))]
 		[ProducesResponseType(400)]
@@ -139,7 +141,7 @@ namespace AirportАutomation.Api.Controllers
 		/// <response code="200">Returns a paged list of flights if found.</response>
 		/// <response code="400">If the request is invalid or if there's a validation error.</response>
 		/// <response code="404">If no flights are found.</response>
-		/// <response code="401">If user do not have permission to access the requested resource.</response>
+		/// <response code="401">If the user is not authenticated.</response>
 		[HttpGet("byDate")]
 		[ProducesResponseType(200, Type = typeof(PagedResponse<FlightDto>))]
 		[ProducesResponseType(400)]
@@ -186,8 +188,8 @@ namespace AirportАutomation.Api.Controllers
 		/// <returns>The created flight.</returns>
 		/// <response code="201">Returns the created flight if successful.</response>
 		/// <response code="400">If the request is invalid or if there's a validation error.</response>
-		/// <response code="401">If user do not have permission to access the requested resource.</response>
-		/// <response code="403">If the user does not have permission to access the requested resource.</response>
+		/// <response code="401">If the user is not authenticated.</response>
+		/// <response code="403">If the authenticated user does not have permission to access the requested resource.</response>
 		[HttpPost]
 		[Authorize(Policy = "RequireAdminRole")]
 		[ProducesResponseType(201, Type = typeof(FlightDto))]
@@ -211,8 +213,8 @@ namespace AirportАutomation.Api.Controllers
 		/// <response code="204">Returns no content if successful.</response>
 		/// <response code="400">If the request is invalid or if there's a validation error.</response>
 		/// <response code="404">If no flight is found.</response>
-		/// <response code="401">If user do not have permission to access the requested resource.</response>
-		/// <response code="403">If the user does not have permission to access the requested resource.</response>
+		/// <response code="401">If the user is not authenticated.</response>
+		/// <response code="403">If the authenticated user does not have permission to access the requested resource.</response>
 		[HttpPut("{id}")]
 		[Authorize(Policy = "RequireAdminRole")]
 		[ProducesResponseType(204)]
@@ -260,8 +262,8 @@ namespace AirportАutomation.Api.Controllers
 		/// <response code="200">Returns the updated flight if successful.</response>
 		/// <response code="400">If the request is invalid or if there's a validation error.</response>
 		/// <response code="404">If the flight with the specified ID is not found.</response>
-		/// <response code="401">If user do not have permission to access the requested resource.</response>
-		/// <response code="403">If the user does not have permission to access the requested resource.</response>
+		/// <response code="401">If the user is not authenticated.</response>
+		/// <response code="403">If the authenticated user does not have permission to access the requested resource.</response>
 		[HttpPatch("{id}")]
 		[Authorize(Policy = "RequireAdminRole")]
 		[ProducesResponseType(200, Type = typeof(FlightDto))]
@@ -294,8 +296,8 @@ namespace AirportАutomation.Api.Controllers
 		/// <response code="204">Returns no content if successful.</response>
 		/// <response code="400">If the request is invalid or if there's a validation error.</response>
 		/// <response code="404">If no flight is found.</response>
-		/// <response code="401">If user do not have permission to access the requested resource.</response>
-		/// <response code="403">If the user does not have permission to access the requested resource.</response>
+		/// <response code="401">If the user is not authenticated.</response>
+		/// <response code="403">If the authenticated user does not have permission to access the requested resource.</response>
 		/// <response code="409">Conflict. If the passenger cannot be deleted because it is being referenced by other entities.</response>
 		[HttpDelete("{id}")]
 		[Authorize(Policy = "RequireAdminRole")]
@@ -339,16 +341,21 @@ namespace AirportАutomation.Api.Controllers
 		/// <param name="startDate">The start date for the search (optional, default is null).</param>
 		/// <param name = "endDate" > The end date for the search (optional, default is null).</param>
 		/// <returns>Returns the generated PDF document.</returns>
+		/// <response code="204">No flights found.</response>
 		/// <response code="200">Returns the generated PDF document.</response>
 		/// <response code="400">If the request is invalid or if there's a validation error.</response>
-		/// <response code="401">If user do not have permission to access the requested resource.</response>
-		/// <response code="403">If the user does not have permission to access the requested resource.</response>
+		/// <response code="401">If the user is not authenticated.</response>
+		/// <response code="403">If the authenticated user does not have permission to access the requested resource.</response>
+		/// <response code="500">If an unexpected server error occurs, such as a failure during PDF generation.</response>
 		[HttpGet("export/pdf")]
 		[Authorize(Policy = "RequireAdminRole")]
+		[Produces("application/pdf")]
 		[ProducesResponseType(200)]
+		[ProducesResponseType(204)]
 		[ProducesResponseType(400)]
 		[ProducesResponseType(401)]
 		[ProducesResponseType(403)]
+		[ProducesResponseType(500)]
 		public async Task<ActionResult> ExportToPdf(
 			CancellationToken cancellationToken,
 			[FromQuery] int page = 1,
@@ -383,12 +390,97 @@ namespace AirportАutomation.Api.Controllers
 			}
 			if (flights is null || !flights.Any())
 			{
-				_logger.LogInformation("Flights not found.");
+				_logger.LogInformation("No flights found for page {Page}, pageSize {PageSize}, getAll {GetAll}, startDate {StartDate}, endDate {EndDate}.",
+					page, pageSize, getAll, startDate, endDate);
 				return NoContent();
 			}
 			var pdf = _exportService.ExportToPDF("Flights", flights);
-			string fileName = _utilityService.GenerateUniqueFileName("Flights");
+			if (pdf == null)
+			{
+				_logger.LogError("PDF generation failed.");
+				return StatusCode(500, "Failed to generate PDF.");
+			}
+			string fileName = _utilityService.GenerateUniqueFileName("Flights", FileExtension.Pdf);
 			return File(pdf, "application/pdf", fileName);
+		}
+
+		/// <summary>
+		/// Endpoint for exporting flight data to Excel.
+		/// </summary>
+		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
+		/// <param name="page">The page number for pagination (optional, default is 1).</param>
+		/// <param name="pageSize">The page size for pagination (optional, default is 10).</param>
+		/// <param name="getAll">Flag indicating whether to retrieve all data (optional, default is false).</param>
+		/// <param name="startDate">The start date for the search (optional, default is null).</param>
+		/// <param name="endDate">The end date for the search (optional, default is null).</param>
+		/// <returns>Returns the generated Excel document.</returns>
+		/// <response code="204">No flights found.</response>
+		/// <response code="200">Returns the generated Excel document.</response>
+		/// <response code="400">If the request is invalid or if there's a validation error.</response>
+		/// <response code="401">If the user is not authenticated.</response>
+		/// <response code="403">If the authenticated user does not have permission to access the requested resource.</response>
+		/// <response code="500">If an unexpected server error occurs, such as a failure during Excel generation.</response>
+		[HttpGet("export/excel")]
+		[Authorize(Policy = "RequireAdminRole")]
+		[Produces("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")]
+		[ProducesResponseType(200)]
+		[ProducesResponseType(204)]
+		[ProducesResponseType(400)]
+		[ProducesResponseType(401)]
+		[ProducesResponseType(403)]
+		[ProducesResponseType(500)]
+		public async Task<ActionResult> ExportToExcel(
+			CancellationToken cancellationToken,
+			[FromQuery] int page = 1,
+			[FromQuery] int pageSize = 10,
+			[FromQuery] bool getAll = false,
+			[FromQuery] DateOnly? startDate = null,
+			[FromQuery] DateOnly? endDate = null)
+		{
+			IList<FlightEntity> flights = new List<FlightEntity>();
+
+			if (getAll)
+			{
+				flights = await _flightService.GetAllFlights(cancellationToken);
+			}
+			else
+			{
+				var (isValid, correctedPageSize, result) = _paginationValidationService.ValidatePaginationParameters(page, pageSize, maxPageSize);
+				if (!isValid)
+				{
+					return result;
+				}
+
+				if (startDate.HasValue && endDate.HasValue)
+				{
+					if (_inputValidationService.IsValidDateOnly(startDate) && _inputValidationService.IsValidDateOnly(endDate))
+					{
+						flights = await _flightService.GetFlightsBetweenDates(cancellationToken, page, correctedPageSize, startDate, endDate);
+					}
+					else
+					{
+						return BadRequest("Invalid date parameters.");
+					}
+				}
+				else
+				{
+					flights = await _flightService.GetFlights(cancellationToken, page, correctedPageSize);
+				}
+			}
+			if (flights == null || !flights.Any())
+			{
+				_logger.LogInformation("No flights found for page {Page}, pageSize {PageSize}, getAll {GetAll}, startDate {StartDate}, endDate {EndDate}.",
+					page, pageSize, getAll, startDate, endDate);
+				return NoContent();
+			}
+			var excel = _exportService.ExportToExcel("Flights", flights);
+			if (excel == null || excel.Length == 0)
+			{
+				_logger.LogError("Excel generation failed.");
+				return StatusCode(500, "Failed to generate Excel file.");
+			}
+			string fileName = _utilityService.GenerateUniqueFileName("Flights", FileExtension.Xlsx);
+			return File(excel, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
 		}
 
 	}

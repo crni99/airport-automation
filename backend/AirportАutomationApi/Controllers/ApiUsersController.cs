@@ -65,8 +65,8 @@ namespace AirportАutomation.Api.Controllers
 		/// <response code="200">Returns a list of api users wrapped in a <see cref="PagedResponse{ApiUserRoleDto}"/>.</response>
 		/// <response code="204">If no apiUsers are found.</response>
 		/// <response code="400">If the request is invalid or if there's a validation error.</response>
-		/// <response code="401">If user do not have permission to access the requested resource.</response>
-		/// <response code="403">If the user does not have permission to access the requested resource.</response>
+		/// <response code="401">If the user is not authenticated.</response>
+		/// <response code="403">If the authenticated user does not have permission to access the requested resource.</response>
 		[HttpGet]
 		[ProducesResponseType(200, Type = typeof(PagedResponse<ApiUserRoleDto>))]
 		[ProducesResponseType(204)]
@@ -103,8 +103,8 @@ namespace AirportАutomation.Api.Controllers
 		/// <response code="200">Returns a single api user if found.</response>
 		/// <response code="400">If the request is invalid or if there's a validation error.</response>
 		/// <response code="404">If no api user is found.</response>
-		/// <response code="401">If user do not have permission to access the requested resource.</response>
-		/// <response code="403">If the user does not have permission to access the requested resource.</response>
+		/// <response code="401">If the user is not authenticated.</response>
+		/// <response code="403">If the authenticated user does not have permission to access the requested resource.</response>
 		[HttpGet("{id}")]
 		[ProducesResponseType(200, Type = typeof(ApiUserRoleDto))]
 		[ProducesResponseType(400)]
@@ -139,8 +139,8 @@ namespace AirportАutomation.Api.Controllers
 		/// <response code="200">Returns a paged list of api users if found.</response>
 		/// <response code="400">If the request is invalid or if there's a validation error.</response>
 		/// <response code="404">If no apiUsers are found.</response>
-		/// <response code="401">If user do not have permission to access the requested resource.</response>
-		/// <response code="403">If the user does not have permission to access the requested resource.</response>
+		/// <response code="401">If the user is not authenticated.</response>
+		/// <response code="403">If the authenticated user does not have permission to access the requested resource.</response>
 		[HttpGet("byRole/{role}")]
 		[ProducesResponseType(200, Type = typeof(PagedResponse<ApiUserRoleDto>))]
 		[ProducesResponseType(400)]
@@ -186,7 +186,8 @@ namespace AirportАutomation.Api.Controllers
 		/// <response code="200">Returns a paged list of api users if found.</response>
 		/// <response code="400">If the request is invalid or the filter criteria are missing or invalid.</response>
 		/// <response code="404">If no api users matching the filter criteria are found.</response>
-		/// <response code="401">If the user does not have permission to access the requested resource.</response>
+		/// <response code="401">If the user is not authenticated.</response>
+		/// <response code="403">If the authenticated user does not have permission to access the requested resource.</response>
 		[HttpGet("byFilter")]
 		[ProducesResponseType(200, Type = typeof(PagedResponse<ApiUserRoleDto>))]
 		[ProducesResponseType(400)]
@@ -230,10 +231,11 @@ namespace AirportАutomation.Api.Controllers
 		/// <response code="204">Returns no content if successful.</response>
 		/// <response code="400">If the request is invalid or if there's a validation error.</response>
 		/// <response code="404">If no apiUser is found.</response>
-		/// <response code="401">If user do not have permission to access the requested resource.</response>
-		/// <response code="403">If the user does not have permission to access the requested resource.</response>
+		/// <response code="401">If the user is not authenticated.</response>
+		/// <response code="403">If the authenticated user does not have permission to access the requested resource.</response>
 		[HttpPut("{id}")]
 		[ProducesResponseType(204)]
+		[ProducesResponseType(400)]
 		[ProducesResponseType(404)]
 		[ProducesResponseType(401)]
 		[ProducesResponseType(403)]
@@ -267,8 +269,8 @@ namespace AirportАutomation.Api.Controllers
 		/// <response code="204">Returns no content if successful.</response>
 		/// <response code="400">If the request is invalid or if there's a validation error.</response>
 		/// <response code="404">If no apiUser is found.</response>
-		/// <response code="401">If user do not have permission to access the requested resource.</response>
-		/// <response code="403">If the user does not have permission to access the requested resource.</response>
+		/// <response code="401">If the user is not authenticated.</response>
+		/// <response code="403">If the authenticated user does not have permission to access the requested resource.</response>
 		[HttpDelete("{id}")]
 		[ProducesResponseType(204)]
 		[ProducesResponseType(400)]
