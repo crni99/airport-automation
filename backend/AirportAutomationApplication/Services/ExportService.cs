@@ -8,6 +8,8 @@ namespace AirportAutomation.Application.Services
 {
 	public class ExportService : IExportService
 	{
+		private const float CELL_PADDING = 6f;
+
 		public byte[] ExportToPDF<T>(string name, IList<T> data)
 		{
 			var doc = Document.Create(container =>
@@ -18,47 +20,71 @@ namespace AirportAutomation.Application.Services
 					page.Margin(1, Unit.Centimetre);
 					page.DefaultTextStyle(x => x.FontSize(12));
 
-					page.Header().Height(100).AlignCenter().AlignMiddle().Text(text =>
-					{
-						text.DefaultTextStyle(x => x.FontSize(14));
-						text.Span(name);
-					});
-
-					page.Content().Row(row =>
+					page.Content().Column(column =>
 					{
 						switch (name)
 						{
 							case "Airlines" when typeof(T) == typeof(AirlineEntity):
-								SetAirlinesRows(row, data.Cast<AirlineEntity>().ToList());
+								AddCustomHeader(column, "Airlines Report");
+								SetAirlinesRows(column, data.Cast<AirlineEntity>().ToList());
 								break;
+
 							case "Destinations" when typeof(T) == typeof(DestinationEntity):
-								SetDestinationsRows(row, data.Cast<DestinationEntity>().ToList());
+								AddCustomHeader(column, "Destinations Report");
+								SetDestinationsRows(column, data.Cast<DestinationEntity>().ToList());
 								break;
+
 							case "Passengers" when typeof(T) == typeof(PassengerEntity):
-								SetPassengersRows(row, data.Cast<PassengerEntity>().ToList());
+								AddCustomHeader(column, "Passengers Report");
+								SetPassengersRows(column, data.Cast<PassengerEntity>().ToList());
 								break;
+
 							case "Pilots" when typeof(T) == typeof(PilotEntity):
-								SetPilotsRows(row, data.Cast<PilotEntity>().ToList());
+								AddCustomHeader(column, "Pilots Report");
+								SetPilotsRows(column, data.Cast<PilotEntity>().ToList());
 								break;
+
 							case "Travel Classes" when typeof(T) == typeof(TravelClassEntity):
-								SetTravelClassesRows(row, data.Cast<TravelClassEntity>().ToList());
+								AddCustomHeader(column, "Travel Classes Report");
+								SetTravelClassesRows(column, data.Cast<TravelClassEntity>().ToList());
 								break;
+
 							case "Flights" when typeof(T) == typeof(FlightEntity):
-								SetFlightsRows(row, data.Cast<FlightEntity>().ToList());
+								AddCustomHeader(column, "Flights Report");
+								SetFlightsRows(column, data.Cast<FlightEntity>().ToList());
 								break;
+
 							case "Plane Tickets" when typeof(T) == typeof(PlaneTicketEntity):
-								SetPlaneTicketsRows(row, data.Cast<PlaneTicketEntity>().ToList());
+								AddCustomHeader(column, "Plane Tickets Report");
+								SetPlaneTicketsRows(column, data.Cast<PlaneTicketEntity>().ToList());
 								break;
+
 							default:
 								throw new ArgumentException("Unsupported name or type.");
 						}
 					});
 
-					page.Footer().Height(30).AlignCenter().AlignMiddle().Text(text =>
-					{
-						text.DefaultTextStyle(x => x.FontSize(14));
-						text.Span("AirportAutomationApi - 2024");
-					});
+					page.Footer()
+						.BorderTop(1)
+						.BorderColor(Colors.Grey.Lighten2)
+						.PaddingTop(5)
+						.PaddingHorizontal(10)
+						.Row(row =>
+						{
+							row.RelativeItem().AlignLeft().Text(text =>
+							{
+								text.DefaultTextStyle(x => x.FontSize(10).FontColor(Colors.Grey.Darken1));
+								text.Span($"AirportAutomationApi © {DateTime.Now.Year}");
+							});
+
+							row.RelativeItem().AlignRight().Text(text =>
+							{
+								text.DefaultTextStyle(x => x.FontSize(10).FontColor(Colors.Grey.Darken1));
+								text.CurrentPageNumber();
+								text.Span(" / ");
+								text.TotalPages();
+							});
+						});
 				});
 			});
 
@@ -66,253 +92,252 @@ namespace AirportAutomation.Application.Services
 			return pdfBytes;
 		}
 
-		private static void SetAirlinesRows(RowDescriptor row, List<AirlineEntity> airlines)
+		private static void AddCustomHeader(ColumnDescriptor column, string headerText)
 		{
-			row.RelativeItem(2).Column(column =>
-			{
-				column.Item().Text("ID").Bold();
-				foreach (var airline in airlines)
+			column.Item()
+				.Padding(10)
+				.AlignCenter()
+				.Text(text =>
 				{
-					column.Item().Text(airline.Id.ToString()).LineHeight(2);
-				}
-			});
+					text.DefaultTextStyle(x => x.FontColor(Colors.Black).FontSize(20).Bold());
+					text.Span(headerText);
+				});
 
-			row.RelativeItem(3).Column(column =>
+			column.Item().Height(20);
+		}
+
+		private static void SetAirlinesRows(ColumnDescriptor column, List<AirlineEntity> airlines)
+		{
+			column.Item().Table(table =>
 			{
-				column.Item().Text("Name").Bold();
-				foreach (var airline in airlines)
+				table.ColumnsDefinition(columns =>
 				{
-					column.Item().Text(airline.Name).LineHeight(2);
+					columns.ConstantColumn(50);
+					columns.RelativeColumn();
+				});
+
+				table.Header(header =>
+				{
+					header.Cell().Background(Colors.Grey.Lighten3).Padding(CELL_PADDING).Text("ID").Bold();
+					header.Cell().Background(Colors.Grey.Lighten3).Padding(CELL_PADDING).Text("Name").Bold();
+				});
+
+				for (int i = 0; i < airlines.Count; i++)
+				{
+					var bg = i % 2 == 0 ? Colors.White : Colors.Grey.Lighten4;
+					table.Cell().Background(bg).Padding(CELL_PADDING).Text(airlines[i].Id.ToString());
+					table.Cell().Background(bg).Padding(CELL_PADDING).Text(airlines[i].Name);
 				}
 			});
 		}
 
-		private static void SetDestinationsRows(RowDescriptor row, List<DestinationEntity> destinations)
+		private static void SetDestinationsRows(ColumnDescriptor column, List<DestinationEntity> destinations)
 		{
-			row.RelativeItem(1).Column(column =>
+			column.Item().Table(table =>
 			{
-				column.Item().Text("ID").Bold();
-				foreach (var destination in destinations)
+				table.ColumnsDefinition(columns =>
 				{
-					column.Item().Text(destination.Id.ToString()).LineHeight(2);
-				}
-			});
+					columns.ConstantColumn(50);
+					columns.RelativeColumn();
+					columns.RelativeColumn();
+				});
 
-			row.RelativeItem(2).Column(column =>
-			{
-				column.Item().Text("City").Bold();
-				foreach (var destination in destinations)
+				table.Header(header =>
 				{
-					column.Item().Text(destination.City).LineHeight(2);
-				}
-			});
+					header.Cell().Background(Colors.Grey.Lighten3).Padding(CELL_PADDING).Text("ID").Bold();
+					header.Cell().Background(Colors.Grey.Lighten3).Padding(CELL_PADDING).Text("City").Bold();
+					header.Cell().Background(Colors.Grey.Lighten3).Padding(CELL_PADDING).Text("Airport").Bold();
+				});
 
-			row.RelativeItem(3).Column(column =>
-			{
-				column.Item().Text("Airport").Bold();
-				foreach (var destination in destinations)
+				for (int i = 0; i < destinations.Count; i++)
 				{
-					column.Item().Text(destination.Airport).LineHeight(2);
+					var bg = i % 2 == 0 ? Colors.White : Colors.Grey.Lighten4;
+					table.Cell().Background(bg).Padding(CELL_PADDING).Text(destinations[i].Id.ToString());
+					table.Cell().Background(bg).Padding(CELL_PADDING).Text(destinations[i].City);
+					table.Cell().Background(bg).Padding(CELL_PADDING).Text(destinations[i].Airport);
 				}
 			});
 		}
 
-		private static void SetPassengersRows(RowDescriptor row, List<PassengerEntity> passengers)
+		private static void SetPassengersRows(ColumnDescriptor column, List<PassengerEntity> passengers)
 		{
-			row.Spacing(20);
-
-			row.RelativeItem(2).Column(column =>
+			column.Item().Table(table =>
 			{
-				foreach (var passenger in passengers)
+				table.ColumnsDefinition(columns =>
 				{
-					column.Item().Text(text =>
-					{
-						text.Span("ID: ").Bold().LineHeight(2);
-						text.Span(passenger.Id.ToString()).LineHeight(2);
-					});
+					columns.ConstantColumn(40);
+					columns.RelativeColumn();
+					columns.RelativeColumn();
+					columns.RelativeColumn();
+					columns.RelativeColumn();
+					columns.RelativeColumn();
+					columns.RelativeColumn();
+				});
 
-					column.Item().Text(text =>
-					{
-						text.Span("First name: ").Bold().LineHeight(2);
-						text.Span(passenger.FirstName).LineHeight(2);
-					});
-
-					column.Item().Text(text =>
-					{
-						text.Span("Last name: ").Bold().LineHeight(2);
-						text.Span(passenger.LastName).LineHeight(2);
-					});
-
-					column.Item().Text(text =>
-					{
-						text.Span("UPRN: ").Bold().LineHeight(2);
-						text.Span(passenger.UPRN).LineHeight(2);
-						text.Span("\n").LineHeight(2);
-					});
-				}
-			});
-
-			row.RelativeItem(3).Column(column =>
-			{
-				foreach (var passenger in passengers)
+				table.Header(header =>
 				{
-					column.Item().Text(text =>
-					{
-						text.Span("\n").LineHeight(2);
-						text.Span("Passport: ").Bold().LineHeight(2);
-						text.Span(passenger.Passport).LineHeight(2);
-					});
+					header.Cell().Background(Colors.Grey.Lighten3).Padding(CELL_PADDING).Text("ID").Bold();
+					header.Cell().Background(Colors.Grey.Lighten3).Padding(CELL_PADDING).Text("First Name").Bold();
+					header.Cell().Background(Colors.Grey.Lighten3).Padding(CELL_PADDING).Text("Last Name").Bold();
+					header.Cell().Background(Colors.Grey.Lighten3).Padding(CELL_PADDING).Text("UPRN").Bold();
+					header.Cell().Background(Colors.Grey.Lighten3).Padding(CELL_PADDING).Text("Passport").Bold();
+					header.Cell().Background(Colors.Grey.Lighten3).Padding(CELL_PADDING).Text("Address").Bold();
+					header.Cell().Background(Colors.Grey.Lighten3).Padding(CELL_PADDING).Text("Phone").Bold();
+				});
 
-					column.Item().Text(text =>
-					{
-						text.Span("Address: ").Bold().LineHeight(2);
-						text.Span(passenger.Address).LineHeight(2);
-					});
+				for (int i = 0; i < passengers.Count; i++)
+				{
+					var p = passengers[i];
+					var bg = i % 2 == 0 ? Colors.White : Colors.Grey.Lighten4;
 
-					column.Item().Text(text =>
-					{
-						text.Span("Phone: ").Bold().LineHeight(2);
-						text.Span(passenger.Phone).LineHeight(2);
-						text.Span("\n").LineHeight(2);
-					});
+					table.Cell().Background(bg).Padding(CELL_PADDING).Text(p.Id.ToString());
+					table.Cell().Background(bg).Padding(CELL_PADDING).Text(p.FirstName);
+					table.Cell().Background(bg).Padding(CELL_PADDING).Text(p.LastName);
+					table.Cell().Background(bg).Padding(CELL_PADDING).Text(p.UPRN);
+					table.Cell().Background(bg).Padding(CELL_PADDING).Text(p.Passport);
+					table.Cell().Background(bg).Padding(CELL_PADDING).Text(p.Address);
+					table.Cell().Background(bg).Padding(CELL_PADDING).Text(p.Phone);
 				}
 			});
 		}
 
-		private static void SetPilotsRows(RowDescriptor row, List<PilotEntity> pilots)
+		private static void SetPilotsRows(ColumnDescriptor column, List<PilotEntity> pilots)
 		{
-			row.RelativeItem(1).Column(column =>
+			column.Item().Table(table =>
 			{
-				column.Item().Text("ID").Bold();
-				foreach (var pilot in pilots)
+				table.ColumnsDefinition(columns =>
 				{
-					column.Item().Text(pilot.Id.ToString()).LineHeight(2);
-				}
-			});
+					columns.ConstantColumn(40);
+					columns.RelativeColumn();
+					columns.RelativeColumn();
+					columns.RelativeColumn();
+					columns.ConstantColumn(70);
+				});
 
-			row.RelativeItem(2).Column(column =>
-			{
-				column.Item().Text("First Name").Bold();
-				foreach (var pilot in pilots)
+				table.Header(header =>
 				{
-					column.Item().Text(pilot.FirstName).LineHeight(2);
-				}
-			});
+					header.Cell().Background(Colors.Grey.Lighten3).Padding(CELL_PADDING).Text("ID").Bold();
+					header.Cell().Background(Colors.Grey.Lighten3).Padding(CELL_PADDING).Text("First Name").Bold();
+					header.Cell().Background(Colors.Grey.Lighten3).Padding(CELL_PADDING).Text("Last Name").Bold();
+					header.Cell().Background(Colors.Grey.Lighten3).Padding(CELL_PADDING).Text("UPRN").Bold();
+					header.Cell().Background(Colors.Grey.Lighten3).Padding(CELL_PADDING).Text("Flying Hours").Bold();
+				});
 
-			row.RelativeItem(2).Column(column =>
-			{
-				column.Item().Text("Last Name").Bold();
-				foreach (var pilot in pilots)
+				for (int i = 0; i < pilots.Count; i++)
 				{
-					column.Item().Text(pilot.LastName).LineHeight(2);
-				}
-			});
-
-			row.RelativeItem(2).Column(column =>
-			{
-				column.Item().Text("UPRN").Bold();
-				foreach (var pilot in pilots)
-				{
-					column.Item().Text(pilot.UPRN).LineHeight(2);
-				}
-			});
-
-			row.RelativeItem(1).Column(column =>
-			{
-				column.Item().Text("Flying Hours").Bold();
-				foreach (var pilot in pilots)
-				{
-					column.Item().Text(pilot.FlyingHours).LineHeight(2);
+					var bg = i % 2 == 0 ? Colors.White : Colors.Grey.Lighten4;
+					table.Cell().Background(bg).Padding(CELL_PADDING).Text(pilots[i].Id.ToString());
+					table.Cell().Background(bg).Padding(CELL_PADDING).Text(pilots[i].FirstName);
+					table.Cell().Background(bg).Padding(CELL_PADDING).Text(pilots[i].LastName);
+					table.Cell().Background(bg).Padding(CELL_PADDING).Text(pilots[i].UPRN);
+					table.Cell().Background(bg).Padding(CELL_PADDING).Text(pilots[i].FlyingHours.ToString());
 				}
 			});
 		}
 
-		private static void SetTravelClassesRows(RowDescriptor row, List<TravelClassEntity> travelClasses)
+		private static void SetTravelClassesRows(ColumnDescriptor column, List<TravelClassEntity> travelClasses)
 		{
-			row.RelativeItem(2).Column(column =>
+			column.Item().Table(table =>
 			{
-				column.Item().Text("ID").Bold();
-				foreach (var travelClass in travelClasses)
+				table.ColumnsDefinition(columns =>
 				{
-					column.Item().Text(travelClass.Id.ToString()).LineHeight(2);
-				}
-			});
+					columns.ConstantColumn(50);
+					columns.RelativeColumn();
+				});
 
-			row.RelativeItem(3).Column(column =>
-			{
-				column.Item().Text("Name").Bold();
-				foreach (var travelClass in travelClasses)
+				table.Header(header =>
 				{
-					column.Item().Text(travelClass.Type).LineHeight(2);
+					header.Cell().Background(Colors.Grey.Lighten3).Padding(CELL_PADDING).Text("ID").Bold();
+					header.Cell().Background(Colors.Grey.Lighten3).Padding(CELL_PADDING).Text("Name").Bold();
+				});
+
+				for (int i = 0; i < travelClasses.Count; i++)
+				{
+					var bg = i % 2 == 0 ? Colors.White : Colors.Grey.Lighten4;
+					table.Cell().Background(bg).Padding(CELL_PADDING).Text(travelClasses[i].Id.ToString());
+					table.Cell().Background(bg).Padding(CELL_PADDING).Text(travelClasses[i].Type);
 				}
 			});
 		}
 
-		private static void SetFlightsRows(RowDescriptor row, List<FlightEntity> flights)
+		private static void SetFlightsRows(ColumnDescriptor column, List<FlightEntity> flights)
 		{
-			row.RelativeItem(2).Column(column =>
+			column.Item().Table(table =>
 			{
-				column.Item().Text("ID").Bold();
-				foreach (var flight in flights)
+				table.ColumnsDefinition(columns =>
 				{
-					column.Item().Text(flight.Id.ToString()).LineHeight(2);
-				}
-			});
+					columns.ConstantColumn(40);
+					columns.RelativeColumn();
+					columns.RelativeColumn();
+					columns.RelativeColumn();
+					columns.RelativeColumn();
+					columns.RelativeColumn();
+				});
 
-			row.RelativeItem(3).Column(column =>
-			{
-				column.Item().Text("Departure Date").Bold();
-				foreach (var flight in flights)
+				table.Header(header =>
 				{
-					column.Item().Text(flight.DepartureDate.ToString()).LineHeight(2);
-				}
-			});
+					header.Cell().Background(Colors.Grey.Lighten3).Padding(CELL_PADDING).Text("ID").Bold();
+					header.Cell().Background(Colors.Grey.Lighten3).Padding(CELL_PADDING).Text("Departure Date").Bold();
+					header.Cell().Background(Colors.Grey.Lighten3).Padding(CELL_PADDING).Text("Departure Time").Bold();
+					header.Cell().Background(Colors.Grey.Lighten3).Padding(CELL_PADDING).Text("Airline").Bold();
+					header.Cell().Background(Colors.Grey.Lighten3).Padding(CELL_PADDING).Text("Destination").Bold();
+					header.Cell().Background(Colors.Grey.Lighten3).Padding(CELL_PADDING).Text("Pilot").Bold();
+				});
 
-			row.RelativeItem(3).Column(column =>
-			{
-				column.Item().Text("Departure Time").Bold();
-				foreach (var flight in flights)
+				for (int i = 0; i < flights.Count; i++)
 				{
-					column.Item().Text(flight.DepartureTime.ToString()).LineHeight(2);
+					var flight = flights[i];
+					var bg = i % 2 == 0 ? Colors.White : Colors.Grey.Lighten4;
+
+					table.Cell().Background(bg).Padding(CELL_PADDING).Text(flight.Id.ToString());
+					table.Cell().Background(bg).Padding(CELL_PADDING).Text(flight.DepartureDate.ToString("yyyy-MM-dd"));
+					table.Cell().Background(bg).Padding(CELL_PADDING).Text(flight.DepartureTime.ToString("HH:mm"));
+					table.Cell().Background(bg).Padding(CELL_PADDING).Text(flight.Airline?.Name ?? "N/A");
+					table.Cell().Background(bg).Padding(CELL_PADDING)
+						.Text($"{flight.Destination?.City ?? "N/A"} ({flight.Destination?.Airport ?? "N/A"})");
+					table.Cell().Background(bg).Padding(CELL_PADDING).Text($"{flight.Pilot?.FirstName} {flight.Pilot?.LastName}".Trim());
 				}
 			});
 		}
 
-		private static void SetPlaneTicketsRows(RowDescriptor row, List<PlaneTicketEntity> planeTickets)
+		private static void SetPlaneTicketsRows(ColumnDescriptor column, List<PlaneTicketEntity> planeTickets)
 		{
-			row.RelativeItem(1).Column(column =>
+			column.Item().Table(table =>
 			{
-				column.Item().Text("ID").Bold();
-				foreach (var planeTicket in planeTickets)
+				table.ColumnsDefinition(columns =>
 				{
-					column.Item().Text(planeTicket.Id.ToString()).LineHeight(2);
-				}
-			});
+					columns.ConstantColumn(40);
+					columns.RelativeColumn();
+					columns.RelativeColumn();
+					columns.RelativeColumn();
+					columns.RelativeColumn();
+					columns.RelativeColumn();
+					columns.RelativeColumn();
+				});
 
-			row.RelativeItem(1).Column(column =>
-			{
-				column.Item().Text("Price").Bold();
-				foreach (var planeTicket in planeTickets)
+				table.Header(header =>
 				{
-					column.Item().Text(planeTicket.Price.ToString()).LineHeight(2);
-				}
-			});
+					header.Cell().Background(Colors.Grey.Lighten3).Padding(CELL_PADDING).Text("ID").Bold();
+					header.Cell().Background(Colors.Grey.Lighten3).Padding(CELL_PADDING).Text("Price").Bold();
+					header.Cell().Background(Colors.Grey.Lighten3).Padding(CELL_PADDING).Text("Purchase Date").Bold();
+					header.Cell().Background(Colors.Grey.Lighten3).Padding(CELL_PADDING).Text("Seat Number").Bold();
+					header.Cell().Background(Colors.Grey.Lighten3).Padding(CELL_PADDING).Text("Passenger").Bold();
+					header.Cell().Background(Colors.Grey.Lighten3).Padding(CELL_PADDING).Text("Travel Class").Bold();
+					header.Cell().Background(Colors.Grey.Lighten3).Padding(CELL_PADDING).Text("Flight ID").Bold();
+				});
 
-			row.RelativeItem(1).Column(column =>
-			{
-				column.Item().Text("Purchase Date").Bold();
-				foreach (var planeTicket in planeTickets)
+				for (int i = 0; i < planeTickets.Count; i++)
 				{
-					column.Item().Text(planeTicket.PurchaseDate.ToString()).LineHeight(2);
-				}
-			});
+					var ticket = planeTickets[i];
+					var bg = i % 2 == 0 ? Colors.White : Colors.Grey.Lighten4;
 
-			row.RelativeItem(1).Column(column =>
-			{
-				column.Item().Text("Seat Number").Bold();
-				foreach (var planeTicket in planeTickets)
-				{
-					column.Item().Text(planeTicket.SeatNumber.ToString()).LineHeight(2);
+					table.Cell().Background(bg).Padding(CELL_PADDING).Text(ticket.Id.ToString());
+					table.Cell().Background(bg).Padding(CELL_PADDING).Text(ticket.Price.ToString("C2"));
+					table.Cell().Background(bg).Padding(CELL_PADDING).Text(ticket.PurchaseDate.ToString("yyyy-MM-dd"));
+					table.Cell().Background(bg).Padding(CELL_PADDING).Text(ticket.SeatNumber.ToString());
+					table.Cell().Background(bg).Padding(CELL_PADDING).Text($"{ticket.Passenger?.FirstName} {ticket.Passenger?.LastName}".Trim());
+					table.Cell().Background(bg).Padding(CELL_PADDING).Text(ticket.TravelClass?.Type ?? "N/A");
+					table.Cell().Background(bg).Padding(CELL_PADDING).Text(ticket.Flight?.Id.ToString() ?? "N/A");
 				}
 			});
 		}

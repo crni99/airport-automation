@@ -112,7 +112,7 @@ builder.Services.AddSwaggerGen(setupAction =>
 					Id = "AirportAutomationApiBearerAuth" }
 			}, new List<string>() }
 	});
-	var filePath = Path.Combine(AppContext.BaseDirectory, "AirportАutomationApi.xml");
+	var filePath = Path.Combine(AppContext.BaseDirectory, "AirportАutomation.Api.xml");
 	setupAction.IncludeXmlComments(filePath);
 	setupAction.UseDateOnlyTimeOnlyStringConverters();
 	setupAction.DocumentFilter<JsonPatchDocumentFilter>();
@@ -202,6 +202,8 @@ builder.Services
 
 var app = builder.Build();
 
+app.UseStaticFiles();
+
 if (app.Environment.IsDevelopment())
 {
 	app.UseSwagger();
@@ -210,6 +212,7 @@ if (app.Environment.IsDevelopment())
 		c.SwaggerEndpoint("/swagger/v1/swagger.json", "Airport Automation API V1");
 		// c.SwaggerEndpoint("/swagger/v2/swagger.json", "Airport Automation API V2");
 		c.DefaultModelsExpandDepth(-1);
+		c.InjectJavascript("/swagger-ui/swagger-theme-toggle.js");
 	});
 }
 
