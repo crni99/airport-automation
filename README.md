@@ -101,6 +101,11 @@ ___
 ### Client-Side Scripting and AJAX Requests:
 - Utilizing JavaScript and AJAX requests to create dynamic and responsive user interfaces, enabling asynchronous data fetching and updating without full page reloads.
 
+### Exporting Data to PDF and Excel:
+- Integrated the export functionality from the API into the MVC frontend, allowing users to generate and download PDF and Excel reports directly from the web interface.
+- Provided options to reflect applied filters or search terms in the exported documents, ensuring consistency between the UI and downloaded data.
+- Ensured user-friendly interactions with appropriate UI components (e.g., export buttons, spinners, error handling) for a seamless reporting experience.
+
 ### Ensuring Web Application Security:
 - Implementing security measures to protect against common web vulnerabilities, enforcing HTTPS, securing data transmission, and safeguarding against threats like Cross-Site Scripting (XSS), Cross-Site Request Forgery (CSRF) and Cross-Origin Resource Sharing (CORS).
 ___
