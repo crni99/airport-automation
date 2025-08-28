@@ -1,13 +1,16 @@
 ﻿using AirportAutomation.Core.Filters;
 using AirportAutomation.Web.Interfaces;
 using AirportAutomation.Web.Models.ApiUser;
+using AirportAutomation.Web.Models.Export;
 using AirportAutomation.Web.Models.Response;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.IdentityModel.JsonWebTokens;
 using QuestPDF.Helpers;
 using System.Data;
 using System.Net;
 using System.Net.Http.Headers;
+using System.Runtime.Intrinsics.X86;
 using System.Web;
 
 namespace AirportAutomation.Web.Services
@@ -782,6 +785,73 @@ namespace AirportAutomation.Web.Services
 			return false;
 		}
 
+		public async Task<FileExportResult> DownloadFileAsync<T>(
+			string fileType,
+			object filter = null,
+			int page = 1,
+			int pageSize = 10,
+			bool getAll = false)
+		{
+			var modelName = GetModelName<T>();
+			var exportEndpoint = fileType.ToLower() == "pdf" ? "export/pdf" : "export/excel";
+			string pluralSuffix = modelName.Equals("TravelClass", StringComparison.OrdinalIgnoreCase) ? "es" : "s";
+
+			var baseUri = $"{apiURL}/{modelName}{pluralSuffix}/{exportEndpoint}";
+
+			var queryParameters = new List<string>
+			{
+				$"page={page}",
+				$"pageSize={pageSize}",
+				$"getAll={getAll.ToString().ToLower()}"
+			};
+
+			var filterQueryString = BuildFilterQueryString(modelName, filter);
+			if (!string.IsNullOrWhiteSpace(filterQueryString))
+			{
+				queryParameters.Add(filterQueryString);
+			}
+
+			var requestUri = $"{baseUri}?{string.Join("&", queryParameters)}";
+
+			using var httpClient = _httpClientFactory.CreateClient("AirportAutomationApi");
+			ConfigureHttpClient(httpClient);
+
+			var response = await httpClient.GetAsync(requestUri).ConfigureAwait(false);
+
+			if (response.IsSuccessStatusCode)
+			{
+				var content = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
+				var contentType = fileType.ToLower() == "pdf"
+					? "application/pdf"
+					: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
+				var fileName = response.Content.Headers.ContentDisposition?.FileName?.Trim('\"') ??
+							   $"Export.{(fileType == "pdf" ? "pdf" : "xlsx")}";
+
+				return new FileExportResult
+				{
+					Content = content,
+					ContentType = contentType,
+					FileName = fileName
+				};
+			}
+			else if (response.StatusCode == HttpStatusCode.NoContent)
+			{
+				_logger.LogInformation("No data found for {FileType} export.", fileType);
+				return new FileExportResult
+				{
+					Content = Array.Empty<byte>(),
+					ContentType = "application/octet-stream",
+					FileName = $"NoData.{fileType.ToLower()}"
+				};
+			}
+			else
+			{
+				_logger.LogError("Failed to download {FileType}. Status code: {StatusCode}", fileType, response.StatusCode);
+				throw new Exception($"Failed to download {fileType.ToUpper()} file.");
+			}
+		}
+
 		/// <summary>
 		/// Configures the provided HttpClient with default headers for JSON content
 		/// and user agent, and adds authorization header if a bearer token is available.
@@ -867,78 +937,96 @@ namespace AirportAutomation.Web.Services
 
 			var queryParameters = new List<string>();
 
-			switch (modelName.ToLower())
+			if (filter is string nameFilter)
 			{
-				case "apiuser":
-					if (filter is ApiUserSearchFilter userFilter)
-					{
-						if (!string.IsNullOrEmpty(userFilter.UserName))
-							queryParameters.Add($"UserName={Uri.EscapeDataString(userFilter.UserName)}");
-						if (!string.IsNullOrEmpty(userFilter.Password))
-							queryParameters.Add($"Password={Uri.EscapeDataString(userFilter.Password)}");
-						if (!string.IsNullOrEmpty(userFilter.Roles))
-							queryParameters.Add($"Roles={Uri.EscapeDataString(userFilter.Roles)}");
-					}
-					break;
-
-				case "destination":
-					if (filter is DestinationSearchFilter destFilter)
-					{
-						if (!string.IsNullOrEmpty(destFilter.City))
-							queryParameters.Add($"City={Uri.EscapeDataString(destFilter.City)}");
-						if (!string.IsNullOrEmpty(destFilter.Airport))
-							queryParameters.Add($"Airport={Uri.EscapeDataString(destFilter.Airport)}");
-					}
-					break;
-
-				case "passenger":
-					if (filter is PassengerSearchFilter passengerFilter)
-					{
-						if (!string.IsNullOrEmpty(passengerFilter.FirstName))
-							queryParameters.Add($"FirstName={Uri.EscapeDataString(passengerFilter.FirstName)}");
-						if (!string.IsNullOrEmpty(passengerFilter.LastName))
-							queryParameters.Add($"LastName={Uri.EscapeDataString(passengerFilter.LastName)}");
-						if (!string.IsNullOrEmpty(passengerFilter.UPRN))
-							queryParameters.Add($"UPRN={Uri.EscapeDataString(passengerFilter.UPRN)}");
-						if (!string.IsNullOrEmpty(passengerFilter.Passport))
-							queryParameters.Add($"Passport={Uri.EscapeDataString(passengerFilter.Passport)}");
-						if (!string.IsNullOrEmpty(passengerFilter.Address))
-							queryParameters.Add($"Address={Uri.EscapeDataString(passengerFilter.Address)}");
-						if (!string.IsNullOrEmpty(passengerFilter.Phone))
-							queryParameters.Add($"Phone={Uri.EscapeDataString(passengerFilter.Phone)}");
-					}
-					break;
-
-				case "pilot":
-					if (filter is PilotSearchFilter pilotFilter)
-					{
-						if (!string.IsNullOrEmpty(pilotFilter.FirstName))
-							queryParameters.Add($"FirstName={Uri.EscapeDataString(pilotFilter.FirstName)}");
-						if (!string.IsNullOrEmpty(pilotFilter.LastName))
-							queryParameters.Add($"LastName={Uri.EscapeDataString(pilotFilter.LastName)}");
-						if (!string.IsNullOrEmpty(pilotFilter.UPRN))
-							queryParameters.Add($"UPRN={Uri.EscapeDataString(pilotFilter.UPRN)}");
-						if (pilotFilter.FlyingHours.HasValue)
-							queryParameters.Add($"FlyingHours={pilotFilter.FlyingHours.Value}");
-					}
-					break;
-
-				case "planeticket":
-					if (filter is PlaneTicketSearchFilter ticketFilter)
-					{
-						if (ticketFilter.Price.HasValue)
-							queryParameters.Add($"Price={ticketFilter.Price.Value}");
-						if (ticketFilter.PurchaseDate.HasValue)
-							queryParameters.Add($"PurchaseDate={Uri.EscapeDataString(ticketFilter.PurchaseDate.Value.ToString("yyyy-MM-dd"))}");
-						if (ticketFilter.SeatNumber.HasValue)
-							queryParameters.Add($"SeatNumber={ticketFilter.SeatNumber.Value}");
-					}
-					break;
-
-				default:
-					break;
+				if (!string.IsNullOrWhiteSpace(nameFilter))
+					queryParameters.Add($"Name={Uri.EscapeDataString(nameFilter)}");
 			}
 
+			else if (filter is Dictionary<string, string> dictFilter)
+			{
+				foreach (var kvp in dictFilter)
+				{
+					if (!string.IsNullOrWhiteSpace(kvp.Value))
+					{
+						queryParameters.Add($"{Uri.EscapeDataString(kvp.Key)}={Uri.EscapeDataString(kvp.Value)}");
+					}
+				}
+			}
+			else
+			{
+				switch (modelName.ToLower())
+				{
+					case "apiuser":
+						if (filter is ApiUserSearchFilter userFilter)
+						{
+							if (!string.IsNullOrEmpty(userFilter.UserName))
+								queryParameters.Add($"UserName={Uri.EscapeDataString(userFilter.UserName)}");
+							if (!string.IsNullOrEmpty(userFilter.Password))
+								queryParameters.Add($"Password={Uri.EscapeDataString(userFilter.Password)}");
+							if (!string.IsNullOrEmpty(userFilter.Roles))
+								queryParameters.Add($"Roles={Uri.EscapeDataString(userFilter.Roles)}");
+						}
+						break;
+
+					case "destination":
+						if (filter is DestinationSearchFilter destFilter)
+						{
+							if (!string.IsNullOrEmpty(destFilter.City))
+								queryParameters.Add($"City={Uri.EscapeDataString(destFilter.City)}");
+							if (!string.IsNullOrEmpty(destFilter.Airport))
+								queryParameters.Add($"Airport={Uri.EscapeDataString(destFilter.Airport)}");
+						}
+						break;
+
+					case "passenger":
+						if (filter is PassengerSearchFilter passengerFilter)
+						{
+							if (!string.IsNullOrEmpty(passengerFilter.FirstName))
+								queryParameters.Add($"FirstName={Uri.EscapeDataString(passengerFilter.FirstName)}");
+							if (!string.IsNullOrEmpty(passengerFilter.LastName))
+								queryParameters.Add($"LastName={Uri.EscapeDataString(passengerFilter.LastName)}");
+							if (!string.IsNullOrEmpty(passengerFilter.UPRN))
+								queryParameters.Add($"UPRN={Uri.EscapeDataString(passengerFilter.UPRN)}");
+							if (!string.IsNullOrEmpty(passengerFilter.Passport))
+								queryParameters.Add($"Passport={Uri.EscapeDataString(passengerFilter.Passport)}");
+							if (!string.IsNullOrEmpty(passengerFilter.Address))
+								queryParameters.Add($"Address={Uri.EscapeDataString(passengerFilter.Address)}");
+							if (!string.IsNullOrEmpty(passengerFilter.Phone))
+								queryParameters.Add($"Phone={Uri.EscapeDataString(passengerFilter.Phone)}");
+						}
+						break;
+
+					case "pilot":
+						if (filter is PilotSearchFilter pilotFilter)
+						{
+							if (!string.IsNullOrEmpty(pilotFilter.FirstName))
+								queryParameters.Add($"FirstName={Uri.EscapeDataString(pilotFilter.FirstName)}");
+							if (!string.IsNullOrEmpty(pilotFilter.LastName))
+								queryParameters.Add($"LastName={Uri.EscapeDataString(pilotFilter.LastName)}");
+							if (!string.IsNullOrEmpty(pilotFilter.UPRN))
+								queryParameters.Add($"UPRN={Uri.EscapeDataString(pilotFilter.UPRN)}");
+							if (pilotFilter.FlyingHours.HasValue)
+								queryParameters.Add($"FlyingHours={pilotFilter.FlyingHours.Value}");
+						}
+						break;
+
+					case "planeticket":
+						if (filter is PlaneTicketSearchFilter ticketFilter)
+						{
+							if (ticketFilter.Price.HasValue)
+								queryParameters.Add($"Price={ticketFilter.Price.Value}");
+							if (ticketFilter.PurchaseDate.HasValue)
+								queryParameters.Add($"PurchaseDate={Uri.EscapeDataString(ticketFilter.PurchaseDate.Value.ToString("yyyy-MM-dd"))}");
+							if (ticketFilter.SeatNumber.HasValue)
+								queryParameters.Add($"SeatNumber={ticketFilter.SeatNumber.Value}");
+						}
+						break;
+
+					default:
+						break;
+				}
+			}
 			return string.Join("&", queryParameters);
 		}
 

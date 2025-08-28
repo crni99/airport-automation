@@ -10,6 +10,7 @@
 				@if (ViewBag.ApiUserRole != "User")
 				{
 					@await Html.PartialAsync("Index/_CreateButtonIndex", typeName)
+					@await Html.PartialAsync("_ExportButtons", typeName)
 				}
 				<div class="d-flex">
 					<div class="input-group me-3">
@@ -19,7 +20,9 @@
 					<div class="me-3">
 						@await Html.PartialAsync("_SearchButton")
 					</div>
-					@await Html.PartialAsync("_ClearInputsButton")
+					<div class="me-3">
+						@await Html.PartialAsync("_ClearInputsButton")
+					</div>
 				</div>
 			</div>
 		</div>
@@ -47,4 +50,5 @@
 	<script src="~/js/OpenHelper.js"></script>
 	<script src="~/js/AlertHelper.js"></script>
 	<script src="~/js/ClearHelper.js"></script>
+	<script src="~/js/ExportHelper.js"></script>
 }

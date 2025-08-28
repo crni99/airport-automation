@@ -49,7 +49,7 @@ namespace AirportAutomation.Web.Controllers
 		}
 
 		[HttpGet]
-		[Route("{id}")]
+		[Route("Details/{id:int}")]
 		public async Task<IActionResult> Details(int id)
 		{
 			var response = await _httpCallService.GetData<DestinationEntity>(id);
@@ -193,6 +193,24 @@ namespace AirportAutomation.Web.Controllers
 				_alertService.SetAlertMessage(TempData, "delete_data_failed", false);
 				return RedirectToAction("Details", new { id });
 			}
+		}
+
+		[HttpGet]
+		[Route("Export")]
+		public async Task<IActionResult> DownloadFile(
+			[FromQuery] DestinationSearchFilter filter,
+			[FromQuery] int page = 1,
+			[FromQuery] int pageSize = 10,
+			[FromQuery] bool getAll = false,
+			[FromQuery] string fileType = "pdf")
+		{
+			var result = await _httpCallService.DownloadFileAsync<DestinationEntity>(fileType, filter, page, pageSize, getAll);
+
+			if (result == null || result.Content.Length == 0)
+			{
+				return NoContent();
+			}
+			return File(result.Content, result.ContentType, result.FileName);
 		}
 
 	}

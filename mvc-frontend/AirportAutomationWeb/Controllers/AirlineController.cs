@@ -1,4 +1,5 @@
 ﻿using AirportAutomation.Core.Entities;
+using AirportAutomation.Core.Filters;
 using AirportAutomation.Web.Interfaces;
 using AirportAutomation.Web.Models.Airline;
 using AirportAutomation.Web.Models.Response;
@@ -46,7 +47,7 @@ namespace AirportAutomation.Web.Controllers
 		}
 
 		[HttpGet]
-		[Route("{id}")]
+		[Route("Details/{id:int}")]
 		public async Task<IActionResult> Details(int id)
 		{
 			var response = await _httpCallService.GetData<AirlineEntity>(id);
@@ -168,6 +169,24 @@ namespace AirportAutomation.Web.Controllers
 				_alertService.SetAlertMessage(TempData, "delete_data_failed", false);
 				return RedirectToAction("Details", new { id });
 			}
+		}
+
+		[HttpGet]
+		[Route("Export")]
+		public async Task<IActionResult> DownloadFile(
+			[FromQuery] string name,
+			[FromQuery] int page = 1,
+			[FromQuery] int pageSize = 10,
+			[FromQuery] bool getAll = false,
+			[FromQuery] string fileType = "pdf")
+		{
+			var result = await _httpCallService.DownloadFileAsync<AirlineEntity>(fileType, name, page, pageSize, getAll);
+
+			if (result == null || result.Content.Length == 0)
+			{
+				return NoContent();
+			}
+			return File(result.Content, result.ContentType, result.FileName);
 		}
 
 	}

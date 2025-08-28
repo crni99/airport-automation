@@ -1,4 +1,5 @@
 ﻿using AirportAutomation.Core.Entities;
+using AirportAutomation.Core.Filters;
 using AirportAutomation.Web.Interfaces;
 using AirportAutomation.Web.Models.Response;
 using AirportAutomation.Web.Models.TravelClass;
@@ -43,5 +44,22 @@ namespace AirportAutomation.Web.Controllers
 			var pagedResponse = _mapper.Map<PagedResponse<TravelClassViewModel>>(response);
 			return Json(new { success = true, data = pagedResponse });
 		}
+
+		[HttpGet]
+		[Route("Export")]
+		public async Task<IActionResult> DownloadFile(
+			[FromQuery] int page = 1,
+			[FromQuery] int pageSize = 10,
+			[FromQuery] string fileType = "pdf")
+		{
+			var result = await _httpCallService.DownloadFileAsync<TravelClassEntity>(fileType, null, page, pageSize, true);
+
+			if (result == null || result.Content.Length == 0)
+			{
+				return NoContent();
+			}
+			return File(result.Content, result.ContentType, result.FileName);
+		}
+
 	}
 }

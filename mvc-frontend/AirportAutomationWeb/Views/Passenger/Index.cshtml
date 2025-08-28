@@ -3,12 +3,13 @@
 	string typeName = "Passenger";
 }
 
-<div class="container container-spacing-top">
+<div class="container container-spacing-top mb-4">
 	<div class="row mb-3">
-		<div class="col d-flex justify-content-between align-items-center">
+		<div class="col d-flex justify-content-between align-items-center mb-2">
 			@if (ViewBag.ApiUserRole != "User")
 			{
 				@await Html.PartialAsync("Index/_CreateButtonIndex", typeName)
+				@await Html.PartialAsync("_ExportButtons", typeName)
 			}
 		</div>
 	</div>
@@ -35,7 +36,7 @@
 			@await Html.PartialAsync("_ClearInputsButton")
 		</div>
 	</div>
-	<div class="row">
+	<div class="row mb-3">
 		<div class="col-md-3 mb-2">
 			<div class="input-group">
 				<label for="passport" class="input-group-text">Passport:</label>
@@ -59,7 +60,6 @@
 		</div>
 	</div>
 </div>
-<br />
 <div id="alert">
 	@if (TempData["AlertMessage"] != null)
 	{
@@ -81,4 +81,5 @@
 	<script src="~/js/OpenHelper.js"></script>
 	<script src="~/js/AlertHelper.js"></script>
 	<script src="~/js/ClearHelper.js"></script>
+	<script src="~/js/ExportHelper.js"></script>
 }

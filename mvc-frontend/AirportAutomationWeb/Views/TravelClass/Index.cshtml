@@ -3,7 +3,16 @@
 	string typeName = "TravelClass";
 }
 
-<br />
+<div class="container container-spacing-top mb-5">
+	<div class="row mb-3">
+		<div class="col d-flex justify-content-between align-items-center mb-2">
+			@if (ViewBag.ApiUserRole != "User")
+			{
+				@await Html.PartialAsync("_ExportButtons", typeName)
+			}
+		</div>
+	</div>
+</div>
 
 @await Html.PartialAsync("Index/_FormContainer")
 
@@ -16,4 +25,5 @@
 		initFetchControls(typeName, fetchUrl);
 	</script>
 	<script src="~/js/GetHelper.js"></script>
+	<script src="~/js/ExportHelper.js"></script>
 }
