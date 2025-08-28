@@ -22,7 +22,11 @@ namespace AirportAutomation.Application.Services
 			if (data == null || data.Count == 0)
 				throw new ArgumentException("No data to export.");
 
-			var properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+			var properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance)
+				.Where(p => p.PropertyType.IsPrimitive
+						 || p.PropertyType.IsValueType
+						 || p.PropertyType == typeof(string))
+				.ToArray();
 
 			for (int col = 0; col < properties.Length; col++)
 			{
@@ -31,13 +35,21 @@ namespace AirportAutomation.Application.Services
 				cell.Style.Font.Bold = true;
 			}
 
+			var headerRange = worksheet.Range(1, 1, 1, properties.Length);
+			headerRange.SetAutoFilter();
+
+			worksheet.Row(1).Height += 2;
+
 			for (int row = 0; row < data.Count; row++)
 			{
+				int rowNumber = row + 2;
+
 				for (int col = 0; col < properties.Length; col++)
 				{
 					var value = properties[col].GetValue(data[row]);
-					worksheet.Cell(row + 2, col + 1).Value = value?.ToString() ?? string.Empty;
+					worksheet.Cell(rowNumber, col + 1).Value = value?.ToString() ?? string.Empty;
 				}
+				worksheet.Row(rowNumber).Height += 2;
 			}
 
 			for (int col = 1; col <= properties.Length; col++)

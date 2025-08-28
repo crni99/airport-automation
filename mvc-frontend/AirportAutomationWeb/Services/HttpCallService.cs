@@ -43,6 +43,7 @@ namespace AirportAutomation.Web.Services
 			apiURL = _configuration.GetValue<string>("ApiSettings:apiUrl");
 		}
 
+		#region Auth
 		/// <summary>
 		/// Sends user data to authenticate and retrieves an access token.
 		/// </summary>
@@ -178,7 +179,9 @@ namespace AirportAutomation.Web.Services
 			}
 			return false;
 		}
+		#endregion
 
+		#region GET
 		/// <summary>
 		/// Gets a paginated list of data for a specified model type.
 		/// </summary>
@@ -687,6 +690,7 @@ namespace AirportAutomation.Web.Services
 				return null;
 			}
 		}
+		#endregion
 
 		/// <summary>
 		/// Creates a new data entry of a specified type.
@@ -852,6 +856,7 @@ namespace AirportAutomation.Web.Services
 			}
 		}
 
+		#region Helper
 		/// <summary>
 		/// Configures the provided HttpClient with default headers for JSON content
 		/// and user agent, and adds authorization header if a bearer token is available.
@@ -1029,6 +1034,7 @@ namespace AirportAutomation.Web.Services
 			}
 			return string.Join("&", queryParameters);
 		}
+		#endregion
 
 	}
 }
