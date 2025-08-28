@@ -132,11 +132,17 @@
   <data name="delete_data_success" xml:space="preserve">
     <value>The data successfully deleted.</value>
   </data>
+  <data name="download_failed" xml:space="preserve">
+    <value>The file could not be downloaded due to an unexpected error. Please try again later.</value>
+  </data>
   <data name="edit_data_failed" xml:space="preserve">
     <value>Failed to edit data. Please try again later.</value>
   </data>
   <data name="edit_data_success" xml:space="preserve">
     <value>The data successfully edited.</value>
+  </data>
+  <data name="forbidden_access" xml:space="preserve">
+    <value>You do not have permission to perform this action.</value>
   </data>
   <data name="invalid_page_number" xml:space="preserve">
     <value>Invalid page number: Page number should be a positive integer.</value>
@@ -150,5 +156,11 @@
   <data name="missing_field" xml:space="preserve">
     <value>Required field is missing.</value>
     <comment>Missing: Name, Price, Date..</comment>
+  </data>
+  <data name="no_content_available" xml:space="preserve">
+    <value>There is no data available to export.</value>
+  </data>
+  <data name="unauthorized_access" xml:space="preserve">
+    <value>You must be logged in to access this resource. Please log in and try again.</value>
   </data>
 </root>

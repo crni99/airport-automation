@@ -849,10 +849,20 @@ namespace AirportAutomation.Web.Services
 					FileName = $"NoData.{fileType.ToLower()}"
 				};
 			}
+			else if (response.StatusCode == HttpStatusCode.Unauthorized)
+			{
+				_logger.LogWarning("Unauthorized access during {FileType} export.", fileType);
+				return new FileExportResult { IsUnauthorized = true };
+			}
+			else if (response.StatusCode == HttpStatusCode.Forbidden)
+			{
+				_logger.LogWarning("Forbidden access during {FileType} export.", fileType);
+				return new FileExportResult { IsForbidden = true };
+			}
 			else
 			{
-				_logger.LogError("Failed to download {FileType}. Status code: {StatusCode}", fileType, response.StatusCode);
-				throw new Exception($"Failed to download {fileType.ToUpper()} file.");
+				_logger.LogError("Unexpected error during {FileType} export. Status code: {StatusCode}", fileType, response.StatusCode);
+				return new FileExportResult { HasError = true };
 			}
 		}
 

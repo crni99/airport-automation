@@ -54,10 +54,30 @@ namespace AirportAutomation.Web.Controllers
 		{
 			var result = await _httpCallService.DownloadFileAsync<TravelClassEntity>(fileType, null, page, pageSize, true);
 
-			if (result == null || result.Content.Length == 0)
+			if (result is null || result.HasError)
 			{
-				return NoContent();
+				_alertService.SetAlertMessage(TempData, "download_failed", false);
+				return RedirectToAction("Index");
 			}
+
+			if (result.IsUnauthorized)
+			{
+				_alertService.SetAlertMessage(TempData, "unauthorized_access", false);
+				return RedirectToAction("Index", "Home");
+			}
+
+			if (result.IsForbidden)
+			{
+				_alertService.SetAlertMessage(TempData, "forbidden_access", false);
+				return RedirectToAction("Index", "TravelClass");
+			}
+
+			if (result.Content == null || result.Content.Length == 0)
+			{
+				_alertService.SetAlertMessage(TempData, "no_content_available", false);
+				return RedirectToAction("Index", "TravelClass");
+			}
+
 			return File(result.Content, result.ContentType, result.FileName);
 		}
 

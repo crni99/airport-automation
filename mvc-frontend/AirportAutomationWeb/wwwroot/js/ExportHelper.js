@@ -3,10 +3,6 @@
         const container = $(this).closest('[data-entity]');
         const entityType = container.data('entity');
         const fileType = $(this).data('type').toLowerCase();
-
-        console.log(container);
-        console.log(entityType);
-        console.log(fileType);
         if (entityType) {
             exportData(entityType, fileType);
         } else {
@@ -66,11 +62,5 @@ function exportData(entityType, fileType = 'excel') {
 
     const finalURL = `${path}?${params.toString()}`;
 
-    // Debug (optional)
-    console.log('Final export URL:', finalURL);
-
-    // Trigger download
-    setTimeout(() => {
-        window.location.href = finalURL;
-    }, 3000);
+    window.location.href = finalURL;
 }
