@@ -3,11 +3,12 @@ import useFetch from '../../hooks/useFetch';
 import LoadingSpinner from '../common/LoadingSpinner';
 import Alert from '../common/Alert';
 import TravelClassesListTable from "./TravelClassesListTable";
+import ListHeader from "../common/ListHeader";
 import { Entities } from '../../utils/const.js';
 
 export default function TravelClassesList() {
     const [travelClasses, settravelClasses] = useState([]);
-    const { data, error, isLoading, isError } = useFetch(Entities.TRAVEL_CLASSES, null, 1);
+    const { data, dataExist, error, isLoading, isError } = useFetch(Entities.TRAVEL_CLASSES, null, 1);
 
     useEffect(() => {
         if (data) {
@@ -18,6 +19,7 @@ export default function TravelClassesList() {
     return (
         <>
             <br />
+            <ListHeader dataExist={dataExist} dataType={Entities.TRAVEL_CLASSES} />
             {isLoading && <LoadingSpinner />}
             {isError && error && (
                 <Alert alertType="error">

@@ -2,18 +2,28 @@ import React from 'react';
 import { Entities } from '../../utils/const';
 import SearchButton from './search/SearchButton';
 import ClearInputButton from './search/ClearInputsButton';
+import ExportButtons from './ExportButtons';
 
-export default function SearchInputWithButton({ type, setTriggerFetch }) {
+export default function SearchInputWithButton({ type, setTriggerFetch, isUser }) {
 
     const handleSearch = () => {
         setTriggerFetch(true);
     };
+
+    const exportButtonsOrSpace = !isUser ? (
+        <ExportButtons dataType={type} />
+    ) : (
+        <>&nbsp;</>
+    );
 
     const renderInput = () => {
         switch (type) {
             case Entities.AIRLINES:
                 return (
                     <>
+                        <div className='me-3'>
+                            {exportButtonsOrSpace}
+                        </div>
                         <div className="input-group me-3">
                             <label htmlFor="searchInput" className="input-group-text">Search by Name:</label>
                             <input
@@ -80,6 +90,9 @@ export default function SearchInputWithButton({ type, setTriggerFetch }) {
             case Entities.DESTINATIONS:
                 return (
                     <>
+                        <div className='me-3'>
+                            {exportButtonsOrSpace}
+                        </div>
                         <div className="input-group me-3">
                             <label htmlFor="city" className="input-group-text">City:</label>
                             <input
@@ -108,36 +121,36 @@ export default function SearchInputWithButton({ type, setTriggerFetch }) {
             case Entities.FLIGHTS:
                 return (
                     <div className="container-fluid">
-                        <div className='row mb-2'>
-                            <div className="col-12 col-md-4 mb-2">
-                                <div className="input-group me-3">
-                                    <label htmlFor="startDate" className="input-group-text">Start Date:</label>
+                        <div className="row mb-3 align-items-end">
+                            <div className="col-12 col-md-5 mb-2">
+                                <div className="input-group">
+                                    <label htmlFor="startDate" className="input-group-text">Start Date</label>
                                     <input
                                         type="date"
                                         id="startDate"
                                         className="form-control"
-                                        placeholder="2023-06-07"
                                     />
                                 </div>
                             </div>
-                            <div className="col-12 col-md-4 mb-2">
-                                <div className="input-group me-3">
-                                    <label htmlFor="endDate" className="input-group-text">End Date:</label>
+                            <div className="col-12 col-md-5 mb-2">
+                                <div className="input-group">
+                                    <label htmlFor="endDate" className="input-group-text">End Date</label>
                                     <input
                                         type="date"
                                         id="endDate"
                                         className="form-control"
-                                        placeholder="2023-14-06"
                                     />
-
                                 </div>
                             </div>
-                            <div className="col-12 col-md-2 mb-2">
-                                <div className="input-group me-3">
-                                    <SearchButton onClick={handleSearch} />
-                                </div>
+                            <div className="col-12 col-md-2 mb-2 text-md-end">
+                                <SearchButton onClick={handleSearch} />
                             </div>
-                            <div className="col-12 col-md-2 mb-2">
+                        </div>
+                        <div className="row align-items-center">
+                            <div className="col-6 col-md-2 mb-2">
+                                {exportButtonsOrSpace}
+                            </div>
+                            <div className="col-6 col-md-2 offset-md-8 mb-2 text-end">
                                 <ClearInputButton />
                             </div>
                         </div>
@@ -147,10 +160,10 @@ export default function SearchInputWithButton({ type, setTriggerFetch }) {
             case Entities.PASSENGERS:
                 return (
                     <div className="container-fluid">
-                        <div className='row mb-2'>
+                        <div className="row mb-3 align-items-end">
                             <div className="col-12 col-md-3 mb-2">
                                 <div className="input-group">
-                                    <label htmlFor="firstName" className="input-group-text">First name:</label>
+                                    <label htmlFor="firstName" className="input-group-text">First Name:</label>
                                     <input
                                         type="text"
                                         id="firstName"
@@ -181,11 +194,11 @@ export default function SearchInputWithButton({ type, setTriggerFetch }) {
                                     />
                                 </div>
                             </div>
-                            <div className="col-12 col-md-3 mb-2 d-flex align-items-center justify-content-end">
-                                <ClearInputButton />
+                            <div className="col-12 col-md-3 mb-2 d-flex justify-content-md-end">
+                                {exportButtonsOrSpace}
                             </div>
                         </div>
-                        <div className='row'>
+                        <div className="row align-items-end">
                             <div className="col-12 col-md-3 mb-2">
                                 <div className="input-group">
                                     <label htmlFor="passport" className="input-group-text">Passport:</label>
@@ -219,8 +232,9 @@ export default function SearchInputWithButton({ type, setTriggerFetch }) {
                                     />
                                 </div>
                             </div>
-                            <div className="col-12 col-md-3 mb-2 d-flex align-items-center justify-content-end">
+                            <div className="col-12 col-md-3 mb-2 d-flex justify-content-md-end gap-4">
                                 <SearchButton onClick={handleSearch} />
+                                <ClearInputButton />
                             </div>
                         </div>
                     </div>
@@ -228,11 +242,11 @@ export default function SearchInputWithButton({ type, setTriggerFetch }) {
 
             case Entities.PILOTS:
                 return (
-                    <div className='container-fluid'>
-                        <div className='row mb-2'>
-                            <div className='col-md-3 mb-2'>
-                                <div className="input-group me-3">
-                                    <label htmlFor="firstName" className="input-group-text">First name:</label>
+                    <div className="container-fluid">
+                        <div className="row mb-2">
+                            <div className="col-12 col-md-3 mb-2">
+                                <div className="input-group">
+                                    <label htmlFor="firstName" className="input-group-text">First Name:</label>
                                     <input
                                         type="text"
                                         id="firstName"
@@ -241,8 +255,8 @@ export default function SearchInputWithButton({ type, setTriggerFetch }) {
                                     />
                                 </div>
                             </div>
-                            <div className='col-md-3 mb-2'>
-                                <div className="input-group me-3">
+                            <div className="col-12 col-md-3 mb-2">
+                                <div className="input-group">
                                     <label htmlFor="lastName" className="input-group-text">Last Name:</label>
                                     <input
                                         type="text"
@@ -252,8 +266,8 @@ export default function SearchInputWithButton({ type, setTriggerFetch }) {
                                     />
                                 </div>
                             </div>
-                            <div className='col-md-3 mb-2'>
-                                <div className="input-group me-3">
+                            <div className="col-12 col-md-3 mb-2">
+                                <div className="input-group">
                                     <label htmlFor="uprn" className="input-group-text">UPRN:</label>
                                     <input
                                         type="number"
@@ -263,8 +277,8 @@ export default function SearchInputWithButton({ type, setTriggerFetch }) {
                                     />
                                 </div>
                             </div>
-                            <div className='col-md-3 mb-2'>
-                                <div className="input-group me-3">
+                            <div className="col-12 col-md-3 mb-2">
+                                <div className="input-group">
                                     <label htmlFor="flyingHours" className="input-group-text">Flying Hours:</label>
                                     <input
                                         type="number"
@@ -275,20 +289,11 @@ export default function SearchInputWithButton({ type, setTriggerFetch }) {
                                 </div>
                             </div>
                         </div>
-                        <div className='row d-flex align-items-center justify-content-end'>
-                            <div className='col-md-2 mb-2'></div>
-                            <div className='col-md-2 mb-2'></div>
-                            <div className='col-md-2 mb-2'></div>
-                            <div className='col-md-2 mb-2'></div>
-                            <div className='col-md-2 mb-2'>
-                                <div className="input-group me-3">
-                                    <ClearInputButton />
-                                </div>
-                            </div>
-                            <div className='col-md-2 mb-2'>
-                                <div className="input-group me-3 d-flex align-items-center justify-content-end">
-                                    <SearchButton onClick={handleSearch} />
-                                </div>
+                        <div className="row mb-3">
+                            <div className="col-12 d-flex justify-content-md-end gap-4">
+                                {exportButtonsOrSpace}
+                                <ClearInputButton />
+                                <SearchButton onClick={handleSearch} />
                             </div>
                         </div>
                     </div>
@@ -334,7 +339,9 @@ export default function SearchInputWithButton({ type, setTriggerFetch }) {
                         <div className='row d-flex align-items-center justify-content-end'>
                             <div className='col-md-2 mb-2'></div>
                             <div className='col-md-2 mb-2'></div>
-                            <div className='col-md-2 mb-2'></div>
+                            <div className='col-md-2 mb-2'>
+                                {exportButtonsOrSpace}
+                            </div>
                             <div className='col-md-2 mb-2'></div>
                             <div className='col-md-2 mb-2'>
                                 <div className="input-group me-3">
@@ -347,6 +354,13 @@ export default function SearchInputWithButton({ type, setTriggerFetch }) {
                                 </div>
                             </div>
                         </div>
+                    </div>
+                );
+
+            case Entities.TRAVEL_CLASSES:
+                return (
+                    <div className='mb-3'>
+                        {exportButtonsOrSpace}
                     </div>
                 );
 
