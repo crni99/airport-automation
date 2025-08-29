@@ -16,7 +16,6 @@ import ApiUsersRoutes from './routes/apiUserRoutes';
 import ProtectedRouteV3 from './routes/ProtectedRouteV3';
 
 function App() {
-
   return (
     <>
       <Header />
