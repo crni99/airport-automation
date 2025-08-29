@@ -3,16 +3,16 @@ import { Route } from "react-router-dom";
 import ApiUsersList from "../components/apiUser/ApiUsersList";
 import ApiUserDetails from "../components/apiUser/ApiUserDetails";
 import ApiUserEditForm from "../components/apiUser/ApiUserEditForm";
-import ProtectedRoutev2 from "./ProtectedRoutev2";
+import ProtectedRouteV2 from "./ProtectedRouteV2";
 
 const ApiUserRoutes = (
     <>
         <Route path="/apiUsers" 
-            element={<ProtectedRoutev2 element={<ApiUsersList />} />} />
+            element={<ProtectedRouteV2 element={<ApiUsersList />} />} />
         <Route path="/apiUsers/:id" 
-            element={<ProtectedRoutev2 element={<ApiUserDetails />} />} />
+            element={<ProtectedRouteV2 element={<ApiUserDetails />} />} />
         <Route path="/apiUsers/edit/:id" 
-            element={<ProtectedRoutev2 element={<ApiUserEditForm />} />} />
+            element={<ProtectedRouteV2 element={<ApiUserEditForm />} />} />
     </>
 );
 

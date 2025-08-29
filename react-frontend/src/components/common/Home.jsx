@@ -14,6 +14,16 @@ export default function Home() {
 
     const [currentDateTime, setCurrentDateTime] = useState('');
 
+    const [message, setMessage] = useState(null);
+
+    useEffect(() => {
+        const storedMessage = localStorage.getItem('authErrorMessage');
+        if (storedMessage) {
+            setMessage(storedMessage);
+            localStorage.removeItem('authErrorMessage');
+        }
+    }, []);
+
     const handleFormSubmit = async (event) => {
         event.preventDefault();
         setLoading(true);
@@ -65,6 +75,7 @@ export default function Home() {
                     {!isLoggedIn &&
                         <div className="row">
                             <div className="col-md-4">
+                                {message && <Alert alertType="error">{message}</Alert>}
                                 {error && <Alert alertType="error" alertText={error} />}
                                 {loading ? (
                                     <div className="d-flex justify-content-center py-4">

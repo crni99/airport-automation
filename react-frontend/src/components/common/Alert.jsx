@@ -1,5 +1,19 @@
+import React, { useEffect, useState } from 'react';
+
 export default function Alert({ alertType, children }) {
-    let alertClasses = "text-center mt-4 alert ";
+    const [visible, setVisible] = useState(true);
+
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            setVisible(false);
+        }, 5000); // 5 seconds
+
+        return () => clearTimeout(timeoutId); // Clean up
+    }, []);
+
+    if (!visible) return null;
+
+    let alertClasses = "text-center mt-4 alert mb-4 ";
 
     if (alertType === 'success') {
         alertClasses += "alert-success";

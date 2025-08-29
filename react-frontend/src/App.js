@@ -13,9 +13,10 @@ import HealthCheck from './components/common/HealthCheck';
 import Footer from './components/common/Footer';
 import Unauthorized from './components/common/Unauthorized';
 import ApiUsersRoutes from './routes/apiUserRoutes';
+import ProtectedRouteV3 from './routes/ProtectedRouteV3';
 
 function App() {
-  
+
   return (
     <>
       <Header />
@@ -26,15 +27,16 @@ function App() {
             <Route path="/HealthCheck" element={<HealthCheck />} />
             <Route path='/unauthorized' element={<Unauthorized />} />
 
-            {AirlineRoutes}
-            {DestinationsRoutes}
-            {TravelClassesRoutes}
-            {PassengersRoutes}
-            {PilotsRoutes}
-            {ApiUsersRoutes}
-            {FlightsRoutes}
-            {PlaneTicketsRoutes}
-
+            <Route element={<ProtectedRouteV3 />}>
+              {AirlineRoutes}
+              {DestinationsRoutes}
+              {TravelClassesRoutes}
+              {PassengersRoutes}
+              {PilotsRoutes}
+              {ApiUsersRoutes}
+              {FlightsRoutes}
+              {PlaneTicketsRoutes}
+            </Route>
           </Routes>
         </div>
       </div>
