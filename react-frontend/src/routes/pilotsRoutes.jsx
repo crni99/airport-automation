@@ -11,7 +11,7 @@ const PilotsRoutes = (
         <Route path="/pilots" element={<PilotsListsList />} />
         <Route path="/pilots/:id" element={<PilotDetailsDetails />} />
         <Route path="/pilots/create"
-        element={<ProtectedRoute element={<PilotCreateFormCreateForm />} />} />
+            element={<ProtectedRoute element={<PilotCreateFormCreateForm />} />} />
         <Route path="/pilots/edit/:id"
             element={<ProtectedRoute element={<PilotEditFormEditForm />} />} />
     </>
