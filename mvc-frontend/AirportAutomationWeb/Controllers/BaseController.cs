@@ -16,7 +16,7 @@ namespace AirportAutomation.Web.Controllers
 			if (string.Equals(controllerName, "Home", StringComparison.OrdinalIgnoreCase))
 				return;
 
-			string token = HttpContext.Session.GetString("BearerToken");
+			string token = HttpContext.Session.GetString("AccessToken");
 
 			if (string.IsNullOrEmpty(token))
 			{

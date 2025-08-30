@@ -10,10 +10,10 @@ export default function SearchInputWithButton({ type, setTriggerFetch, isUser })
         setTriggerFetch(true);
     };
 
-    const exportButtonsOrSpace = !isUser ? (
-        <ExportButtons dataType={type} />
-    ) : (
+    const exportButtonsOrSpace = isUser === 'User' ? (
         <>&nbsp;</>
+    ) : (
+        <ExportButtons dataType={type} />
     );
 
     const renderInput = () => {

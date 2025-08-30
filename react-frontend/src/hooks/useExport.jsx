@@ -1,16 +1,20 @@
-import { useContext } from 'react';
+import { useState, useContext } from 'react';
 import { buildExportURL } from '../utils/export.js';
 import { DataContext } from '../store/data-context.jsx';
 import { getAuthToken } from '../utils/auth';
 
 export function useExport() {
+
     const dataCtx = useContext(DataContext);
+    const [isLoading, setLoading] = useState(false); 
 
     async function triggerExport(dataType, exportType) {
         if (!dataCtx || !dataCtx.apiUrl) {
             console.warn('API URL not set');
             return;
         }
+
+        setLoading(true);
 
         const { baseUrl, params } = buildExportURL(dataCtx.apiUrl, dataType, exportType);
 
@@ -65,8 +69,10 @@ export function useExport() {
         } catch (err) {
             console.error(err);
             alert('Export failed. Please try again.');
+        } finally {
+            setLoading(false);
         }
     }
 
-    return { triggerExport };
+    return { triggerExport, isLoading };
 }

@@ -4,6 +4,7 @@
         const entityType = container.data('entity');
         const fileType = $(this).data('type').toLowerCase();
         if (entityType) {
+            showLoading();
             exportData(entityType, fileType);
         } else {
             console.warn('Entity type is not set.');
@@ -61,6 +62,18 @@ function exportData(entityType, fileType = 'excel') {
     params.append('fileType', fileType);
 
     const finalURL = `${path}?${params.toString()}`;
-
     window.location.href = finalURL;
+    hideLoading();
+}
+
+function showLoading() {
+    $('#exportButtonPDF').prop('disabled', true);
+    $('#exportButtonEXCEL').prop('disabled', true);
+    $('#loadingSpinner').css('display', 'block');
+}
+
+function hideLoading() {
+    $('#exportButtonPDF').prop('disabled', false);
+    $('#exportButtonEXCEL').prop('disabled', false);
+    $('#loadingSpinner').css('display', 'none');
 }
