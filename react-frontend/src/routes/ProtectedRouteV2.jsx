@@ -1,9 +1,9 @@
-import { Navigate } from 'react-router-dom';
-import { getRole } from '../utils/auth';
+import { Navigate } from 'react-router-dom';
+import { getRole } from '../utils/auth';
 
-const ProtectedRouteV2 = ({ element }) => {
-    const role = getRole();
-    return role === 'SuperAdmin' ? element : <Navigate to="/unauthorized" />;
+const ProtectedRouteV2 = ({ element }) => {
+    const role = getRole();
+    return role === 'SuperAdmin' ? element : <Navigate to="/unauthorized" />;
 };
 
-export default ProtectedRouteV2;
+export default ProtectedRouteV2;

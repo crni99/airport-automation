@@ -11,8 +11,7 @@ module.exports = {
     'plugin:react-hooks/recommended',
   ],
   env: {
-    browser: true,
-    jest: true,
+    browser: true
   },
   settings: {
     react: {
