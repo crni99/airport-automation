@@ -1,6 +1,6 @@
 # Airport Automation <br /> [![Build and Test .NET](https://github.com/crni99/airport-automation/actions/workflows/dotnet.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/dotnet.yml) [![React Frontend CI](https://github.com/crni99/airport-automation/actions/workflows/node.js.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/node.js.yml) <br /> [![C# CodeQL Analysis](https://github.com/crni99/airport-automation/actions/workflows/csharp-codeql.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/csharp-codeql.yml)  [![React CodeQL Analysis](https://github.com/crni99/airport-automation/actions/workflows/react-codeql.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/react-codeql.yml) [![ESLint](https://github.com/crni99/airport-automation/actions/workflows/eslint.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/eslint.yml) <br /> [![Vercel - deploy](https://img.shields.io/badge/Vercel-deployed-30c352?logo=vercel&labelColor=2f353b)](https://airport-automation.vercel.app/) [![Netlify Status](https://api.netlify.com/api/v1/badges/f68f50c9-da24-4df3-a645-973662999506/deploy-status)](https://airport-automation.netlify.app/)
 
-This project demonstrates a complete full-stack solution featuring a robust ASP.NET Core Web API backend, an MVC web frontend, and a modern React single-page application — all working together to deliver a secure, scalable, and responsive airport automation system.
+This project showcases a comprehensive full-stack solution, combining a robust ASP.NET Core Web API backend, an MVC web frontend, and a modern React single-page application — all seamlessly integrated to provide a highly secure, scalable, and user-friendly system.
 <br />
 <br />
 
@@ -21,93 +21,121 @@ ___
 <a name="-backend-aspnet-core-web-api"></a>
 ## 📡 [Backend - ASP.NET Core Web API](https://github.com/crni99/airport-automation/tree/main/backend/Airport%D0%90utomationApi) 🡥
 
-### Creating the API and Returning Resources:
-- Establishing the foundation of the Web API and defining endpoints.
-- Implementing the logic to retrieve and return resources in response to client requests.
+### Database Setup and Management
+- SQL Server (or a relevant relational database) is used as the primary data store.
+- Manage the database schema and migrations via Entity Framework Core to ensure version control and smooth schema evolution.
+- Map EF Core entities directly to database tables to facilitate efficient data access and manipulation.
 
-### Manipulating Resources and Validating Input:
-- Demonstrating how to manipulate data resources and ensure data integrity.
-- Implementing input validation techniques to enhance the reliability of the API.
+### Defining RESTful API Endpoints and Implementing Logic to Serve Requested Resources via HTTP
+- Establish the foundation of the Web API and define endpoints.
+- Implement the logic to retrieve and return resources in response to client requests.
 
-### Working with Services and Dependency Injection:
-- Employing services and dependency injection to promote modularity and maintainability in the codebase.
+### Manipulating Resources and Validating Input
+- Demonstrate how to manipulate data resources and ensure data integrity.
+- Implement input validation techniques to enhance the reliability of the API.
 
-### Getting Acquainted with Entity Framework Core:
-- Introducing Entity Framework Core, a powerful ORM tool for data access.
-- Learning how to configure and interact with the database using Entity Framework Core.
+### API Behavior Customization
+- Customize model validation error responses to conform to RFC 9457, with detailed problem details and trace identifiers for easier debugging.
 
-### Using Entity Framework Core in Controllers:
-- Integrating Entity Framework Core into API controllers to perform CRUD (Create, Read, Update, Delete) operations on data resources.
+### Working with Services and Dependency Injection
+- Employ services and dependency injection to promote modularity and maintainability in the codebase.
 
-### Searching, Filtering, and Paging Resources:
-- Implementing advanced features like searching, filtering, and paging to enhance the API's usability and performance.
+### Getting Acquainted with Entity Framework Core
+- Utilize Entity Framework Core for database interactions and ORM capabilities within repository and service layers.
+- Abstract EF Core queries and commands away from controllers to maintain separation of concerns and improve testability.
+- Ensure controllers receive processed data from services, maintaining clean and manageable API endpoints.
 
-### Exporting Data to PDF and Excel:
-- Implemented endpoints for exporting data in PDF and Excel formats to support reporting and offline data analysis.
-- Ensured the exported documents preserve formatting and reflect applied filters or search criteria.
-- Used QuestPDF for generating high-quality, customizable PDF documents.
-- Used ClosedXML for creating Excel files with structured data, formatting, and support for advanced Excel features.
+### Separation of Concerns with EF Core
+- Use EF Core exclusively in repositories and services, keeping controllers free from direct database operations.
+- Promote modularity, easier testing, and cleaner controller logic focused on handling HTTP requests and responses.
 
-### Securing API and CORS Implementation:
-- Ensuring API security involves robust authentication and authorization mechanisms.
-- CORS is carefully configured to permit legitimate cross-origin requests while maintaining security against unauthorized access.
+### Searching, Filtering, and Paging Resources
+- Implement advanced features such as searching, filtering, and paging to improve the API’s usability and performance.
 
-### Role-Based Authorization:
-- Implemented role-based access control with policies:
+### Exporting Data to PDF and Excel
+- Implement endpoints to export data in PDF and Excel formats for reporting and offline analysis.
+- Ensure exported documents preserve formatting and reflect applied filters or search criteria.
+- Use QuestPDF to generate high-quality, customizable PDF documents.
+- Use ClosedXML to create Excel files with structured data, formatting, and support for advanced Excel features.
+
+### Securing API and CORS Implementation
+- Secure the API using robust authentication and authorization mechanisms.
+- Handle authentication with JWT tokens to enable secure, stateless client-server communication.
+- Configure CORS to allow authorized cross-origin requests while maintaining protection against unauthorized access.
+
+### Role-Based Authorization
+- Implement role-based access control with policies:
   - `RequireSuperAdminRole`
   - `RequireAdminRole`
   - `RequireUserRole`
-- Fine-grained endpoint access based on user roles ensures secure handling of sensitive data.
+- Enable fine-grained endpoint access control based on user roles to ensure secure handling of sensitive data.
 
-### CORS Policy:
-- Enabled a global CORS policy (`_AllowAll`) to facilitate frontend-backend communication during development.
-- Consider configuring more restrictive CORS policies in production for enhanced security.
+### CORS Policy
+- Enable a global CORS policy (`_AllowAll`) to facilitate frontend-backend communication during development.
+- Plan for more restrictive CORS policies in production environments for enhanced security.
 
-### Versioning and Documenting API with Swagger:
-- Managing API versions to maintain backward compatibility.
-- Documenting the API endpoints for easy consumption by developers.
-- Customized Swagger UI with a toggleable dark/light mode, improving usability and aligning with user preferences.
+### Versioning and Documenting API with Swagger
+- Manage API versions to maintain backward compatibility.
+- Document API endpoints for easy use by developers.
+- Customize Swagger UI with a toggleable dark/light mode to enhance usability and align with user preferences.
 
-### Logging and Exception Handling for Error Management:
-- Integrated Serilog for structured, centralized logging with configuration read from app settings.
-- Added custom middleware (`RequestLogContextMiddleware`) to enrich logs with request context such as trace identifiers.
-- Implemented a global exception handler middleware (`GlobalExceptionHandler`) to ensure consistent error responses and to capture unhandled exceptions in logs.
+### Logging and Exception Handling for Error Management
+- Integrate Serilog for structured, centralized logging, with configuration sourced from app settings.
+- Add custom middleware (`RequestLogContextMiddleware`) to enrich logs with request context, such as trace identifiers.
+- Implement global exception handler middleware (`GlobalExceptionHandler`) to standardize error responses and capture unhandled exceptions.
 
-### API Rate Limiting:
-- Implementing a rate limiter is crucial for Protecting API Resources by preventing abuse, fortifying the system against DDoS Attacks, and Enhancing API Performance.
+### Middleware Customization
+- Implement custom middleware to enhance logging context and provide consistent exception handling, improving diagnostics and debugging.
 
-### Unit Testing with xUnit: 
-- Writing comprehensive unit tests using the xUnit framework to validate individual components of the application, ensuring that each unit functions correctly in isolation. 
-- These tests help maintain code integrity, improve software reliability, and facilitate easier debugging and refactoring.
+### Configuration Management
+- Centralize all configurations (e.g., Serilog, rate limiting, authentication secrets, pagination settings) in `appsettings.json` for better maintainability and environment flexibility.
 
-### Monitoring Application Health with HealthChecks:
-- Monitoring the health of critical components, such as databases and external dependencies, to proactively identify and address potential issues.
-- Configuring health check endpoints to offer insights into the overall well-being of the application, and integrating these checks into the Swagger documentation for visibility and ease of access.
+### API Rate Limiting
+- Implement a rate limiter to protect API resources from abuse, mitigate DDoS attacks, and enhance overall API performance.
+
+### Unit Testing with xUnit
+- Write comprehensive unit tests using the xUnit framework to validate individual components in isolation.
+- Ensure tests improve code reliability, support refactoring, and simplify debugging.
+
+### Monitoring Application Health with HealthChecks
+- Monitor the health of critical components such as databases and external services.
+- Configure health check endpoints to provide visibility into system status and integrate them into Swagger documentation for easy access.
 ___
 <br />
 
 <a name="-mvc-web-frontend"></a>
 ## 🌐 [MVC Web Frontend](https://github.com/crni99/airport-automation/tree/main/mvc-frontend/AirportAutomationWeb) 🡥
 
-### Consuming APIs with HttpClientFactory:
-- Implementing efficient API calls using HttpClientFactory for improved performance and resource management, ensuring seamless integration with external APIs while maintaining optimal usage of resources.
+### Consuming APIs with HttpClientFactory
+- Implement efficient and reusable API calls using `HttpClientFactory` to improve performance, manage resources effectively, and avoid socket exhaustion.
+- Centralize `HttpClient` configuration to ensure consistent request headers, including JSON content type, user agent, and authorization tokens.
 
-### Integrating Web Services and APIs:
-- Consuming external web services and APIs to fetch real-time data or integrate third-party functionalities, allowing seamless data exchange and integration with backend services.
+### Generic and Typed API Interaction
+- Utilize generic methods for CRUD operations (`EditData<T>`, `DeleteData<T>`, etc.) to enable type-safe, reusable API communication across different data models.
+- Dynamically construct API endpoints based on model types with custom pluralization rules for flexible routing.
+- Support advanced filtering through dynamically built query strings tailored to each data model's specific filter requirements.
+- Implement pagination and optional retrieval of all data items for optimized data loading and exporting.
 
-### Managing Data Presentation and User Input:
-- Handling dynamic data presentation on web pages using templates and binding techniques while implementing user input forms and validating submitted data for accuracy.
+### Integrating Web Services and APIs
+- Consume external and backend web services to fetch real-time data and integrate third-party functionalities seamlessly.
+- Manage robust error handling and detailed logging for HTTP responses, including success, conflicts, unauthorized, forbidden, and other error states to improve debugging and user feedback.
 
-### Client-Side Scripting and AJAX Requests:
-- Utilizing JavaScript and AJAX requests to create dynamic and responsive user interfaces, enabling asynchronous data fetching and updating without full page reloads.
+### Managing Data Presentation and User Input
+- Handle dynamic data presentation using MVC templates and model binding to ensure consistent and user-friendly data display.
+- Develop user input forms with validation to maintain data accuracy and integrity.
 
-### Exporting Data to PDF and Excel:
-- Integrated the export functionality from the API into the MVC frontend, allowing users to generate and download PDF and Excel reports directly from the web interface.
-- Provided options to reflect applied filters or search terms in the exported documents, ensuring consistency between the UI and downloaded data.
-- Ensured user-friendly interactions with appropriate UI components (e.g., export buttons, spinners, error handling) for a seamless reporting experience.
+### Client-Side Scripting and AJAX Requests
+- Leverage JavaScript, jQuery, and AJAX to build responsive and interactive user interfaces, enabling asynchronous data fetching and partial page updates without full reloads.
 
-### Ensuring Web Application Security:
-- Implementing security measures to protect against common web vulnerabilities, enforcing HTTPS, securing data transmission, and safeguarding against threats like Cross-Site Scripting (XSS), Cross-Site Request Forgery (CSRF) and Cross-Origin Resource Sharing (CORS).
+### Exporting Data to PDF and Excel
+- Integrate the export functionality from the API into the MVC frontend, allowing users to generate and download PDF and Excel reports directly from the web interface.
+- Provide options to reflect applied filters or search terms in the exported documents, ensuring consistency between the UI and downloaded data.
+- Ensure user-friendly interactions with appropriate UI components (e.g., export buttons, spinners, error handling) for a seamless reporting experience.
+
+### Ensuring Web Application Security
+- Enforce HTTPS to secure data transmission between client and server.
+- Implement protections against common vulnerabilities such as Cross-Site Scripting (XSS), Cross-Site Request Forgery (CSRF), and control Cross-Origin Resource Sharing (CORS).
+- Secure API calls with bearer token authorization headers automatically added to all HTTP requests.
 ___
 <br />
 
@@ -115,50 +143,52 @@ ___
 ## ⚛️ [React Frontend](https://github.com/crni99/airport-automation/tree/main/react-frontend/src) 🡥
 
 ### User Interface Design
-- Built with functional components and React Hooks.
-- Responsive, mobile-friendly layout using modern styling techniques.
+- Build the frontend using functional components and React Hooks.
+- Design a responsive, mobile-friendly layout with modern styling techniques.
 
 ### State Management
-- Application state is managed via Context API or Redux.
-- Efficient handling of asynchronous operations using the native `fetch` API and middleware when necessary.
+- Manage application state via Context API or Redux.
+- Handle asynchronous operations efficiently using the native `fetch` API and middleware where necessary.
 
 ### Data Fetching and Integration
-- Full integration with the backend API to retrieve and manage data such as flights, passengers, and airport operations.
-- Dynamic rendering of components based on API responses and user interaction.
+- Fully integrate with the backend API to retrieve and manage data such as flights, passengers, and airport operations.
+- Dynamically render components based on API responses and user interactions.
 
 ### Form Handling and Validation
-- Form inputs (e.g., bookings, user data) managed with **React Hook Form**.
-- Real-time validation with user-friendly error handling and feedback.
+- Manage form inputs (e.g., bookings, user data) with **React Hook Form**.
+- Provide real-time validation with user-friendly error handling and feedback.
 
 ### Routing and Navigation
-- Navigation handled via **React Router**, including dynamic and nested routes for scalability.
-- Seamless page transitions without full reloads.
+- Handle navigation using **React Router**, including dynamic and nested routes for scalability.
+- Enable seamless page transitions without full reloads.
 
 ### Exporting Data to PDF and Excel
-- The frontend integrates with API endpoints to allow users to export data to PDF and Excel formats.
-- Users can apply filters or search terms before export, and the generated documents reflect these criteria.
-- Export actions are accompanied by UI feedback such as loading spinners and error messages for improved user experience.
-- Download links are provided directly in the UI for quick access to exported files.
+- Integrate the frontend with API endpoints to allow users to export data to PDF and Excel formats.
+- Allow users to apply filters or search terms before export, with generated documents reflecting those criteria.
+- Accompany export actions with UI feedback such as loading spinners and error messages for an improved user experience.
+- Provide download links directly in the UI for quick access to exported files.
 
 ### Security and Authentication
-- Secure user login with **JWT-based authentication**.
-- Role-based access control for restricting features based on user permissions.
+- Implement secure user login using **JWT-based authentication**.
+- Apply role-based access control to restrict features based on user permissions.
 
 ### Performance Optimization
-- Performance improvements through **lazy loading**, **code splitting**, and **memoization**.
-- Optimized re-renders using React best practices to enhance responsiveness.
+- Improve performance through **lazy loading**, **code splitting**, and **memoization**.
+- Optimize re-renders using React best practices to enhance responsiveness.
 ___
 <br />
 
 <a name="-deployment"></a>
 ## 🚀 Deployment and Monitoring
-- Deployed to both **[Vercel](https://airport-automation.vercel.app/)** and **[Netlify](https://airport-automation.netlify.app/)** for high availability.
-- Integrated basic logging and monitoring to track app health and errors in production environments.
+- Deploy the application to both **[Vercel](https://airport-automation.vercel.app/)** and **[Netlify](https://airport-automation.netlify.app/)** to ensure high availability and redundancy.
+- Integrate basic logging and monitoring solutions to track application health and capture errors in production environments.
 ___
 <br />
 
 <a name="-demo-credentials"></a>
 ## 🔐 [Demo Credentials](https://github.com/crni99/airport-automation/blob/main/backend/AirportAutomationInfrastructure/Data/createDB.sql#L213-L218) 🡥
+
+> **Note:** These demo credentials are provided for testing and demonstration purposes only.
 
 <table>
   <thead>
@@ -174,13 +204,13 @@ ___
       <td>og</td>
       <td>og</td>
       <td>SuperAdmin</td>
-      <td>CRUD operations + managing other roles</td>
+      <td>CRUD operations + exporting data + managing other roles</td>
     </tr>
     <tr>
       <td>aa</td>
       <td>aa</td>
       <td>Admin</td>
-      <td>CRUD operations</td>
+      <td>CRUD operations + exporting data</td>
     </tr>
     <tr>
       <td>uu</td>
@@ -190,4 +220,3 @@ ___
     </tr>
   </tbody>
 </table>
-
