@@ -134,6 +134,12 @@ ___
 - Navigation handled via **React Router**, including dynamic and nested routes for scalability.
 - Seamless page transitions without full reloads.
 
+### Exporting Data to PDF and Excel
+- The frontend integrates with API endpoints to allow users to export data to PDF and Excel formats.
+- Users can apply filters or search terms before export, and the generated documents reflect these criteria.
+- Export actions are accompanied by UI feedback such as loading spinners and error messages for improved user experience.
+- Download links are provided directly in the UI for quick access to exported files.
+
 ### Security and Authentication
 - Secure user login with **JWT-based authentication**.
 - Role-based access control for restricting features based on user permissions.
