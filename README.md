@@ -19,7 +19,7 @@ ___
 <br />
 
 <a name="-backend-aspnet-core-web-api"></a>
-## 📡 [Backend - ASP.NET Core Web API](https://github.com/crni99/airport-automation/tree/main/backend/Airport%D0%90utomationApi) 🡥
+## 📡 [Backend - ASP.NET Core Web API](https://github.com/crni99/airport-automation/tree/main/backend/AirportAutomationApi) 🡥
 
 ### Database Setup and Management
 - SQL Server (or a relevant relational database) is used as the primary data store.
@@ -179,7 +179,7 @@ ___
 <br />
 
 <a name="-deployment"></a>
-## 🚀 Deployment and Monitoring
+## 🚀 [Deployment and Monitoring](https://airport-automation.vercel.app/) 🡥
 - Deploy the application to both **[Vercel](https://airport-automation.vercel.app/)** and **[Netlify](https://airport-automation.netlify.app/)** to ensure high availability and redundancy.
 - Integrate basic logging and monitoring solutions to track application health and capture errors in production environments.
 ___
