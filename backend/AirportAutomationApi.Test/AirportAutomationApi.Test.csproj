@@ -32,7 +32,7 @@
     <ProjectReference Include="..\AirportAutomationApplication\AirportAutomation.Application.csproj" />
     <ProjectReference Include="..\AirportAutomationDomain\AirportAutomation.Core.csproj" />
     <ProjectReference Include="..\AirportAutomationInfrastructure\AirportAutomation.Infrastructure.csproj" />
-    <ProjectReference Include="..\AirportАutomationApi\AirportАutomation.Api.csproj" />
+    <ProjectReference Include="..\AirportAutomationApi\AirportAutomation.Api.csproj" />
   </ItemGroup>
 
   <ItemGroup>

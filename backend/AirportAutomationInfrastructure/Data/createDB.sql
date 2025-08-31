@@ -1,21 +1,21 @@
 ﻿-- Check if the database exists and drop it (delete)
 USE [master];
-IF EXISTS (SELECT name FROM sys.databases WHERE name = 'AirportАutomation')
+IF EXISTS (SELECT name FROM sys.databases WHERE name = 'AirportAutomation')
 BEGIN
-    ALTER DATABASE AirportАutomation SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-    ALTER DATABASE AirportАutomation SET MULTI_USER;
+    ALTER DATABASE AirportAutomation SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+    ALTER DATABASE AirportAutomation SET MULTI_USER;
 END
-DROP DATABASE IF EXISTS AirportАutomation;
+DROP DATABASE IF EXISTS AirportAutomation;
 
 -- Create the database
-CREATE DATABASE AirportАutomation;
+CREATE DATABASE AirportAutomation;
 
 GO
 
 BEGIN TRANSACTION InitializeAirportDatabase;
 
 -- Use the database
-USE AirportАutomation;
+USE AirportAutomation;
 
 -- Create the tables
 CREATE TABLE Passenger (
@@ -93,7 +93,7 @@ PRIMARY KEY (ApiUserId )
 );
 
 GO
-USE AirportАutomation;
+USE AirportAutomation;
 
 -- Insert data into the tables
 INSERT INTO Passenger (FirstName, LastName, UPRN, Passport, Address, Phone)
