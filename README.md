@@ -2,6 +2,7 @@
 
 This project showcases a comprehensive full-stack solution, combining a robust ASP.NET Core Web API backend, an MVC web frontend, and a modern React single-page application — all seamlessly integrated to provide a highly secure, scalable, and user-friendly system.
 <br />
+
 <br />
 
 ## 📖 Table of Contents
