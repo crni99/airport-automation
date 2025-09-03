@@ -1,8 +1,7 @@
-# Airport Automation <br /> [![Build and Test .NET](https://github.com/crni99/airport-automation/actions/workflows/dotnet.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/dotnet.yml) [![React Frontend CI](https://github.com/crni99/airport-automation/actions/workflows/node.js.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/node.js.yml) <br /> [![C# CodeQL Analysis](https://github.com/crni99/airport-automation/actions/workflows/csharp-codeql.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/csharp-codeql.yml)  [![React CodeQL Analysis](https://github.com/crni99/airport-automation/actions/workflows/react-codeql.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/react-codeql.yml) [![ESLint](https://github.com/crni99/airport-automation/actions/workflows/eslint.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/eslint.yml) <br /> [![Vercel - deploy](https://img.shields.io/badge/Vercel-deployed-30c352?logo=vercel&labelColor=2f353b)](https://airport-automation.vercel.app/) [![Netlify Status](https://api.netlify.com/api/v1/badges/f68f50c9-da24-4df3-a645-973662999506/deploy-status)](https://airport-automation.netlify.app/)
+# Airport Automation <br /> [![Build and Test .NET](https://github.com/crni99/airport-automation/actions/workflows/dotnet.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/dotnet.yml) [![React Frontend CI](https://github.com/crni99/airport-automation/actions/workflows/node.js.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/node.js.yml) <br /> [![C# CodeQL Analysis](https://github.com/crni99/airport-automation/actions/workflows/csharp-codeql.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/csharp-codeql.yml)  [![React CodeQL Analysis](https://github.com/crni99/airport-automation/actions/workflows/react-codeql.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/react-codeql.yml) [![ESLint](https://github.com/crni99/airport-automation/actions/workflows/eslint.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/eslint.yml) <br /> [![Vercel - deploy](https://img.shields.io/badge/Vercel-deployed-30c352?logo=vercel&labelColor=2f353b)](https://airport-automation.vercel.app/) [![Netlify Status](https://api.netlify.com/api/v1/badges/f68f50c9-da24-4df3-a645-973662999506/deploy-status)](https://airport-automation.netlify.app/) [![Mirror to GitLab](https://github.com/crni99/airport-automation/actions/workflows/mirror-to-gitlab.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/mirror-to-gitlab.yml)
 
 This project showcases a comprehensive full-stack solution, combining a robust ASP.NET Core Web API backend, an MVC web frontend, and a modern React single-page application — all seamlessly integrated to provide a highly secure, scalable, and user-friendly system.
 <br />
-
 <br />
 
 ## 📖 Table of Contents
@@ -13,6 +12,8 @@ This project showcases a comprehensive full-stack solution, combining a robust A
 - [⚛️ React Frontend](#-react-frontend)
   
 - [🚀 Deployment](#-deployment)
+
+- [🔄 Mirroring](#-mirroring)
   
 - [🔐 Demo Credentials](#-demo-credentials)
 
@@ -183,6 +184,15 @@ ___
 ## 🚀 [Deployment and Monitoring](https://airport-automation.vercel.app/) 🡥
 - Deploy the application to both **[Vercel](https://airport-automation.vercel.app/)** and **[Netlify](https://airport-automation.netlify.app/)** to ensure high availability and redundancy.
 - Integrate basic logging and monitoring solutions to track application health and capture errors in production environments.
+- The project is mirrored from GitHub to GitLab, where custom **[Github Action](https://github.com/crni99/airport-automation/blob/main/.github/workflows/mirror-to-gitlab.yml)** are configured to automatically trigger the CI/CD pipeline on code changes.
+___
+<br />
+
+<a name="-mirroring"></a>
+## 🔄 [Mirroring](https://github.com/crni99/airport-automation/blob/main/.github/workflows/mirror-to-gitlab.yml) 🡥
+- The project is mirrored from GitHub to GitLab, where a custom GitHub Action is configured to automatically trigger the CI/CD pipeline on code changes.
+- This mirroring setup ensures continuous integration and deployment on GitLab, leveraging the GitHub-to-GitLab synchronization.
+- GitLab actions automatically pick up changes pushed to GitHub, triggering the corresponding CI/CD pipeline on GitLab for seamless integration and deployment.
 ___
 <br />
 
