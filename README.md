@@ -187,11 +187,12 @@ ___
 ___
 <br />
 
+
 <a name="-mirroring"></a>
 ## 🔄 [Mirroring](https://github.com/crni99/airport-automation/blob/main/.github/workflows/mirror-to-gitlab-and-bitbucket.yml) 🡥
-- The project is mirrored from GitHub to GitLab, where a custom GitHub Action is configured to automatically trigger the CI/CD pipeline on code changes.
-- This mirroring setup ensures continuous integration and deployment on GitLab, leveraging the GitHub-to-GitLab synchronization.
-- GitLab actions automatically pick up changes pushed to GitHub, triggering the corresponding CI/CD pipeline on GitLab for seamless integration and deployment.
+- The project is mirrored from GitHub to GitLab and Bitbucket, where custom GitHub Actions are configured to automatically trigger CI/CD pipelines on code changes.
+- This mirroring setup ensures continuous integration and deployment on both GitLab and Bitbucket by synchronizing code changes pushed to GitHub.
+- Both GitLab and Bitbucket automatically pick up the changes pushed from GitHub, triggering their respective CI/CD pipelines for seamless integration and deployment.
 ___
 <br />
 
