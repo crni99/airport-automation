@@ -57,6 +57,7 @@ jobs:
 
       - name: Push to Bitbucket
         run: |
+          echo "Remote URL: https://x-token-auth:***@bitbucket.org/${{ secrets.BITBUCKET_USERNAME }}/airport-automation.git"
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
           echo "Adding Bitbucket remote..."
