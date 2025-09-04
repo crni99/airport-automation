@@ -35,5 +35,5 @@ jobs:
         run: |
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-          git remote add bitbucket https://x-token-auth:${{ secrets.BITBUCKET_API_TOKEN }}@bitbucket.org/${{ secrets.BITBUCKET_USERNAME }}/airport-automation.git
+          git remote add bitbucket https://x-token-auth:${{ secrets.BITBUCKET_TOKEN }}@bitbucket.org/${{ secrets.BITBUCKET_USERNAME }}/airport-automation.git
           git push --force --prune bitbucket refs/heads/*:refs/heads/* refs/tags/*:refs/tags/*
