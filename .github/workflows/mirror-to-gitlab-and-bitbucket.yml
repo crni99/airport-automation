@@ -15,24 +15,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Debug GitLab info
-        run: |
-          echo "GitHub actor: ${{ github.actor }}"
-          echo "GitLab username: ${{ secrets.GITLAB_USERNAME }}"
-          if [ -z "${{ secrets.GITLAB_TOKEN }}" ]; then
-            echo "Error: GITLAB_TOKEN is not set!"
-            exit 1
-          else
-            echo "GITLAB_TOKEN is set."
-          fi
-
       - name: Push to GitLab
         run: |
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-          echo "Adding GitLab remote..."
           git remote add gitlab https://oauth2:${{ secrets.GITLAB_TOKEN }}@gitlab.com/${{ secrets.GITLAB_USERNAME }}/airport-automation.git
-          echo "Pushing to GitLab..."
           git push --force --prune gitlab refs/heads/*:refs/heads/* refs/tags/*:refs/tags/*
 
   mirror-to-bitbucket:
@@ -44,23 +31,9 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Debug Bitbucket info
-        run: |
-          echo "GitHub actor: ${{ github.actor }}"
-          echo "Bitbucket username/workspace: ${{ secrets.BITBUCKET_USERNAME }}"
-          if [ -z "${{ secrets.BITBUCKET_TOKEN }}" ]; then
-            echo "Error: BITBUCKET_TOKEN is not set!"
-            exit 1
-          else
-            echo "BITBUCKET_TOKEN is set."
-          fi
-
       - name: Push to Bitbucket
         run: |
-          echo "Remote URL: https://x-token-auth:***@bitbucket.org/${{ secrets.BITBUCKET_USERNAME }}/airport-automation.git"
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-          echo "Adding Bitbucket remote..."
           git remote add bitbucket https://x-token-auth:${{ secrets.BITBUCKET_TOKEN }}@bitbucket.org/${{ secrets.BITBUCKET_USERNAME }}/airport-automation.git
-          echo "Pushing to Bitbucket..."
           git push --force --prune bitbucket refs/heads/*:refs/heads/* refs/tags/*:refs/tags/*
