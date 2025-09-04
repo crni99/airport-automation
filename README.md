@@ -16,7 +16,6 @@ This project showcases a comprehensive full-stack solution, combining a robust A
 - [🔄 Mirroring](#-mirroring)
   
 - [🔐 Demo Credentials](#-demo-credentials)
-
 ___
 <br />
 
