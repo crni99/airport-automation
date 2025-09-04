@@ -1,0 +1,39 @@
+name: Mirror to GitLab and Bitbucket
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  mirror-to-gitlab:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Push to GitLab
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          git remote add gitlab https://oauth2:${{ secrets.GITLAB_TOKEN }}@gitlab.com/${{ secrets.GITLAB_USERNAME }}/airport-automation.git
+          git push --force --prune gitlab refs/heads/*:refs/heads/* refs/tags/*:refs/tags/*
+
+  mirror-to-bitbucket:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Push to Bitbucket
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          git remote add bitbucket https://x-token-auth:${{ secrets.BITBUCKET_API_TOKEN }}@bitbucket.org/${{ secrets.BITBUCKET_USERNAME }}/airport-automation.git
+          git push --force --prune bitbucket refs/heads/*:refs/heads/* refs/tags/*:refs/tags/*
