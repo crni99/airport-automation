@@ -180,7 +180,7 @@ ___
 <br />
 
 <a name="-deployment"></a>
-## 🚀 [Deployment and Monitoring](https://airport-automation.vercel.app/) 🡥
+## 🚀 [Deployment](https://airport-automation.vercel.app/) 🡥
 - Deploy the application to both **[Vercel](https://airport-automation.vercel.app/)** and **[Netlify](https://airport-automation.netlify.app/)** to ensure high availability and redundancy.
 - Integrate basic logging and monitoring solutions to track application health and capture errors in production environments.
 ___
