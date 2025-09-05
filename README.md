@@ -183,10 +183,8 @@ ___
 ## 🚀 [Deployment and Monitoring](https://airport-automation.vercel.app/) 🡥
 - Deploy the application to both **[Vercel](https://airport-automation.vercel.app/)** and **[Netlify](https://airport-automation.netlify.app/)** to ensure high availability and redundancy.
 - Integrate basic logging and monitoring solutions to track application health and capture errors in production environments.
-- The project is mirrored from GitHub to GitLab, where custom **[Github Action](https://github.com/crni99/airport-automation/blob/main/.github/workflows/mirror-to-gitlab.yml)** are configured to automatically trigger the CI/CD pipeline on code changes.
 ___
 <br />
-
 
 <a name="-mirroring"></a>
 ## 🔄 [Mirroring](https://github.com/crni99/airport-automation/blob/main/.github/workflows/mirror-to-gitlab-and-bitbucket.yml) 🡥
