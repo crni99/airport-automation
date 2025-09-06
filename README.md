@@ -28,7 +28,7 @@ ___
 <img src="https://github.com/user-attachments/assets/c3b1bf69-9ce6-4d97-9179-dd38e0bfa797" alt="Core_Architecture" width="66%" height="66%">
 
 ### Extended Architecture (CI/CD + Deployments)
-<img src="https://github.com/user-attachments/assets/d2d01b54-2d50-49fc-8b8b-0c574db058c9" alt="Extended_Architecture" width="100%" height="100%">
+<img src="https://github.com/user-attachments/assets/c09f0b16-f443-4d5f-8728-35e44092d2b3" alt="Extended_Architecture" width="100%" height="100%">
 
 ___
 <br />
