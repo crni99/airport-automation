@@ -5,6 +5,8 @@ This project showcases a comprehensive full-stack solution, combining a robust A
 <br />
 
 ## 📖 Table of Contents
+- [🏗️ Architecture](#-architecture)
+
 - [📡 Backend - ASP.NET Core Web API](#-backend-aspnet-core-web-api)
   
 - [🌐 MVC Web Frontend](#-mvc-web-frontend)
@@ -16,6 +18,119 @@ This project showcases a comprehensive full-stack solution, combining a robust A
 - [🔄 Mirroring](#-mirroring)
   
 - [🔐 Demo Credentials](#-demo-credentials)
+___
+<br />
+
+<a name="-architecture"></a>
+## 🏗️ Architecture
+
+### Core Architecture
+```mermaid
+flowchart TD
+    %% Subgraphs
+    subgraph Frontends
+        ReactFrontend[⚛️ React Frontend]
+        MVC[🌐 MVC Web Frontend]
+    end
+
+    subgraph Backend
+        API[📡 ASP.NET Core Web API]
+    end
+
+    subgraph Database
+        DB[(🗄️ SQL Server)]
+    end
+
+    %% Connections
+    ReactFrontend -->|REST API| API
+    MVC -->|REST API| API
+    API -->|EF Core| DB
+
+    %% Node Styling
+    style ReactFrontend fill:#61dafb,stroke:#ffffff,stroke-width:2px,color:#000000
+    style MVC fill:#f7df1e,stroke:#ffffff,stroke-width:2px,color:#000000
+    style API fill:#4caf50,stroke:#ffffff,stroke-width:2px,color:#000000
+    style DB fill:#e53935,stroke:#ffffff,stroke-width:2px,color:#ffffff
+
+    %% Subgraph Styling
+    style Frontends fill:#1e1e1e,stroke:#ffffff,stroke-width:1px
+    style Backend fill:#1e1e1e,stroke:#ffffff,stroke-width:1px
+    style Database fill:#1e1e1e,stroke:#ffffff,stroke-width:1px
+
+    %% Link Styling
+    linkStyle 0 stroke:#61dafb,stroke-width:2px,color:#61dafb
+    linkStyle 1 stroke:#f7df1e,stroke-width:2px,color:#f7df1e
+    linkStyle 2 stroke:#4caf50,stroke-width:2px,color:#4caf50
+```
+
+### Extended Architecture (CI/CD + Deployments)
+```mermaid
+flowchart TD
+    %% Subgraphs
+    subgraph Clients
+        ReactFrontend[⚛️ React Frontend]
+        MVC[🌐 MVC Web Frontend]
+    end
+
+    subgraph Backend
+        API[📡 ASP.NET Core Web API]
+    end
+
+    subgraph Database
+        DB[(🗄️ SQL Server)]
+    end
+
+    %% Connections
+    ReactFrontend -->|REST API| API
+    MVC -->|REST API| API
+    API -->|EF Core| DB
+
+    subgraph CI_CD [⚙️ CI/CD Pipelines]
+        GitHub[🐙 GitHub Actions]
+        GitLab[🦊 GitLab CI/CD]
+        Bitbucket[🟦 Bitbucket Pipelines]
+    end
+
+    GitHub --> API
+    GitHub --> ReactFrontend
+    GitHub --> MVC
+    GitHub --> GitLab
+    GitHub --> Bitbucket
+
+    subgraph Deployments
+        Vercel[▲ Vercel]
+        Netlify[🟢 Netlify]
+    end
+
+    ReactFrontend --> Vercel
+    ReactFrontend --> Netlify
+
+    %% Node Styling
+    style ReactFrontend fill:#61dafb,stroke:#ffffff,stroke-width:2px,color:#000000
+    style MVC fill:#f7df1e,stroke:#ffffff,stroke-width:2px,color:#000000
+    style API fill:#4caf50,stroke:#ffffff,stroke-width:2px,color:#000000
+    style DB fill:#e53935,stroke:#ffffff,stroke-width:2px,color:#ffffff
+    style GitHub fill:#24292f,stroke:#ffffff,stroke-width:2px,color:#ffffff
+    style GitLab fill:#fc6d26,stroke:#ffffff,stroke-width:2px,color:#ffffff
+    style Bitbucket fill:#205081,stroke:#ffffff,stroke-width:2px,color:#ffffff
+    style Vercel fill:#000000,stroke:#ffffff,stroke-width:2px,color:#ffffff
+    style Netlify fill:#00c7b7,stroke:#ffffff,stroke-width:2px,color:#ffffff
+
+    %% Subgraph Styling
+    style Clients fill:#1e1e1e,stroke:#ffffff,stroke-width:1px
+    style Backend fill:#1e1e1e,stroke:#ffffff,stroke-width:1px
+    style Database fill:#1e1e1e,stroke:#ffffff,stroke-width:1px
+    style CI_CD fill:#1e1e1e,stroke:#ffffff,stroke-width:1px
+    style Deployments fill:#1e1e1e,stroke:#ffffff,stroke-width:1px
+
+    %% Link Styling
+    linkStyle 0 stroke:#61dafb,stroke-width:2px,color:#61dafb
+    linkStyle 1 stroke:#f7df1e,stroke-width:2px,color:#f7df1e
+    linkStyle 2 stroke:#4caf50,stroke-width:2px,color:#4caf50
+    linkStyle 3 stroke:#24292f,stroke-width:2px,color:#ffffff
+    linkStyle 4 stroke:#24292f,stroke-width:2px,color:#ffffff
+    linkStyle 5 stroke:#24292f,stroke-width:2px,color:#ffffff
+```
 ___
 <br />
 
