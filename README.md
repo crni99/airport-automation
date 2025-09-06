@@ -25,10 +25,10 @@ ___
 ## 🏗️ Architecture
 
 ### Core Architecture
-<img src="https://github.com/user-attachments/assets/c3b1bf69-9ce6-4d97-9179-dd38e0bfa797" alt="Core_Architecture" width="50%" height="50%">
+<img src="https://github.com/user-attachments/assets/c3b1bf69-9ce6-4d97-9179-dd38e0bfa797" alt="Core_Architecture" width="66%" height="66%">
 
 ### Extended Architecture (CI/CD + Deployments)
-<img src="https://github.com/user-attachments/assets/d2d01b54-2d50-49fc-8b8b-0c574db058c9" alt="Extended_Architecture" width="100%" height="50%">
+<img src="https://github.com/user-attachments/assets/d2d01b54-2d50-49fc-8b8b-0c574db058c9" alt="Extended_Architecture" width="100%" height="100%">
 
 ___
 <br />
