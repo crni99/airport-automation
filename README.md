@@ -4,6 +4,50 @@ This project showcases a comprehensive full-stack solution, combining a robust A
 <br />
 <br />
 
+## 🛫 Getting Started
+### To run the project locally:
+1. **Clone the repository**
+```bash
+git clone https://github.com/crni99/airport-automation.git
+```
+2. **Navigate to the backend API project**
+```bash
+cd airport-automation/backend/AirportAutomationApi
+```
+3. **Replace the connection string**
+- Open `appsettings.json` and update the `DefaultConnection` value to point to your local SQL Server instance:
+```json
+"ConnectionStrings": {
+  "Default": "Server=YOUR_SERVER_NAME;Database=AirportAutomation;Trusted_Connection=True;MultipleActiveResultSets=true"
+}
+```
+4. **Run migrations and seed the database**
+```bash
+dotnet ef database update
+```
+5. **In Visual Studio or JetBrains Rider:**
+- Set `AirportAutomationApi` (Web API) and `AirportAutomationWeb` (MVC Web) as the startup projects.
+- This ensures the API and MVC frontend run together.
+6. Start the application
+```bash
+dotnet run
+```
+### **Optional: To use the React instead of the MVC frontend:**
+1. **Navigate to the React frontend**
+```bash
+cd ../../react-frontend
+```
+2. **Install dependencies**
+```bash
+npm install
+```
+3. **Start the React frontend**
+```bash
+npm run start
+```
+___
+<br />
+
 ## 📖 Table of Contents
 - [🏗️ Architecture](#-architecture)
 
@@ -25,10 +69,14 @@ ___
 ## 🏗️ Architecture
 
 ### Core Architecture
-<img src="https://github.com/user-attachments/assets/c3b1bf69-9ce6-4d97-9179-dd38e0bfa797" alt="Core_Architecture" width="66%" height="66%">
+<a href="https://github.com/crni99/airport-automation/blob/main/docs/AA_Core_Architecture.svg" target="_blank">
+<img src="https://raw.githubusercontent.com/crni99/airport-automation/3522c30f0cb3f048c684829ecbd822c90c62f121/docs/AA_Core_Architecture.svg" alt="Core_Architecture" width="66%" height="66%">
+</a>
 
 ### Extended Architecture (CI/CD + Deployments)
-<img src="https://github.com/user-attachments/assets/c09f0b16-f443-4d5f-8728-35e44092d2b3" alt="Extended_Architecture" width="100%" height="100%">
+<a href="https://github.com/crni99/airport-automation/blob/main/docs/AA_Extended_Architecture.svg" target="_blank">
+<img src="https://raw.githubusercontent.com/crni99/airport-automation/3522c30f0cb3f048c684829ecbd822c90c62f121/docs/AA_Extended_Architecture.svg" alt="Extended_Architecture" width="100%" height="100%">
+</a>
 
 ___
 <br />
