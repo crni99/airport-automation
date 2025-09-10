@@ -388,7 +388,7 @@ namespace AirportAutomation.Api.Controllers
 			if (pdf == null)
 			{
 				_logger.LogError("PDF generation failed.");
-				return StatusCode(500, "Failed to generate PDF.");
+				return StatusCode(500, "Failed to generate PDF file.");
 			}
 			string fileName = _utilityService.GenerateUniqueFileName("Airlines", FileExtension.Pdf);
 			return File(pdf, "application/pdf", fileName);
