@@ -1,11 +1,13 @@
-﻿using AirportAutomation.Api.Interfaces;
+﻿using AirportAutomation.Api.Controllers;
+using AirportAutomation.Api.Interfaces;
 using AirportAutomation.Application.Dtos.Destination;
 using AirportAutomation.Application.Dtos.Response;
 using AirportAutomation.Core.Entities;
+using AirportAutomation.Core.Enums;
+using AirportAutomation.Core.Filters;
 using AirportAutomation.Core.Interfaces.IServices;
-using AirportAutomation.Api.Controllers;
-using AirportAutomation.Api.Interfaces;
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -69,6 +71,128 @@ namespace AirportAutomationApi.Test.Controllers
 			);
 		}
 
+		#region Constructor
+		[Fact]
+		[Trait("Category", "Constructor")]
+		public void Constructor_ThrowsArgumentNullException_WhenDestinationServiceIsNull()
+		{
+			// Act & Assert
+			Assert.Throws<ArgumentNullException>(() => new DestinationsController(
+				null,
+				_paginationValidationServiceMock.Object,
+				_inputValidationServiceMock.Object,
+				_utilityServiceMock.Object,
+				_exportServiceMock.Object,
+				_mapperMock.Object,
+				_loggerMock.Object,
+				_configurationMock.Object
+			));
+		}
+
+		[Fact]
+		[Trait("Category", "Constructor")]
+		public void Constructor_ThrowsArgumentNullException_WhenPaginationValidationServiceIsNull()
+		{
+			// Act & Assert
+			Assert.Throws<ArgumentNullException>(() => new DestinationsController(
+				_destinationServiceMock.Object,
+				null,
+				_inputValidationServiceMock.Object,
+				_utilityServiceMock.Object,
+				_exportServiceMock.Object,
+				_mapperMock.Object,
+				_loggerMock.Object,
+				_configurationMock.Object
+			));
+		}
+
+		[Fact]
+		[Trait("Category", "Constructor")]
+		public void Constructor_ThrowsArgumentNullException_WhenInputValidationServiceIsNull()
+		{
+			// Act & Assert
+			Assert.Throws<ArgumentNullException>(() => new DestinationsController(
+				_destinationServiceMock.Object,
+				_paginationValidationServiceMock.Object,
+				null,
+				_utilityServiceMock.Object,
+				_exportServiceMock.Object,
+				_mapperMock.Object,
+				_loggerMock.Object,
+				_configurationMock.Object
+			));
+		}
+
+		[Fact]
+		[Trait("Category", "Constructor")]
+		public void Constructor_ThrowsArgumentNullException_WhenUtilityServiceIsNull()
+		{
+			// Act & Assert
+			Assert.Throws<ArgumentNullException>(() => new DestinationsController(
+				_destinationServiceMock.Object,
+				_paginationValidationServiceMock.Object,
+				_inputValidationServiceMock.Object,
+				null,
+				_exportServiceMock.Object,
+				_mapperMock.Object,
+				_loggerMock.Object,
+				_configurationMock.Object
+			));
+		}
+
+		[Fact]
+		[Trait("Category", "Constructor")]
+		public void Constructor_ThrowsArgumentNullException_WhenExportServiceIsNull()
+		{
+			// Act & Assert
+			Assert.Throws<ArgumentNullException>(() => new DestinationsController(
+				_destinationServiceMock.Object,
+				_paginationValidationServiceMock.Object,
+				_inputValidationServiceMock.Object,
+				_utilityServiceMock.Object,
+				null,
+				_mapperMock.Object,
+				_loggerMock.Object,
+				_configurationMock.Object
+			));
+		}
+
+		[Fact]
+		[Trait("Category", "Constructor")]
+		public void Constructor_ThrowsArgumentNullException_WhenMapperIsNull()
+		{
+			// Act & Assert
+			Assert.Throws<ArgumentNullException>(() => new DestinationsController(
+				_destinationServiceMock.Object,
+				_paginationValidationServiceMock.Object,
+				_inputValidationServiceMock.Object,
+				_utilityServiceMock.Object,
+				_exportServiceMock.Object,
+				null,
+				_loggerMock.Object,
+				_configurationMock.Object
+			));
+		}
+
+		[Fact]
+		[Trait("Category", "Constructor")]
+		public void Constructor_ThrowsArgumentNullException_WhenLoggerIsNull()
+		{
+			// Act & Assert
+			Assert.Throws<ArgumentNullException>(() => new DestinationsController(
+				_destinationServiceMock.Object,
+				_paginationValidationServiceMock.Object,
+				_inputValidationServiceMock.Object,
+				_utilityServiceMock.Object,
+				_exportServiceMock.Object,
+				_mapperMock.Object,
+				null,
+				_configurationMock.Object
+			));
+		}
+		#endregion
+
+		#region GetDestinations
 		[Fact]
 		[Trait("Category", "GetDestinations")]
 		public async Task GetDestinations_InvalidPaginationParameters_ReturnsBadRequest()
@@ -112,6 +236,27 @@ namespace AirportAutomationApi.Test.Controllers
 			Assert.IsType<NoContentResult>(result.Result);
 		}
 
+		[Fact]
+		[Trait("Category", "GetDestinations")]
+		public async Task GetDestinations_ReturnsNoContent_WhenDestinationsIsNull()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			int page = 1;
+			int pageSize = 10;
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, pageSize, null));
+			_destinationServiceMock.Setup(service => service.GetDestinations(cancellationToken, It.IsAny<int>(), It.IsAny<int>()))
+				.ReturnsAsync((List<DestinationEntity>)null);
+
+			// Act
+			var result = await _controller.GetDestinations(cancellationToken, page, pageSize);
+
+			// Assert
+			Assert.IsType<NoContentResult>(result.Result);
+		}
 
 		[Fact]
 		[Trait("Category", "GetDestinations")]
@@ -236,7 +381,9 @@ namespace AirportAutomationApi.Test.Controllers
 			Assert.Equal(allDestinations.Count, pagedResponse.TotalCount);
 			Assert.Equal(expectedData, pagedResponse.Data);
 		}
+		#endregion
 
+		#region GetDestination
 		[Fact]
 		[Trait("Category", "GetDestination")]
 		public async Task GetDestination_InvalidId_ReturnsBadRequest()
@@ -308,7 +455,9 @@ namespace AirportAutomationApi.Test.Controllers
 			var returnedDestinationDto = Assert.IsType<DestinationDto>(okResult.Value);
 			Assert.Equal(destinationDto, returnedDestinationDto);
 		}
+		#endregion
 
+		#region GetDestinationsByCityOrAirport
 		[Fact]
 		[Trait("Category", "GetDestinationsByCityOrAirport")]
 		public async Task GetDestinationsByCityOrAirport_InvalidCityOrAirport_ReturnsBadRequest()
@@ -385,6 +534,31 @@ namespace AirportAutomationApi.Test.Controllers
 			Assert.IsType<NotFoundResult>(result.Result);
 		}
 
+		[Fact]
+		[Trait("Category", "GetDestinationsByCityOrAirport")]
+		public async Task GetDestinationsByCityOrAirport_DestinationsNull_ReturnsNotFound()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			string validName = "NonExistentName";
+			int validPage = 1;
+			int validPageSize = 10;
+
+			_inputValidationServiceMock
+				.Setup(x => x.IsValidString(validName))
+				.Returns(true);
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(validPage, validPageSize, It.IsAny<int>()))
+				.Returns((true, validPageSize, null));
+			_destinationServiceMock.Setup(service => service.GetDestinationsByCityOrAirport(cancellationToken, validPage, validPageSize, validName, null))
+				.ReturnsAsync((List<DestinationEntity>)null);
+
+			// Act
+			var result = await _controller.GetDestinationsByCityOrAirport(cancellationToken, validName, null, validPage, validPageSize);
+
+			// Assert
+			Assert.IsType<NotFoundResult>(result.Result);
+		}
 
 		[Fact]
 		[Trait("Category", "GetDestinationsByCityOrAirport")]
@@ -431,7 +605,150 @@ namespace AirportAutomationApi.Test.Controllers
 			Assert.Equal(totalItems, response.TotalCount);
 			Assert.Equal(destinationDtos, response.Data);
 		}
+		#endregion
 
+		#region GetDestinationsByFilter
+		[Fact]
+		[Trait("Category", "GetDestinationsByFilter")]
+		public async Task GetDestinationsByFilter_ReturnsBadRequest_WhenFilterIsEmpty()
+		{
+			// Arrange
+			var filter = new DestinationSearchFilter();
+
+			// Act
+			var result = await _controller.GetDestinationsByFilter(CancellationToken.None, filter);
+
+			// Assert
+			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+			Assert.Equal("At least one filter criterion must be provided.", badRequestResult.Value);
+		}
+
+		[Fact]
+		[Trait("Category", "GetDestinationsByFilter")]
+		public async Task GetDestinationsByFilter_ReturnsBadRequest_WhenPaginationIsInvalid()
+		{
+			// Arrange
+			var filter = new DestinationSearchFilter { City = "Paris" };
+			var invalidPage = -1;
+			var expectedBadRequestResult = new BadRequestObjectResult("Invalid page number.");
+
+			_paginationValidationServiceMock
+				.Setup(s => s.ValidatePaginationParameters(invalidPage, It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((false, 0, expectedBadRequestResult));
+
+			// Act
+			var result = await _controller.GetDestinationsByFilter(CancellationToken.None, filter, invalidPage);
+
+			// Assert
+			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+			Assert.Equal(expectedBadRequestResult.Value, badRequestResult.Value);
+		}
+
+		[Fact]
+		[Trait("Category", "GetDestinationsByFilter")]
+		public async Task GetDestinationsByFilter_ReturnsNotFound_WhenDestinationsAreEmpty()
+		{
+			// Arrange
+			var filter = new DestinationSearchFilter { City = "Paris" };
+
+			_paginationValidationServiceMock
+				.Setup(s => s.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, 10, null));
+			_destinationServiceMock
+				.Setup(s => s.GetDestinationsByFilter(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>(), filter))
+				.ReturnsAsync(new List<DestinationEntity>());
+
+			// Act
+			var result = await _controller.GetDestinationsByFilter(CancellationToken.None, filter);
+
+			// Assert
+			Assert.IsType<NotFoundResult>(result.Result);
+		}
+
+		[Fact]
+		[Trait("Category", "GetDestinationsByFilter")]
+		public async Task GetDestinationsByFilter_ReturnsNotFound_WhenDestinationsAreNull()
+		{
+			// Arrange
+			var filter = new DestinationSearchFilter { City = "Paris" };
+
+			_paginationValidationServiceMock
+				.Setup(s => s.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, 10, null));
+			_destinationServiceMock
+				.Setup(s => s.GetDestinationsByFilter(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>(), filter))
+				.ReturnsAsync((List<DestinationEntity>)null);
+
+			// Act
+			var result = await _controller.GetDestinationsByFilter(CancellationToken.None, filter);
+
+			// Assert
+			Assert.IsType<NotFoundResult>(result.Result);
+		}
+
+		[Fact]
+		[Trait("Category", "GetDestinationsByFilter")]
+		public async Task GetDestinationsByFilter_ReturnsOk_WithPagedResponse()
+		{
+			// Arrange
+			var filter = new DestinationSearchFilter { City = "Paris" };
+			var page = 1;
+			var pageSize = 10;
+			var destinationEntities = new List<DestinationEntity>
+			{
+				new DestinationEntity { Id = 1, City = "Paris" }
+			};
+			var destinationDtos = new List<DestinationDto>
+			{
+				new DestinationDto { Id = 1, City = "Paris" }
+			};
+			var totalItems = destinationEntities.Count;
+
+			_paginationValidationServiceMock
+				.Setup(s => s.ValidatePaginationParameters(page, pageSize, It.IsAny<int>()))
+				.Returns((true, pageSize, null));
+			_destinationServiceMock
+				.Setup(s => s.GetDestinationsByFilter(It.IsAny<CancellationToken>(), page, pageSize, filter))
+				.ReturnsAsync(destinationEntities);
+			_destinationServiceMock
+				.Setup(s => s.DestinationsCountFilter(It.IsAny<CancellationToken>(), filter))
+				.ReturnsAsync(totalItems);
+			_mapperMock
+				.Setup(m => m.Map<IEnumerable<DestinationDto>>(destinationEntities))
+				.Returns(destinationDtos);
+
+			// Act
+			var result = await _controller.GetDestinationsByFilter(CancellationToken.None, filter, page, pageSize);
+
+			// Assert
+			var okResult = Assert.IsType<OkObjectResult>(result.Result);
+			var response = Assert.IsType<PagedResponse<DestinationDto>>(okResult.Value);
+			Assert.Equal(page, response.PageNumber);
+			Assert.Equal(pageSize, response.PageSize);
+			Assert.Equal(totalItems, response.TotalCount);
+			Assert.Equal(destinationDtos, response.Data);
+		}
+
+		[Fact]
+		[Trait("Category", "GetDestinationsByFilter")]
+		public async Task GetDestinationsByFilter_ThrowsException_WhenServiceFails()
+		{
+			// Arrange
+			var filter = new DestinationSearchFilter { City = "Paris" };
+
+			_paginationValidationServiceMock
+				.Setup(s => s.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, 10, null));
+			_destinationServiceMock
+				.Setup(s => s.GetDestinationsByFilter(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>(), filter))
+				.ThrowsAsync(new Exception("Simulated exception"));
+
+			// Act & Assert
+			await Assert.ThrowsAsync<Exception>(async () => await _controller.GetDestinationsByFilter(CancellationToken.None, filter));
+		}
+		#endregion
+
+		#region PostDestination
 		[Fact]
 		[Trait("Category", "PostDestination")]
 		public async Task PostDestination_ReturnsCreatedAtActionResult_WhenDestinationIsCreatedSuccessfully()
@@ -476,7 +793,9 @@ namespace AirportAutomationApi.Test.Controllers
 			// Act & Assert
 			await Assert.ThrowsAsync<Exception>(async () => await _controller.PostDestination(destinationCreateDto));
 		}
+		#endregion
 
+		#region PutDestination
 		[Fact]
 		[Trait("Category", "PutDestination")]
 		public async Task PutDestination_ReturnsNoContent_WhenUpdateIsSuccessful()
@@ -550,7 +869,9 @@ namespace AirportAutomationApi.Test.Controllers
 			// Assert
 			Assert.IsType<NotFoundResult>(result);
 		}
+		#endregion
 
+		#region PatchDestination
 		[Fact]
 		[Trait("Category", "PatchDestination")]
 		public async Task PatchDestination_ReturnsOk_WhenUpdateIsSuccessful()
@@ -609,7 +930,9 @@ namespace AirportAutomationApi.Test.Controllers
 			// Assert
 			Assert.IsType<NotFoundResult>(result);
 		}
+		#endregion
 
+		#region DeleteDestination
 		[Fact]
 		[Trait("Category", "DeleteDestination")]
 		public async Task DeleteDestination_ReturnsNoContent_WhenDeletionIsSuccessful()
@@ -676,7 +999,394 @@ namespace AirportAutomationApi.Test.Controllers
 			var conflictResult = Assert.IsType<ConflictObjectResult>(result);
 			Assert.Equal("Destination cannot be deleted because it is being referenced by other entities.", conflictResult.Value);
 		}
+		#endregion
+
+		#region ExportToPdf
+		[Fact]
+		[Trait("Category", "ExportToPdf")]
+		public async Task ExportToPdf_ReturnsNoContent_WhenGetAllAndNoDestinationsFound()
+		{
+			// Arrange
+			var filter = new DestinationSearchFilter();
+			_destinationServiceMock.Setup(s => s.GetAllDestinations(It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new List<DestinationEntity>());
+
+			// Act
+			var result = await _controller.ExportToPdf(CancellationToken.None, filter, getAll: true);
+
+			// Assert
+			Assert.IsType<NoContentResult>(result);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToPdf")]
+		public async Task ExportToPdf_ReturnsNoContent_WhenFilteredAndNoDestinationsFound()
+		{
+			// Arrange
+			var filter = new DestinationSearchFilter { City = "NonExistentCity" };
+			_paginationValidationServiceMock.Setup(s => s.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, 10, null));
+			_destinationServiceMock.Setup(s => s.GetDestinationsByFilter(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>(), filter))
+				.ReturnsAsync(new List<DestinationEntity>());
+
+			// Act
+			var result = await _controller.ExportToPdf(CancellationToken.None, filter);
+
+			// Assert
+			Assert.IsType<NoContentResult>(result);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToPdf")]
+		public async Task ExportToPdf_ReturnsNoContent_WhenGetDestinationsReturnsNull()
+		{
+			// Arrange
+			var filter = new DestinationSearchFilter();
+
+			_paginationValidationServiceMock.Setup(s => s.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, 10, null));
+			_destinationServiceMock.Setup(s => s.GetDestinations(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>()))
+				.ReturnsAsync((IList<DestinationEntity>)null);
+
+			// Act
+			var result = await _controller.ExportToPdf(CancellationToken.None, filter);
+
+			// Assert
+			Assert.IsType<NoContentResult>(result);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToPdf")]
+		public async Task ExportToPdf_ReturnsBadRequest_WhenPaginationIsInvalid()
+		{
+			// Arrange
+			var filter = new DestinationSearchFilter();
+			var invalidPage = -1;
+			var expectedBadRequestResult = new BadRequestObjectResult("Invalid page number.");
+
+			_paginationValidationServiceMock
+				.Setup(s => s.ValidatePaginationParameters(invalidPage, It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((false, 0, expectedBadRequestResult));
+
+			// Act
+			var result = await _controller.ExportToPdf(CancellationToken.None, filter, page: invalidPage);
+
+			// Assert
+			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+			Assert.Equal(expectedBadRequestResult.Value, badRequestResult.Value);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToPdf")]
+		public async Task ExportToPdf_ReturnsFileResult_WhenFilterIsEmptyAndDestinationsAreFound()
+		{
+			// Arrange
+			var filter = new DestinationSearchFilter();
+			var destinations = new List<DestinationEntity> { new DestinationEntity { Id = 1, City = "Paris" } };
+			var pdfBytes = new byte[] { 1, 2, 3 };
+
+			_paginationValidationServiceMock.Setup(s => s.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, 10, null));
+			_destinationServiceMock.Setup(s => s.GetDestinations(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>()))
+				.ReturnsAsync(destinations);
+			_exportServiceMock.Setup(s => s.ExportToPDF(It.IsAny<string>(), It.IsAny<IList<DestinationEntity>>()))
+				.Returns(pdfBytes);
+			_utilityServiceMock.Setup(s => s.GenerateUniqueFileName(It.IsAny<string>(), It.IsAny<FileExtension>()))
+				.Returns("TestFile.pdf");
+
+			// Act
+			var result = await _controller.ExportToPdf(CancellationToken.None, filter);
+
+			// Assert
+			var fileResult = Assert.IsType<FileContentResult>(result);
+			Assert.Equal("application/pdf", fileResult.ContentType);
+			Assert.Equal("TestFile.pdf", fileResult.FileDownloadName);
+			Assert.Equal(pdfBytes, fileResult.FileContents);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToPdf")]
+		public async Task ExportToPdf_ReturnsFileResult_WhenFilteredAndDestinationsAreFound()
+		{
+			// Arrange
+			var filter = new DestinationSearchFilter { City = "Paris" };
+			var destinations = new List<DestinationEntity> { new DestinationEntity { Id = 1, City = "Paris" } };
+			var pdfBytes = new byte[] { 1, 2, 3 };
+			_paginationValidationServiceMock.Setup(s => s.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, 10, null));
+			_destinationServiceMock.Setup(s => s.GetDestinationsByFilter(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>(), filter))
+				.ReturnsAsync(destinations);
+			_exportServiceMock.Setup(s => s.ExportToPDF(It.IsAny<string>(), It.IsAny<IList<DestinationEntity>>()))
+				.Returns(pdfBytes);
+			_utilityServiceMock.Setup(s => s.GenerateUniqueFileName(It.IsAny<string>(), It.IsAny<FileExtension>()))
+				.Returns("TestFile.pdf");
+
+			// Act
+			var result = await _controller.ExportToPdf(CancellationToken.None, filter);
+
+			// Assert
+			var fileResult = Assert.IsType<FileContentResult>(result);
+			Assert.Equal("application/pdf", fileResult.ContentType);
+			Assert.Equal("TestFile.pdf", fileResult.FileDownloadName);
+			Assert.Equal(pdfBytes, fileResult.FileContents);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToPdf")]
+		public async Task ExportToPdf_ReturnsFileResult_WhenGetAllIsTrue()
+		{
+			// Arrange
+			var destinations = new List<DestinationEntity> { new DestinationEntity { Id = 1, City = "Paris" } };
+			var pdfBytes = new byte[] { 1, 2, 3 };
+
+			_destinationServiceMock.Setup(s => s.GetAllDestinations(It.IsAny<CancellationToken>()))
+				.ReturnsAsync(destinations);
+			_exportServiceMock.Setup(s => s.ExportToPDF(It.IsAny<string>(), It.IsAny<IList<DestinationEntity>>()))
+				.Returns(pdfBytes);
+			_utilityServiceMock.Setup(s => s.GenerateUniqueFileName(It.IsAny<string>(), It.IsAny<FileExtension>()))
+				.Returns("TestFile.pdf");
+
+			// Act
+			var result = await _controller.ExportToPdf(CancellationToken.None, new DestinationSearchFilter(), getAll: true);
+
+			// Assert
+			var fileResult = Assert.IsType<FileContentResult>(result);
+			Assert.Equal("application/pdf", fileResult.ContentType);
+			Assert.Equal("TestFile.pdf", fileResult.FileDownloadName);
+			Assert.Equal(pdfBytes, fileResult.FileContents);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToPdf")]
+		public async Task ExportToPdf_ReturnsStatusCode500_WhenPdfGenerationFails()
+		{
+			// Arrange
+			var destinations = new List<DestinationEntity> { new DestinationEntity { Id = 1, City = "Paris" } };
+			_destinationServiceMock.Setup(s => s.GetAllDestinations(It.IsAny<CancellationToken>()))
+				.ReturnsAsync(destinations);
+			_exportServiceMock.Setup(s => s.ExportToPDF(It.IsAny<string>(), It.IsAny<IList<DestinationEntity>>()))
+				.Returns((byte[])null);
+
+			// Act
+			var result = await _controller.ExportToPdf(CancellationToken.None, new DestinationSearchFilter(), getAll: true);
+
+			// Assert
+			var statusCodeResult = Assert.IsType<ObjectResult>(result);
+			Assert.Equal(StatusCodes.Status500InternalServerError, statusCodeResult.StatusCode);
+			Assert.Equal("Failed to generate PDF file.", statusCodeResult.Value);
+		}
+		#endregion
+
+		#region ExportToExcel
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_ReturnsNoContent_WhenGetAllAndNoDestinationsFound()
+		{
+			// Arrange
+			var filter = new DestinationSearchFilter();
+			_destinationServiceMock.Setup(s => s.GetAllDestinations(It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new List<DestinationEntity>());
+
+			// Act
+			var result = await _controller.ExportToExcel(CancellationToken.None, filter, getAll: true);
+
+			// Assert
+			Assert.IsType<NoContentResult>(result);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_ReturnsNoContent_WhenFilteredAndNoDestinationsFound()
+		{
+			// Arrange
+			var filter = new DestinationSearchFilter { City = "NonExistentCity" };
+			_paginationValidationServiceMock.Setup(s => s.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, 10, null));
+			_destinationServiceMock.Setup(s => s.GetDestinationsByFilter(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>(), filter))
+				.ReturnsAsync(new List<DestinationEntity>());
+
+			// Act
+			var result = await _controller.ExportToExcel(CancellationToken.None, filter);
+
+			// Assert
+			Assert.IsType<NoContentResult>(result);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_ReturnsBadRequest_WhenPaginationIsInvalid()
+		{
+			// Arrange
+			var filter = new DestinationSearchFilter();
+			var invalidPage = -1;
+			var expectedBadRequestResult = new BadRequestObjectResult("Invalid page number.");
+
+			_paginationValidationServiceMock
+				.Setup(s => s.ValidatePaginationParameters(invalidPage, It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((false, 0, expectedBadRequestResult));
+
+			// Act
+			var result = await _controller.ExportToExcel(CancellationToken.None, filter, page: invalidPage);
+
+			// Assert
+			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+			Assert.Equal(expectedBadRequestResult.Value, badRequestResult.Value);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_ReturnsFileResult_WhenFilterIsEmptyAndDestinationsAreFound()
+		{
+			// Arrange
+			var filter = new DestinationSearchFilter();
+			var destinations = new List<DestinationEntity> { new DestinationEntity { Id = 1, City = "Paris" } };
+			var excelBytes = new byte[] { 1, 2, 3 };
+
+			_paginationValidationServiceMock.Setup(s => s.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, 10, null));
+			_destinationServiceMock.Setup(s => s.GetDestinations(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>()))
+				.ReturnsAsync(destinations);
+			_exportServiceMock.Setup(s => s.ExportToExcel(It.IsAny<string>(), It.IsAny<IList<DestinationEntity>>()))
+				.Returns(excelBytes);
+			_utilityServiceMock.Setup(s => s.GenerateUniqueFileName(It.IsAny<string>(), It.IsAny<FileExtension>()))
+				.Returns("TestFile.xlsx");
+
+			// Act
+			var result = await _controller.ExportToExcel(CancellationToken.None, filter);
+
+			// Assert
+			var fileResult = Assert.IsType<FileContentResult>(result);
+			Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileResult.ContentType);
+			Assert.Equal("TestFile.xlsx", fileResult.FileDownloadName);
+			Assert.Equal(excelBytes, fileResult.FileContents);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_ReturnsFileResult_WhenFilteredAndDestinationsAreFound()
+		{
+			// Arrange
+			var filter = new DestinationSearchFilter { City = "Paris" };
+			var destinations = new List<DestinationEntity> { new DestinationEntity { Id = 1, City = "Paris" } };
+			var excelBytes = new byte[] { 1, 2, 3 };
+			_paginationValidationServiceMock.Setup(s => s.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, 10, null));
+			_destinationServiceMock.Setup(s => s.GetDestinationsByFilter(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>(), filter))
+				.ReturnsAsync(destinations);
+			_exportServiceMock.Setup(s => s.ExportToExcel(It.IsAny<string>(), It.IsAny<IList<DestinationEntity>>()))
+				.Returns(excelBytes);
+			_utilityServiceMock.Setup(s => s.GenerateUniqueFileName(It.IsAny<string>(), It.IsAny<FileExtension>()))
+				.Returns("TestFile.xlsx");
+
+			// Act
+			var result = await _controller.ExportToExcel(CancellationToken.None, filter);
+
+			// Assert
+			var fileResult = Assert.IsType<FileContentResult>(result);
+			Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileResult.ContentType);
+			Assert.Equal("TestFile.xlsx", fileResult.FileDownloadName);
+			Assert.Equal(excelBytes, fileResult.FileContents);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_ReturnsFileResult_WhenGetAllIsTrue()
+		{
+			// Arrange
+			var destinations = new List<DestinationEntity> { new DestinationEntity { Id = 1, City = "Paris" } };
+			var excelBytes = new byte[] { 1, 2, 3 };
+
+			_destinationServiceMock.Setup(s => s.GetAllDestinations(It.IsAny<CancellationToken>()))
+				.ReturnsAsync(destinations);
+			_exportServiceMock.Setup(s => s.ExportToExcel(It.IsAny<string>(), It.IsAny<IList<DestinationEntity>>()))
+				.Returns(excelBytes);
+			_utilityServiceMock.Setup(s => s.GenerateUniqueFileName(It.IsAny<string>(), It.IsAny<FileExtension>()))
+				.Returns("TestFile.xlsx");
+
+			// Act
+			var result = await _controller.ExportToExcel(CancellationToken.None, new DestinationSearchFilter(), getAll: true);
+
+			// Assert
+			var fileResult = Assert.IsType<FileContentResult>(result);
+			Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileResult.ContentType);
+			Assert.Equal("TestFile.xlsx", fileResult.FileDownloadName);
+			Assert.Equal(excelBytes, fileResult.FileContents);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_ReturnsStatusCode500_WhenExcelGenerationFails_Null()
+		{
+			// Arrange
+			var destinations = new List<DestinationEntity> { new DestinationEntity { Id = 1, City = "Paris" } };
+			_destinationServiceMock.Setup(s => s.GetAllDestinations(It.IsAny<CancellationToken>()))
+				.ReturnsAsync(destinations);
+			_exportServiceMock.Setup(s => s.ExportToExcel(It.IsAny<string>(), It.IsAny<IList<DestinationEntity>>()))
+				.Returns((byte[])null);
+
+			// Act
+			var result = await _controller.ExportToExcel(CancellationToken.None, new DestinationSearchFilter(), getAll: true);
+
+			// Assert
+			var statusCodeResult = Assert.IsType<ObjectResult>(result);
+			Assert.Equal(StatusCodes.Status500InternalServerError, statusCodeResult.StatusCode);
+			Assert.Equal("Failed to generate Excel file.", statusCodeResult.Value);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_ReturnsStatusCode500_WhenExcelGenerationFails_EmptyArray()
+		{
+			// Arrange
+			var destinations = new List<DestinationEntity> { new DestinationEntity { Id = 1, City = "Paris" } };
+			_destinationServiceMock.Setup(s => s.GetAllDestinations(It.IsAny<CancellationToken>()))
+				.ReturnsAsync(destinations);
+			_exportServiceMock.Setup(s => s.ExportToExcel(It.IsAny<string>(), It.IsAny<IList<DestinationEntity>>()))
+				.Returns(Array.Empty<byte>());
+
+			// Act
+			var result = await _controller.ExportToExcel(CancellationToken.None, new DestinationSearchFilter(), getAll: true);
+
+			// Assert
+			var statusCodeResult = Assert.IsType<ObjectResult>(result);
+			Assert.Equal(StatusCodes.Status500InternalServerError, statusCodeResult.StatusCode);
+			Assert.Equal("Failed to generate Excel file.", statusCodeResult.Value);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_ReturnsNoContent_WhenGetDestinationsReturnsNull()
+		{
+			// Arrange
+			var filter = new DestinationSearchFilter();
+			_paginationValidationServiceMock.Setup(s => s.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, 10, null));
+			_destinationServiceMock.Setup(s => s.GetDestinations(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>()))
+				.ReturnsAsync((IList<DestinationEntity>)null);
+
+			// Act
+			var result = await _controller.ExportToExcel(CancellationToken.None, filter);
+
+			// Assert
+			Assert.IsType<NoContentResult>(result);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_ReturnsNoContent_WhenGetAllReturnsNull()
+		{
+			// Arrange
+			var filter = new DestinationSearchFilter();
+			_destinationServiceMock.Setup(s => s.GetAllDestinations(It.IsAny<CancellationToken>()))
+				.ReturnsAsync((IList<DestinationEntity>)null);
+
+			// Act
+			var result = await _controller.ExportToExcel(CancellationToken.None, filter, getAll: true);
+
+			// Assert
+			Assert.IsType<NoContentResult>(result);
+		}
+		#endregion
 
 	}
-
 }

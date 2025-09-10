@@ -69,13 +69,13 @@ namespace AirportAutomationApi.Test.Controllers
 			);
 		}
 
-		#region Constructor Tests
+		#region Constructor
 		/// <summary>
 		/// This test ensures that the `AirlinesController` constructor throws an `ArgumentNullException`
 		/// if a `null` value is passed in for the `IAirlineService`. This prevents the application from failing
 		/// unexpectedly later on if a crucial dependency is missing.
 		/// </summary>
-		[Trait("Category", "Constructor Tests")]
+		[Trait("Category", "Constructor")]
 		[Fact]
 		public void Constructor_ThrowsArgumentNullException_WhenAirlineServiceIsNull()
 		{
@@ -105,7 +105,7 @@ namespace AirportAutomationApi.Test.Controllers
 		/// `IPaginationValidationService` dependency is `null`.
 		/// </summary>
 		[Fact]
-		[Trait("Category", "Constructor Tests")]
+		[Trait("Category", "Constructor")]
 		public void Constructor_ThrowsArgumentNullException_WhenPaginationValidationServiceIsNull()
 		{
 			// Arrange
@@ -134,7 +134,7 @@ namespace AirportAutomationApi.Test.Controllers
 		/// `IInputValidationService` is `null`, ensuring proper validation services are always provided.
 		/// </summary>
 		[Fact]
-		[Trait("Category", "Constructor Tests")]
+		[Trait("Category", "Constructor")]
 		public void Constructor_ThrowsArgumentNullException_WhenInputValidationServiceIsNull()
 		{
 			// Arrange
@@ -163,7 +163,7 @@ namespace AirportAutomationApi.Test.Controllers
 		/// `IUtilityService` is `null`.
 		/// </summary>
 		[Fact]
-		[Trait("Category", "Constructor Tests")]
+		[Trait("Category", "Constructor")]
 		public void Constructor_ThrowsArgumentNullException_WhenUtilityServiceIsNull()
 		{
 			// Arrange
@@ -192,7 +192,7 @@ namespace AirportAutomationApi.Test.Controllers
 		/// `IExportService` is passed to it.
 		/// </summary>
 		[Fact]
-		[Trait("Category", "Constructor Tests")]
+		[Trait("Category", "Constructor")]
 		public void Constructor_ThrowsArgumentNullException_WhenExportServiceIsNull()
 		{
 			// Arrange
@@ -221,7 +221,7 @@ namespace AirportAutomationApi.Test.Controllers
 		/// dependency is `null`.
 		/// </summary>
 		[Fact]
-		[Trait("Category", "Constructor Tests")]
+		[Trait("Category", "Constructor")]
 		public void Constructor_ThrowsArgumentNullException_WhenMapperIsNull()
 		{
 			// Arrange
@@ -250,7 +250,7 @@ namespace AirportAutomationApi.Test.Controllers
 		/// dependency is `null`, which is important for maintaining a functional logging system.
 		/// </summary>
 		[Fact]
-		[Trait("Category", "Constructor Tests")]
+		[Trait("Category", "Constructor")]
 		public void Constructor_ThrowsArgumentNullException_WhenLoggerIsNull()
 		{
 			// Arrange
@@ -280,7 +280,7 @@ namespace AirportAutomationApi.Test.Controllers
 		/// the constructor works as expected under normal circumstances.
 		/// </summary>
 		[Fact]
-		[Trait("Category", "Constructor Tests")]
+		[Trait("Category", "Constructor")]
 		public void Constructor_DoesNotThrowException_WhenAllDependenciesAreValid()
 		{
 			// Arrange
