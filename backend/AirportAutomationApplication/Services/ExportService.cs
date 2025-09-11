@@ -14,6 +14,7 @@ namespace AirportAutomation.Application.Services
 		private const float CELL_PADDING = 6f;
 
 		#region Excel Export
+
 		public byte[] ExportToExcel<T>(string name, IList<T> data)
 		{
 			using var workbook = new XLWorkbook();
@@ -62,9 +63,11 @@ namespace AirportAutomation.Application.Services
 			workbook.SaveAs(stream);
 			return stream.ToArray();
 		}
+
 		#endregion
 
 		#region PDF Export
+
 		public byte[] ExportToPDF<T>(string name, IList<T> data)
 		{
 			var doc = Document.Create(container =>
@@ -396,6 +399,7 @@ namespace AirportAutomation.Application.Services
 				}
 			});
 		}
+
 		#endregion
 
 	}

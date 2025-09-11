@@ -53,6 +53,15 @@ namespace AirportAutomationApi.Test.Services
 		}
 
 		[Fact]
+		public async Task GetPassengersByFilter_Should_Call_Repository_GetPassengersByFilter()
+		{
+			var cancellationToken = new CancellationToken();
+			await _service.GetPassengersByFilter(cancellationToken, 1, 10, null);
+
+			_repositoryMock.Verify(repo => repo.GetPassengersByFilter(cancellationToken, 1, 10, null), Times.Once);
+		}
+
+		[Fact]
 		public async Task PostPassenger_Should_Call_Repository_PostPassenger()
 		{
 			var passenger = new PassengerEntity();
@@ -107,6 +116,18 @@ namespace AirportAutomationApi.Test.Services
 			_repositoryMock.Setup(repo => repo.PassengersCount(cancellationToken, null, null)).ReturnsAsync(expectedCount);
 
 			int count = await _service.PassengersCount(cancellationToken);
+
+			Assert.Equal(expectedCount, count);
+		}
+
+		[Fact]
+		public async Task PassengersCountFilter_ShouldReturnCorrectCount()
+		{
+			var cancellationToken = new CancellationToken();
+			var expectedCount = 5;
+			_repositoryMock.Setup(repo => repo.PassengersCountFilter(cancellationToken, null)).ReturnsAsync(expectedCount);
+
+			int count = await _service.PassengersCountFilter(cancellationToken, null);
 
 			Assert.Equal(expectedCount, count);
 		}

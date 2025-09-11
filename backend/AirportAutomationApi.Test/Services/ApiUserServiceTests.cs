@@ -43,6 +43,15 @@ namespace AirportAutomationApi.Test.Services
 		}
 
 		[Fact]
+		public async Task GetApiUsersByFilter_Should_Call_Repository_GetApiUsersByFilter()
+		{
+			var cancellationToken = new CancellationToken();
+			await _service.GetApiUsersByFilter(cancellationToken, 1, 10, null);
+
+			_repositoryMock.Verify(repo => repo.GetApiUsersByFilter(cancellationToken, 1, 10, null), Times.Once);
+		}
+
+		[Fact]
 		public async Task PutApiUser_Should_Call_Repository_PutApiUser()
 		{
 			var airline = new ApiUserEntity();
@@ -80,6 +89,19 @@ namespace AirportAutomationApi.Test.Services
 
 			Assert.Equal(expectedCount, count);
 		}
+
+		[Fact]
+		public async Task ApiUsersCountFilter_ShouldReturnCorrectCount()
+		{
+			var cancellationToken = new CancellationToken();
+			var expectedCount = 5;
+			_repositoryMock.Setup(repo => repo.ApiUsersCountFilter(cancellationToken, null)).ReturnsAsync(expectedCount);
+
+			var count = await _service.ApiUsersCountFilter(cancellationToken, null);
+
+			Assert.Equal(expectedCount, count);
+		}
+
 	}
 }
 
