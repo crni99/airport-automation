@@ -652,7 +652,7 @@ namespace AirportAutomationApi.Test.Controllers
 
 			_paginationValidationServiceMock
 				.Setup(s => s.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
-				.Returns((true, 50, null)); // Corrected page size to 50
+				.Returns((true, 50, null));
 			_passengerServiceMock
 				.Setup(s => s.GetPassengersByFilter(It.IsAny<CancellationToken>(), It.IsAny<int>(), 50, It.IsAny<PassengerSearchFilter>()))
 				.ReturnsAsync(passengers);
@@ -705,11 +705,8 @@ namespace AirportAutomationApi.Test.Controllers
 			var passengerEntity = new PassengerEntity { Id = 1 };
 			var passengerDto = new PassengerDto { Id = 1 };
 
-			// Set up the mapper to return the expected values
 			_mapperMock.Setup(m => m.Map<PassengerEntity>(passengerCreateDto)).Returns(passengerEntity);
 			_mapperMock.Setup(m => m.Map<PassengerDto>(passengerEntity)).Returns(passengerDto);
-
-			// Adjust service setup to return the passengerEntity wrapped in a Task
 			_passengerServiceMock.Setup(service => service.PostPassenger(passengerEntity))
 							   .ReturnsAsync(passengerEntity);
 

@@ -694,11 +694,8 @@ namespace AirportAutomationApi.Test.Controllers
 			var destinationEntity = new DestinationEntity { Id = 1 };
 			var destinationDto = new DestinationDto { Id = 1 };
 
-			// Set up the mapper to return the expected values
 			_mapperMock.Setup(m => m.Map<DestinationEntity>(destinationCreateDto)).Returns(destinationEntity);
 			_mapperMock.Setup(m => m.Map<DestinationDto>(destinationEntity)).Returns(destinationDto);
-
-			// Adjust service setup to return the destinationEntity wrapped in a Task
 			_destinationServiceMock.Setup(service => service.PostDestination(destinationEntity))
 							   .ReturnsAsync(destinationEntity);
 

@@ -187,7 +187,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, pageSize, null));
 			_airlineServiceMock.Setup(service => service.GetAirlines(cancellationToken, It.IsAny<int>(), It.IsAny<int>()))
-				.ReturnsAsync((List<AirlineEntity>)null); // Simulate null return
+				.ReturnsAsync((List<AirlineEntity>)null);
 
 			// Act
 			var result = await _controller.GetAirlines(cancellationToken, page, pageSize);

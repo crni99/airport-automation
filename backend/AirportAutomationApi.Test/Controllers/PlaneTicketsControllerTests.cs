@@ -3,6 +3,8 @@ using AirportAutomation.Api.Interfaces;
 using AirportAutomation.Application.Dtos.PlaneTicket;
 using AirportAutomation.Application.Dtos.Response;
 using AirportAutomation.Core.Entities;
+using AirportAutomation.Core.Enums;
+using AirportAutomation.Core.Filters;
 using AirportAutomation.Core.Interfaces.IServices;
 using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
@@ -126,6 +128,8 @@ namespace AirportAutomationApi.Test.Controllers
 			Assert.Contains(serviceName, exception.Message);
 		}
 
+		#region GetPlaneTickets
+
 		[Fact]
 		[Trait("Category", "GetPlaneTickets")]
 		public async Task GetPlaneTickets_InvalidPaginationParameters_ReturnsBadRequest()
@@ -161,6 +165,28 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns((true, pageSize, null));
 			_planeTicketServiceMock.Setup(service => service.GetPlaneTickets(cancellationToken, It.IsAny<int>(), It.IsAny<int>()))
 				.ReturnsAsync(new List<PlaneTicketEntity>());
+
+			// Act
+			var result = await _controller.GetPlaneTickets(cancellationToken, page, pageSize);
+
+			// Assert
+			Assert.IsType<NoContentResult>(result.Result);
+		}
+
+		[Fact]
+		[Trait("Category", "GetPlaneTickets")]
+		public async Task GetPlaneTickets_ReturnsNoContent_WhenPlaneTicketsListIsNull()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			int page = 1;
+			int pageSize = 10;
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, pageSize, null));
+			_planeTicketServiceMock.Setup(service => service.GetPlaneTickets(cancellationToken, It.IsAny<int>(), It.IsAny<int>()))
+				.ReturnsAsync((List<PlaneTicketEntity>)null);
 
 			// Act
 			var result = await _controller.GetPlaneTickets(cancellationToken, page, pageSize);
@@ -293,6 +319,10 @@ namespace AirportAutomationApi.Test.Controllers
 			Assert.Equal(expectedData, pagedResponse.Data);
 		}
 
+		#endregion
+
+		#region GetPlaneTicket
+
 		[Fact]
 		[Trait("Category", "GetPlaneTicket")]
 		public async Task GetPlaneTicket_InvalidId_ReturnsBadRequest()
@@ -365,19 +395,26 @@ namespace AirportAutomationApi.Test.Controllers
 			Assert.Equal(planeTicketDto, returnedPlaneTicketDto);
 		}
 
+		#endregion
+
+		#region GetPlaneTicketsByPrice
+
 		[Fact]
+		[Trait("Category", "GetPlaneTicketsByPrice")]
 		public async Task GetPlaneTicketsForPrice_ReturnsBadRequest_WhenMinPriceAndMaxPriceAreMissing()
 		{
 			// Arrange
 			var cancellationToken = new CancellationToken();
 			int page = 1;
 			int pageSize = 10;
+			var expectedBadRequestResult = "Both min price and max price are missing in the request.";
 
 			// Act
 			var result = await _controller.GetPlaneTicketsForPrice(cancellationToken, null, null, page, pageSize);
 
 			// Assert
-			Assert.NotNull(result);
+			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+			Assert.Equal(expectedBadRequestResult, badRequestResult.Value);
 		}
 
 		[Fact]
@@ -430,6 +467,31 @@ namespace AirportAutomationApi.Test.Controllers
 
 		[Fact]
 		[Trait("Category", "GetPlaneTicketsByPrice")]
+		public async Task GetPlaneTicketsByPrice_ReturnsNotFound_WhenPlaneTicketsListIsNull()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			int minPrice = 100;
+			int maxPrice = 200;
+			int validPage = 1;
+			int validPageSize = 10;
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(validPage, validPageSize, It.IsAny<int>()))
+				.Returns((true, validPageSize, null));
+			_planeTicketServiceMock
+				.Setup(service => service.GetPlaneTicketsForPrice(cancellationToken, validPage, validPageSize, minPrice, maxPrice))
+				.ReturnsAsync((List<PlaneTicketEntity>)null);
+
+			// Act
+			var result = await _controller.GetPlaneTicketsForPrice(cancellationToken, minPrice, maxPrice, validPage, validPageSize);
+
+			// Assert
+			Assert.IsType<NotFoundResult>(result.Result);
+		}
+
+		[Fact]
+		[Trait("Category", "GetPlaneTicketsByPrice")]
 		public async Task GetPlaneTicketsByPrice_ReturnsPagedListOfPlaneTickets_WhenPlaneTicketsFound()
 		{
 			// Arrange
@@ -468,6 +530,142 @@ namespace AirportAutomationApi.Test.Controllers
 			Assert.Equal(planeTicketDtos, response.Data);
 		}
 
+		#endregion
+
+		#region GetPlaneTicketsByFilter
+
+		[Fact]
+		[Trait("Category", "GetPlaneTicketsByFilter")]
+		public async Task GetPlaneTicketsByFilter_EmptyFilter_ReturnsBadRequest()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			// Assuming IsEmpty() is a static extension method, we don't need to mock it.
+			var emptyFilter = new PlaneTicketSearchFilter();
+			var expectedBadRequestResult = "At least one filter criterion must be provided.";
+
+			// Act
+			var result = await _controller.GetPlaneTicketsByFilter(cancellationToken, emptyFilter);
+
+			// Assert
+			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+			Assert.Equal(expectedBadRequestResult, badRequestResult.Value);
+		}
+
+		[Fact]
+		[Trait("Category", "GetPlaneTicketsByFilter")]
+		public async Task GetPlaneTicketsByFilter_InvalidPaginationParameters_ReturnsBadRequest()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var filter = new PlaneTicketSearchFilter { SeatNumber = 16 };
+			int invalidPage = -1;
+			int invalidPageSize = 0;
+			var expectedBadRequestResult = new BadRequestObjectResult("Invalid pagination parameters.");
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(invalidPage, invalidPageSize, It.IsAny<int>()))
+				.Returns((false, 0, expectedBadRequestResult));
+
+			// Act
+			var result = await _controller.GetPlaneTicketsByFilter(cancellationToken, filter, invalidPage, invalidPageSize);
+
+			// Assert
+			Assert.IsType<BadRequestObjectResult>(result.Result);
+		}
+
+		[Fact]
+		[Trait("Category", "GetPlaneTicketsByFilter")]
+		public async Task GetPlaneTicketsByFilter_PlaneTicketsNotFound_ReturnsNotFound()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var filter = new PlaneTicketSearchFilter { SeatNumber = 16 };
+			int page = 1;
+			int pageSize = 10;
+			var emptyPlaneTicketsList = new List<PlaneTicketEntity>();
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(page, pageSize, It.IsAny<int>()))
+				.Returns((true, pageSize, null));
+			_planeTicketServiceMock
+				.Setup(service => service.GetPlaneTicketsByFilter(cancellationToken, page, pageSize, filter))
+				.ReturnsAsync(emptyPlaneTicketsList);
+
+			// Act
+			var result = await _controller.GetPlaneTicketsByFilter(cancellationToken, filter, page, pageSize);
+
+			// Assert
+			Assert.IsType<NotFoundResult>(result.Result);
+		}
+
+		[Fact]
+		[Trait("Category", "GetPlaneTicketsByFilter")]
+		public async Task GetPlaneTicketsByFilter_ReturnsNotFound_WhenPlaneTicketsListIsNull()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var filter = new PlaneTicketSearchFilter { SeatNumber = 16 };
+			int page = 1;
+			int pageSize = 10;
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(page, pageSize, It.IsAny<int>()))
+				.Returns((true, pageSize, null));
+			_planeTicketServiceMock
+				.Setup(service => service.GetPlaneTicketsByFilter(cancellationToken, page, pageSize, filter))
+				.ReturnsAsync((List<PlaneTicketEntity>)null);
+
+			// Act
+			var result = await _controller.GetPlaneTicketsByFilter(cancellationToken, filter, page, pageSize);
+
+			// Assert
+			Assert.IsType<NotFoundResult>(result.Result);
+		}
+
+		[Fact]
+		[Trait("Category", "GetPlaneTicketsByFilter")]
+		public async Task GetPlaneTicketsByFilter_ReturnsOk_WithPaginatedPlaneTickets()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var filter = new PlaneTicketSearchFilter { SeatNumber = 16 };
+			int page = 1;
+			int pageSize = 10;
+			var planeTicketEntities = new List<PlaneTicketEntity> { new PlaneTicketEntity(), new PlaneTicketEntity() };
+			var planeTicketDtos = new List<PlaneTicketDto> { new PlaneTicketDto(), new PlaneTicketDto() };
+			var totalItems = 2;
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(page, pageSize, It.IsAny<int>()))
+				.Returns((true, pageSize, null));
+			_planeTicketServiceMock
+				.Setup(service => service.GetPlaneTicketsByFilter(cancellationToken, page, pageSize, filter))
+				.ReturnsAsync(planeTicketEntities);
+			_planeTicketServiceMock
+				.Setup(service => service.PlaneTicketsCountFilter(cancellationToken, filter))
+				.ReturnsAsync(totalItems);
+			_mapperMock
+				.Setup(m => m.Map<IEnumerable<PlaneTicketDto>>(planeTicketEntities))
+				.Returns(planeTicketDtos);
+
+			// Act
+			var result = await _controller.GetPlaneTicketsByFilter(cancellationToken, filter, page, pageSize);
+
+			// Assert
+			var actionResult = Assert.IsType<ActionResult<PagedResponse<PlaneTicketDto>>>(result);
+			var okResult = Assert.IsType<OkObjectResult>(actionResult.Result);
+			var response = Assert.IsType<PagedResponse<PlaneTicketDto>>(okResult.Value);
+			Assert.Equal(page, response.PageNumber);
+			Assert.Equal(pageSize, response.PageSize);
+			Assert.Equal(totalItems, response.TotalCount);
+			Assert.Equal(planeTicketDtos, response.Data);
+		}
+
+		#endregion
+
+		#region PostPlaneTicket
+
 		[Fact]
 		[Trait("Category", "PostPlaneTicket")]
 		public async Task PostPlaneTicket_ReturnsCreatedAtActionResult_WhenPlaneTicketIsCreatedSuccessfully()
@@ -477,11 +675,8 @@ namespace AirportAutomationApi.Test.Controllers
 			var planeTicketEntity = new PlaneTicketEntity { Id = 1 };
 			var planeTicketDto = new PlaneTicketDto { Id = 1 };
 
-			// Set up the mapper to return the expected values
 			_mapperMock.Setup(m => m.Map<PlaneTicketEntity>(planeTicketCreateDto)).Returns(planeTicketEntity);
 			_mapperMock.Setup(m => m.Map<PlaneTicketDto>(planeTicketEntity)).Returns(planeTicketDto);
-
-			// Adjust service setup to return the planeTicketEntity wrapped in a Task
 			_planeTicketServiceMock.Setup(service => service.PostPlaneTicket(planeTicketEntity))
 							   .ReturnsAsync(planeTicketEntity);
 
@@ -512,6 +707,10 @@ namespace AirportAutomationApi.Test.Controllers
 			// Act & Assert
 			await Assert.ThrowsAsync<Exception>(async () => await _controller.PostPlaneTicket(planeTicketCreateDto));
 		}
+
+		#endregion
+
+		#region PutPlaneTicket
 
 		[Fact]
 		[Trait("Category", "PutPlaneTicket")]
@@ -587,6 +786,10 @@ namespace AirportAutomationApi.Test.Controllers
 			Assert.IsType<NotFoundResult>(result);
 		}
 
+		#endregion
+
+		#region PatchPlaneTicket
+
 		[Fact]
 		[Trait("Category", "PatchPlaneTicket")]
 		public async Task PatchPlaneTicket_ReturnsOk_WhenUpdateIsSuccessful()
@@ -645,6 +848,10 @@ namespace AirportAutomationApi.Test.Controllers
 			// Assert
 			Assert.IsType<NotFoundResult>(result);
 		}
+
+		#endregion
+
+		#region DeletePlaneTicket
 
 		[Fact]
 		[Trait("Category", "DeletePlaneTicket")]
@@ -711,6 +918,424 @@ namespace AirportAutomationApi.Test.Controllers
 			// Assert
 			var conflictResult = Assert.IsType<ConflictResult>(result);
 		}
+
+		#endregion
+
+		#region ExportToPdf
+
+		[Fact]
+		[Trait("Category", "ExportToPdf")]
+		public async Task ExportToPdf_GetAllIsTrue_ReturnsFileContent()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var pilots = new List<PlaneTicketEntity> { new PlaneTicketEntity(), new PlaneTicketEntity() };
+			var pdfBytes = new byte[] { 1, 2, 3, 4 };
+			var fileName = "PlaneTickets.pdf";
+			var getAll = true;
+
+			_planeTicketServiceMock
+				.Setup(s => s.GetAllPlaneTickets(cancellationToken))
+				.ReturnsAsync(pilots);
+			_exportServiceMock
+				.Setup(s => s.ExportToPDF("Plane Tickets", pilots))
+				.Returns(pdfBytes);
+			_utilityServiceMock
+				.Setup(s => s.GenerateUniqueFileName("PlaneTickets", FileExtension.Pdf))
+				.Returns(fileName);
+
+			// Act
+			var result = await _controller.ExportToPdf(cancellationToken, null, getAll: getAll);
+
+			// Assert
+			var fileResult = Assert.IsType<FileContentResult>(result);
+			Assert.Equal("application/pdf", fileResult.ContentType);
+			Assert.Equal(fileName, fileResult.FileDownloadName);
+			Assert.Equal(pdfBytes, fileResult.FileContents);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToPdf")]
+		public async Task ExportToPdf_EmptyFilter_ReturnsFileContent()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var filter = new PlaneTicketSearchFilter { SeatNumber = null };
+			int page = 1;
+			int pageSize = 10;
+			var pilots = new List<PlaneTicketEntity> { new PlaneTicketEntity() };
+			var pdfBytes = new byte[] { 1, 2, 3, 4 };
+			var fileName = "PlaneTickets.pdf";
+
+			_paginationValidationServiceMock
+				.Setup(s => s.ValidatePaginationParameters(page, pageSize, It.IsAny<int>()))
+				.Returns((true, pageSize, null));
+			// Assuming IsEmpty is a static extension method, no mock setup is needed.
+			_planeTicketServiceMock
+				.Setup(s => s.GetPlaneTickets(cancellationToken, page, pageSize))
+				.ReturnsAsync(pilots);
+			_exportServiceMock
+				.Setup(s => s.ExportToPDF("Plane Tickets", pilots))
+				.Returns(pdfBytes);
+			_utilityServiceMock
+				.Setup(s => s.GenerateUniqueFileName("PlaneTickets", FileExtension.Pdf))
+				.Returns(fileName);
+
+			// Act
+			var result = await _controller.ExportToPdf(cancellationToken, filter, page, pageSize);
+
+			// Assert
+			var fileResult = Assert.IsType<FileContentResult>(result);
+			Assert.Equal("application/pdf", fileResult.ContentType);
+			Assert.Equal(fileName, fileResult.FileDownloadName);
+			Assert.Equal(pdfBytes, fileResult.FileContents);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToPdf")]
+		public async Task ExportToPdf_NonEmptyFilter_ReturnsFileContent()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var filter = new PlaneTicketSearchFilter { SeatNumber = 16 };
+			int page = 1;
+			int pageSize = 10;
+			var pilots = new List<PlaneTicketEntity> { new PlaneTicketEntity() };
+			var pdfBytes = new byte[] { 1, 2, 3, 4 };
+			var fileName = "PlaneTickets.pdf";
+
+			_paginationValidationServiceMock
+				.Setup(s => s.ValidatePaginationParameters(page, pageSize, It.IsAny<int>()))
+				.Returns((true, pageSize, null));
+			_planeTicketServiceMock
+				.Setup(s => s.GetPlaneTicketsByFilter(cancellationToken, page, pageSize, filter))
+				.ReturnsAsync(pilots);
+			_exportServiceMock
+				.Setup(s => s.ExportToPDF("Plane Tickets", pilots))
+				.Returns(pdfBytes);
+			_utilityServiceMock
+				.Setup(s => s.GenerateUniqueFileName("PlaneTickets", FileExtension.Pdf))
+				.Returns(fileName);
+
+			// Act
+			var result = await _controller.ExportToPdf(cancellationToken, filter, page, pageSize);
+
+			// Assert
+			var fileResult = Assert.IsType<FileContentResult>(result);
+			Assert.Equal("application/pdf", fileResult.ContentType);
+			Assert.Equal(fileName, fileResult.FileDownloadName);
+			Assert.Equal(pdfBytes, fileResult.FileContents);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToPdf")]
+		public async Task ExportToPdf_InvalidPaginationParameters_ReturnsBadRequest()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var filter = new PlaneTicketSearchFilter { SeatNumber = 16 };
+			int invalidPage = -1;
+			int invalidPageSize = 0;
+			var expectedBadRequestResult = new BadRequestObjectResult("Invalid pagination parameters.");
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(invalidPage, invalidPageSize, It.IsAny<int>()))
+				.Returns((false, 0, expectedBadRequestResult));
+
+			// Act
+			var result = await _controller.ExportToPdf(cancellationToken, filter, invalidPage, invalidPageSize);
+
+			// Assert
+			Assert.IsType<BadRequestObjectResult>(result);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToPdf")]
+		public async Task ExportToPdf_NoPilotsFound_ReturnsNoContent()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var filter = new PlaneTicketSearchFilter();
+			var pilots = new List<PlaneTicketEntity>();
+			var getAll = true;
+
+			_planeTicketServiceMock
+				.Setup(s => s.GetAllPlaneTickets(cancellationToken))
+				.ReturnsAsync(pilots);
+
+			// Act
+			var result = await _controller.ExportToPdf(cancellationToken, filter, getAll: getAll);
+
+			// Assert
+			Assert.IsType<NoContentResult>(result);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToPdf")]
+		public async Task ExportToPdf_PilotsListIsNull_ReturnsNoContent()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var filter = new PlaneTicketSearchFilter();
+			var getAll = true;
+
+			_planeTicketServiceMock
+				.Setup(s => s.GetAllPlaneTickets(cancellationToken))
+				.ReturnsAsync((IList<PlaneTicketEntity>)null);
+
+			// Act
+			var result = await _controller.ExportToPdf(cancellationToken, filter, getAll: getAll);
+
+			// Assert
+			Assert.IsType<NoContentResult>(result);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToPdf")]
+		public async Task ExportToPdf_PdfGenerationFails_ReturnsInternalServerError()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var pilots = new List<PlaneTicketEntity> { new PlaneTicketEntity() };
+			var getAll = true;
+
+			_planeTicketServiceMock
+				.Setup(s => s.GetAllPlaneTickets(cancellationToken))
+				.ReturnsAsync(pilots);
+			_exportServiceMock
+				.Setup(s => s.ExportToPDF("Plane Tickets", pilots))
+				.Returns((byte[])null);
+
+			// Act
+			var result = await _controller.ExportToPdf(cancellationToken, null, getAll: getAll);
+
+			// Assert
+			var statusCodeResult = Assert.IsType<ObjectResult>(result);
+			Assert.Equal(500, statusCodeResult.StatusCode);
+			Assert.Equal("Failed to generate PDF file.", statusCodeResult.Value);
+		}
+
+		#endregion
+
+		#region ExportToExcel
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_GetAllIsTrue_ReturnsFileContent()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var planeTickets = new List<PlaneTicketEntity> { new PlaneTicketEntity(), new PlaneTicketEntity() };
+			var excelBytes = new byte[] { 1, 2, 3, 4 };
+			var fileName = "PlaneTickets.xlsx";
+			var getAll = true;
+
+			_planeTicketServiceMock
+				.Setup(s => s.GetAllPlaneTickets(cancellationToken))
+				.ReturnsAsync(planeTickets);
+			_exportServiceMock
+				.Setup(s => s.ExportToExcel("PlaneTickets", planeTickets))
+				.Returns(excelBytes);
+			_utilityServiceMock
+				.Setup(s => s.GenerateUniqueFileName("PlaneTickets", FileExtension.Xlsx))
+				.Returns(fileName);
+
+			// Act
+			var result = await _controller.ExportToExcel(cancellationToken, null, getAll: getAll);
+
+			// Assert
+			var fileResult = Assert.IsType<FileContentResult>(result);
+			Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileResult.ContentType);
+			Assert.Equal(fileName, fileResult.FileDownloadName);
+			Assert.Equal(excelBytes, fileResult.FileContents);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_EmptyFilter_ReturnsFileContent()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var filter = new PlaneTicketSearchFilter { SeatNumber = null };
+			int page = 1;
+			int pageSize = 10;
+			var planeTickets = new List<PlaneTicketEntity> { new PlaneTicketEntity() };
+			var excelBytes = new byte[] { 1, 2, 3, 4 };
+			var fileName = "PlaneTickets.xlsx";
+
+			_paginationValidationServiceMock
+				.Setup(s => s.ValidatePaginationParameters(page, pageSize, It.IsAny<int>()))
+				.Returns((true, pageSize, null));
+			_planeTicketServiceMock
+				.Setup(s => s.GetPlaneTickets(cancellationToken, page, pageSize))
+				.ReturnsAsync(planeTickets);
+			_exportServiceMock
+				.Setup(s => s.ExportToExcel("PlaneTickets", planeTickets))
+				.Returns(excelBytes);
+			_utilityServiceMock
+				.Setup(s => s.GenerateUniqueFileName("PlaneTickets", FileExtension.Xlsx))
+				.Returns(fileName);
+
+			// Act
+			var result = await _controller.ExportToExcel(cancellationToken, filter, page, pageSize);
+
+			// Assert
+			var fileResult = Assert.IsType<FileContentResult>(result);
+			Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileResult.ContentType);
+			Assert.Equal(fileName, fileResult.FileDownloadName);
+			Assert.Equal(excelBytes, fileResult.FileContents);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_NonEmptyFilter_ReturnsFileContent()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var filter = new PlaneTicketSearchFilter { SeatNumber = 16 };
+			int page = 1;
+			int pageSize = 10;
+			var planeTickets = new List<PlaneTicketEntity> { new PlaneTicketEntity() };
+			var excelBytes = new byte[] { 1, 2, 3, 4 };
+			var fileName = "PlaneTickets.xlsx";
+
+			_paginationValidationServiceMock
+				.Setup(s => s.ValidatePaginationParameters(page, pageSize, It.IsAny<int>()))
+				.Returns((true, pageSize, null));
+			_planeTicketServiceMock
+				.Setup(s => s.GetPlaneTicketsByFilter(cancellationToken, page, pageSize, filter))
+				.ReturnsAsync(planeTickets);
+			_exportServiceMock
+				.Setup(s => s.ExportToExcel("PlaneTickets", planeTickets))
+				.Returns(excelBytes);
+			_utilityServiceMock
+				.Setup(s => s.GenerateUniqueFileName("PlaneTickets", FileExtension.Xlsx))
+				.Returns(fileName);
+
+			// Act
+			var result = await _controller.ExportToExcel(cancellationToken, filter, page, pageSize);
+
+			// Assert
+			var fileResult = Assert.IsType<FileContentResult>(result);
+			Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileResult.ContentType);
+			Assert.Equal(fileName, fileResult.FileDownloadName);
+			Assert.Equal(excelBytes, fileResult.FileContents);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_InvalidPaginationParameters_ReturnsBadRequest()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var filter = new PlaneTicketSearchFilter { SeatNumber = 16 };
+			int invalidPage = -1;
+			int invalidPageSize = 0;
+			var expectedBadRequestResult = new BadRequestObjectResult("Invalid pagination parameters.");
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(invalidPage, invalidPageSize, It.IsAny<int>()))
+				.Returns((false, 0, expectedBadRequestResult));
+
+			// Act
+			var result = await _controller.ExportToExcel(cancellationToken, filter, invalidPage, invalidPageSize);
+
+			// Assert
+			Assert.IsType<BadRequestObjectResult>(result);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_NoPlaneTicketsFound_ReturnsNoContent()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var filter = new PlaneTicketSearchFilter();
+			var planeTickets = new List<PlaneTicketEntity>();
+			var getAll = true;
+
+			_planeTicketServiceMock
+				.Setup(s => s.GetAllPlaneTickets(cancellationToken))
+				.ReturnsAsync(planeTickets);
+
+			// Act
+			var result = await _controller.ExportToExcel(cancellationToken, filter, getAll: getAll);
+
+			// Assert
+			Assert.IsType<NoContentResult>(result);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_PlaneTicketsListIsNull_ReturnsNoContent()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var filter = new PlaneTicketSearchFilter();
+			var getAll = true;
+
+			_planeTicketServiceMock
+				.Setup(s => s.GetAllPlaneTickets(cancellationToken))
+				.ReturnsAsync((IList<PlaneTicketEntity>)null);
+
+			// Act
+			var result = await _controller.ExportToExcel(cancellationToken, filter, getAll: getAll);
+
+			// Assert
+			Assert.IsType<NoContentResult>(result);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_ExcelGenerationFails_ReturnsInternalServerError()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var planeTickets = new List<PlaneTicketEntity> { new PlaneTicketEntity() };
+			var getAll = true;
+
+			_planeTicketServiceMock
+				.Setup(s => s.GetAllPlaneTickets(cancellationToken))
+				.ReturnsAsync(planeTickets);
+			_exportServiceMock
+				.Setup(s => s.ExportToExcel("PlaneTickets", planeTickets))
+				.Returns((byte[])null);
+
+			// Act
+			var result = await _controller.ExportToExcel(cancellationToken, null, getAll: getAll);
+
+			// Assert
+			var statusCodeResult = Assert.IsType<ObjectResult>(result);
+			Assert.Equal(500, statusCodeResult.StatusCode);
+			Assert.Equal("Failed to generate Excel file.", statusCodeResult.Value);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_ExcelGenerationReturnsEmptyBytes_ReturnsInternalServerError()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var planeTickets = new List<PlaneTicketEntity> { new PlaneTicketEntity() };
+			var getAll = true;
+
+			_planeTicketServiceMock
+				.Setup(s => s.GetAllPlaneTickets(cancellationToken))
+				.ReturnsAsync(planeTickets);
+			_exportServiceMock
+				.Setup(s => s.ExportToExcel("PlaneTickets", planeTickets))
+				.Returns(Array.Empty<byte>());
+
+			// Act
+			var result = await _controller.ExportToExcel(cancellationToken, null, getAll: getAll);
+
+			// Assert
+			var statusCodeResult = Assert.IsType<ObjectResult>(result);
+			Assert.Equal(500, statusCodeResult.StatusCode);
+			Assert.Equal("Failed to generate Excel file.", statusCodeResult.Value);
+		}
+
+		#endregion
 
 	}
 }

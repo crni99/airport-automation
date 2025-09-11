@@ -3,6 +3,8 @@ using AirportAutomation.Api.Interfaces;
 using AirportAutomation.Application.Dtos.Pilot;
 using AirportAutomation.Application.Dtos.Response;
 using AirportAutomation.Core.Entities;
+using AirportAutomation.Core.Enums;
+using AirportAutomation.Core.Filters;
 using AirportAutomation.Core.Interfaces.IServices;
 using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
@@ -120,6 +122,8 @@ namespace AirportAutomationApi.Test.Controllers
 			Assert.Contains(serviceName, exception.Message);
 		}
 
+		#region GetPilots
+
 		[Fact]
 		[Trait("Category", "GetPilots")]
 		public async Task GetPilots_InvalidPaginationParameters_ReturnsBadRequest()
@@ -155,6 +159,28 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns((true, pageSize, null));
 			_pilotServiceMock.Setup(service => service.GetPilots(cancellationToken, It.IsAny<int>(), It.IsAny<int>()))
 				.ReturnsAsync(new List<PilotEntity>());
+
+			// Act
+			var result = await _controller.GetPilots(cancellationToken, page, pageSize);
+
+			// Assert
+			Assert.IsType<NoContentResult>(result.Result);
+		}
+
+		[Fact]
+		[Trait("Category", "GetPilots")]
+		public async Task GetPilots_ReturnsNoContent_WhenPilotsListIsNull()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			int page = 1;
+			int pageSize = 10;
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, pageSize, null));
+			_pilotServiceMock.Setup(service => service.GetPilots(cancellationToken, It.IsAny<int>(), It.IsAny<int>()))
+				.ReturnsAsync((List<PilotEntity>)null);
 
 			// Act
 			var result = await _controller.GetPilots(cancellationToken, page, pageSize);
@@ -287,6 +313,10 @@ namespace AirportAutomationApi.Test.Controllers
 			Assert.Equal(expectedData, pagedResponse.Data);
 		}
 
+		#endregion
+
+		#region GetPilot
+
 		[Fact]
 		[Trait("Category", "GetPilot")]
 		public async Task GetPilot_InvalidId_ReturnsBadRequest()
@@ -358,6 +388,10 @@ namespace AirportAutomationApi.Test.Controllers
 			var returnedPilotDto = Assert.IsType<PilotDto>(okResult.Value);
 			Assert.Equal(pilotDto, returnedPilotDto);
 		}
+
+		#endregion
+
+		#region GetPilotsByName
 
 		[Fact]
 		[Trait("Category", "GetPilotsByName")]
@@ -439,6 +473,30 @@ namespace AirportAutomationApi.Test.Controllers
 
 		[Fact]
 		[Trait("Category", "GetPilotsByName")]
+		public async Task GetPilotsByName_ReturnsNotFound_WhenPilotsListIsNull()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			string validName = "ValidName";
+			int validPage = 1;
+			int validPageSize = 10;
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(validPage, validPageSize, It.IsAny<int>()))
+				.Returns((true, validPageSize, null));
+			_pilotServiceMock
+				.Setup(service => service.GetPilotsByName(cancellationToken, validPage, validPageSize, validName, null))
+				.ReturnsAsync((List<PilotEntity>)null);
+
+			// Act
+			var result = await _controller.GetPilotsByName(cancellationToken, validName, null, validPage, validPageSize);
+
+			// Assert
+			Assert.IsType<NotFoundResult>(result.Result);
+		}
+
+		[Fact]
+		[Trait("Category", "GetPilotsByName")]
 		public async Task GetPilotsByName_ReturnsPagedListOfPilots_WhenPilotsFound()
 		{
 			// Arrange
@@ -483,6 +541,141 @@ namespace AirportAutomationApi.Test.Controllers
 			Assert.Equal(pilotDtos, response.Data);
 		}
 
+		#endregion
+
+		#region GetPilotsByFilter
+
+		[Fact]
+		[Trait("Category", "GetPilotsByFilter")]
+		public async Task GetPilotsByFilter_EmptyFilter_ReturnsBadRequest()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var emptyFilter = new PilotSearchFilter { FirstName = null, LastName = null, UPRN = null, FlyingHours = null };
+			var expectedBadRequestResult = new BadRequestObjectResult("At least one filter criterion must be provided.");
+
+			// Act
+			var result = await _controller.GetPilotsByFilter(cancellationToken, emptyFilter);
+
+			// Assert
+			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+			Assert.Equal(expectedBadRequestResult.Value, badRequestResult.Value);
+		}
+
+		[Fact]
+		[Trait("Category", "GetPilotsByFilter")]
+		public async Task GetPilotsByFilter_InvalidPaginationParameters_ReturnsBadRequest()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var filter = new PilotSearchFilter { FirstName = "John" };
+			int invalidPage = -1;
+			int invalidPageSize = 0;
+			var expectedBadRequestResult = new BadRequestObjectResult("Invalid pagination parameters.");
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(invalidPage, invalidPageSize, It.IsAny<int>()))
+				.Returns((false, 0, expectedBadRequestResult));
+
+			// Act
+			var result = await _controller.GetPilotsByFilter(cancellationToken, filter, invalidPage, invalidPageSize);
+
+			// Assert
+			Assert.IsType<BadRequestObjectResult>(result.Result);
+		}
+
+		[Fact]
+		[Trait("Category", "GetPilotsByFilter")]
+		public async Task GetPilotsByFilter_PilotsNotFound_ReturnsNotFound()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var filter = new PilotSearchFilter { FirstName = "NonExistent" };
+			int page = 1;
+			int pageSize = 10;
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(page, pageSize, It.IsAny<int>()))
+				.Returns((true, pageSize, null));
+			_pilotServiceMock
+				.Setup(service => service.GetPilotsByFilter(cancellationToken, page, pageSize, filter))
+				.ReturnsAsync(new List<PilotEntity>());
+
+			// Act
+			var result = await _controller.GetPilotsByFilter(cancellationToken, filter, page, pageSize);
+
+			// Assert
+			Assert.IsType<NotFoundResult>(result.Result);
+		}
+
+		[Fact]
+		[Trait("Category", "GetPilotsByFilter")]
+		public async Task GetPilotsByFilter_ReturnsNotFound_WhenPilotsListIsNull()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var filter = new PilotSearchFilter { FirstName = "NullTest" };
+			int page = 1;
+			int pageSize = 10;
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(page, pageSize, It.IsAny<int>()))
+				.Returns((true, pageSize, null));
+			_pilotServiceMock
+				.Setup(service => service.GetPilotsByFilter(cancellationToken, page, pageSize, filter))
+				.ReturnsAsync((List<PilotEntity>)null);
+
+			// Act
+			var result = await _controller.GetPilotsByFilter(cancellationToken, filter, page, pageSize);
+
+			// Assert
+			Assert.IsType<NotFoundResult>(result.Result);
+		}
+
+		[Fact]
+		[Trait("Category", "GetPilotsByFilter")]
+		public async Task GetPilotsByFilter_ReturnsOk_WithPaginatedPilots()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var filter = new PilotSearchFilter { FirstName = "John" };
+			int page = 1;
+			int pageSize = 10;
+			var pilotEntities = new List<PilotEntity> { new PilotEntity(), new PilotEntity() };
+			var pilotDtos = new List<PilotDto> { new PilotDto(), new PilotDto() };
+			var totalItems = 2;
+
+			// The controller will call the real IsEmpty() method, which returns false.
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(page, pageSize, It.IsAny<int>()))
+				.Returns((true, pageSize, null));
+			_pilotServiceMock
+				.Setup(service => service.GetPilotsByFilter(cancellationToken, page, pageSize, filter))
+				.ReturnsAsync(pilotEntities);
+			_pilotServiceMock
+				.Setup(service => service.PilotsCountFilter(cancellationToken, filter))
+				.ReturnsAsync(totalItems);
+			_mapperMock
+				.Setup(m => m.Map<IEnumerable<PilotDto>>(pilotEntities))
+				.Returns(pilotDtos);
+
+			// Act
+			var result = await _controller.GetPilotsByFilter(cancellationToken, filter, page, pageSize);
+
+			// Assert
+			var actionResult = Assert.IsType<ActionResult<PagedResponse<PilotDto>>>(result);
+			var okResult = Assert.IsType<OkObjectResult>(actionResult.Result);
+			var response = Assert.IsType<PagedResponse<PilotDto>>(okResult.Value);
+			Assert.Equal(page, response.PageNumber);
+			Assert.Equal(pageSize, response.PageSize);
+			Assert.Equal(totalItems, response.TotalCount);
+			Assert.Equal(pilotDtos, response.Data);
+		}
+
+		#endregion
+
+		#region PostPilot
+
 		[Fact]
 		[Trait("Category", "PostPilot")]
 		public async Task PostPilot_ReturnsCreatedAtActionResult_WhenPilotIsCreatedSuccessfully()
@@ -492,11 +685,8 @@ namespace AirportAutomationApi.Test.Controllers
 			var pilotEntity = new PilotEntity { Id = 1 };
 			var pilotDto = new PilotDto { Id = 1 };
 
-			// Set up the mapper to return the expected values
 			_mapperMock.Setup(m => m.Map<PilotEntity>(pilotCreateDto)).Returns(pilotEntity);
 			_mapperMock.Setup(m => m.Map<PilotDto>(pilotEntity)).Returns(pilotDto);
-
-			// Adjust service setup to return the pilotEntity wrapped in a Task
 			_pilotServiceMock.Setup(service => service.PostPilot(pilotEntity))
 							   .ReturnsAsync(pilotEntity);
 
@@ -527,6 +717,10 @@ namespace AirportAutomationApi.Test.Controllers
 			// Act & Assert
 			await Assert.ThrowsAsync<Exception>(async () => await _controller.PostPilot(pilotCreateDto));
 		}
+
+		#endregion
+
+		#region PutPilot
 
 		[Fact]
 		[Trait("Category", "PutPilot")]
@@ -602,6 +796,10 @@ namespace AirportAutomationApi.Test.Controllers
 			Assert.IsType<NotFoundResult>(result);
 		}
 
+		#endregion
+
+		#region PatchPilot
+
 		[Fact]
 		[Trait("Category", "PatchPilot")]
 		public async Task PatchPilot_ReturnsOk_WhenUpdateIsSuccessful()
@@ -660,6 +858,10 @@ namespace AirportAutomationApi.Test.Controllers
 			// Assert
 			Assert.IsType<NotFoundResult>(result);
 		}
+
+		#endregion
+
+		#region DeletePilot
 
 		[Fact]
 		[Trait("Category", "DeletePilot")]
@@ -728,6 +930,423 @@ namespace AirportAutomationApi.Test.Controllers
 			Assert.Equal("Pilot cannot be deleted because it is being referenced by other entities.", conflictResult.Value);
 		}
 
+		#endregion
+
+		#region ExportToPdf
+
+		[Fact]
+		[Trait("Category", "ExportToPdf")]
+		public async Task ExportToPdf_GetAllIsTrue_ReturnsFileContent()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var pilots = new List<PilotEntity> { new PilotEntity(), new PilotEntity() };
+			var pdfBytes = new byte[] { 1, 2, 3, 4 };
+			var fileName = "Pilots.pdf";
+			var getAll = true;
+
+			_pilotServiceMock
+				.Setup(s => s.GetAllPilots(cancellationToken))
+				.ReturnsAsync(pilots);
+			_exportServiceMock
+				.Setup(s => s.ExportToPDF("Pilots", pilots))
+				.Returns(pdfBytes);
+			_utilityServiceMock
+				.Setup(s => s.GenerateUniqueFileName("Pilots", FileExtension.Pdf))
+				.Returns(fileName);
+
+			// Act
+			var result = await _controller.ExportToPdf(cancellationToken, null, getAll: getAll);
+
+			// Assert
+			var fileResult = Assert.IsType<FileContentResult>(result);
+			Assert.Equal("application/pdf", fileResult.ContentType);
+			Assert.Equal(fileName, fileResult.FileDownloadName);
+			Assert.Equal(pdfBytes, fileResult.FileContents);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToPdf")]
+		public async Task ExportToPdf_EmptyFilter_ReturnsFileContent()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			// This filter is intentionally left with null properties so the real IsEmpty() method returns true.
+			var filter = new PilotSearchFilter { FirstName = null };
+			int page = 1;
+			int pageSize = 10;
+			var pilots = new List<PilotEntity> { new PilotEntity() };
+			var pdfBytes = new byte[] { 1, 2, 3, 4 };
+			var fileName = "Pilots.pdf";
+
+			_paginationValidationServiceMock
+				.Setup(s => s.ValidatePaginationParameters(page, pageSize, It.IsAny<int>()))
+				.Returns((true, pageSize, null));
+			_pilotServiceMock
+				.Setup(s => s.GetPilots(cancellationToken, page, pageSize))
+				.ReturnsAsync(pilots);
+			_exportServiceMock
+				.Setup(s => s.ExportToPDF("Pilots", pilots))
+				.Returns(pdfBytes);
+			_utilityServiceMock
+				.Setup(s => s.GenerateUniqueFileName("Pilots", FileExtension.Pdf))
+				.Returns(fileName);
+
+			// Act
+			var result = await _controller.ExportToPdf(cancellationToken, filter, page, pageSize);
+
+			// Assert
+			var fileResult = Assert.IsType<FileContentResult>(result);
+			Assert.Equal("application/pdf", fileResult.ContentType);
+			Assert.Equal(fileName, fileResult.FileDownloadName);
+			Assert.Equal(pdfBytes, fileResult.FileContents);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToPdf")]
+		public async Task ExportToPdf_NonEmptyFilter_ReturnsFileContent()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var filter = new PilotSearchFilter { FirstName = "John" };
+			int page = 1;
+			int pageSize = 10;
+			var pilots = new List<PilotEntity> { new PilotEntity() };
+			var pdfBytes = new byte[] { 1, 2, 3, 4 };
+			var fileName = "Pilots.pdf";
+
+			_paginationValidationServiceMock
+				.Setup(s => s.ValidatePaginationParameters(page, pageSize, It.IsAny<int>()))
+				.Returns((true, pageSize, null));
+			_pilotServiceMock
+				.Setup(s => s.GetPilotsByFilter(cancellationToken, page, pageSize, filter))
+				.ReturnsAsync(pilots);
+			_exportServiceMock
+				.Setup(s => s.ExportToPDF("Pilots", pilots))
+				.Returns(pdfBytes);
+			_utilityServiceMock
+				.Setup(s => s.GenerateUniqueFileName("Pilots", FileExtension.Pdf))
+				.Returns(fileName);
+
+			// Act
+			var result = await _controller.ExportToPdf(cancellationToken, filter, page, pageSize);
+
+			// Assert
+			var fileResult = Assert.IsType<FileContentResult>(result);
+			Assert.Equal("application/pdf", fileResult.ContentType);
+			Assert.Equal(fileName, fileResult.FileDownloadName);
+			Assert.Equal(pdfBytes, fileResult.FileContents);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToPdf")]
+		public async Task ExportToPdf_InvalidPaginationParameters_ReturnsBadRequest()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var filter = new PilotSearchFilter { FirstName = "John" };
+			int invalidPage = -1;
+			int invalidPageSize = 0;
+			var expectedBadRequestResult = new BadRequestObjectResult("Invalid pagination parameters.");
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(invalidPage, invalidPageSize, It.IsAny<int>()))
+				.Returns((false, 0, expectedBadRequestResult));
+
+			// Act
+			var result = await _controller.ExportToPdf(cancellationToken, filter, invalidPage, invalidPageSize);
+
+			// Assert
+			Assert.IsType<BadRequestObjectResult>(result);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToPdf")]
+		public async Task ExportToPdf_NoPilotsFound_ReturnsNoContent()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var filter = new PilotSearchFilter();
+			var pilots = new List<PilotEntity>();
+			var getAll = true;
+
+			_pilotServiceMock
+				.Setup(s => s.GetAllPilots(cancellationToken))
+				.ReturnsAsync(pilots);
+
+			// Act
+			var result = await _controller.ExportToPdf(cancellationToken, filter, getAll: getAll);
+
+			// Assert
+			Assert.IsType<NoContentResult>(result);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToPdf")]
+		public async Task ExportToPdf_PilotsListIsNull_ReturnsNoContent()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var filter = new PilotSearchFilter();
+			var getAll = true;
+
+			_pilotServiceMock
+				.Setup(s => s.GetAllPilots(cancellationToken))
+				.ReturnsAsync((IList<PilotEntity>)null);
+
+			// Act
+			var result = await _controller.ExportToPdf(cancellationToken, filter, getAll: getAll);
+
+			// Assert
+			Assert.IsType<NoContentResult>(result);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToPdf")]
+		public async Task ExportToPdf_PdfGenerationFails_ReturnsInternalServerError()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var pilots = new List<PilotEntity> { new PilotEntity() };
+			var getAll = true;
+
+			_pilotServiceMock
+				.Setup(s => s.GetAllPilots(cancellationToken))
+				.ReturnsAsync(pilots);
+			_exportServiceMock
+				.Setup(s => s.ExportToPDF("Pilots", pilots))
+				.Returns((byte[])null);
+
+			// Act
+			var result = await _controller.ExportToPdf(cancellationToken, null, getAll: getAll);
+
+			// Assert
+			var statusCodeResult = Assert.IsType<ObjectResult>(result);
+			Assert.Equal(500, statusCodeResult.StatusCode);
+			Assert.Equal("Failed to generate PDF file.", statusCodeResult.Value);
+		}
+
+		#endregion
+
+		#region ExportToExcel
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_GetAllIsTrue_ReturnsFileContent()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var pilots = new List<PilotEntity> { new PilotEntity(), new PilotEntity() };
+			var excelBytes = new byte[] { 1, 2, 3, 4 };
+			var fileName = "Pilots.xlsx";
+			var getAll = true;
+
+			_pilotServiceMock
+				.Setup(s => s.GetAllPilots(cancellationToken))
+				.ReturnsAsync(pilots);
+			_exportServiceMock
+				.Setup(s => s.ExportToExcel("Pilots", pilots))
+				.Returns(excelBytes);
+			_utilityServiceMock
+				.Setup(s => s.GenerateUniqueFileName("Pilots", FileExtension.Xlsx))
+				.Returns(fileName);
+
+			// Act
+			var result = await _controller.ExportToExcel(cancellationToken, null, getAll: getAll);
+
+			// Assert
+			var fileResult = Assert.IsType<FileContentResult>(result);
+			Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileResult.ContentType);
+			Assert.Equal(fileName, fileResult.FileDownloadName);
+			Assert.Equal(excelBytes, fileResult.FileContents);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_EmptyFilter_ReturnsFileContent()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var filter = new PilotSearchFilter { FirstName = null };
+			int page = 1;
+			int pageSize = 10;
+			var pilots = new List<PilotEntity> { new PilotEntity() };
+			var excelBytes = new byte[] { 1, 2, 3, 4 };
+			var fileName = "Pilots.xlsx";
+
+			_paginationValidationServiceMock
+				.Setup(s => s.ValidatePaginationParameters(page, pageSize, It.IsAny<int>()))
+				.Returns((true, pageSize, null));
+			_pilotServiceMock
+				.Setup(s => s.GetPilots(cancellationToken, page, pageSize))
+				.ReturnsAsync(pilots);
+			_exportServiceMock
+				.Setup(s => s.ExportToExcel("Pilots", pilots))
+				.Returns(excelBytes);
+			_utilityServiceMock
+				.Setup(s => s.GenerateUniqueFileName("Pilots", FileExtension.Xlsx))
+				.Returns(fileName);
+
+			// Act
+			var result = await _controller.ExportToExcel(cancellationToken, filter, page, pageSize);
+
+			// Assert
+			var fileResult = Assert.IsType<FileContentResult>(result);
+			Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileResult.ContentType);
+			Assert.Equal(fileName, fileResult.FileDownloadName);
+			Assert.Equal(excelBytes, fileResult.FileContents);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_NonEmptyFilter_ReturnsFileContent()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var filter = new PilotSearchFilter { FirstName = "John" };
+			int page = 1;
+			int pageSize = 10;
+			var pilots = new List<PilotEntity> { new PilotEntity() };
+			var excelBytes = new byte[] { 1, 2, 3, 4 };
+			var fileName = "Pilots.xlsx";
+
+			_paginationValidationServiceMock
+				.Setup(s => s.ValidatePaginationParameters(page, pageSize, It.IsAny<int>()))
+				.Returns((true, pageSize, null));
+			_pilotServiceMock
+				.Setup(s => s.GetPilotsByFilter(cancellationToken, page, pageSize, filter))
+				.ReturnsAsync(pilots);
+			_exportServiceMock
+				.Setup(s => s.ExportToExcel("Pilots", pilots))
+				.Returns(excelBytes);
+			_utilityServiceMock
+				.Setup(s => s.GenerateUniqueFileName("Pilots", FileExtension.Xlsx))
+				.Returns(fileName);
+
+			// Act
+			var result = await _controller.ExportToExcel(cancellationToken, filter, page, pageSize);
+
+			// Assert
+			var fileResult = Assert.IsType<FileContentResult>(result);
+			Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileResult.ContentType);
+			Assert.Equal(fileName, fileResult.FileDownloadName);
+			Assert.Equal(excelBytes, fileResult.FileContents);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_InvalidPaginationParameters_ReturnsBadRequest()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var filter = new PilotSearchFilter { FirstName = "John" };
+			int invalidPage = -1;
+			int invalidPageSize = 0;
+			var expectedBadRequestResult = new BadRequestObjectResult("Invalid pagination parameters.");
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(invalidPage, invalidPageSize, It.IsAny<int>()))
+				.Returns((false, 0, expectedBadRequestResult));
+
+			// Act
+			var result = await _controller.ExportToExcel(cancellationToken, filter, invalidPage, invalidPageSize);
+
+			// Assert
+			Assert.IsType<BadRequestObjectResult>(result);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_NoPilotsFound_ReturnsNoContent()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var filter = new PilotSearchFilter();
+			var pilots = new List<PilotEntity>();
+			var getAll = true;
+
+			_pilotServiceMock
+				.Setup(s => s.GetAllPilots(cancellationToken))
+				.ReturnsAsync(pilots);
+
+			// Act
+			var result = await _controller.ExportToExcel(cancellationToken, filter, getAll: getAll);
+
+			// Assert
+			Assert.IsType<NoContentResult>(result);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_PilotsListIsNull_ReturnsNoContent()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var filter = new PilotSearchFilter();
+			var getAll = true;
+
+			_pilotServiceMock
+				.Setup(s => s.GetAllPilots(cancellationToken))
+				.ReturnsAsync((IList<PilotEntity>)null);
+
+			// Act
+			var result = await _controller.ExportToExcel(cancellationToken, filter, getAll: getAll);
+
+			// Assert
+			Assert.IsType<NoContentResult>(result);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_ExcelGenerationFails_ReturnsInternalServerError()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var pilots = new List<PilotEntity> { new PilotEntity() };
+			var getAll = true;
+
+			_pilotServiceMock
+				.Setup(s => s.GetAllPilots(cancellationToken))
+				.ReturnsAsync(pilots);
+			_exportServiceMock
+				.Setup(s => s.ExportToExcel("Pilots", pilots))
+				.Returns(Array.Empty<byte>());
+
+			// Act
+			var result = await _controller.ExportToExcel(cancellationToken, null, getAll: getAll);
+
+			// Assert
+			var statusCodeResult = Assert.IsType<ObjectResult>(result);
+			Assert.Equal(500, statusCodeResult.StatusCode);
+			Assert.Equal("Failed to generate Excel file.", statusCodeResult.Value);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_ExcelGenerationReturnsNull_ReturnsInternalServerError()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var pilots = new List<PilotEntity> { new PilotEntity() };
+			var getAll = true;
+
+			_pilotServiceMock
+				.Setup(s => s.GetAllPilots(cancellationToken))
+				.ReturnsAsync(pilots);
+			_exportServiceMock
+				.Setup(s => s.ExportToExcel("Pilots", pilots))
+				.Returns((byte[])null);
+
+			// Act
+			var result = await _controller.ExportToExcel(cancellationToken, null, getAll: getAll);
+
+			// Assert
+			var statusCodeResult = Assert.IsType<ObjectResult>(result);
+			Assert.Equal(500, statusCodeResult.StatusCode);
+			Assert.Equal("Failed to generate Excel file.", statusCodeResult.Value);
+		}
+
+		#endregion
 
 	}
 }

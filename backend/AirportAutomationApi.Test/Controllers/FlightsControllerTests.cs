@@ -434,10 +434,10 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns((true, 10, new OkResult()));
 			_inputValidationServiceMock
 				.Setup(x => x.IsValidDateOnly(startDate))
-				.Returns(false); // invalid start date
+				.Returns(false);
 			_inputValidationServiceMock
 				.Setup(x => x.IsValidDateOnly(endDate))
-				.Returns(true); // valid end date
+				.Returns(true);
 
 			// Act
 			var result = await _controller.GetFlightsBetweenDates(cancellationToken, startDate, endDate);
@@ -463,10 +463,10 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns((true, 10, new OkResult()));
 			_inputValidationServiceMock
 				.Setup(x => x.IsValidDateOnly(startDate))
-				.Returns(true); // valid start date
+				.Returns(true);
 			_inputValidationServiceMock
 				.Setup(x => x.IsValidDateOnly(endDate))
-				.Returns(false); // invalid end date
+				.Returns(false);
 
 			// Act
 			var result = await _controller.GetFlightsBetweenDates(cancellationToken, startDate, endDate);
@@ -625,11 +625,8 @@ namespace AirportAutomationApi.Test.Controllers
 			var flightEntity = new FlightEntity { Id = 1 };
 			var flightDto = new FlightDto { Id = 1 };
 
-			// Set up the mapper to return the expected values
 			_mapperMock.Setup(m => m.Map<FlightEntity>(flightCreateDto)).Returns(flightEntity);
 			_mapperMock.Setup(m => m.Map<FlightDto>(flightEntity)).Returns(flightDto);
-
-			// Adjust service setup to return the flightEntity wrapped in a Task
 			_flightServiceMock.Setup(service => service.PostFlight(flightEntity))
 							   .ReturnsAsync(flightEntity);
 
