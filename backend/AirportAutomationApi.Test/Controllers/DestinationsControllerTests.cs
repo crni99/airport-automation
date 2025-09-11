@@ -71,128 +71,56 @@ namespace AirportAutomationApi.Test.Controllers
 			);
 		}
 
-		#region Constructor
-		[Fact]
+		[Theory]
 		[Trait("Category", "Constructor")]
-		public void Constructor_ThrowsArgumentNullException_WhenDestinationServiceIsNull()
+		[InlineData("destinationService")]
+		[InlineData("paginationValidationService")]
+		[InlineData("inputValidationService")]
+		[InlineData("utilityService")]
+		[InlineData("exportService")]
+		[InlineData("mapper")]
+		[InlineData("logger")]
+		public void Constructor_WhenServiceIsNull_ThrowsArgumentNullException(string serviceName)
 		{
-			// Act & Assert
-			Assert.Throws<ArgumentNullException>(() => new DestinationsController(
-				null,
-				_paginationValidationServiceMock.Object,
-				_inputValidationServiceMock.Object,
-				_utilityServiceMock.Object,
-				_exportServiceMock.Object,
-				_mapperMock.Object,
-				_loggerMock.Object,
-				_configurationMock.Object
-			));
-		}
+			// Arrange
+			var destinationServiceMock = new Mock<IDestinationService>();
+			var paginationValidationServiceMock = new Mock<IPaginationValidationService>();
+			var inputValidationServiceMock = new Mock<IInputValidationService>();
+			var utilityServiceMock = new Mock<IUtilityService>();
+			var exportServiceMock = new Mock<IExportService>();
+			var mapperMock = new Mock<IMapper>();
+			var loggerMock = new Mock<ILogger<DestinationsController>>();
+			var configurationMock = new Mock<IConfiguration>();
 
-		[Fact]
-		[Trait("Category", "Constructor")]
-		public void Constructor_ThrowsArgumentNullException_WhenPaginationValidationServiceIsNull()
-		{
-			// Act & Assert
-			Assert.Throws<ArgumentNullException>(() => new DestinationsController(
-				_destinationServiceMock.Object,
-				null,
-				_inputValidationServiceMock.Object,
-				_utilityServiceMock.Object,
-				_exportServiceMock.Object,
-				_mapperMock.Object,
-				_loggerMock.Object,
-				_configurationMock.Object
-			));
-		}
+			// Set up mocks to return null based on the test case
+			IDestinationService destinationService = serviceName == "destinationService" ? null : destinationServiceMock.Object;
+			IPaginationValidationService paginationValidationService = serviceName == "paginationValidationService" ? null : paginationValidationServiceMock.Object;
+			IInputValidationService inputValidationService = serviceName == "inputValidationService" ? null : inputValidationServiceMock.Object;
+			IUtilityService utilityService = serviceName == "utilityService" ? null : utilityServiceMock.Object;
+			IExportService exportService = serviceName == "exportService" ? null : exportServiceMock.Object;
+			IMapper mapper = serviceName == "mapper" ? null : mapperMock.Object;
+			ILogger<DestinationsController> logger = serviceName == "logger" ? null : loggerMock.Object;
 
-		[Fact]
-		[Trait("Category", "Constructor")]
-		public void Constructor_ThrowsArgumentNullException_WhenInputValidationServiceIsNull()
-		{
 			// Act & Assert
-			Assert.Throws<ArgumentNullException>(() => new DestinationsController(
-				_destinationServiceMock.Object,
-				_paginationValidationServiceMock.Object,
-				null,
-				_utilityServiceMock.Object,
-				_exportServiceMock.Object,
-				_mapperMock.Object,
-				_loggerMock.Object,
-				_configurationMock.Object
+			var exception = Record.Exception(() => new DestinationsController(
+				destinationService,
+				paginationValidationService,
+				inputValidationService,
+				utilityService,
+				exportService,
+				mapper,
+				logger,
+				configurationMock.Object
 			));
-		}
 
-		[Fact]
-		[Trait("Category", "Constructor")]
-		public void Constructor_ThrowsArgumentNullException_WhenUtilityServiceIsNull()
-		{
-			// Act & Assert
-			Assert.Throws<ArgumentNullException>(() => new DestinationsController(
-				_destinationServiceMock.Object,
-				_paginationValidationServiceMock.Object,
-				_inputValidationServiceMock.Object,
-				null,
-				_exportServiceMock.Object,
-				_mapperMock.Object,
-				_loggerMock.Object,
-				_configurationMock.Object
-			));
+			// Assert
+			Assert.NotNull(exception);
+			Assert.IsType<ArgumentNullException>(exception);
+			Assert.Contains(serviceName, exception.Message);
 		}
-
-		[Fact]
-		[Trait("Category", "Constructor")]
-		public void Constructor_ThrowsArgumentNullException_WhenExportServiceIsNull()
-		{
-			// Act & Assert
-			Assert.Throws<ArgumentNullException>(() => new DestinationsController(
-				_destinationServiceMock.Object,
-				_paginationValidationServiceMock.Object,
-				_inputValidationServiceMock.Object,
-				_utilityServiceMock.Object,
-				null,
-				_mapperMock.Object,
-				_loggerMock.Object,
-				_configurationMock.Object
-			));
-		}
-
-		[Fact]
-		[Trait("Category", "Constructor")]
-		public void Constructor_ThrowsArgumentNullException_WhenMapperIsNull()
-		{
-			// Act & Assert
-			Assert.Throws<ArgumentNullException>(() => new DestinationsController(
-				_destinationServiceMock.Object,
-				_paginationValidationServiceMock.Object,
-				_inputValidationServiceMock.Object,
-				_utilityServiceMock.Object,
-				_exportServiceMock.Object,
-				null,
-				_loggerMock.Object,
-				_configurationMock.Object
-			));
-		}
-
-		[Fact]
-		[Trait("Category", "Constructor")]
-		public void Constructor_ThrowsArgumentNullException_WhenLoggerIsNull()
-		{
-			// Act & Assert
-			Assert.Throws<ArgumentNullException>(() => new DestinationsController(
-				_destinationServiceMock.Object,
-				_paginationValidationServiceMock.Object,
-				_inputValidationServiceMock.Object,
-				_utilityServiceMock.Object,
-				_exportServiceMock.Object,
-				_mapperMock.Object,
-				null,
-				_configurationMock.Object
-			));
-		}
-		#endregion
 
 		#region GetDestinations
+
 		[Fact]
 		[Trait("Category", "GetDestinations")]
 		public async Task GetDestinations_InvalidPaginationParameters_ReturnsBadRequest()
@@ -381,9 +309,11 @@ namespace AirportAutomationApi.Test.Controllers
 			Assert.Equal(allDestinations.Count, pagedResponse.TotalCount);
 			Assert.Equal(expectedData, pagedResponse.Data);
 		}
+
 		#endregion
 
 		#region GetDestination
+
 		[Fact]
 		[Trait("Category", "GetDestination")]
 		public async Task GetDestination_InvalidId_ReturnsBadRequest()
@@ -455,9 +385,11 @@ namespace AirportAutomationApi.Test.Controllers
 			var returnedDestinationDto = Assert.IsType<DestinationDto>(okResult.Value);
 			Assert.Equal(destinationDto, returnedDestinationDto);
 		}
+
 		#endregion
 
 		#region GetDestinationsByCityOrAirport
+
 		[Fact]
 		[Trait("Category", "GetDestinationsByCityOrAirport")]
 		public async Task GetDestinationsByCityOrAirport_InvalidCityOrAirport_ReturnsBadRequest()
@@ -605,9 +537,11 @@ namespace AirportAutomationApi.Test.Controllers
 			Assert.Equal(totalItems, response.TotalCount);
 			Assert.Equal(destinationDtos, response.Data);
 		}
+
 		#endregion
 
 		#region GetDestinationsByFilter
+
 		[Fact]
 		[Trait("Category", "GetDestinationsByFilter")]
 		public async Task GetDestinationsByFilter_ReturnsBadRequest_WhenFilterIsEmpty()
@@ -746,9 +680,11 @@ namespace AirportAutomationApi.Test.Controllers
 			// Act & Assert
 			await Assert.ThrowsAsync<Exception>(async () => await _controller.GetDestinationsByFilter(CancellationToken.None, filter));
 		}
+
 		#endregion
 
 		#region PostDestination
+
 		[Fact]
 		[Trait("Category", "PostDestination")]
 		public async Task PostDestination_ReturnsCreatedAtActionResult_WhenDestinationIsCreatedSuccessfully()
@@ -793,9 +729,11 @@ namespace AirportAutomationApi.Test.Controllers
 			// Act & Assert
 			await Assert.ThrowsAsync<Exception>(async () => await _controller.PostDestination(destinationCreateDto));
 		}
+
 		#endregion
 
 		#region PutDestination
+
 		[Fact]
 		[Trait("Category", "PutDestination")]
 		public async Task PutDestination_ReturnsNoContent_WhenUpdateIsSuccessful()
@@ -869,9 +807,11 @@ namespace AirportAutomationApi.Test.Controllers
 			// Assert
 			Assert.IsType<NotFoundResult>(result);
 		}
+
 		#endregion
 
 		#region PatchDestination
+
 		[Fact]
 		[Trait("Category", "PatchDestination")]
 		public async Task PatchDestination_ReturnsOk_WhenUpdateIsSuccessful()
@@ -930,9 +870,11 @@ namespace AirportAutomationApi.Test.Controllers
 			// Assert
 			Assert.IsType<NotFoundResult>(result);
 		}
+
 		#endregion
 
 		#region DeleteDestination
+
 		[Fact]
 		[Trait("Category", "DeleteDestination")]
 		public async Task DeleteDestination_ReturnsNoContent_WhenDeletionIsSuccessful()
@@ -999,9 +941,11 @@ namespace AirportAutomationApi.Test.Controllers
 			var conflictResult = Assert.IsType<ConflictObjectResult>(result);
 			Assert.Equal("Destination cannot be deleted because it is being referenced by other entities.", conflictResult.Value);
 		}
+
 		#endregion
 
 		#region ExportToPdf
+
 		[Fact]
 		[Trait("Category", "ExportToPdf")]
 		public async Task ExportToPdf_ReturnsNoContent_WhenGetAllAndNoDestinationsFound()
@@ -1175,9 +1119,11 @@ namespace AirportAutomationApi.Test.Controllers
 			Assert.Equal(StatusCodes.Status500InternalServerError, statusCodeResult.StatusCode);
 			Assert.Equal("Failed to generate PDF file.", statusCodeResult.Value);
 		}
+
 		#endregion
 
 		#region ExportToExcel
+
 		[Fact]
 		[Trait("Category", "ExportToExcel")]
 		public async Task ExportToExcel_ReturnsNoContent_WhenGetAllAndNoDestinationsFound()
@@ -1386,6 +1332,7 @@ namespace AirportAutomationApi.Test.Controllers
 			// Assert
 			Assert.IsType<NoContentResult>(result);
 		}
+
 		#endregion
 
 	}

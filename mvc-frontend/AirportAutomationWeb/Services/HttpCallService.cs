@@ -3,14 +3,10 @@ using AirportAutomation.Web.Interfaces;
 using AirportAutomation.Web.Models.ApiUser;
 using AirportAutomation.Web.Models.Export;
 using AirportAutomation.Web.Models.Response;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.IdentityModel.JsonWebTokens;
-using QuestPDF.Helpers;
 using System.Data;
 using System.Net;
 using System.Net.Http.Headers;
-using System.Runtime.Intrinsics.X86;
 using System.Web;
 
 namespace AirportAutomation.Web.Services

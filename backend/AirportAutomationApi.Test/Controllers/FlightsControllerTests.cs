@@ -1,10 +1,10 @@
-﻿using AirportAutomation.Api.Interfaces;
+﻿using AirportAutomation.Api.Controllers;
+using AirportAutomation.Api.Interfaces;
 using AirportAutomation.Application.Dtos.Flight;
 using AirportAutomation.Application.Dtos.Response;
 using AirportAutomation.Core.Entities;
+using AirportAutomation.Core.Enums;
 using AirportAutomation.Core.Interfaces.IServices;
-using AirportAutomation.Api.Controllers;
-using AirportAutomation.Api.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -77,6 +77,56 @@ namespace AirportAutomationApi.Test.Controllers
 			);
 		}
 
+		[Theory]
+		[Trait("Category", "Constructor")]
+		[InlineData("flightService")]
+		[InlineData("paginationValidationService")]
+		[InlineData("inputValidationService")]
+		[InlineData("utilityService")]
+		[InlineData("exportService")]
+		[InlineData("mapper")]
+		[InlineData("logger")]
+		public void Constructor_WhenServiceIsNull_ThrowsArgumentNullException(string serviceName)
+		{
+			// Arrange
+			var flightServiceMock = new Mock<IFlightService>();
+			var paginationValidationServiceMock = new Mock<IPaginationValidationService>();
+			var inputValidationServiceMock = new Mock<IInputValidationService>();
+			var utilityServiceMock = new Mock<IUtilityService>();
+			var exportServiceMock = new Mock<IExportService>();
+			var mapperMock = new Mock<IMapper>();
+			var loggerMock = new Mock<ILogger<FlightsController>>();
+			var configurationMock = new Mock<IConfiguration>();
+
+			// Set up mocks to return null based on the test case
+			IFlightService flightService = serviceName == "flightService" ? null : flightServiceMock.Object;
+			IPaginationValidationService paginationValidationService = serviceName == "paginationValidationService" ? null : paginationValidationServiceMock.Object;
+			IInputValidationService inputValidationService = serviceName == "inputValidationService" ? null : inputValidationServiceMock.Object;
+			IUtilityService utilityService = serviceName == "utilityService" ? null : utilityServiceMock.Object;
+			IExportService exportService = serviceName == "exportService" ? null : exportServiceMock.Object;
+			IMapper mapper = serviceName == "mapper" ? null : mapperMock.Object;
+			ILogger<FlightsController> logger = serviceName == "logger" ? null : loggerMock.Object;
+
+			// Act & Assert
+			var exception = Record.Exception(() => new FlightsController(
+				flightService,
+				paginationValidationService,
+				inputValidationService,
+				utilityService,
+				exportService,
+				mapper,
+				logger,
+				configurationMock.Object
+			));
+
+			// Assert
+			Assert.NotNull(exception);
+			Assert.IsType<ArgumentNullException>(exception);
+			Assert.Contains(serviceName, exception.Message);
+		}
+
+		#region GetFlights
+
 		[Fact]
 		[Trait("Category", "GetFlights")]
 		public async Task GetFlights_InvalidPaginationParameters_ReturnsBadRequest()
@@ -112,6 +162,28 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns((true, pageSize, null));
 			_flightServiceMock.Setup(service => service.GetFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>()))
 				.ReturnsAsync(new List<FlightEntity>());
+
+			// Act
+			var result = await _controller.GetFlights(cancellationToken, page, pageSize);
+
+			// Assert
+			Assert.IsType<NoContentResult>(result.Result);
+		}
+
+		[Fact]
+		[Trait("Category", "GetFlights")]
+		public async Task GetFlights_ReturnsNoContent_WhenFlightServiceReturnsNull()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			int page = 1;
+			int pageSize = 10;
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, pageSize, null));
+			_flightServiceMock.Setup(service => service.GetFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>()))
+				.ReturnsAsync((List<FlightEntity>)null);
 
 			// Act
 			var result = await _controller.GetFlights(cancellationToken, page, pageSize);
@@ -244,6 +316,10 @@ namespace AirportAutomationApi.Test.Controllers
 			Assert.Equal(expectedData, pagedResponse.Data);
 		}
 
+		#endregion
+
+		#region GetFlight
+
 		[Fact]
 		[Trait("Category", "GetFlight")]
 		public async Task GetFlight_InvalidId_ReturnsBadRequest()
@@ -315,6 +391,10 @@ namespace AirportAutomationApi.Test.Controllers
 			var returnedFlightDto = Assert.IsType<FlightDto>(okResult.Value);
 			Assert.Equal(flightDto, returnedFlightDto);
 		}
+
+		#endregion
+
+		#region GetFlightsBetweenDates
 
 		[Fact]
 		[Trait("Category", "GetFlightsBetweenDates")]
@@ -458,6 +538,36 @@ namespace AirportAutomationApi.Test.Controllers
 
 		[Fact]
 		[Trait("Category", "GetFlightsBetweenDates")]
+		public async Task GetFlightsBetweenDates_ServiceReturnsNull_ReturnsNotFound()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var startDate = new DateOnly(2024, 1, 1);
+			var endDate = new DateOnly(2024, 1, 31);
+
+			// Mocks
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, 10, null));
+			_inputValidationServiceMock
+				.Setup(x => x.IsValidDateOnly(startDate))
+				.Returns(true);
+			_inputValidationServiceMock
+				.Setup(x => x.IsValidDateOnly(endDate))
+				.Returns(true);
+			_flightServiceMock
+				.Setup(x => x.GetFlightsBetweenDates(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
+				.ReturnsAsync((List<FlightEntity>)null);
+
+			// Act
+			var result = await _controller.GetFlightsBetweenDates(cancellationToken, startDate, endDate);
+
+			// Assert
+			Assert.IsType<NotFoundResult>(result.Result);
+		}
+
+		[Fact]
+		[Trait("Category", "GetFlightsBetweenDates")]
 		public async Task GetFlightsBetweenDates_ReturnsPagedListOfFlights_WhenFlightsFound()
 		{
 			// Arrange
@@ -501,6 +611,10 @@ namespace AirportAutomationApi.Test.Controllers
 			Assert.Equal(totalItems, response.TotalCount);
 			Assert.Equal(flightDtos, response.Data);
 		}
+
+		#endregion
+
+		#region PostFlight
 
 		[Fact]
 		[Trait("Category", "PostFlight")]
@@ -546,6 +660,10 @@ namespace AirportAutomationApi.Test.Controllers
 			// Act & Assert
 			await Assert.ThrowsAsync<Exception>(async () => await _controller.PostFlight(flightCreateDto));
 		}
+
+		#endregion
+
+		#region PutFlight
 
 		[Fact]
 		[Trait("Category", "PutFlight")]
@@ -621,6 +739,10 @@ namespace AirportAutomationApi.Test.Controllers
 			Assert.IsType<NotFoundResult>(result);
 		}
 
+		#endregion
+
+		#region PatchFlight
+
 		[Fact]
 		[Trait("Category", "PatchFlight")]
 		public async Task PatchFlight_ReturnsOk_WhenUpdateIsSuccessful()
@@ -679,6 +801,10 @@ namespace AirportAutomationApi.Test.Controllers
 			// Assert
 			Assert.IsType<NotFoundResult>(result);
 		}
+
+		#endregion
+
+		#region DeleteFlight
 
 		[Fact]
 		[Trait("Category", "DeleteFlight")]
@@ -746,6 +872,612 @@ namespace AirportAutomationApi.Test.Controllers
 			var conflictResult = Assert.IsType<ConflictObjectResult>(result);
 			Assert.Equal("Flight cannot be deleted because it is being referenced by other entities.", conflictResult.Value);
 		}
+
+		#endregion
+
+		#region ExportToPdf
+
+		[Fact]
+		[Trait("Category", "ExportToPdf")]
+		public async Task ExportToPdf_InvalidPaginationParameters_ReturnsBadRequest()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var expectedBadRequestResult = new BadRequestObjectResult("Invalid pagination parameters.");
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((false, 0, expectedBadRequestResult));
+
+			// Act
+			var result = await _controller.ExportToPdf(cancellationToken, page: -1, pageSize: 0);
+
+			// Assert
+			Assert.IsType<BadRequestObjectResult>(result);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToPdf")]
+		public async Task ExportToPdf_BothDatesInvalid_ReturnsNoContent()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var invalidStartDate = new DateOnly(1, 1, 1);
+			var invalidEndDate = new DateOnly(1, 1, 1);
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, 10, null));
+
+			_inputValidationServiceMock
+				.Setup(x => x.IsValidDateOnly(invalidStartDate))
+				.Returns(false);
+
+			_inputValidationServiceMock
+				.Setup(x => x.IsValidDateOnly(invalidEndDate))
+				.Returns(false);
+
+			// Act
+			var result = await _controller.ExportToPdf(cancellationToken, startDate: invalidStartDate, endDate: invalidEndDate);
+
+			// Assert
+			Assert.IsType<NoContentResult>(result);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToPdf")]
+		public async Task ExportToPdf_GetAll_ReturnsFileResult()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var flights = new List<FlightEntity> { new FlightEntity() };
+			var pdfBytes = new byte[] { 1, 2, 3 };
+			var fileName = "Flights_test.pdf";
+
+			_flightServiceMock.Setup(x => x.GetAllFlights(cancellationToken)).ReturnsAsync(flights);
+			_exportServiceMock.Setup(x => x.ExportToPDF("Flights", flights)).Returns(pdfBytes);
+			_utilityServiceMock.Setup(x => x.GenerateUniqueFileName("Flights", FileExtension.Pdf)).Returns(fileName);
+
+			// Act
+			var result = await _controller.ExportToPdf(cancellationToken, getAll: true);
+
+			// Assert
+			var fileResult = Assert.IsType<FileContentResult>(result);
+			Assert.Equal("application/pdf", fileResult.ContentType);
+			Assert.Equal(fileName, fileResult.FileDownloadName);
+			Assert.Equal(pdfBytes, fileResult.FileContents);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToPdf")]
+		public async Task ExportToPdf_BetweenDates_ReturnsFileResult()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var startDate = new DateOnly(2024, 1, 1);
+			var endDate = new DateOnly(2024, 1, 31);
+			var flights = new List<FlightEntity> { new FlightEntity() };
+			var pdfBytes = new byte[] { 1, 2, 3 };
+			var fileName = "Flights_test.pdf";
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, 10, null));
+			_inputValidationServiceMock
+				.Setup(x => x.IsValidDateOnly(startDate))
+				.Returns(true);
+			_inputValidationServiceMock
+				.Setup(x => x.IsValidDateOnly(endDate))
+				.Returns(true);
+			_flightServiceMock
+				.Setup(x => x.GetFlightsBetweenDates(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
+				.ReturnsAsync(flights);
+			_exportServiceMock.Setup(x => x.ExportToPDF("Flights", flights)).Returns(pdfBytes);
+			_utilityServiceMock.Setup(x => x.GenerateUniqueFileName("Flights", FileExtension.Pdf)).Returns(fileName);
+
+			// Act
+			var result = await _controller.ExportToPdf(cancellationToken, startDate: startDate, endDate: endDate);
+
+			// Assert
+			var fileResult = Assert.IsType<FileContentResult>(result);
+			Assert.Equal("application/pdf", fileResult.ContentType);
+			Assert.Equal(fileName, fileResult.FileDownloadName);
+			Assert.Equal(pdfBytes, fileResult.FileContents);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToPdf")]
+		public async Task ExportToPdf_NoDates_ReturnsFileResult()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var flights = new List<FlightEntity> { new FlightEntity() };
+			var pdfBytes = new byte[] { 1, 2, 3 };
+			var fileName = "Flights_test.pdf";
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, 10, null));
+			_flightServiceMock.Setup(x => x.GetFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(flights);
+			_exportServiceMock.Setup(x => x.ExportToPDF("Flights", flights)).Returns(pdfBytes);
+			_utilityServiceMock.Setup(x => x.GenerateUniqueFileName("Flights", FileExtension.Pdf)).Returns(fileName);
+
+			// Act
+			var result = await _controller.ExportToPdf(cancellationToken);
+
+			// Assert
+			var fileResult = Assert.IsType<FileContentResult>(result);
+			Assert.Equal("application/pdf", fileResult.ContentType);
+			Assert.Equal(fileName, fileResult.FileDownloadName);
+			Assert.Equal(pdfBytes, fileResult.FileContents);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToPdf")]
+		public async Task ExportToPdf_GetAll_NoFlightsFound_ReturnsNoContent()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var flights = new List<FlightEntity>();
+
+			_flightServiceMock.Setup(x => x.GetAllFlights(cancellationToken)).ReturnsAsync(flights);
+
+			// Act
+			var result = await _controller.ExportToPdf(cancellationToken, getAll: true);
+
+			// Assert
+			Assert.IsType<NoContentResult>(result);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToPdf")]
+		public async Task ExportToPdf_GetAll_ServiceReturnsNull_ReturnsNoContent()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+
+			_flightServiceMock.Setup(x => x.GetAllFlights(cancellationToken)).ReturnsAsync((List<FlightEntity>)null);
+
+			// Act
+			var result = await _controller.ExportToPdf(cancellationToken, getAll: true);
+
+			// Assert
+			Assert.IsType<NoContentResult>(result);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToPdf")]
+		public async Task ExportToPdf_BetweenDates_NoFlightsFound_ReturnsNoContent()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var startDate = new DateOnly(2024, 1, 1);
+			var endDate = new DateOnly(2024, 1, 31);
+			var flights = new List<FlightEntity>();
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, 10, null));
+			_inputValidationServiceMock
+				.Setup(x => x.IsValidDateOnly(startDate))
+				.Returns(true);
+			_inputValidationServiceMock
+				.Setup(x => x.IsValidDateOnly(endDate))
+				.Returns(true);
+			_flightServiceMock
+				.Setup(x => x.GetFlightsBetweenDates(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
+				.ReturnsAsync(flights);
+
+			// Act
+			var result = await _controller.ExportToPdf(cancellationToken, startDate: startDate, endDate: endDate);
+
+			// Assert
+			Assert.IsType<NoContentResult>(result);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToPdf")]
+		public async Task ExportToPdf_BetweenDates_ServiceReturnsNull_ReturnsNoContent()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var startDate = new DateOnly(2024, 1, 1);
+			var endDate = new DateOnly(2024, 1, 31);
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, 10, null));
+			_inputValidationServiceMock
+				.Setup(x => x.IsValidDateOnly(startDate))
+				.Returns(true);
+			_inputValidationServiceMock
+				.Setup(x => x.IsValidDateOnly(endDate))
+				.Returns(true);
+			_flightServiceMock
+				.Setup(x => x.GetFlightsBetweenDates(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
+				.ReturnsAsync((List<FlightEntity>)null);
+
+			// Act
+			var result = await _controller.ExportToPdf(cancellationToken, startDate: startDate, endDate: endDate);
+
+			// Assert
+			Assert.IsType<NoContentResult>(result);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToPdf")]
+		public async Task ExportToPdf_NoDates_NoFlightsFound_ReturnsNoContent()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var flights = new List<FlightEntity>();
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, 10, null));
+			_flightServiceMock.Setup(x => x.GetFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(flights);
+
+			// Act
+			var result = await _controller.ExportToPdf(cancellationToken);
+
+			// Assert
+			Assert.IsType<NoContentResult>(result);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToPdf")]
+		public async Task ExportToPdf_NoDates_ServiceReturnsNull_ReturnsNoContent()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, 10, null));
+			_flightServiceMock.Setup(x => x.GetFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync((List<FlightEntity>)null);
+
+			// Act
+			var result = await _controller.ExportToPdf(cancellationToken);
+
+			// Assert
+			Assert.IsType<NoContentResult>(result);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToPdf")]
+		public async Task ExportToPdf_PdfGenerationFails_ReturnsInternalServerError()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var flights = new List<FlightEntity> { new FlightEntity() };
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, 10, null));
+			_flightServiceMock.Setup(x => x.GetFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(flights);
+			_exportServiceMock.Setup(x => x.ExportToPDF("Flights", flights)).Returns((byte[])null);
+
+			// Act
+			var result = await _controller.ExportToPdf(cancellationToken);
+
+			// Assert
+			var statusCodeResult = Assert.IsType<ObjectResult>(result);
+			Assert.Equal(500, statusCodeResult.StatusCode);
+			Assert.Equal("Failed to generate PDF file.", statusCodeResult.Value);
+		}
+
+		#endregion
+
+		#region ExportToExcel
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_InvalidPaginationParameters_ReturnsBadRequest()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var expectedBadRequestResult = new BadRequestObjectResult("Invalid pagination parameters.");
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((false, 0, expectedBadRequestResult));
+
+			// Act
+			var result = await _controller.ExportToExcel(cancellationToken, page: -1, pageSize: 0);
+
+			// Assert
+			Assert.IsType<BadRequestObjectResult>(result);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_BothDatesInvalid_ReturnsBadRequest()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var invalidStartDate = new DateOnly(1, 1, 1);
+			var invalidEndDate = new DateOnly(1, 1, 1);
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, 10, null));
+			_inputValidationServiceMock
+				.Setup(x => x.IsValidDateOnly(It.IsAny<DateOnly?>()))
+				.Returns(false);
+
+			// Act
+			var result = await _controller.ExportToExcel(cancellationToken, startDate: invalidStartDate, endDate: invalidEndDate);
+
+			// Assert
+			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+			Assert.Equal("Invalid date parameters.", badRequestResult.Value);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_GetAll_ReturnsFileResult()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var flights = new List<FlightEntity> { new FlightEntity() };
+			var excelBytes = new byte[] { 1, 2, 3 };
+			var fileName = "Flights_test.xlsx";
+
+			_flightServiceMock.Setup(x => x.GetAllFlights(cancellationToken)).ReturnsAsync(flights);
+			_exportServiceMock.Setup(x => x.ExportToExcel("Flights", flights)).Returns(excelBytes);
+			_utilityServiceMock.Setup(x => x.GenerateUniqueFileName("Flights", FileExtension.Xlsx)).Returns(fileName);
+
+			// Act
+			var result = await _controller.ExportToExcel(cancellationToken, getAll: true);
+
+			// Assert
+			var fileResult = Assert.IsType<FileContentResult>(result);
+			Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileResult.ContentType);
+			Assert.Equal(fileName, fileResult.FileDownloadName);
+			Assert.Equal(excelBytes, fileResult.FileContents);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_BetweenDates_ReturnsFileResult()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var startDate = new DateOnly(2024, 1, 1);
+			var endDate = new DateOnly(2024, 1, 31);
+			var flights = new List<FlightEntity> { new FlightEntity() };
+			var excelBytes = new byte[] { 1, 2, 3 };
+			var fileName = "Flights_test.xlsx";
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, 10, null));
+			_inputValidationServiceMock
+				.Setup(x => x.IsValidDateOnly(startDate))
+				.Returns(true);
+			_inputValidationServiceMock
+				.Setup(x => x.IsValidDateOnly(endDate))
+				.Returns(true);
+			_flightServiceMock
+				.Setup(x => x.GetFlightsBetweenDates(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
+				.ReturnsAsync(flights);
+			_exportServiceMock.Setup(x => x.ExportToExcel("Flights", flights)).Returns(excelBytes);
+			_utilityServiceMock.Setup(x => x.GenerateUniqueFileName("Flights", FileExtension.Xlsx)).Returns(fileName);
+
+			// Act
+			var result = await _controller.ExportToExcel(cancellationToken, startDate: startDate, endDate: endDate);
+
+			// Assert
+			var fileResult = Assert.IsType<FileContentResult>(result);
+			Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileResult.ContentType);
+			Assert.Equal(fileName, fileResult.FileDownloadName);
+			Assert.Equal(excelBytes, fileResult.FileContents);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_NoDates_ReturnsFileResult()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var flights = new List<FlightEntity> { new FlightEntity() };
+			var excelBytes = new byte[] { 1, 2, 3 };
+			var fileName = "Flights_test.xlsx";
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, 10, null));
+			_flightServiceMock.Setup(x => x.GetFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(flights);
+			_exportServiceMock.Setup(x => x.ExportToExcel("Flights", flights)).Returns(excelBytes);
+			_utilityServiceMock.Setup(x => x.GenerateUniqueFileName("Flights", FileExtension.Xlsx)).Returns(fileName);
+
+			// Act
+			var result = await _controller.ExportToExcel(cancellationToken);
+
+			// Assert
+			var fileResult = Assert.IsType<FileContentResult>(result);
+			Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileResult.ContentType);
+			Assert.Equal(fileName, fileResult.FileDownloadName);
+			Assert.Equal(excelBytes, fileResult.FileContents);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_GetAll_NoFlightsFound_ReturnsNoContent()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var flights = new List<FlightEntity>();
+
+			_flightServiceMock.Setup(x => x.GetAllFlights(cancellationToken)).ReturnsAsync(flights);
+
+			// Act
+			var result = await _controller.ExportToExcel(cancellationToken, getAll: true);
+
+			// Assert
+			Assert.IsType<NoContentResult>(result);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_GetAll_ServiceReturnsNull_ReturnsNoContent()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+
+			_flightServiceMock.Setup(x => x.GetAllFlights(cancellationToken)).ReturnsAsync((List<FlightEntity>)null);
+
+			// Act
+			var result = await _controller.ExportToExcel(cancellationToken, getAll: true);
+
+			// Assert
+			Assert.IsType<NoContentResult>(result);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_BetweenDates_NoFlightsFound_ReturnsNoContent()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var startDate = new DateOnly(2024, 1, 1);
+			var endDate = new DateOnly(2024, 1, 31);
+			var flights = new List<FlightEntity>();
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, 10, null));
+			_inputValidationServiceMock
+				.Setup(x => x.IsValidDateOnly(startDate))
+				.Returns(true);
+			_inputValidationServiceMock
+				.Setup(x => x.IsValidDateOnly(endDate))
+				.Returns(true);
+			_flightServiceMock
+				.Setup(x => x.GetFlightsBetweenDates(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
+				.ReturnsAsync(flights);
+
+			// Act
+			var result = await _controller.ExportToExcel(cancellationToken, startDate: startDate, endDate: endDate);
+
+			// Assert
+			Assert.IsType<NoContentResult>(result);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_BetweenDates_ServiceReturnsNull_ReturnsNoContent()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var startDate = new DateOnly(2024, 1, 1);
+			var endDate = new DateOnly(2024, 1, 31);
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, 10, null));
+			_inputValidationServiceMock
+				.Setup(x => x.IsValidDateOnly(startDate))
+				.Returns(true);
+			_inputValidationServiceMock
+				.Setup(x => x.IsValidDateOnly(endDate))
+				.Returns(true);
+			_flightServiceMock
+				.Setup(x => x.GetFlightsBetweenDates(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
+				.ReturnsAsync((List<FlightEntity>)null);
+
+			// Act
+			var result = await _controller.ExportToExcel(cancellationToken, startDate: startDate, endDate: endDate);
+
+			// Assert
+			Assert.IsType<NoContentResult>(result);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_NoDates_NoFlightsFound_ReturnsNoContent()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var flights = new List<FlightEntity>();
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, 10, null));
+			_flightServiceMock.Setup(x => x.GetFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(flights);
+
+			// Act
+			var result = await _controller.ExportToExcel(cancellationToken);
+
+			// Assert
+			Assert.IsType<NoContentResult>(result);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_NoDates_ServiceReturnsNull_ReturnsNoContent()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, 10, null));
+			_flightServiceMock.Setup(x => x.GetFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync((List<FlightEntity>)null);
+
+			// Act
+			var result = await _controller.ExportToExcel(cancellationToken);
+
+			// Assert
+			Assert.IsType<NoContentResult>(result);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_ExcelGenerationFails_ReturnsInternalServerError()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var flights = new List<FlightEntity> { new FlightEntity() };
+			var emptyExcelBytes = Array.Empty<byte>();
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, 10, null));
+			_flightServiceMock.Setup(x => x.GetFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(flights);
+			_exportServiceMock.Setup(x => x.ExportToExcel("Flights", flights)).Returns(emptyExcelBytes);
+
+			// Act
+			var result = await _controller.ExportToExcel(cancellationToken);
+
+			// Assert
+			var statusCodeResult = Assert.IsType<ObjectResult>(result);
+			Assert.Equal(500, statusCodeResult.StatusCode);
+			Assert.Equal("Failed to generate Excel file.", statusCodeResult.Value);
+		}
+
+		[Fact]
+		[Trait("Category", "ExportToExcel")]
+		public async Task ExportToExcel_ExcelGenerationReturnsNull_ReturnsInternalServerError()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			var flights = new List<FlightEntity> { new FlightEntity() };
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, 10, null));
+			_flightServiceMock.Setup(x => x.GetFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(flights);
+			_exportServiceMock.Setup(x => x.ExportToExcel("Flights", flights)).Returns((byte[])null);
+
+			// Act
+			var result = await _controller.ExportToExcel(cancellationToken);
+
+			// Assert
+			var statusCodeResult = Assert.IsType<ObjectResult>(result);
+			Assert.Equal(500, statusCodeResult.StatusCode);
+			Assert.Equal("Failed to generate Excel file.", statusCodeResult.Value);
+		}
+
+		#endregion
 
 	}
 }

@@ -6,7 +6,6 @@ using AirportAutomation.Core.Enums;
 using AirportAutomation.Core.FilterExtensions;
 using AirportAutomation.Core.Filters;
 using AirportAutomation.Core.Interfaces.IServices;
-using AirportAutomation.Api.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
@@ -195,7 +194,7 @@ namespace AirportAutomation.Api.Controllers
 		[ProducesResponseType(400)]
 		[ProducesResponseType(404)]
 		[ProducesResponseType(401)]
-		public async Task<ActionResult<PagedResponse<PassengerDto>>> GetPassegnersByFilter(
+		public async Task<ActionResult<PagedResponse<PassengerDto>>> GetPassengersByFilter(
 			CancellationToken cancellationToken,
 			[FromQuery] PassengerSearchFilter filter,
 			[FromQuery] int page = 1,
@@ -435,7 +434,7 @@ namespace AirportAutomation.Api.Controllers
 			if (pdf == null)
 			{
 				_logger.LogError("PDF generation failed.");
-				return StatusCode(500, "Failed to generate PDF.");
+				return StatusCode(500, "Failed to generate PDF file.");
 			}
 			string fileName = _utilityService.GenerateUniqueFileName("Passengers", FileExtension.Pdf);
 			return File(pdf, "application/pdf", fileName);

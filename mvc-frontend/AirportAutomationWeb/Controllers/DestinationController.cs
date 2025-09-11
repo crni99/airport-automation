@@ -6,7 +6,6 @@ using AirportAutomation.Web.Models.Destination;
 using AirportAutomation.Web.Models.Response;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using System.Globalization;
 
 namespace AirportAutomation.Web.Controllers
 {

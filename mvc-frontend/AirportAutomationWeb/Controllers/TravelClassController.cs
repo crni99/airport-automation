@@ -1,5 +1,4 @@
 ﻿using AirportAutomation.Core.Entities;
-using AirportAutomation.Core.Filters;
 using AirportAutomation.Web.Interfaces;
 using AirportAutomation.Web.Models.Response;
 using AirportAutomation.Web.Models.TravelClass;

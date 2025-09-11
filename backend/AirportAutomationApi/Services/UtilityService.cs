@@ -1,5 +1,5 @@
-﻿using AirportAutomation.Core.Enums;
-using AirportAutomation.Api.Interfaces;
+﻿using AirportAutomation.Api.Interfaces;
+using AirportAutomation.Core.Enums;
 
 namespace AirportAutomation.Api.Services
 {

@@ -1,9 +1,8 @@
-﻿using AirportAutomation.Api.HealthChecks;
-using AirportAutomation.Infrastructure.Data;
-using AirportAutomation.Infrastructure.Middlewares;
-using AirportAutomation.Api.Binders;
+﻿using AirportAutomation.Api.Binders;
 using AirportAutomation.Api.HealthChecks;
 using AirportAutomation.Api.Helpers;
+using AirportAutomation.Infrastructure.Data;
+using AirportAutomation.Infrastructure.Middlewares;
 using AspNetCoreRateLimit;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

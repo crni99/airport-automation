@@ -41,57 +41,42 @@ namespace AirportAutomationApi.Test.Controllers
 				_loggerMock.Object);
 		}
 
-		#region Constructor
+		[Theory]
 		[Trait("Category", "Constructor")]
-		[Fact]
-		public void Constructor_WithNullAuthenticationRepository_ThrowsArgumentNullException()
+		[InlineData("authenticationRepository")]
+		[InlineData("configuration")]
+		[InlineData("mapper")]
+		[InlineData("logger")]
+		public void Constructor_WhenServiceIsNull_ThrowsArgumentNullException(string serviceName)
 		{
-			// Act & Assert
-			Assert.Throws<ArgumentNullException>(() => new AuthenticationController(
-				null,
-				_configurationMock.Object,
-				_mapperMock.Object,
-				_loggerMock.Object));
-		}
+			// Arrange
+			var authenticationRepositoryMock = new Mock<IAuthenticationRepository>();
+			var configurationMock = new Mock<IConfiguration>();
+			var mapperMock = new Mock<IMapper>();
+			var loggerMock = new Mock<ILogger<AuthenticationController>>();
 
-		[Trait("Category", "Constructor")]
-		[Fact]
-		public void Constructor_WithNullConfiguration_ThrowsArgumentNullException()
-		{
-			// Act & Assert
-			Assert.Throws<ArgumentNullException>(() => new AuthenticationController(
-				_authenticationRepositoryMock.Object,
-				null,
-				_mapperMock.Object,
-				_loggerMock.Object));
-		}
+			// Set up mocks to return null based on the test case
+			IAuthenticationRepository authenticationRepository = serviceName == "authenticationRepository" ? null : authenticationRepositoryMock.Object;
+			IConfiguration configuration = serviceName == "configuration" ? null : configurationMock.Object;
+			IMapper mapper = serviceName == "mapper" ? null : mapperMock.Object;
+			ILogger<AuthenticationController> logger = serviceName == "logger" ? null : loggerMock.Object;
 
-		[Trait("Category", "Constructor")]
-		[Fact]
-		public void Constructor_WithNullMapper_ThrowsArgumentNullException()
-		{
 			// Act & Assert
-			Assert.Throws<ArgumentNullException>(() => new AuthenticationController(
-				_authenticationRepositoryMock.Object,
-				_configurationMock.Object,
-				null,
-				_loggerMock.Object));
-		}
+			var exception = Record.Exception(() => new AuthenticationController(
+				authenticationRepository,
+				configuration,
+				mapper,
+				logger
+			));
 
-		[Trait("Category", "Constructor")]
-		[Fact]
-		public void Constructor_WithNullLogger_ThrowsArgumentNullException()
-		{
-			// Act & Assert
-			Assert.Throws<ArgumentNullException>(() => new AuthenticationController(
-				_authenticationRepositoryMock.Object,
-				_configurationMock.Object,
-				_mapperMock.Object,
-				null));
+			// Assert
+			Assert.NotNull(exception);
+			Assert.IsType<ArgumentNullException>(exception);
+			Assert.Contains(serviceName, exception.Message);
 		}
-		#endregion
 
 		#region Authenticate
+
 		[Trait("Category", "Authenticate")]
 		[Fact]
 		public void Authenticate_ValidUser_ReturnsOkWithToken()
@@ -181,6 +166,7 @@ namespace AirportAutomationApi.Test.Controllers
 			Assert.Equal("testuser", jwtToken.Claims.First(c => c.Type == ClaimTypes.Name).Value);
 			Assert.Equal("Admin", jwtToken.Claims.First(c => c.Type == ClaimTypes.Role).Value);
 		}
+
 		#endregion
 
 	}

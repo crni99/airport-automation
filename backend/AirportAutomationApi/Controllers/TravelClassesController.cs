@@ -3,11 +3,9 @@ using AirportAutomation.Application.Dtos.Response;
 using AirportAutomation.Application.Dtos.TravelClass;
 using AirportAutomation.Core.Enums;
 using AirportAutomation.Core.Interfaces.IServices;
-using AirportAutomation.Api.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace AirportAutomation.Api.Controllers
 {
@@ -170,7 +168,7 @@ namespace AirportAutomation.Api.Controllers
 			if (pdf == null)
 			{
 				_logger.LogError("PDF generation failed.");
-				return StatusCode(500, "Failed to generate PDF.");
+				return StatusCode(500, "Failed to generate PDF file.");
 			}
 			string fileName = _utilityService.GenerateUniqueFileName("TravelClasses", FileExtension.Pdf);
 			return File(pdf, "application/pdf", fileName);

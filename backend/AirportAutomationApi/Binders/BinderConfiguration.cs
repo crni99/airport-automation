@@ -1,12 +1,11 @@
 ﻿using AirportAutomation.Api.Interfaces;
 using AirportAutomation.Api.MappingProfiles;
+using AirportAutomation.Api.Repositories;
+using AirportAutomation.Api.Services;
 using AirportAutomation.Application.Services;
 using AirportAutomation.Core.Interfaces.IRepositories;
 using AirportAutomation.Core.Interfaces.IServices;
 using AirportAutomation.Infrastructure.Repositories;
-using AirportAutomation.Api.Interfaces;
-using AirportAutomation.Api.Repositories;
-using AirportAutomation.Api.Services;
 using AspNetCoreRateLimit;
 
 namespace AirportAutomation.Api.Binders

@@ -1,5 +1,4 @@
 ﻿using AirportAutomation.Api.Interfaces;
-using AirportAutomation.Api.Interfaces;
 using AirportAutomation.Application.Dtos.ApiUser;
 using AirportAutomation.Application.Dtos.Response;
 using AirportAutomation.Core.Entities;

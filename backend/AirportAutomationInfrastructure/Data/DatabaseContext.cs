@@ -1,8 +1,6 @@
 ﻿using AirportAutomation.Core.Converters;
 using AirportAutomation.Core.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.Reflection;
 
 namespace AirportAutomation.Infrastructure.Data
 {

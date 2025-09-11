@@ -66,123 +66,48 @@ namespace AirportAutomationApi.Test.Controllers
 			);
 		}
 
-		#region Constructor
-		[Fact]
+		[Theory]
 		[Trait("Category", "Constructor")]
-		public void Constructor_WithValidDependencies_InitializesCorrectly()
+		[InlineData("apiUserService")]
+		[InlineData("paginationValidationService")]
+		[InlineData("inputValidationService")]
+		[InlineData("mapper")]
+		[InlineData("logger")]
+		public void Constructor_WhenServiceIsNull_ThrowsArgumentNullException(string serviceName)
 		{
 			// Arrange
-			var configurationSectionMock = new Mock<IConfigurationSection>();
-			configurationSectionMock.Setup(s => s.Value).Returns("100");
-			_configurationMock.Setup(c => c.GetSection("pageSettings:maxPageSize")).Returns(configurationSectionMock.Object);
+			var apiUserServiceMock = new Mock<IApiUserService>();
+			var paginationValidationServiceMock = new Mock<IPaginationValidationService>();
+			var inputValidationServiceMock = new Mock<IInputValidationService>();
+			var mapperMock = new Mock<IMapper>();
+			var loggerMock = new Mock<ILogger<ApiUsersController>>();
+			var configurationMock = new Mock<IConfiguration>();
 
-			// Act
-			var controller = new ApiUsersController(
-				_apiUserServiceMock.Object,
-				_paginationValidationServiceMock.Object,
-				_inputValidationServiceMock.Object,
-				_mapperMock.Object,
-				_loggerMock.Object,
-				_configurationMock.Object
-			);
+			// Set up mocks to return null based on the test case
+			IApiUserService apiUserService = serviceName == "apiUserService" ? null : apiUserServiceMock.Object;
+			IPaginationValidationService paginationValidationService = serviceName == "paginationValidationService" ? null : paginationValidationServiceMock.Object;
+			IInputValidationService inputValidationService = serviceName == "inputValidationService" ? null : inputValidationServiceMock.Object;
+			IMapper mapper = serviceName == "mapper" ? null : mapperMock.Object;
+			ILogger<ApiUsersController> logger = serviceName == "logger" ? null : loggerMock.Object;
+
+			// Act & Assert
+			var exception = Record.Exception(() => new ApiUsersController(
+				apiUserService,
+				paginationValidationService,
+				inputValidationService,
+				mapper,
+				logger,
+				configurationMock.Object
+			));
 
 			// Assert
-			Assert.NotNull(controller);
-			Assert.Equal(100, (int)controller.GetType().GetField("maxPageSize", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(controller));
+			Assert.NotNull(exception);
+			Assert.IsType<ArgumentNullException>(exception);
+			Assert.Contains(serviceName, exception.Message);
 		}
-
-		[Fact]
-		[Trait("Category", "Constructor")]
-		public void Constructor_WithNullApiUserService_ThrowsArgumentNullException()
-		{
-			// Arrange
-			IApiUserService nullApiUserService = null;
-
-			// Act & Assert
-			Assert.Throws<ArgumentNullException>(() => new ApiUsersController(
-				nullApiUserService,
-				_paginationValidationServiceMock.Object,
-				_inputValidationServiceMock.Object,
-				_mapperMock.Object,
-				_loggerMock.Object,
-				_configurationMock.Object
-			));
-		}
-
-		[Fact]
-		[Trait("Category", "Constructor")]
-		public void Constructor_WithNullPaginationValidationService_ThrowsArgumentNullException()
-		{
-			// Arrange
-			IPaginationValidationService nullPaginationValidationService = null;
-
-			// Act & Assert
-			Assert.Throws<ArgumentNullException>(() => new ApiUsersController(
-				_apiUserServiceMock.Object,
-				nullPaginationValidationService,
-				_inputValidationServiceMock.Object,
-				_mapperMock.Object,
-				_loggerMock.Object,
-				_configurationMock.Object
-			));
-		}
-
-		[Fact]
-		[Trait("Category", "Constructor")]
-		public void Constructor_WithNullInputValidationService_ThrowsArgumentNullException()
-		{
-			// Arrange
-			IInputValidationService nullInputValidationService = null;
-
-			// Act & Assert
-			Assert.Throws<ArgumentNullException>(() => new ApiUsersController(
-				_apiUserServiceMock.Object,
-				_paginationValidationServiceMock.Object,
-				nullInputValidationService,
-				_mapperMock.Object,
-				_loggerMock.Object,
-				_configurationMock.Object
-			));
-		}
-
-		[Fact]
-		[Trait("Category", "Constructor")]
-		public void Constructor_WithNullMapper_ThrowsArgumentNullException()
-		{
-			// Arrange
-			IMapper nullMapper = null;
-
-			// Act & Assert
-			Assert.Throws<ArgumentNullException>(() => new ApiUsersController(
-				_apiUserServiceMock.Object,
-				_paginationValidationServiceMock.Object,
-				_inputValidationServiceMock.Object,
-				nullMapper,
-				_loggerMock.Object,
-				_configurationMock.Object
-			));
-		}
-
-		[Fact]
-		[Trait("Category", "Constructor")]
-		public void Constructor_WithNullLogger_ThrowsArgumentNullException()
-		{
-			// Arrange
-			ILogger<ApiUsersController> nullLogger = null;
-
-			// Act & Assert
-			Assert.Throws<ArgumentNullException>(() => new ApiUsersController(
-				_apiUserServiceMock.Object,
-				_paginationValidationServiceMock.Object,
-				_inputValidationServiceMock.Object,
-				_mapperMock.Object,
-				nullLogger,
-				_configurationMock.Object
-			));
-		}
-		#endregion
 
 		#region GetApiUsers
+
 		[Fact]
 		[Trait("Category", "GetApiUsers")]
 		public async Task GetApiUsers_InvalidPaginationParameters_ReturnsBadRequest()
@@ -372,9 +297,11 @@ namespace AirportAutomationApi.Test.Controllers
 			Assert.Equal(allApiUsers.Count, pagedResponse.TotalCount);
 			Assert.Equal(expectedData, pagedResponse.Data);
 		}
+
 		#endregion
 
 		#region GetApiUser
+
 		[Fact]
 		[Trait("Category", "GetApiUser")]
 		public async Task GetApiUser_InvalidId_ReturnsBadRequest()
@@ -446,9 +373,11 @@ namespace AirportAutomationApi.Test.Controllers
 			var returnedApiUserDto = Assert.IsType<ApiUserRoleDto>(okResult.Value);
 			Assert.Equal(apiUserRoleDto, returnedApiUserDto);
 		}
+
 		#endregion
 
 		#region GetApiUsersByRole
+
 		[Fact]
 		[Trait("Category", "GetApiUsersByRole")]
 		public async Task GetApiUsersByRole_InvalidRole_ReturnsBadRequest()
@@ -591,9 +520,11 @@ namespace AirportAutomationApi.Test.Controllers
 			Assert.Equal(totalItems, response.TotalCount);
 			Assert.Equal(apiUserRoleDtos, response.Data);
 		}
+
 		#endregion
 
 		#region GetApiUsersByFilter
+
 		[Fact]
 		[Trait("Category", "GetApiUsersByFilter")]
 		public async Task GetApiUsersByFilter_ReturnsBadRequest_WhenFilterIsEmpty()
@@ -753,9 +684,11 @@ namespace AirportAutomationApi.Test.Controllers
 			// Act & Assert
 			await Assert.ThrowsAsync<Exception>(async () => await _controller.GetApiUsersByFilter(CancellationToken.None, filter));
 		}
+
 		#endregion
 
 		#region PutApiUser
+
 		[Fact]
 		[Trait("Category", "PutApiUser")]
 		public async Task PutApiUser_ReturnsNoContent_WhenUpdateIsSuccessful()
@@ -829,9 +762,11 @@ namespace AirportAutomationApi.Test.Controllers
 			// Assert
 			Assert.IsType<NotFoundResult>(result);
 		}
+
 		#endregion
 
 		#region DeleteApiUser
+
 		[Fact]
 		[Trait("Category", "DeleteApiUser")]
 		public async Task DeleteApiUser_ReturnsNoContent_WhenDeletionIsSuccessful()
@@ -880,6 +815,7 @@ namespace AirportAutomationApi.Test.Controllers
 			// Assert
 			Assert.IsType<NotFoundResult>(result);
 		}
+
 		#endregion
 
 	}

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace AirportAutomation.Web.Models.ApiUser
+﻿namespace AirportAutomation.Web.Models.ApiUser
 {
 	public class ApiUserViewModel
 	{

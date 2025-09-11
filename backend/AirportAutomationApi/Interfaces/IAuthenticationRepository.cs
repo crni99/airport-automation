@@ -2,9 +2,9 @@
 
 namespace AirportAutomation.Api.Interfaces
 {
-    public interface IAuthenticationRepository
-    {
-        public ApiUserEntity GetUserByUsername(string username);
+	public interface IAuthenticationRepository
+	{
+		public ApiUserEntity GetUserByUsername(string username);
 
-    }
+	}
 }

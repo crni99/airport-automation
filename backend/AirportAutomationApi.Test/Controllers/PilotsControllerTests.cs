@@ -1,10 +1,9 @@
-﻿using AirportAutomation.Api.Interfaces;
+﻿using AirportAutomation.Api.Controllers;
+using AirportAutomation.Api.Interfaces;
 using AirportAutomation.Application.Dtos.Pilot;
 using AirportAutomation.Application.Dtos.Response;
 using AirportAutomation.Core.Entities;
 using AirportAutomation.Core.Interfaces.IServices;
-using AirportAutomation.Api.Controllers;
-using AirportAutomation.Api.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -71,6 +70,54 @@ namespace AirportAutomationApi.Test.Controllers
 				_loggerMock.Object,
 				_configurationMock.Object
 			);
+		}
+
+		[Theory]
+		[Trait("Category", "Constructor")]
+		[InlineData("pilotService")]
+		[InlineData("paginationValidationService")]
+		[InlineData("inputValidationService")]
+		[InlineData("utilityService")]
+		[InlineData("exportService")]
+		[InlineData("mapper")]
+		[InlineData("logger")]
+		public void Constructor_WhenServiceIsNull_ThrowsArgumentNullException(string serviceName)
+		{
+			// Arrange
+			var pilotServiceMock = new Mock<IPilotService>();
+			var paginationValidationServiceMock = new Mock<IPaginationValidationService>();
+			var inputValidationServiceMock = new Mock<IInputValidationService>();
+			var utilityServiceMock = new Mock<IUtilityService>();
+			var exportServiceMock = new Mock<IExportService>();
+			var mapperMock = new Mock<IMapper>();
+			var loggerMock = new Mock<ILogger<PilotsController>>();
+			var configurationMock = new Mock<IConfiguration>();
+
+			// Set up mocks to return null based on the test case
+			IPilotService pilotService = serviceName == "pilotService" ? null : pilotServiceMock.Object;
+			IPaginationValidationService paginationValidationService = serviceName == "paginationValidationService" ? null : paginationValidationServiceMock.Object;
+			IInputValidationService inputValidationService = serviceName == "inputValidationService" ? null : inputValidationServiceMock.Object;
+			IUtilityService utilityService = serviceName == "utilityService" ? null : utilityServiceMock.Object;
+			IExportService exportService = serviceName == "exportService" ? null : exportServiceMock.Object;
+			IMapper mapper = serviceName == "mapper" ? null : mapperMock.Object;
+			ILogger<PilotsController> logger = serviceName == "logger" ? null : loggerMock.Object;
+
+			// Act & Assert
+			var exception = Record.Exception(() => new PilotsController(
+				pilotService,
+				paginationValidationService,
+				inputValidationService,
+				utilityService,
+				exportService,
+				mapper,
+				logger,
+				configurationMock.Object
+			));
+
+			// Assert
+			Assert.NotNull(exception);
+			Assert.IsType<ArgumentNullException>(exception);
+			Assert.Contains(serviceName, exception.Message);
 		}
 
 		[Fact]

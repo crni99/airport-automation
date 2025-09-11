@@ -69,245 +69,56 @@ namespace AirportAutomationApi.Test.Controllers
 			);
 		}
 
-		#region Constructor
-		/// <summary>
-		/// This test ensures that the `AirlinesController` constructor throws an `ArgumentNullException`
-		/// if a `null` value is passed in for the `IAirlineService`. This prevents the application from failing
-		/// unexpectedly later on if a crucial dependency is missing.
-		/// </summary>
+		[Theory]
 		[Trait("Category", "Constructor")]
-		[Fact]
-		public void Constructor_ThrowsArgumentNullException_WhenAirlineServiceIsNull()
+		[InlineData("airlineService")]
+		[InlineData("paginationValidationService")]
+		[InlineData("inputValidationService")]
+		[InlineData("utilityService")]
+		[InlineData("exportService")]
+		[InlineData("mapper")]
+		[InlineData("logger")]
+		public void Constructor_WhenServiceIsNull_ThrowsArgumentNullException(string serviceName)
 		{
 			// Arrange
-			var config = _configurationMock.Object;
-			var pagination = _paginationValidationServiceMock.Object;
-			var input = _inputValidationServiceMock.Object;
-			var utility = _utilityServiceMock.Object;
-			var export = _exportServiceMock.Object;
-			var mapper = _mapperMock.Object;
-			var logger = _loggerMock.Object;
+			var airlineServiceMock = new Mock<IAirlineService>();
+			var paginationValidationServiceMock = new Mock<IPaginationValidationService>();
+			var inputValidationServiceMock = new Mock<IInputValidationService>();
+			var utilityServiceMock = new Mock<IUtilityService>();
+			var exportServiceMock = new Mock<IExportService>();
+			var mapperMock = new Mock<IMapper>();
+			var loggerMock = new Mock<ILogger<AirlinesController>>();
+			var configurationMock = new Mock<IConfiguration>();
 
-			// Act & Assert
-			Assert.Throws<ArgumentNullException>(() => new AirlinesController(
-				null,
-				pagination,
-				input,
-				utility,
-				export,
-				mapper,
-				logger,
-				config));
-		}
-
-		/// <summary>
-		/// This test checks that the constructor throws an `ArgumentNullException` when the
-		/// `IPaginationValidationService` dependency is `null`.
-		/// </summary>
-		[Fact]
-		[Trait("Category", "Constructor")]
-		public void Constructor_ThrowsArgumentNullException_WhenPaginationValidationServiceIsNull()
-		{
-			// Arrange
-			var airline = _airlineServiceMock.Object;
-			var config = _configurationMock.Object;
-			var input = _inputValidationServiceMock.Object;
-			var utility = _utilityServiceMock.Object;
-			var export = _exportServiceMock.Object;
-			var mapper = _mapperMock.Object;
-			var logger = _loggerMock.Object;
-
-			// Act & Assert
-			Assert.Throws<ArgumentNullException>(() => new AirlinesController(
-				airline,
-				null,
-				input,
-				utility,
-				export,
-				mapper,
-				logger,
-				config));
-		}
-
-		/// <summary>
-		/// This test confirms that the constructor throws an `ArgumentNullException` if the
-		/// `IInputValidationService` is `null`, ensuring proper validation services are always provided.
-		/// </summary>
-		[Fact]
-		[Trait("Category", "Constructor")]
-		public void Constructor_ThrowsArgumentNullException_WhenInputValidationServiceIsNull()
-		{
-			// Arrange
-			var airline = _airlineServiceMock.Object;
-			var config = _configurationMock.Object;
-			var pagination = _paginationValidationServiceMock.Object;
-			var utility = _utilityServiceMock.Object;
-			var export = _exportServiceMock.Object;
-			var mapper = _mapperMock.Object;
-			var logger = _loggerMock.Object;
-
-			// Act & Assert
-			Assert.Throws<ArgumentNullException>(() => new AirlinesController(
-				airline,
-				pagination,
-				null,
-				utility,
-				export,
-				mapper,
-				logger,
-				config));
-		}
-
-		/// <summary>
-		/// This test validates that the constructor throws an `ArgumentNullException` if the
-		/// `IUtilityService` is `null`.
-		/// </summary>
-		[Fact]
-		[Trait("Category", "Constructor")]
-		public void Constructor_ThrowsArgumentNullException_WhenUtilityServiceIsNull()
-		{
-			// Arrange
-			var airline = _airlineServiceMock.Object;
-			var config = _configurationMock.Object;
-			var pagination = _paginationValidationServiceMock.Object;
-			var input = _inputValidationServiceMock.Object;
-			var export = _exportServiceMock.Object;
-			var mapper = _mapperMock.Object;
-			var logger = _loggerMock.Object;
-
-			// Act & Assert
-			Assert.Throws<ArgumentNullException>(() => new AirlinesController(
-				airline,
-				pagination,
-				input,
-				null,
-				export,
-				mapper,
-				logger,
-				config));
-		}
-
-		/// <summary>
-		/// This test verifies that the constructor throws an `ArgumentNullException` when a `null`
-		/// `IExportService` is passed to it.
-		/// </summary>
-		[Fact]
-		[Trait("Category", "Constructor")]
-		public void Constructor_ThrowsArgumentNullException_WhenExportServiceIsNull()
-		{
-			// Arrange
-			var airline = _airlineServiceMock.Object;
-			var config = _configurationMock.Object;
-			var pagination = _paginationValidationServiceMock.Object;
-			var input = _inputValidationServiceMock.Object;
-			var utility = _utilityServiceMock.Object;
-			var mapper = _mapperMock.Object;
-			var logger = _loggerMock.Object;
-
-			// Act & Assert
-			Assert.Throws<ArgumentNullException>(() => new AirlinesController(
-				airline,
-				pagination,
-				input,
-				utility,
-				null,
-				mapper,
-				logger,
-				config));
-		}
-
-		/// <summary>
-		/// This test ensures the constructor throws an `ArgumentNullException` if the required `IMapper`
-		/// dependency is `null`.
-		/// </summary>
-		[Fact]
-		[Trait("Category", "Constructor")]
-		public void Constructor_ThrowsArgumentNullException_WhenMapperIsNull()
-		{
-			// Arrange
-			var airline = _airlineServiceMock.Object;
-			var config = _configurationMock.Object;
-			var pagination = _paginationValidationServiceMock.Object;
-			var input = _inputValidationServiceMock.Object;
-			var utility = _utilityServiceMock.Object;
-			var export = _exportServiceMock.Object;
-			var logger = _loggerMock.Object;
-
-			// Act & Assert
-			Assert.Throws<ArgumentNullException>(() => new AirlinesController(
-				airline,
-				pagination,
-				input,
-				utility,
-				export,
-				null,
-				logger,
-				config));
-		}
-
-		/// <summary>
-		/// This test confirms the constructor throws an `ArgumentNullException` if the `ILogger`
-		/// dependency is `null`, which is important for maintaining a functional logging system.
-		/// </summary>
-		[Fact]
-		[Trait("Category", "Constructor")]
-		public void Constructor_ThrowsArgumentNullException_WhenLoggerIsNull()
-		{
-			// Arrange
-			var airline = _airlineServiceMock.Object;
-			var config = _configurationMock.Object;
-			var pagination = _paginationValidationServiceMock.Object;
-			var input = _inputValidationServiceMock.Object;
-			var utility = _utilityServiceMock.Object;
-			var export = _exportServiceMock.Object;
-			var mapper = _mapperMock.Object;
-
-			// Act & Assert
-			Assert.Throws<ArgumentNullException>(() => new AirlinesController(
-				airline,
-				pagination,
-				input,
-				utility,
-				export,
-				mapper,
-				null,
-				config));
-		}
-
-		/// <summary>
-		/// This is a "happy path" test. It verifies that when all dependencies are correctly provided, the
-		/// `AirlinesController` is successfully instantiated without throwing any exceptions. This test confirms that
-		/// the constructor works as expected under normal circumstances.
-		/// </summary>
-		[Fact]
-		[Trait("Category", "Constructor")]
-		public void Constructor_DoesNotThrowException_WhenAllDependenciesAreValid()
-		{
-			// Arrange
-			var airline = _airlineServiceMock.Object;
-			var config = _configurationMock.Object;
-			var pagination = _paginationValidationServiceMock.Object;
-			var input = _inputValidationServiceMock.Object;
-			var utility = _utilityServiceMock.Object;
-			var export = _exportServiceMock.Object;
-			var mapper = _mapperMock.Object;
-			var logger = _loggerMock.Object;
+			// Set up mocks to return null based on the test case
+			IAirlineService airlineService = serviceName == "airlineService" ? null : airlineServiceMock.Object;
+			IPaginationValidationService paginationValidationService = serviceName == "paginationValidationService" ? null : paginationValidationServiceMock.Object;
+			IInputValidationService inputValidationService = serviceName == "inputValidationService" ? null : inputValidationServiceMock.Object;
+			IUtilityService utilityService = serviceName == "utilityService" ? null : utilityServiceMock.Object;
+			IExportService exportService = serviceName == "exportService" ? null : exportServiceMock.Object;
+			IMapper mapper = serviceName == "mapper" ? null : mapperMock.Object;
+			ILogger<AirlinesController> logger = serviceName == "logger" ? null : loggerMock.Object;
 
 			// Act & Assert
 			var exception = Record.Exception(() => new AirlinesController(
-				airline,
-				pagination,
-				input,
-				utility,
-				export,
+				airlineService,
+				paginationValidationService,
+				inputValidationService,
+				utilityService,
+				exportService,
 				mapper,
 				logger,
-				config));
-			Assert.Null(exception);
+				configurationMock.Object
+			));
+
+			// Assert
+			Assert.NotNull(exception);
+			Assert.IsType<ArgumentNullException>(exception);
+			Assert.Contains(serviceName, exception.Message);
 		}
-		#endregion
 
 		#region GetAirlines
+
 		/// <summary>
 		/// This test validates that the `GetAirlines` method returns a `400 BadRequest`
 		/// when provided with invalid pagination parameters, such as a negative page number or a zero page size.
@@ -521,9 +332,11 @@ namespace AirportAutomationApi.Test.Controllers
 			Assert.Equal(allAirlines.Count, pagedResponse.TotalCount);
 			Assert.Equal(expectedData, pagedResponse.Data);
 		}
+
 		#endregion
 
 		#region GetAirline
+
 		/// <summary>
 		/// This test verifies that the `GetAirline` method returns a `400 BadRequest`
 		/// response when a negative or invalid ID is provided.
@@ -607,9 +420,11 @@ namespace AirportAutomationApi.Test.Controllers
 			var returnedAirlineDto = Assert.IsType<AirlineDto>(okResult.Value);
 			Assert.Equal(airlineDto, returnedAirlineDto);
 		}
+
 		#endregion
 
 		#region GetAirlinesByName
+
 		/// <summary>
 		/// This test verifies that the `GetAirlinesByName` method returns a `400 BadRequest`
 		/// response when provided with an invalid or empty name string.
@@ -756,9 +571,11 @@ namespace AirportAutomationApi.Test.Controllers
 			Assert.Equal(totalItems, response.TotalCount);
 			Assert.Equal(airlineDtos, response.Data);
 		}
+
 		#endregion
 
 		#region PostAirline
+
 		/// <summary>
 		/// This is a happy-path test that verifies the `PostAirline` method returns a `201 CreatedAtActionResult`
 		/// when an airline is successfully created. It also checks that the returned object, action name, and route values are correct.
@@ -811,9 +628,11 @@ namespace AirportAutomationApi.Test.Controllers
 			// Act & Assert
 			await Assert.ThrowsAsync<Exception>(async () => await _controller.PostAirline(airlineCreateDto));
 		}
+
 		#endregion
 
 		#region PutAirline
+
 		/// <summary>
 		/// This is a happy-path test that verifies the `PutAirline` method returns a `204 No Content`
 		/// response when an airline is successfully updated.
@@ -903,9 +722,11 @@ namespace AirportAutomationApi.Test.Controllers
 			// Assert
 			Assert.IsType<NotFoundResult>(result);
 		}
+
 		#endregion
 
 		#region PatchAirline
+
 		/// <summary>
 		/// This happy-path test verifies that the `PatchAirline` method returns a `200 OK`
 		/// response when a partial update is successful.
@@ -976,9 +797,11 @@ namespace AirportAutomationApi.Test.Controllers
 			// Assert
 			Assert.IsType<NotFoundResult>(result);
 		}
+
 		#endregion
 
 		#region DeleteAirline
+
 		/// <summary>
 		/// This is a happy-path test that verifies the `DeleteAirline` method returns a `204 No Content`
 		/// response when an airline is successfully deleted.
@@ -1061,9 +884,11 @@ namespace AirportAutomationApi.Test.Controllers
 			var conflictResult = Assert.IsType<ConflictObjectResult>(result);
 			Assert.Equal("Airline cannot be deleted because it is being referenced by other entities.", conflictResult.Value);
 		}
+
 		#endregion
 
 		#region ExportToPdf
+
 		/// <summary>
 		/// This is a happy-path test that verifies the `ExportToPdf` method returns a file (`FileContentResult`)
 		/// with the correct content and headers when the `getAll` parameter is set to `true`.
@@ -1266,9 +1091,11 @@ namespace AirportAutomationApi.Test.Controllers
 			Assert.Equal(StatusCodes.Status500InternalServerError, statusCodeResult.StatusCode);
 			Assert.Equal("Failed to generate PDF file.", statusCodeResult.Value);
 		}
+
 		#endregion
 
 		#region ExportToExcel
+
 		/// <summary>
 		/// This is a happy-path test that verifies the `ExportToExcel` method returns a file (`FileContentResult`)
 		/// with the correct content and headers when the `getAll` parameter is set to `true`.
@@ -1471,6 +1298,7 @@ namespace AirportAutomationApi.Test.Controllers
 			Assert.Equal(StatusCodes.Status500InternalServerError, statusCodeResult.StatusCode);
 			Assert.Equal("Failed to generate Excel file.", statusCodeResult.Value);
 		}
+
 		#endregion
 
 	}
