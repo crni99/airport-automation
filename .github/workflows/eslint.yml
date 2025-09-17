@@ -15,10 +15,7 @@ on:
 jobs:
   eslint:
     name: Run eslint scanning
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ubuntu-latest
 
     permissions:
       contents: read
@@ -40,17 +37,12 @@ jobs:
         env:
           SARIF_ESLINT_IGNORE_SUPPRESSED: "true"
         run: |
-          if [[ "$RUNNER_OS" == "Windows" ]]; then
-            cd react-frontend
-            npx eslint . --config eslint.config.js --ext .js,.jsx,.ts,.tsx --format @microsoft/eslint-formatter-sarif --output-file eslint-results.sarif
-          else
-            cd react-frontend
-            npx eslint . \
-              --config eslint.config.js \
-              --ext .js,.jsx,.ts,.tsx \
-              --format @microsoft/eslint-formatter-sarif \
-              --output-file eslint-results.sarif
-          fi
+          npx eslint . \
+            --config eslint.config.js \
+            --ext .js,.jsx,.ts,.tsx \
+            --format @microsoft/eslint-formatter-sarif \
+            --output-file eslint-results.sarif
+        working-directory: ./react-frontend
         shell: bash
 
       - name: Upload analysis results to GitHub
