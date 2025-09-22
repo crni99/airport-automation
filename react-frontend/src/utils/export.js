@@ -1,4 +1,4 @@
-import { Entities } from '../utils/const.js';
+import { ENTITIES } from '../utils/const.js';
 
 export function buildExportURL(apiUrl, dataType, exportType) {
     const typeSegment = exportType ? exportType.toLowerCase() : 'excel';
@@ -8,12 +8,12 @@ export function buildExportURL(apiUrl, dataType, exportType) {
     const getInputValue = (id) => document.getElementById(id)?.value?.trim() || '';
 
     switch (dataType) {
-        case Entities.AIRLINES: {
+        case ENTITIES.AIRLINES: {
             const searchName = getInputValue('searchInput');
             if (searchName) params.name = searchName;
             break;
         }
-        case Entities.API_USERS: {
+        case ENTITIES.API_USERS: {
             const username = getInputValue('username');
             const password = getInputValue('password');
             const searchRole = getInputValue('roleSelect');
@@ -22,21 +22,21 @@ export function buildExportURL(apiUrl, dataType, exportType) {
             if (searchRole) params.roles = searchRole;
             break;
         }
-        case Entities.DESTINATIONS: {
+        case ENTITIES.DESTINATIONS: {
             const city = getInputValue('city');
             const airport = getInputValue('airport');
             if (city) params.city = city;
             if (airport) params.airport = airport;
             break;
         }
-        case Entities.FLIGHTS: {
+        case ENTITIES.FLIGHTS: {
             const startDate = getInputValue('startDate');
             const endDate = getInputValue('endDate');
             if (startDate) params.startDate = startDate;
             if (endDate) params.endDate = endDate;
             break;
         }
-        case Entities.PASSENGERS: {
+        case ENTITIES.PASSENGERS: {
             const firstName = getInputValue('firstName');
             const lastName = getInputValue('lastName');
             const uprn = getInputValue('uprn');
@@ -51,7 +51,7 @@ export function buildExportURL(apiUrl, dataType, exportType) {
             if (phone) params.phone = phone;
             break;
         }
-        case Entities.PILOTS: {
+        case ENTITIES.PILOTS: {
             const firstName = getInputValue('firstName');
             const lastName = getInputValue('lastName');
             const uprn = getInputValue('uprn');
@@ -62,7 +62,7 @@ export function buildExportURL(apiUrl, dataType, exportType) {
             if (flyingHours) params.flyingHours = flyingHours;
             break;
         }
-        case Entities.PLANE_TICKETS: {
+        case ENTITIES.PLANE_TICKETS: {
             const price = getInputValue('price');
             const purchaseDate = getInputValue('purchaseDate');
             const seatNumber = getInputValue('seatNumber');
@@ -71,7 +71,7 @@ export function buildExportURL(apiUrl, dataType, exportType) {
             if (seatNumber) params.seatNumber = seatNumber;
             break;
         }
-        case Entities.HEALTH_CHECKS: {
+        case ENTITIES.HEALTH_CHECKS: {
             break;
         }
         default: {

@@ -7,11 +7,11 @@ import ProtectedRouteV2 from "./ProtectedRouteV2";
 
 const ApiUserRoutes = (
     <>
-        <Route path="/apiUsers" 
+        <Route path="/api-users" 
             element={<ProtectedRouteV2 element={<ApiUsersList />} />} />
-        <Route path="/apiUsers/:id" 
+        <Route path="/api-users/:id" 
             element={<ProtectedRouteV2 element={<ApiUserDetails />} />} />
-        <Route path="/apiUsers/edit/:id" 
+        <Route path="/api-users/edit/:id" 
             element={<ProtectedRouteV2 element={<ApiUserEditForm />} />} />
     </>
 );

@@ -1,31 +1,49 @@
-import React  from 'react';
-import TableActions from '../common/table/TableActions';
-import { Entities } from '../../utils/const';
+import React from 'react';
+import { ENTITIES } from '../../utils/const';
 
-export default function FlightsListTable( {flights }) {
+// MUI Components
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import Box from '@mui/material/Box';
+
+// Custom Components
+import TableActions from '../common/table/TableActions';
+
+export default function FlightsListTable({ flights }) {
     return (
-        <div>
-            <hr />
-            <table className="table table-responsive table-striped">
-                <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>Departure Date</th>
-                        <th>Departure Time</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                    {flights.map(flight => (
-                        <tr key={flight.id}>
-                            <td>{flight.id}</td>
-                            <td>{flight.departureDate}</td>
-                            <td>{flight.departureTime}</td>
-                            <TableActions entity={Entities.FLIGHTS} id={flight.id} />
-                        </tr>
+        <TableContainer component={Paper}>
+            <Table stickyHeader aria-label="Flights table">
+                <TableHead>
+                    <TableRow>
+                        <TableCell sx={{ width: '20%' }}>Id</TableCell>
+                        <TableCell sx={{ width: '30%' }}>Departure Date</TableCell>
+                        <TableCell sx={{ width: '30%' }}>Departure Time</TableCell>
+                        <TableCell sx={{ width: '20%' }}>Actions</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {flights.map((flight) => (
+                        <TableRow
+                            key={flight.id}
+                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                        >
+                            <TableCell component="th" scope="row">
+                                {flight.id}
+                            </TableCell>
+                            <TableCell>{flight.departureDate}</TableCell>
+                            <TableCell>{flight.departureTime}</TableCell>
+                            <TableCell>
+                                <TableActions entity={ENTITIES.FLIGHTS} id={flight.id} />
+                            </TableCell>
+                        </TableRow>
                     ))}
-                </tbody>
-            </table>
-        </div>
-    )
+                </TableBody>
+            </Table>
+        </TableContainer>
+    );
 }

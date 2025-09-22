@@ -1,13 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createData } from '../../utils/create.js';
-import PageTitle from '../common/PageTitle.jsx';
-import Alert from '../common/Alert.jsx';
-import BackToListAction from '../common/pagination/BackToListAction.jsx';
-import { useContext } from 'react';
-import { DataContext } from '../../store/data-context.jsx';
 import { validateFields } from '../../utils/validation/validateFields.js';
-import { Entities } from '../../utils/const.js';
+import { ENTITIES } from '../../utils/const.js';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
+import Grid from '@mui/material/Grid';
+import PageTitle from '../common/PageTitle.jsx';
+import BackToListAction from '../common/pagination/BackToListAction.jsx';
+import { DataContext } from '../../store/DataContext.jsx';
+import CustomAlert from '../common/Alert.jsx';
+import { Container } from '@mui/material';
 
 export default function AirlineCreateForm() {
     const dataCtx = useContext(DataContext);
@@ -21,7 +26,7 @@ export default function AirlineCreateForm() {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const errorMessage = validateFields(Entities.AIRLINES, formData, ['name']);
+        const errorMessage = validateFields(ENTITIES.AIRLINES, formData, ['name']);
         if (errorMessage) {
             setFormData({
                 ...formData,
@@ -34,16 +39,14 @@ export default function AirlineCreateForm() {
         setFormData({ ...formData, isPending: true, error: null });
 
         try {
-            const create = await createData(airline, Entities.AIRLINES, dataCtx.apiUrl, navigate);
+            const result = await createData(airline, ENTITIES.AIRLINES, dataCtx.apiUrl, navigate);
 
-            if (create) {
-                console.error('Error creating airline:', create.message);
-                setFormData({ ...formData, error: create.message, isPending: false });
+            if (result && result.message) {
+                setFormData({ ...formData, error: result.message, isPending: false });
             } else {
                 setFormData({ name: '', error: null, isPending: false });
             }
         } catch (err) {
-            console.error('Error during API call:', err);
             setFormData({ ...formData, error: 'Failed to create airline. Please try again.', isPending: false });
         }
     };
@@ -57,36 +60,48 @@ export default function AirlineCreateForm() {
     };
 
     return (
-        <>
-            <PageTitle title='Create Airline' />
-            <div className="col-md-4">
-                <form onSubmit={handleSubmit}>
-                    <div className="form-group pb-4">
-                        <label htmlFor="name" className="control-label">Name</label>
-                        <input
-                            id="name"
-                            type="text"
-                            className="form-control"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            placeholder="Air Serbia"
-                            required
-                        />
-                    </div>
-                    <div className="form-group pb-3">
-                        <button type="submit" className="btn btn-success" disabled={formData.isPending}>
-                            {formData.isPending ? 'Creating...' : 'Create'}
-                        </button>
-                    </div>
-                    {formData.error && <Alert alertType="error" alertText={formData.error} />}
-                </form>
-            </div>
-            <nav aria-label="Page navigation">
-                <ul className="pagination pagination-container pagination-container-absolute">
-                    <BackToListAction dataType={Entities.AIRLINES} />
-                </ul>
-            </nav>
-        </>
+        <Container sx={{ mt: 4 }}>
+            <Box sx={{ mt: 2 }}>
+                <PageTitle title='Create Airline' />
+                <Box
+                    component="form"
+                    autoComplete="off"
+                    onSubmit={handleSubmit}
+                >
+                    <Grid container spacing={3}>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}>
+                            <TextField
+                                id="name"
+                                name="name"
+                                label="Name"
+                                variant="outlined"
+                                value={formData.name}
+                                onChange={handleChange}
+                                placeholder="Air Serbia"
+                                required
+                                error={!!formData.error}
+                                helperText={formData.error}
+                            />
+                        </Grid>
+                        <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                color="success"
+                                disabled={formData.isPending}
+                            >
+                                {formData.isPending ? <CircularProgress /> : 'Create'}
+                            </Button>
+                        </Grid>
+                    </Grid>
+                    {formData.error && (
+                        <CustomAlert alertType='error' type='Error' message={formData.error} />
+                    )}
+                </Box>
+                <Box sx={{ mt: 3 }}>
+                    <BackToListAction dataType={ENTITIES.AIRLINES} />
+                </Box>
+            </Box>
+        </Container >
     );
 }

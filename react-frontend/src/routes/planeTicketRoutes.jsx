@@ -8,11 +8,11 @@ import ProtectedRoute from "./ProtectedRoute";
 
 const PlaneTicketsRoutes = (
     <>
-        <Route path="/planeTickets" element={<PlaneTicketsList />} />
-        <Route path="/planeTickets/:id" element={<PlaneTicketDetails />} />
-        <Route path="/planeTickets/create" 
+        <Route path="/plane-tickets" element={<PlaneTicketsList />} />
+        <Route path="/plane-tickets/:id" element={<PlaneTicketDetails />} />
+        <Route path="/plane-tickets/create" 
             element={<ProtectedRoute element={<PlaneTicketCreateForm />} />} />
-        <Route path="/planeTickets/edit/:id" 
+        <Route path="/plane-tickets/edit/:id" 
             element={<ProtectedRoute element={<PlaneTicketEditForm />} />} />
     </>
 );

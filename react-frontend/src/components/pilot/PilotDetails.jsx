@@ -4,19 +4,26 @@ import useFetch from '../../hooks/useFetch.jsx';
 import { deleteData } from '../../utils/delete.js';
 import { editData } from '../../utils/edit.js';
 import PageTitle from '../common/PageTitle.jsx';
-import LoadingSpinner from '../common/LoadingSpinner.jsx';
 import PageNavigationActions from '../common/pagination/PageNavigationActions.jsx';
 import Alert from '../common/Alert.jsx';
 import { useContext } from 'react';
-import { DataContext } from '../../store/data-context.jsx';
-import { Entities } from '../../utils/const.js';
+import { DataContext } from '../../store/DataContext.jsx';
+import { ENTITIES } from '../../utils/const.js';
 import { DD } from '..//common/table/DD.jsx';
 import { DT } from '..//common/table/DT.jsx';
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import CircularProgress from '@mui/material/CircularProgress';
+import AlertTitle from '@mui/material/AlertTitle';
+import Link from '@mui/material/Link';
+import Paper from '@mui/material/Paper';
+import { Stack } from '@mui/material';
 
 export default function PilotDetails() {
     const dataCtx = useContext(DataContext);
     const { id } = useParams();
-    const { data: pilot, dataExist, error, isLoading } = useFetch(Entities.PILOTS, id);
+    const { data: pilot, dataExist, error, isLoading } = useFetch(ENTITIES.PILOTS, id);
     const navigate = useNavigate();
 
     const [operationState, setOperationState] = useState({
@@ -30,9 +37,9 @@ export default function PilotDetails() {
             let operationResult;
 
             if (operation === 'edit') {
-                operationResult = await editData(Entities.PILOTS, id, dataCtx.apiUrl, navigate);
+                operationResult = await editData(ENTITIES.PILOTS, id, dataCtx.apiUrl, navigate);
             } else if (operation === 'delete') {
-                operationResult = await deleteData(Entities.PILOTS, id, dataCtx.apiUrl, navigate);
+                operationResult = await deleteData(ENTITIES.PILOTS, id, dataCtx.apiUrl, navigate);
             }
             if (operationResult) {
                 setOperationState(prevState => ({ ...prevState, operationError: operationResult.message }));
@@ -45,32 +52,81 @@ export default function PilotDetails() {
     };
 
     return (
-        <>
-            <PageTitle title='Pilot Details' />
-            {(isLoading || operationState.isPending) && <LoadingSpinner />}
-            {error && <Alert alertType="error" alertText={error.message} />}
-            {operationState.operationError && <Alert alertType="error" alertText={operationState.operationError} />}
-            {dataExist && (
-                <>
-                    <div>
-                        <br />
-                        <dl className="row">
-                            <DT className="col-sm-2 mt-2">Id</DT>
-                            <DD className="col-sm-10 mt-2">{pilot.id}</DD>
-                            <DT className="col-sm-2 mt-2">First Name</DT>
-                            <DD className="col-sm-10 mt-2">{pilot.firstName}</DD>
-                            <DT className="col-sm-2 mt-2">Last Name</DT>
-                            <DD className="col-sm-10 mt-2">{pilot.lastName}</DD>
-                            <DT className="col-sm-2 mt-2">UPRN</DT>
-                            <DD className="col-sm-10 mt-2">{pilot.uprn}</DD>
-                            <DT className="col-sm-2 mt-2">Flying Hours</DT>
-                            <DD className="col-sm-10 mt-2">{pilot.flyingHours}</DD>
-                        </dl>
-                    </div>
-                    <PageNavigationActions dataType={Entities.PILOTS} dataId={id} onEdit={() => handleOperation('edit')}
-                        onDelete={() => handleOperation('delete')} />
-                </>
+        <Box sx={{ p: 3 }}>
+            <PageTitle title="Pilot Details" />
+
+            {(isLoading || operationState.isPending) && (
+                <Stack direction="row" justifyContent="center" sx={{ mt: 4 }}>
+                    <CircularProgress />
+                </Stack>
             )}
-        </>
+
+            {error && (
+                <Alert severity="error" sx={{ mt: 2 }}>
+                    <Box component="span" sx={{ fontWeight: 'bold' }}>{error.type}</Box>: {error.message}
+                </Alert>
+            )}
+
+            {operationState.operationError && (
+                <Alert severity="error" sx={{ mt: 2 }}>
+                    {operationState.operationError}
+                </Alert>
+            )}
+
+            {dataExist && (
+                <Box sx={{ mt: 3 }}>
+                    <Grid container spacing={6}>
+                        <Grid>
+                            <Typography variant="subtitle1" component="dt" sx={{ fontWeight: 'bold' }}>
+                                Id
+                            </Typography>
+                            <Typography variant="body1" component="dd" sx={{ mt: 1 }}>
+                                {pilot.id}
+                            </Typography>
+                        </Grid>
+                        <Grid>
+                            <Typography variant="subtitle1" component="dt" sx={{ fontWeight: 'bold' }}>
+                                First Name
+                            </Typography>
+                            <Typography variant="body1" component="dd" sx={{ mt: 1 }}>
+                                {pilot.firstName}
+                            </Typography>
+                        </Grid>
+                        <Grid>
+                            <Typography variant="subtitle1" component="dt" sx={{ fontWeight: 'bold' }}>
+                                Last Name
+                            </Typography>
+                            <Typography variant="body1" component="dd" sx={{ mt: 1 }}>
+                                {pilot.lastName}
+                            </Typography>
+                        </Grid>
+                        <Grid>
+                            <Typography variant="subtitle1" component="dt" sx={{ fontWeight: 'bold' }}>
+                                UPRN
+                            </Typography>
+                            <Typography variant="body1" component="dd" sx={{ mt: 1 }}>
+                                {pilot.uprn}
+                            </Typography>
+                        </Grid>
+                        <Grid>
+                            <Typography variant="subtitle1" component="dt" sx={{ fontWeight: 'bold' }}>
+                                Flying Hours
+                            </Typography>
+                            <Typography variant="body1" component="dd" sx={{ mt: 1 }}>
+                                {pilot.flyingHours}
+                            </Typography>
+                        </Grid>
+                    </Grid>
+                    <Box sx={{ mt: 3 }}>
+                        <PageNavigationActions
+                            dataType={ENTITIES.PILOTS}
+                            dataId={id}
+                            onEdit={() => navigate(`/pilots/edit/${id}`)}
+                            onDelete={() => handleOperation('delete')}
+                        />
+                    </Box>
+                </Box>
+            )}
+        </Box>
     );
 }

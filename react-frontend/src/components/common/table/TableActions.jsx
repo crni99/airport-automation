@@ -1,7 +1,19 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { deleteData } from '../../../utils/delete.js';
-import { DataContext } from '../../../store/data-context.jsx';
+import { DataContext } from '../../../store/DataContext.jsx';
+
+// Material-UI components
+import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+import Alert from '@mui/material/Alert';
+
+// Material-UI Icons
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const TableActions = ({ entity, id, entityType, currentUserRole }) => {
     const [isDeleting, setIsDeleting] = useState(false);
@@ -30,56 +42,57 @@ const TableActions = ({ entity, id, entityType, currentUserRole }) => {
     const editUrl = `${basePath}/Edit/${id}`;
 
     return (
-        <td>
-            <div className="btn-group btn-group-sm" role="group">
-                <a
-                    href={openUrl}
-                    className="btn btn-icon-open me-3"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    data-bs-toggle="tooltip"
-                    data-bs-placement="right"
-                    title="Open"
-                >
-                    <i className="fa-solid fa-square-up-right fa-xl"></i>
-                </a>
+        <Box>
+            <Stack direction="row" spacing={1} alignItems="center">
+                <Tooltip title="Open" arrow>
+                    <IconButton
+                        component="a"
+                        href={openUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        size="small"
+                        color="primary"
+                    >
+                        <OpenInNewIcon />
+                    </IconButton>
+                </Tooltip>
 
                 {currentUserRole !== 'User' && (
                     <>
-                        <a
-                            href={editUrl}
-                            className="btn btn-icon-edit me-3"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            data-bs-toggle="tooltip"
-                            data-bs-placement="right"
-                            title="Edit"
-                        >
-                            <i className="fa-solid fa-square-pen fa-xl"></i>
-                        </a>
+                        <Tooltip title="Edit" arrow>
+                            <IconButton
+                                component="a"
+                                href={editUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                size="small"
+                                color="success"
+                            >
+                                <EditIcon />
+                            </IconButton>
+                        </Tooltip>
 
                         {entityType !== 'ApiUser' && (
-                            <button
-                                onClick={handleDelete}
-                                className="btn btn-icon-delete"
-                                type="button"
-                                disabled={isDeleting}
-                                data-bs-toggle="tooltip"
-                                data-bs-placement="right"
-                                title="Delete"
-                            >
-                                <i className="fa-solid fa-trash-can fa-xl"></i>
-                            </button>
+                            <Tooltip title="Delete" arrow>
+                                <IconButton
+                                    onClick={handleDelete}
+                                    disabled={isDeleting}
+                                    size="small"
+                                    color="error"
+                                >
+                                    <DeleteIcon />
+                                </IconButton>
+                            </Tooltip>
                         )}
                     </>
                 )}
-            </div>
+            </Stack>
             {deleteError && (
-                <div className="text-danger small mt-1">
+                <Alert severity="error" sx={{ mt: 1 }}>
                     {deleteError}
-                </div>
+                </Alert>
             )}
-        </td>
+        </Box>
     );
 };
 

@@ -1,22 +1,36 @@
-export default function TravelClassesListTable( {travelClasses }) {
+import React from 'react';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+
+export default function TravelClassesListTable({ travelClasses }) {
     return (
-        <div>
-            <table className="table table-responsive table-striped">
-                <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>Type</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                    {travelClasses.map(travelClass => (
-                        <tr key={travelClass.id}>
-                            <td>{travelClass.id}</td>
-                            <td>{travelClass.type}</td>
-                        </tr>
+        <TableContainer component={Paper}>
+            <Table stickyHeader aria-label="Travel Classes table">
+                <TableHead>
+                    <TableRow>
+                        <TableCell>Id</TableCell>
+                        <TableCell>Type</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {travelClasses.map((travelClass) => (
+                        <TableRow
+                            key={travelClass.id}
+                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                        >
+                            <TableCell component="th" scope="row">
+                                {travelClass.id}
+                            </TableCell>
+                            <TableCell>{travelClass.type}</TableCell>
+                        </TableRow>
                     ))}
-                </tbody>
-            </table>
-        </div>
-    )
+                </TableBody>
+            </Table>
+        </TableContainer>
+    );
 }

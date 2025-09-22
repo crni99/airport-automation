@@ -1,15 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useContext } from 'react';
-import { DataContext } from '../../store/data-context.jsx';
+import { DataContext } from '../../store/DataContext.jsx';
 import { editData } from '../../utils/edit.js';
 import PageTitle from '../common/PageTitle.jsx';
-import LoadingSpinner from '../common/LoadingSpinner.jsx';
 import Alert from '../common/Alert.jsx';
 import BackToListAction from '../common/pagination/BackToListAction.jsx';
 import useFetch from '../../hooks/useFetch.jsx';
 import { validateFields } from '../../utils/validation/validateFields.js';
-import { Entities } from '../../utils/const.js';
+import { ENTITIES } from '../../utils/const.js';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
+import AlertTitle from '@mui/material/AlertTitle';
+import Grid from '@mui/material/Grid';
 
 export default function PlaneTicketEditForm() {
     const dataCtx = useContext(DataContext);
@@ -27,7 +32,7 @@ export default function PlaneTicketEditForm() {
         isPending: false,
     });
 
-    const { data: planeTicket, isLoading, isError, error } = useFetch(Entities.PLANE_TICKETS, id);
+    const { data: planeTicket, isLoading, isError, error } = useFetch(ENTITIES.PLANE_TICKETS, id);
 
     useEffect(() => {
         if (planeTicket) {
@@ -46,7 +51,7 @@ export default function PlaneTicketEditForm() {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const errorMessage = validateFields(Entities.PLANE_TICKETS, formData, ['price', 'purchaseDate', 'seatNumber', 'passengerId', 'travelClassId', 'flightId']);
+        const errorMessage = validateFields(ENTITIES.PLANE_TICKETS, formData, ['price', 'purchaseDate', 'seatNumber', 'passengerId', 'travelClassId', 'flightId']);
         if (errorMessage) {
             setFormData({
                 ...formData,
@@ -68,7 +73,7 @@ export default function PlaneTicketEditForm() {
         setFormData((prevState) => ({ ...prevState, isPending: true }));
 
         try {
-            const edit = await editData(planeTicket, Entities.PLANE_TICKETS, id, dataCtx.apiUrl, navigate);
+            const edit = await editData(planeTicket, ENTITIES.PLANE_TICKETS, id, dataCtx.apiUrl, navigate);
 
             if (edit) {
                 console.error('Error updating plane ticket:', edit.message);
@@ -85,127 +90,144 @@ export default function PlaneTicketEditForm() {
     const handleChange = (event) => {
         const { name, value } = event.target;
         setFormData((prev) => {
-            const newError = validateFields(Entities.PLANE_TICKETS, { ...prev, [name]: value }, ['price', 'purchaseDate', 'seatNumber', 'passengerId', 'travelClassId', 'flightId']);
+            const newError = validateFields(ENTITIES.PLANE_TICKETS, { ...prev, [name]: value }, ['price', 'purchaseDate', 'seatNumber', 'passengerId', 'travelClassId', 'flightId']);
             return { ...prev, [name]: value, error: newError };
         });
     };
 
     return (
-        <>
+        <Box sx={{ p: 3 }}>
             <PageTitle title='Edit Plane Ticket' />
-            {formData.isPending && <LoadingSpinner />}
-            <form onSubmit={handleSubmit}>
-                <div className='row'>
-                    <div className="col-md-4">
-                        <div className="form-group pb-3">
-                            <label htmlFor="id" className="control-label">Id</label>
-                            <input
+            {isLoading && (
+                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+                    <CircularProgress />
+                </Box>
+            )}
+            {isError && error && (
+                <Alert severity="error" sx={{ mt: 2 }}>
+                    <AlertTitle>Error</AlertTitle>
+                    {error.message}
+                </Alert>
+            )}
+            {formData.error && (
+                <Alert severity="error" sx={{ mt: 2 }}>
+                    <AlertTitle>Error</AlertTitle>
+                    {formData.error}
+                </Alert>
+            )}
+            {!isLoading && !isError && (
+                <Box
+                    component="form"
+                    sx={{ mt: 2, '& .MuiTextField-root': { mb: 3, width: '100%' } }}
+                    autoComplete="off"
+                    onSubmit={handleSubmit}
+                >
+                    <Grid container spacing={4}>
+                        <Grid item xs={12} md={4}>
+                            <TextField
                                 id="id"
-                                type="number"
-                                className="form-control"
                                 name="id"
-                                value={id}
-                                required
-                                readOnly
-                            />
-                        </div>
-                        <div className="form-group pb-3">
-                            <label htmlFor="price" className="control-label">Price</label>
-                            <input
-                                id="price"
+                                label="Id"
                                 type="number"
-                                className="form-control"
+                                variant="outlined"
+                                value={id}
+                                InputProps={{ readOnly: true }}
+                                fullWidth
+                                sx={{ mb: 3 }}
+                            />
+                            <TextField
+                                id="price"
                                 name="price"
+                                label="Price"
+                                type="number"
+                                variant="outlined"
                                 value={formData.price}
                                 onChange={handleChange}
-                                placeholder="999"
                                 required
+                                fullWidth
+                                sx={{ mb: 3 }}
                             />
-                        </div>
-                        <div className="form-group pb-3">
-                            <label htmlFor="purchaseDate" className="control-label">Purchase Date</label>
-                            <input
+                            <TextField
                                 id="purchaseDate"
-                                type="date"
-                                className="form-control"
                                 name="purchaseDate"
+                                label="Purchase Date"
+                                type="date"
+                                variant="outlined"
                                 value={formData.purchaseDate}
                                 onChange={handleChange}
-                                placeholder="1-dec-1999"
                                 required
+                                fullWidth
+                                InputLabelProps={{
+                                    shrink: true,
+                                }}
+                                sx={{ mb: 3 }}
                             />
-                        </div>
-                        <div className="form-group pb-3">
-                            <label htmlFor="seatNumber" className="control-label">Seat Number</label>
-                            <input
+                            <TextField
                                 id="seatNumber"
-                                type="number"
-                                className="form-control"
                                 name="seatNumber"
+                                label="Seat Number"
+                                type="number"
+                                variant="outlined"
                                 value={formData.seatNumber}
                                 onChange={handleChange}
-                                placeholder="1"
                                 required
+                                fullWidth
+                                sx={{ mb: 3 }}
                             />
-                        </div>
-                        <div className="form-group pb-3">
-                            <button type="submit" className="btn btn-success" disabled={formData.isPending}>
-                                {formData.isPending ? 'Submitting...' : 'Save Changes'}
-                            </button>
-                        </div>
-                    </div>
-                    <div className="col-md-4">
-                        <div className="form-group pb-3">
-                            <label htmlFor="passengerId" className="control-label">Passenger Id</label>
-                            <input
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                color="success"
+                                disabled={formData.isPending}
+                            >
+                                {formData.isPending ? <CircularProgress size={24} color="inherit" /> : 'Save Changes'}
+                            </Button>
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                            <TextField
                                 id="passengerId"
-                                type="number"
-                                className="form-control"
                                 name="passengerId"
+                                label="Passenger Id"
+                                type="number"
+                                variant="outlined"
                                 value={formData.passengerId}
+                                InputProps={{ readOnly: true }}
                                 required
-                                readOnly
+                                fullWidth
+                                sx={{ mb: 3 }}
                             />
-                        </div>
-                        <div className="form-group pb-3">
-                            <label htmlFor="travelClassId" className="control-label">Travel Class Id</label>
-                            <input
+                            <TextField
                                 id="travelClassId"
-                                type="number"
-                                className="form-control"
                                 name="travelClassId"
-                                value={formData.travelClassId}
-                                required
-                                readOnly
-                            />
-                        </div>
-                        <div className="form-group pb-3">
-                            <label htmlFor="flightId" className="control-label">Flight Id</label>
-                            <input
-                                id="flightId"
+                                label="Travel Class Id"
                                 type="number"
-                                className="form-control"
-                                name="flightId"
-                                value={formData.flightId}
+                                variant="outlined"
+                                value={formData.travelClassId}
+                                InputProps={{ readOnly: true }}
                                 required
-                                readOnly
+                                fullWidth
+                                sx={{ mb: 3 }}
                             />
-                        </div>
-                    </div>
-                </div>
-                {isLoading && <Alert alertType="info" alertText="Loading..." />}
-                {isError && error && (
-                    <Alert alertType="error">
-                        <strong>{error.type}</strong>: {error.message}
-                    </Alert>
-                )}
-                {formData.error && <Alert alertType="error" alertText={formData.error} />}
-            </form>
-            <nav aria-label="Page navigation">
-                <ul className="pagination pagination-container pagination-container-absolute">
-                    <BackToListAction dataType={Entities.PLANE_TICKETS} />
-                </ul>
-            </nav>
-        </>
+                            <TextField
+                                id="flightId"
+                                name="flightId"
+                                label="Flight Id"
+                                type="number"
+                                variant="outlined"
+                                value={formData.flightId}
+                                InputProps={{ readOnly: true }}
+                                required
+                                fullWidth
+                                sx={{ mb: 3 }}
+                                disabled
+                            />
+                        </Grid>
+                    </Grid>
+                </Box>
+            )}
+            <Box sx={{ mt: 3 }}>
+                <BackToListAction dataType={ENTITIES.PLANE_TICKETS} />
+            </Box>
+        </Box>
     );
 }

@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import useFetch from '../../hooks/useFetch';
-import { Pagination } from '../common/pagination/Pagination';
-import LoadingSpinner from '../common/LoadingSpinner';
-import Alert from '../common/Alert';
+import Pagination from '../common/pagination/Pagination';
 import ListHeader from "../common/ListHeader";
 import FlightsListTable from "./FlightsListTable";
-import { Entities } from '../../utils/const.js';
-import PageInfo from "../common/pagination/PageInfo.jsx";
+import { ENTITIES } from '../../utils/const.js';
+import Box from '@mui/material/Box';
+import { Container } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
+import CustomAlert from "../common/Alert.jsx";
 
 export default function FlightsList() {
     const [pageNumber, setPageNumber] = useState(1);
@@ -18,7 +19,7 @@ export default function FlightsList() {
         return saved ? Number(saved) : 10;
     });
     const { data, dataExist, error, isLoading, isError } = useFetch(
-        Entities.FLIGHTS,
+        ENTITIES.FLIGHTS,
         null,
         pageNumber,
         triggerFetch,
@@ -34,49 +35,58 @@ export default function FlightsList() {
         }
     }, [data]);
 
-    function handlePageChange(newPageNumber) {
-        setPageNumber(newPageNumber);
-    }
+    const handlePageChange = (event, newPageNumber) => {
+        setPageNumber(newPageNumber + 1);
+        setTriggerFetch(true);
+    };
+
+    const handleRowsPerPageChange = (event) => {
+        const newRowsPerPage = parseInt(event.target.value, 10);
+        setRowsPerPage(newRowsPerPage);
+        setPageNumber(1);
+        localStorage.setItem("rowsPerPage", newRowsPerPage);
+    };
 
     useEffect(() => {
         setTriggerFetch(true);
     }, [rowsPerPage]);
 
     return (
-        <>
-            <ListHeader dataExist={dataExist} dataType={Entities.FLIGHTS} createButtonTitle="Create Flight" setTriggerFetch={setTriggerFetch} />
-            <br />
-            {isLoading && <LoadingSpinner />}
-            {isError && error && (
-                <Alert alertType="error">
-                    <strong>{error.type}</strong>: {error.message}
-                </Alert>
-            )}
-            {!isError && !isLoading && (
-                <div className="form-horizontal">
-                    <div className="form-group">
+        <Container sx={{ mt: 4 }}>
+            <ListHeader
+                dataExist={dataExist}
+                dataType={ENTITIES.FLIGHTS}
+                createButtonTitle="Create Flight"
+                setTriggerFetch={setTriggerFetch}
+            />
+
+            <Box sx={{ mt: 2 }}>
+                {isLoading && <CircularProgress sx={{ mb: 2 }}/>}
+
+                {isError && error && (
+                    <CustomAlert alertType='error' type={error.type} message={error.message} />
+                )}
+
+                {!isError && !isLoading && (
+                    <>
                         {flights && flights.length > 0 ? (
-                            <FlightsListTable flights={flights} />
+                            <>
+                                <FlightsListTable flights={flights} />
+                                <Pagination
+                                    data={data}
+                                    pageNumber={pageNumber}
+                                    totalPages={totalPages}
+                                    rowsPerPage={rowsPerPage}
+                                    handlePageChange={handlePageChange}
+                                    handleRowsPerPageChange={handleRowsPerPageChange}
+                                />
+                            </>
                         ) : (
-                            <Alert alertType="info" alertText="No flights available" />
+                            <CustomAlert alertType='info' type='Info' message='No flights available' />
                         )}
-                        <PageInfo
-                            currentPage={pageNumber}
-                            totalPages={totalPages}
-                            totalCount={data?.totalCount ?? 0}
-                        />
-                        <div>
-                            <Pagination
-                                pageNumber={pageNumber}
-                                lastPage={totalPages}
-                                onPageChange={handlePageChange}
-                                rowsPerPage={rowsPerPage}
-                                onRowsPerPageChange={setRowsPerPage}
-                            />
-                        </div>
-                    </div>
-                </div>
-            )}
-        </>
+                    </>
+                )}
+            </Box>
+        </Container>
     );
 }

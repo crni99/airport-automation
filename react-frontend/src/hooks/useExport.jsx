@@ -1,6 +1,6 @@
 import { useState, useContext } from 'react';
 import { buildExportURL } from '../utils/export.js';
-import { DataContext } from '../store/data-context.jsx';
+import { DataContext } from '../store/DataContext.jsx';
 import { getAuthToken } from '../utils/auth';
 
 export function useExport() {

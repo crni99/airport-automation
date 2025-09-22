@@ -1,3 +1,10 @@
+import React from 'react';
+import Box from '@mui/material/Box';
+
 export function DD({ children }) {
-    return <dd className="col-sm-10 mt-2">{children}</dd>;
+    return (
+        <Box component="dd" sx={{ flexGrow: 1, ml: { sm: 2 }, mt: 2 }}>
+            {children}
+        </Box>
+    );
 }

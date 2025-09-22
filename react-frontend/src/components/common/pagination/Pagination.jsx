@@ -1,63 +1,39 @@
-import React, { useEffect } from "react";
+import React from 'react';
+import { Box, Typography, TablePagination } from '@mui/material';
 
-export function Pagination({
+const Pagination = ({
+    data,
     pageNumber,
-    lastPage,
-    onPageChange,
+    totalPages,
     rowsPerPage,
-    onRowsPerPageChange
-}) {
-    
-    useEffect(() => {
-        const savedRows = localStorage.getItem("rowsPerPage");
-        if (savedRows && !isNaN(savedRows)) {
-            onRowsPerPageChange(Number(savedRows));
-        }
-    }, [onRowsPerPageChange]);
-
-    const handleRowsChange = (e) => {
-        const value = Number(e.target.value);
-        localStorage.setItem("rowsPerPage", value);
-        onRowsPerPageChange(value);
-    };
-
+    handlePageChange,
+    handleRowsPerPageChange,
+}) => {
     return (
-        <nav aria-label="Page navigation" className="mb-2">
-            <div className="d-flex justify-content-between align-items-center flex-wrap mt-3 mb-3">
-                <ul className="pagination mb-0">
-                    <li className={`page-item ${pageNumber === 1 ? "disabled" : ""}`}>
-                        <button className="page-link" onClick={() => onPageChange(1)}>First Page</button>
-                    </li>
-                    <li className={`page-item ${pageNumber === 1 ? "disabled" : ""}`}>
-                        <button className="page-link" onClick={() => onPageChange(pageNumber - 1)}>Previous</button>
-                    </li>
-                    <li className={`page-item ${pageNumber === lastPage ? "disabled" : ""}`}>
-                        <button className="page-link" onClick={() => onPageChange(pageNumber + 1)}>Next</button>
-                    </li>
-                    <li className={`page-item ${pageNumber === lastPage ? "disabled" : ""}`}>
-                        <button className="page-link" onClick={() => onPageChange(lastPage)}>Last Page</button>
-                    </li>
-                </ul>
-
-                <div
-                    className="d-flex align-items-center ms-3 flex-nowrap"
-                    style={{ whiteSpace: "nowrap", minWidth: "160px" }}
-                >
-                    <label htmlFor="rowsPerPage" className="me-2 mb-0">
-                        Items per page:
-                    </label>
-                    <select
-                        id="rowsPerPage"
-                        className="form-control form-control-sm text-center"
-                        value={rowsPerPage}
-                        onChange={handleRowsChange}
-                    >
-                        <option value={5}>5</option>
-                        <option value={10}>10</option>
-                        <option value={20}>20</option>
-                    </select>
-                </div>
-            </div>
-        </nav>
+        <Box
+            sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                mt: 2,
+            }}
+        >
+            <Typography variant="body2" color="text.secondary">
+                Page {pageNumber} of {totalPages}
+            </Typography>
+            <TablePagination
+                component="div"
+                count={data?.totalCount ?? 0}
+                page={pageNumber - 1}
+                onPageChange={handlePageChange}
+                rowsPerPage={rowsPerPage}
+                onRowsPerPageChange={handleRowsPerPageChange}
+                rowsPerPageOptions={[5, 10, 20]}
+                showFirstButton
+                showLastButton
+            />
+        </Box>
     );
-}
+};
+
+export default Pagination;

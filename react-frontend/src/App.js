@@ -8,25 +8,38 @@ import PilotsRoutes from './routes/pilotsRoutes';
 import FlightsRoutes from './routes/flightRoutes';
 import PlaneTicketsRoutes from './routes/planeTicketRoutes';
 import Home from './components/common/Home';
-import Header from './components/common/header/Header';
 import HealthCheck from './components/common/HealthCheck';
-import Footer from './components/common/Footer';
 import Unauthorized from './components/common/Unauthorized';
 import ApiUsersRoutes from './routes/apiUserRoutes';
 import ProtectedRouteV3 from './routes/ProtectedRouteV3';
 
+import Box from '@mui/material/Box';
+
+import Navbar from './components/common/header/Navbar';
+import { getAuthToken } from "./utils/auth";
+
 function App() {
-  
+  const isLoggedIn = getAuthToken() !== null;
+
   return (
-    <>
-      <Header />
-      <div className="container">
-        <div className="row">
+    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <Box sx={{ display: 'flex', flexGrow: 1 }}>
+        {isLoggedIn && (
+          <Box
+            sx={{
+              width: 240,
+              flexShrink: 0,
+              overflowY: 'auto'
+            }}
+          >
+            <Navbar />
+          </Box>
+        )}
+        <Box component="main" sx={{ flexGrow: 1, overflowY: 'auto' }}>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/HealthCheck" element={<HealthCheck />} />
-            <Route path='/unauthorized' element={<Unauthorized />} />
-
+            <Route path="/health-check" element={<HealthCheck />} />
+            <Route path="/unauthorized" element={<Unauthorized />} />
             <Route element={<ProtectedRouteV3 />}>
               {AirlineRoutes}
               {DestinationsRoutes}
@@ -38,10 +51,9 @@ function App() {
               {PlaneTicketsRoutes}
             </Route>
           </Routes>
-        </div>
-      </div>
-      <Footer />
-    </>
+        </Box>
+      </Box>
+    </Box>
   );
 }
 

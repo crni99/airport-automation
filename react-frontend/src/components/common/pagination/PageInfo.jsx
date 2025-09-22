@@ -1,23 +1,57 @@
 import React from 'react';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
+import Divider from '@mui/material/Divider';
 
 function PageInfo({ currentPage, totalPages, totalCount }) {
     return (
-        <div
-            id="pagedInfo"
-            className="d-flex justify-content-between align-items-center mt-3 mb-2 p-2 border rounded small text-muted"
+        <Box
+            sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                mt: 1,
+                p: 2,
+                border: '1px solid',
+                borderColor: 'divider',
+                borderRadius: 1,
+                fontSize: '0.875rem',
+            }}
         >
-            <div className="flex-fill text-center">
-                <strong>Page:</strong> <span>{currentPage}</span>
-            </div>
-            <span className="mx-2">|</span>
-            <div className="flex-fill text-center">
-                <strong>Total Pages:</strong> <span>{totalPages}</span>
-            </div>
-            <span className="mx-2">|</span>
-            <div className="flex-fill text-center">
-                <strong>Total Records:</strong> <span>{totalCount}</span>
-            </div>
-        </div>
+            <Grid container spacing={2} alignItems="center" >
+                <Grid sx={{ display: 'flex' }}>
+                    <Typography variant="body2" component="strong">
+                        Page:
+                    </Typography>
+                    <Typography variant="body2" component="span" sx={{ ml: 0.5 }}>
+                        {currentPage}
+                    </Typography>
+                </Grid>
+                <Grid>
+                    <Divider orientation="vertical" flexItem />
+                </Grid>
+                <Grid sx={{ display: 'flex' }}>
+                    <Typography variant="body2" component="strong">
+                        Total Pages:
+                    </Typography>
+                    <Typography variant="body2" component="span" sx={{ ml: 0.5 }}>
+                        {totalPages}
+                    </Typography>
+                </Grid>
+                <Grid>
+                    <Divider orientation="vertical" flexItem />
+                </Grid>
+                <Grid sx={{ display: 'flex' }}>
+                    <Typography variant="body2" component="strong">
+                        Total Records:
+                    </Typography>
+                    <Typography variant="body2" component="span" sx={{ ml: 0.5 }}>
+                        {totalCount}
+                    </Typography>
+                </Grid>
+            </Grid>
+        </Box>
     );
 }
 

@@ -2,12 +2,18 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createData } from '../../utils/create.js';
 import PageTitle from '../common/PageTitle.jsx';
-import Alert from '../common/Alert.jsx';
 import BackToListAction from '../common/pagination/BackToListAction.jsx';
 import { useContext } from 'react';
-import { DataContext } from '../../store/data-context.jsx';
+import { DataContext } from '../../store/DataContext.jsx';
 import { validateFields } from '../../utils/validation/validateFields.js';
-import { Entities } from '../../utils/const.js';
+import { ENTITIES } from '../../utils/const.js';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
+import Grid from '@mui/material/Grid';
+import { Container } from '@mui/material';
+import CustomAlert from '../common/Alert.jsx';
 
 export default function PassengerCreateForm() {
     const dataCtx = useContext(DataContext);
@@ -26,7 +32,7 @@ export default function PassengerCreateForm() {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const errorMessage = validateFields(Entities.PASSENGERS, formData, ['firstName', 'lastName', 'uprn', 'passport', 'address', 'phone']);
+        const errorMessage = validateFields(ENTITIES.PASSENGERS, formData, ['firstName', 'lastName', 'uprn', 'passport', 'address', 'phone']);
         if (errorMessage) {
             setFormData({
                 ...formData,
@@ -35,8 +41,8 @@ export default function PassengerCreateForm() {
             return;
         }
 
-        const passenger = { 
-            FirstName: formData.firstName, 
+        const passenger = {
+            FirstName: formData.firstName,
             LastName: formData.lastName,
             UPRN: formData.uprn,
             Passport: formData.passport,
@@ -46,7 +52,7 @@ export default function PassengerCreateForm() {
         setFormData({ ...formData, isPending: true, error: null });
 
         try {
-            const create = await createData(passenger, Entities.PASSENGERS, dataCtx.apiUrl, navigate);
+            const create = await createData(passenger, ENTITIES.PASSENGERS, dataCtx.apiUrl, navigate);
 
             if (create) {
                 console.error('Error creating passenger:', create.message);
@@ -63,107 +69,124 @@ export default function PassengerCreateForm() {
     const handleChange = (event) => {
         const { name, value } = event.target;
         setFormData((prev) => {
-            const newError = validateFields(Entities.PASSENGERS, { ...prev, [name]: value }, ['firstName', 'lastName', 'uprn', 'passport', 'address', 'phone']);
+            const newError = validateFields(ENTITIES.PASSENGERS, { ...prev, [name]: value }, ['firstName', 'lastName', 'uprn', 'passport', 'address', 'phone']);
             return { ...prev, [name]: value, error: newError };
         });
     };
 
     return (
-        <>
-            <PageTitle title='Create Passenger' />
-            <div className="col-md-4">
-                <form onSubmit={handleSubmit}>
-                    <div className="form-group pb-3">
-                        <label htmlFor="firstName" className="control-label">First Name</label>
-                        <input
-                            id="firstName"
-                            type="text"
-                            className="form-control"
-                            name="firstName"
-                            value={formData.firstName}
-                            onChange={handleChange}
-                            placeholder="Ognjen"
-                            required
-                        />
-                    </div>
-                    <div className="form-group pb-3">
-                        <label htmlFor="lastName" className="control-label">Last Name</label>
-                        <input
-                            id="lastName"
-                            type="text"
-                            className="form-control"
-                            name="lastName"
-                            value={formData.lastName}
-                            onChange={handleChange}
-                            placeholder="Andjelic"
-                            required
-                        />
-                    </div>
-                    <div className="form-group pb-3">
-                        <label htmlFor="uprn" className="control-label">UPRN</label>
-                        <input
-                            id="uprn"
-                            type="text"
-                            className="form-control"
-                            name="uprn"
-                            value={formData.uprn}
-                            onChange={handleChange}
-                            placeholder="0123456789112"
-                            required
-                        />
-                    </div>
-                    <div className="form-group pb-3">
-                        <label htmlFor="passport" className="control-label">Passport</label>
-                        <input
-                            id="passport"
-                            type="text"
-                            className="form-control"
-                            name="passport"
-                            value={formData.passport}
-                            onChange={handleChange}
-                            placeholder="012345678"
-                            required
-                        />
-                    </div>
-                    <div className="form-group pb-3">
-                        <label htmlFor="address" className="control-label">Address</label>
-                        <input
-                            id="address"
-                            type="text"
-                            className="form-control"
-                            name="address"
-                            value={formData.address}
-                            onChange={handleChange}
-                            placeholder="014 Main Street, Belgrade, Serbia"
-                            required
-                        />
-                    </div>
-                    <div className="form-group pb-4">
-                        <label htmlFor="phone" className="control-label">Phone</label>
-                        <input
-                            id="phone"
-                            type="text"
-                            className="form-control"
-                            name="phone"
-                            value={formData.phone}
-                            onChange={handleChange}
-                            placeholder="012-456-7890"
-                            required
-                        />
-                    </div>
-                    <div className="form-group pb-3">
-                        <button type="submit" className="btn btn-success" disabled={formData.isPending}>
-                            {formData.isPending ? 'Creating...' : 'Create'}
-                        </button>
-                    </div>
-                    {formData.error && <Alert alertType="error" alertText={formData.error} />}
-                </form>
-            </div>
-            <nav aria-label="Page navigation">
-                <ul className="pagination pagination-container pagination-container-absolute">
-                    <BackToListAction dataType={Entities.PASSENGERS} />
-                </ul>
-            </nav>
-        </>
+        <Container sx={{ mt: 4 }}>
+            <Box sx={{ mt: 2 }}>
+                <PageTitle title='Create Passenger' />
+                <Box
+                    component="form"
+                    autoComplete="off"
+                    onSubmit={handleSubmit}
+                >
+                    <Grid container spacing={3}>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
+                            <TextField
+                                id="firstName"
+                                name="firstName"
+                                label="First Name"
+                                variant="outlined"
+                                value={formData.firstName}
+                                onChange={handleChange}
+                                placeholder="Ognjen"
+                                required
+                                error={!!formData.error}
+                                helperText={formData.error}
+                            />
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
+                            <TextField
+                                id="lastName"
+                                name="lastName"
+                                label="Last Name"
+                                variant="outlined"
+                                value={formData.lastName}
+                                onChange={handleChange}
+                                placeholder="Andjelic"
+                                required
+                                error={!!formData.error}
+                                helperText={formData.error}
+                            />
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
+                            <TextField
+                                id="uprn"
+                                name="uprn"
+                                label="UPRN"
+                                variant="outlined"
+                                value={formData.uprn}
+                                onChange={handleChange}
+                                placeholder="0123456789112"
+                                required
+                                error={!!formData.error}
+                                helperText={formData.error}
+                            />
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
+                            <TextField
+                                id="passport"
+                                name="passport"
+                                label="Passport"
+                                variant="outlined"
+                                value={formData.passport}
+                                onChange={handleChange}
+                                placeholder="012345678"
+                                required
+                                error={!!formData.error}
+                                helperText={formData.error}
+                            />
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
+                            <TextField
+                                id="address"
+                                name="address"
+                                label="Address"
+                                variant="outlined"
+                                value={formData.address}
+                                onChange={handleChange}
+                                placeholder="014 Main Street, Belgrade, Serbia"
+                                required
+                                error={!!formData.error}
+                                helperText={formData.error}
+                            />
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
+                            <TextField
+                                id="phone"
+                                name="phone"
+                                label="Phone"
+                                variant="outlined"
+                                value={formData.phone}
+                                onChange={handleChange}
+                                placeholder="012-456-7890"
+                                required
+                                error={!!formData.error}
+                                helperText={formData.error}
+                            />
+                        </Grid>
+                        <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                color="success"
+                                disabled={formData.isPending}
+                            >
+                                {formData.isPending ? <CircularProgress /> : 'Create'}
+                            </Button>
+                        </Grid>
+                        {formData.error && (
+                            <CustomAlert alertType='error' type='Error' message={formData.error} />
+                        )}
+                    </Grid>
+                </Box>
+                <Box sx={{ mt: 3 }}>
+                    <BackToListAction dataType={ENTITIES.PASSENGERS} />
+                </Box>
+            </Box>
+        </Container>
     );
 }

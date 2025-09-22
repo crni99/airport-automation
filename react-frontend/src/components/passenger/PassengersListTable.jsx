@@ -1,43 +1,62 @@
-import React  from 'react';
-import TableActions from '../common/table/TableActions';
-import { Entities } from '../../utils/const';
+import React from 'react';
+import { ENTITIES } from '../../utils/const';
 import openMap from '../../utils/openMapHelper';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import Link from '@mui/material/Link';
+import TableActions from '../common/table/TableActions';
 
-export default function PassengersListTable( {passengers }) {
+export default function PassengersListTable({ passengers }) {
     return (
-        <div>
-            <hr />
-            <table className="table table-responsive table-striped">
-                <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>UPRN</th>
-                        <th>Passport</th>
-                        <th>Address</th>
-                        <th>Phone</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                    {passengers.map(passenger => (
-                        <tr key={passenger.id}>
-                            <td>{passenger.id}</td>
-                            <td>{passenger.firstName}</td>
-                            <td>{passenger.lastName}</td>
-                            <td>{passenger.uprn}</td>
-                            <td>{passenger.passport}</td>
-                            <td className="clickable-row link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
-                                onClick={() => openMap(passenger.address)}>
-                                {passenger.address}
-                            </td>
-                            <td>{passenger.phone}</td>
-                            <TableActions entity={Entities.PASSENGERS} id={passenger.id} />
-                        </tr>
+        <TableContainer component={Paper}>
+            <Table stickyHeader aria-label="Passengers table">
+                <TableHead>
+                    <TableRow>
+                        <TableCell sx={{ width: '10%' }}>Id</TableCell>
+                        <TableCell sx={{ width: '10%' }}>First Name</TableCell>
+                        <TableCell sx={{ width: '15%' }}>Last Name</TableCell>
+                        <TableCell sx={{ width: '10%' }}>UPRN</TableCell>
+                        <TableCell sx={{ width: '10%' }}>Passport</TableCell>
+                        <TableCell sx={{ width: '20%' }}>Address</TableCell>
+                        <TableCell sx={{ width: '15%' }}>Phone</TableCell>
+                        <TableCell sx={{ width: '10%' }}>Actions</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {passengers.map((passenger) => (
+                        <TableRow
+                            key={passenger.id}
+                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                        >
+                            <TableCell component="th" scope="row">
+                                {passenger.id}
+                            </TableCell>
+                            <TableCell>{passenger.firstName}</TableCell>
+                            <TableCell>{passenger.lastName}</TableCell>
+                            <TableCell>{passenger.uprn}</TableCell>
+                            <TableCell>{passenger.passport}</TableCell>
+                            <TableCell>
+                                <Link
+                                    component="button"
+                                    variant="body2"
+                                    onClick={() => openMap(passenger.address)}
+                                >
+                                    {passenger.address}
+                                </Link>
+                            </TableCell>
+                            <TableCell>{passenger.phone}</TableCell>
+                            <TableCell>
+                                <TableActions entity={ENTITIES.PASSENGERS} id={passenger.id} />
+                            </TableCell>
+                        </TableRow>
                     ))}
-                </tbody>
-            </table>
-        </div>
-    )
+                </TableBody>
+            </Table>
+        </TableContainer>
+    );
 }

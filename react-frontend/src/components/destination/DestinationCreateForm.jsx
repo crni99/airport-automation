@@ -1,12 +1,20 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createData } from '../../utils/create.js';
-import PageTitle from '../common/PageTitle.jsx';
-import Alert from '../common/Alert.jsx';
-import BackToListAction from '../common/pagination/BackToListAction.jsx';
-import { DataContext } from '../../store/data-context.jsx';
+import { DataContext } from '../../store/DataContext.jsx';
 import { validateFields } from '../../utils/validation/validateFields.js';
-import { Entities } from '../../utils/const.js';
+import { ENTITIES } from '../../utils/const.js';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
+import PageTitle from '../common/PageTitle.jsx';
+import BackToListAction from '../common/pagination/BackToListAction.jsx';
+import { Container } from '@mui/material';
+import CustomAlert from '../common/Alert.jsx';
 
 export default function DestinationCreateForm() {
     const dataCtx = useContext(DataContext);
@@ -21,7 +29,7 @@ export default function DestinationCreateForm() {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const errorMessage = validateFields(Entities.DESTINATIONS, formData, ['city', 'airport']);
+        const errorMessage = validateFields(ENTITIES.DESTINATIONS, formData, ['city', 'airport']);
         if (errorMessage) {
             setFormData({
                 ...formData,
@@ -34,7 +42,7 @@ export default function DestinationCreateForm() {
         setFormData({ ...formData, isPending: true, error: null });
 
         try {
-            const create = await createData(destination, Entities.DESTINATIONS, dataCtx.apiUrl, navigate);
+            const create = await createData(destination, ENTITIES.DESTINATIONS, dataCtx.apiUrl, navigate);
 
             if (create) {
                 console.error('Error creating destination:', create.message);
@@ -51,55 +59,69 @@ export default function DestinationCreateForm() {
     const handleChange = (event) => {
         const { name, value } = event.target;
         setFormData((prev) => {
-            const newError = validateFields(Entities.DESTINATIONS, { ...prev, [name]: value }, ['city', 'airport']);
+            const newError = validateFields(ENTITIES.DESTINATIONS, { ...prev, [name]: value }, ['city', 'airport']);
             return { ...prev, [name]: value, error: newError };
         });
     };
 
     return (
-        <>
-            <PageTitle title='Create Destination' />
-            <div className="col-md-4">
-                <form onSubmit={handleSubmit}>
-                    <div className="form-group pb-3">
-                        <label htmlFor="city" className="control-label">City</label>
-                        <input
-                            id="city"
-                            type="text"
-                            className="form-control"
-                            name="city"
-                            value={formData.city}
-                            onChange={handleChange}
-                            placeholder="Belgrade"
-                            required
-                        />
-                    </div>
-                    <div className="form-group pb-4">
-                        <label htmlFor="airport" className="control-label">Airport</label>
-                        <input
-                            id="airport"
-                            type="text"
-                            className="form-control"
-                            name="airport"
-                            value={formData.airport}
-                            onChange={handleChange}
-                            placeholder="Belgrade Nikola Tesla Airport"
-                            required
-                        />
-                    </div>
-                    <div className="form-group pb-3">
-                        <button type="submit" className="btn btn-success" disabled={formData.isPending}>
-                            {formData.isPending ? 'Creating...' : 'Create'}
-                        </button>
-                    </div>
-                    {formData.error && <Alert alertType="error" alertText={formData.error} />}
-                </form>
-            </div>
-            <nav aria-label="Page navigation">
-                <ul className="pagination pagination-container pagination-container-absolute">
-                    <BackToListAction dataType={Entities.DESTINATIONS} />
-                </ul>
-            </nav>
-        </>
+        <Container sx={{ mt: 4 }}>
+            <Box sx={{ mt: 2 }}>
+                <PageTitle title='Create Destination' />
+                <Box
+                    component="form"
+                    autoComplete="off"
+                    onSubmit={handleSubmit}
+                >
+                    <Grid container spacing={3}>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}>
+                            <TextField
+                                id="city"
+                                name="city"
+                                label="City"
+                                variant="outlined"
+                                value={formData.city}
+                                onChange={handleChange}
+                                placeholder="Belgrade"
+                                required
+                                error={!!formData.error}
+                                helperText={formData.error}
+                            />
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}>
+                            <TextField
+                                id="airport"
+                                name="airport"
+                                label="Airport"
+                                variant="outlined"
+                                value={formData.airport}
+                                onChange={handleChange}
+                                placeholder="Belgrade Nikola Tesla Airport"
+                                required
+                                error={!!formData.error}
+                                helperText={formData.error}
+                            />
+                        </Grid>
+                        <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                color="success"
+                                disabled={formData.isPending}
+                            >
+                                {formData.isPending ? <CircularProgress /> : 'Create'}
+                            </Button>
+                        </Grid>
+                        {formData.error && (
+                            <CustomAlert alertType='error' type='Error' message={formData.error} />
+                        )}
+                    </Grid>
+                </Box>
+
+                <Box sx={{ mt: 3 }}>
+                    <BackToListAction dataType={ENTITIES.DESTINATIONS} />
+                </Box>
+            </Box >
+        </Container>
     );
 }

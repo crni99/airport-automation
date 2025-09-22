@@ -1,33 +1,46 @@
-import React  from 'react';
+import React from 'react';
+import { ENTITIES } from '../../utils/const';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
 import TableActions from '../common/table/TableActions';
-import { Entities } from '../../utils/const';
 
 export default function PlaneTicketsListTable({ planeTickets }) {
     return (
-        <div>
-            <hr />
-            <table className="table table-responsive table-striped">
-                <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>Price</th>
-                        <th>Purchase Date</th>
-                        <th>Seat Number</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                    {planeTickets.map(planeTicket => (
-                        <tr key={planeTicket.id}>
-                            <td>{planeTicket.id}</td>
-                            <td>{planeTicket.price}</td>
-                            <td>{planeTicket.purchaseDate}</td>
-                            <td>{planeTicket.seatNumber}</td>
-                            <TableActions entity={Entities.PLANE_TICKETS} id={planeTicket.id} />
-                        </tr>
+        <TableContainer component={Paper}>
+            <Table stickyHeader aria-label="Plane Tickets table">
+                <TableHead>
+                    <TableRow>
+                        <TableCell sx={{ width: '20%' }}>Id</TableCell>
+                        <TableCell sx={{ width: '20%' }}>Price</TableCell>
+                        <TableCell sx={{ width: '20%' }}>Purchase Date</TableCell>
+                        <TableCell sx={{ width: '20%' }}>Seat Number</TableCell>
+                        <TableCell sx={{ width: '20%' }}>Actions</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {planeTickets.map((planeTicket) => (
+                        <TableRow
+                            key={planeTicket.id}
+                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                        >
+                            <TableCell component="th" scope="row">
+                                {planeTicket.id}
+                            </TableCell>
+                            <TableCell>{planeTicket.price}</TableCell>
+                            <TableCell>{planeTicket.purchaseDate}</TableCell>
+                            <TableCell>{planeTicket.seatNumber}</TableCell>
+                            <TableCell>
+                                <TableActions entity={ENTITIES.PLANE_TICKETS} id={planeTicket.id} />
+                            </TableCell>
+                        </TableRow>
                     ))}
-                </tbody>
-            </table>
-        </div>
+                </TableBody>
+            </Table>
+        </TableContainer>
     );
 }

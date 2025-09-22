@@ -1,11 +1,26 @@
 import React from 'react';
 import useFetch from "../../hooks/useFetch";
-import Alert from '../common/Alert';
-import { Entities } from '../../utils/const.js';
+import { ENTITIES } from '../../utils/const.js';
+import { Container } from '@mui/material';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import CircularProgress from '@mui/material/CircularProgress';
+import MuiAlert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
+import Chip from '@mui/material/Chip';
+import Stack from '@mui/material/Stack';
+import Divider from '@mui/material/Divider';
+import Paper from '@mui/material/Paper';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import CustomAlert from './Alert.jsx';
 
-// Not working properly if there isn't connection with the API
 export default function HealthCheck() {
-    const { data, dataExist, error, isLoading, isError } = useFetch(Entities.HEALTH_CHECKS, null, null, null);
+    const { data, dataExist, error, isLoading, isError } = useFetch(ENTITIES.HEALTH_CHECKS, null, null, null);
 
     const extractErrorMessage = (error) => {
         if (error && error.message) {
@@ -15,60 +30,74 @@ export default function HealthCheck() {
     };
 
     return (
-        <div className="container mt-5">
-            <div className="row justify-content-between">
-                <div className="col-md-6"></div>
-            </div>
-            <div className="form-horizontal">
-                <div className="form-group">
-                    {isLoading && <Alert alertType="info" alertText="Loading..." />}
-                    {isError && error && <Alert alertType="error" alertText={extractErrorMessage(error)} />}
-                    {data && dataExist && !isError && !error ? (
-                        <div>
-                            <dl className="row">
-                                <dt className="col-sm-2">Status</dt>
-                                <dd className="col-sm-4">
-                                    {data.status === "Healthy" ? (
-                                        <h5><span className="badge text-bg-success">{data.status}</span></h5>
-                                    ) : (
-                                        <h5><span className="badge text-bg-danger">{data.status}</span></h5>
-                                    )}
-                                </dd>
-                                <dt className="col-sm-2">Total Duration</dt>
-                                <dd className="col-sm-4">{data.totalDuration}</dd>
-                            </dl>
-                            <hr />
-                            <br />
-                            <dl className="row">
-                                <dt className="col-sm-3">Name</dt>
-                                <dt className="col-sm-3">Description</dt>
-                                <dt className="col-sm-3">Duration</dt>
-                                <dt className="col-sm-3">Status</dt>
-                            </dl>
-                            <hr />
-                            {Object.keys(data.entries).map((key, index) => (
-                                <div key={index}>
-                                    <dl className="row">
-                                        <dd className="col-sm-3">{key}</dd>
-                                        <dd className="col-sm-3">{data.entries[key].description}</dd>
-                                        <dd className="col-sm-3">{data.entries[key].duration}</dd>
-                                        <dd className="col-sm-3">
-                                            {data.entries[key].status === "Healthy" ? (
-                                                <h5><span className="badge text-bg-success">{data.entries[key].status}</span></h5>
-                                            ) : (
-                                                <h5><span className="badge text-bg-danger">{data.entries[key].status}</span></h5>
-                                            )}
-                                        </dd>
-                                    </dl>
-                                    <hr />
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <Alert alertType="info" alertText="No data available" />
-                    )}
-                </div>
-            </div>
-        </div>
+        <Container sx={{ mt: 4 }}>
+            <Box sx={{ p: 3 }}>
+                {isLoading && (
+                    <Stack sx={{ mb: 3}}>
+                        <CircularProgress />
+                    </Stack>
+                )}
+
+                {isError && error && (
+                    <CustomAlert alertType='error' type='Error' message={extractErrorMessage(error)} />
+                )}
+
+                {data && dataExist && !isError ? (
+                    <Box sx={{ mt: 3 }}>
+                        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ xs: 'flex-start', sm: 'center' }}>
+                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                                Status:
+                            </Typography>
+                            {data.status === "Healthy" ? (
+                                <Chip label={data.status} color="success" />
+                            ) : (
+                                <Chip label={data.status} color="error" />
+                            )}
+                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                                Total Duration:
+                            </Typography>
+                            <Typography variant="body1">
+                                {data.totalDuration}
+                            </Typography>
+                        </Stack>
+
+                        <Divider sx={{ my: 3 }} />
+
+                        <TableContainer component={Paper} elevation={0}>
+                            <Table aria-label="health check table">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell sx={{ fontWeight: 'bold' }}>Name</TableCell>
+                                        <TableCell sx={{ fontWeight: 'bold' }}>Description</TableCell>
+                                        <TableCell sx={{ fontWeight: 'bold' }}>Duration</TableCell>
+                                        <TableCell sx={{ fontWeight: 'bold' }}>Status</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {Object.keys(data.entries).map((key) => (
+                                        <TableRow key={key}>
+                                            <TableCell component="th" scope="row">
+                                                {key}
+                                            </TableCell>
+                                            <TableCell>{data.entries[key].description}</TableCell>
+                                            <TableCell>{data.entries[key].duration}</TableCell>
+                                            <TableCell>
+                                                {data.entries[key].status === "Healthy" ? (
+                                                    <Chip label={data.entries[key].status} color="success" />
+                                                ) : (
+                                                    <Chip label={data.entries[key].status} color="error" />
+                                                )}
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </Box>
+                ) : (
+                    <CustomAlert alertType='info' type='Info' message='No data available' />
+                )}
+            </Box>
+        </Container>
     );
 }

@@ -1,8 +1,17 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { DataContext } from '../../store/data-context';
+import { DataContext } from '../../store/DataContext';
 import { getAuthToken, authenticateUser } from '../../utils/auth';
-import Alert from '../common/Alert';
-import LoadingSpinner from './LoadingSpinner';
+
+// Material-UI Components
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
+import MuiAlert from '@mui/material/Alert';
+import Stack from '@mui/material/Stack';
+import Footer from './Footer';
 
 export default function Home() {
     const dataCtx = useContext(DataContext);
@@ -11,9 +20,7 @@ export default function Home() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
-
     const [currentDateTime, setCurrentDateTime] = useState('');
-
     const [message, setMessage] = useState(null);
 
     useEffect(() => {
@@ -60,64 +67,90 @@ export default function Home() {
     }, []);
 
     return (
-        <div className="container">
-            <br />
-            <br />
-            <br />
-            <main role="main" className="pb-3">
-                <div>
-                    <div className="form-horizontal">
-                        <div className="form-group">
-                            <h1>Airport Automation React</h1>
-                            <p>{currentDateTime}</p>
-                        </div>
-                    </div>
-                    {!isLoggedIn &&
-                        <div className="row">
-                            <div className="col-md-4">
-                                {message && <Alert alertType="error">{message}</Alert>}
-                                {error && <Alert alertType="error" alertText={error} />}
-                                {loading ? (
-                                    <div className="d-flex justify-content-center py-4">
-                                        <LoadingSpinner />
-                                    </div>
-                                ) : (
-                                    <form onSubmit={handleFormSubmit}>
-                                        <div className="form-group pb-3">
-                                            <label htmlFor="UserName" className="control-label">Username</label>
-                                            <input
-                                                id="UserName"
-                                                name="UserName"
-                                                maxLength="50"
-                                                className="form-control"
-                                                required
-                                                value={userName}
-                                                onChange={(e) => setUserName(e.target.value)}
-                                            />
-                                        </div>
-                                        <div className="form-group pb-4">
-                                            <label htmlFor="Password" className="control-label">Password</label>
-                                            <input
-                                                id="Password"
-                                                name="Password"
-                                                type="password"
-                                                maxLength="50"
-                                                className="form-control"
-                                                required
-                                                value={password}
-                                                onChange={(e) => setPassword(e.target.value)}
-                                            />
-                                        </div>
-                                        <div className="form-group">
-                                            <button type="submit" className="btn btn-primary">Sign In</button>
-                                        </div>
-                                    </form>
-                                )}
-                            </div>
-                        </div>
-                    }
-                </div>
-            </main>
-        </div>
+        <Box
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                minHeight: '100vh',
+                overflow: 'hidden',
+            }}
+        >
+            <Box
+                component="main"
+                role="main"
+                sx={{
+                    flexGrow: 1,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    py: 4,
+                }}
+            >
+                <Box
+                    sx={{
+                        width: '100%',
+                        maxWidth: 450,
+                        p: 4,
+                        borderRadius: 2,
+                        boxShadow: 3,
+                        bgcolor: 'background.paper',
+                    }}
+                >
+                    <Stack spacing={1} sx={{ mb: 4, textAlign: 'center' }}>
+                        <Typography variant="h3" component="h1">
+                            Airport Automation
+                        </Typography>
+                        <Typography variant="subtitle1" color="text.secondary">
+                            {currentDateTime}
+                        </Typography>
+                    </Stack>
+                    {!isLoggedIn && (
+                        <Grid container justifyContent="center">
+                            <Grid>
+                                <Stack spacing={2}>
+                                    {message && <MuiAlert severity="error">{message}</MuiAlert>}
+                                    {error && <MuiAlert severity="error">{error}</MuiAlert>}
+                                    {loading ? (
+                                        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+                                            <CircularProgress />
+                                        </Box>
+                                    ) : (
+                                        <Box component="form" onSubmit={handleFormSubmit}>
+                                            <Stack spacing={3}>
+                                                <TextField
+                                                    label="Username"
+                                                    id="UserName"
+                                                    name="UserName"
+                                                    inputProps={{ maxLength: 50 }}
+                                                    fullWidth
+                                                    required
+                                                    value={userName}
+                                                    onChange={(e) => setUserName(e.target.value)}
+                                                />
+                                                <TextField
+                                                    label="Password"
+                                                    id="Password"
+                                                    name="Password"
+                                                    type="password"
+                                                    inputProps={{ maxLength: 50 }}
+                                                    fullWidth
+                                                    required
+                                                    value={password}
+                                                    onChange={(e) => setPassword(e.target.value)}
+                                                />
+                                                <Button type="submit" variant="contained" fullWidth sx={{ mb: '8px !important' }} >
+                                                    Sign In
+                                                </Button>
+                                            </Stack>
+                                        </Box>
+                                    )}
+                                </Stack>
+                            </Grid>
+                        </Grid>
+                    )}
+                </Box>
+            </Box>
+            <Footer />
+        </Box>
     );
 }

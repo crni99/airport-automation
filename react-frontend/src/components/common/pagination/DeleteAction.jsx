@@ -1,14 +1,21 @@
 import React from 'react';
+import Button from '@mui/material/Button';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function DeleteAction({ dataType, dataId, onDelete }) {
 
     const handleDelete = () => {
         onDelete(dataType, dataId);
     };
-    
+
     return (
-        <li className="page-item">
-            <button onClick={handleDelete} className="page-link text-danger" type="button">Delete</button>
-        </li>
+        <Button
+            variant="outlined"
+            color="error"
+            onClick={handleDelete}
+            startIcon={<DeleteIcon />}
+        >
+            Delete
+        </Button>
     );
 }

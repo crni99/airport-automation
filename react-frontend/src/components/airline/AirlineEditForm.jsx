@@ -1,15 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useContext } from 'react';
-import { DataContext } from '../../store/data-context.jsx';
+import { DataContext } from '../../store/DataContext.jsx';
 import { editData } from '../../utils/edit.js';
-import PageTitle from '../common/PageTitle.jsx';
-import LoadingSpinner from '../common/LoadingSpinner';
-import Alert from '../common/Alert.jsx';
-import BackToListAction from '../common/pagination/BackToListAction.jsx';
 import useFetch from '../../hooks/useFetch.jsx';
 import { validateFields } from '../../utils/validation/validateFields.js';
-import { Entities } from '../../utils/const.js';
+import { ENTITIES } from '../../utils/const.js';
+import PageTitle from '../common/PageTitle.jsx';
+import BackToListAction from '../common/pagination/BackToListAction.jsx';
+import CustomAlert from '../common/Alert.jsx';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
+import Grid from '@mui/material/Grid';
+import { Stack } from '@mui/material';
 
 export default function AirlineEditForm() {
     const dataCtx = useContext(DataContext);
@@ -22,7 +26,7 @@ export default function AirlineEditForm() {
         isPending: false,
     });
 
-    const { data: airlineData, isLoading, isError, error } = useFetch(Entities.AIRLINES, id);
+    const { data: airlineData, isLoading, isError, error } = useFetch(ENTITIES.AIRLINES, id);
 
     useEffect(() => {
         if (airlineData) {
@@ -33,7 +37,7 @@ export default function AirlineEditForm() {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const errorMessage = validateFields(Entities.AIRLINES, formData, ['name']);
+        const errorMessage = validateFields(ENTITIES.AIRLINES, formData, ['name']);
         if (errorMessage) {
             setFormData({
                 ...formData,
@@ -47,19 +51,17 @@ export default function AirlineEditForm() {
             Name: formData.name,
         };
 
-        setFormData((prevState) => ({ ...prevState, isPending: true }));
+        setFormData((prevState) => ({ ...prevState, isPending: true, error: null }));
 
         try {
-            const edit = await editData(airline, Entities.AIRLINES, id, dataCtx.apiUrl, navigate);
+            const result = await editData(airline, ENTITIES.AIRLINES, id, dataCtx.apiUrl, navigate);
 
-            if (edit) {
-                console.error('Error updating airline:', edit.message);
-                setFormData({ ...formData, error: edit.message, isPending: false });
+            if (result && result.message) {
+                setFormData({ ...formData, error: result.message, isPending: false });
             } else {
                 setFormData({ name: '', error: null, isPending: false });
             }
         } catch (err) {
-            console.error('Error during API call:', err);
             setFormData({ ...formData, error: 'Failed to update airline. Please try again.', isPending: false });
         }
     };
@@ -67,48 +69,61 @@ export default function AirlineEditForm() {
     const handleChange = (event) => {
         const { name, value } = event.target;
         setFormData((prev) => {
-            const newError = validateFields(Entities.AIRLINES, { ...prev, [name]: value }, ['name']);
+            const newError = validateFields(ENTITIES.AIRLINES, { ...prev, [name]: value }, ['name']);
             return { ...prev, [name]: value, error: newError };
         });
     };
 
     return (
-        <>
+        <Box sx={{ p: 3 }}>
             <PageTitle title='Edit Airline' />
-            <div className="col-md-4">
-                {formData.isPending && <LoadingSpinner />}
-                <form onSubmit={handleSubmit}>
-                    <div className="form-group pb-4">
-                        <label htmlFor="name" className="control-label">Name</label>
-                        <input
-                            id="name"
-                            type="text"
-                            className="form-control"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-                    <div className="form-group pb-3">
-                        <button type="submit" className="btn btn-success" disabled={formData.isPending}>
-                            {formData.isPending ? 'Submitting...' : 'Save Changes'}
-                        </button>
-                    </div>
-                    {isLoading && <Alert alertType="info" alertText="Loading..." />}
-                    {isError && error && (
-                        <Alert alertType="error">
-                            <strong>{error.type}</strong>: {error.message}
-                        </Alert>
+
+            {isLoading && (
+                <CircularProgress sx={{ mb: 2 }}/>
+            )}
+
+            {isError && error && (
+                <CustomAlert alertType='error' type={error.type} message={error.message} />
+            )}
+
+            {!isLoading && !isError && (
+                <Box
+                    component="form"
+                    autoComplete="off"
+                    sx={{ mt: 2, '& .MuiTextField-root': { mb: 3, width: '100%' } }}
+                    onSubmit={handleSubmit}
+                >
+                    <Grid container spacing={2}>
+                        <Grid>
+                            <TextField
+                                id="name"
+                                name="name"
+                                label="Name"
+                                variant="outlined"
+                                value={formData.name}
+                                onChange={handleChange}
+                                required
+                                error={!!formData.error}
+                                helperText={formData.error}
+                            />
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                color="success"
+                                disabled={formData.isPending}
+                            >
+                                {formData.isPending ? <CircularProgress /> : 'Save Changes'}
+                            </Button>
+                        </Grid>
+                    </Grid>
+                    {formData.error && (
+                        <CustomAlert alertType='error' type='Error' message={formData.error} />
                     )}
-                    {formData.error && <Alert alertType="error" alertText={formData.error} />}
-                </form>
-            </div>
-            <nav aria-label="Page navigation">
-                <ul className="pagination pagination-container pagination-container-absolute">
-                    <BackToListAction dataType={Entities.AIRLINES} />
-                </ul>
-            </nav>
-        </>
+                </Box>
+            )}
+            <Box sx={{ mt: 3 }}>
+                <BackToListAction dataType={ENTITIES.AIRLINES} />
+            </Box>
+        </Box>
     );
 }

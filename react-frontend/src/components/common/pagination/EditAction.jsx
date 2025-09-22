@@ -1,9 +1,23 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import Button from '@mui/material/Button';
+import EditIcon from '@mui/icons-material/Edit';
 
-export default function EditAction({ dataType, dataId, onEdit }) {
+export default function EditAction({ dataType, dataId }) {
+    const navigate = useNavigate();
+
+    const handleEdit = () => {
+        navigate(`/${dataType}/Edit/${dataId}`);
+    };
+
     return (
-        <li className="page-item">
-            <a href={`/${dataType}/Edit/${dataId}`} className="page-link text-success">Edit</a>
-        </li>
-    )
+        <Button
+            variant="outlined"
+            color="success"
+            onClick={handleEdit}
+            startIcon={<EditIcon />}
+        >
+            Edit
+        </Button>
+    );
 }

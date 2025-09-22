@@ -1,14 +1,18 @@
 import React from 'react';
+import Button from '@mui/material/Button';
+import SearchIcon from '@mui/icons-material/Search';
 
 function SearchButton({ onClick }) {
     return (
-        <button
+        <Button
             id="searchButton"
-            className="btn btn-primary"
+            variant="contained"
+            color="primary"
             onClick={onClick}
+            startIcon={<SearchIcon />}
         >
             Search
-        </button>
+        </Button>
     );
 }
 

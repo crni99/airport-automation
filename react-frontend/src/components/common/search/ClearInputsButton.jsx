@@ -1,25 +1,16 @@
 import React from 'react';
+import Button from '@mui/material/Button';
+import ClearIcon from '@mui/icons-material/Clear';
 
-const ClearInputButton = () => {
-    const handleClear = () => {
-        const inputs = document.querySelectorAll('.container input, .container select, .container textarea');
-
-        inputs.forEach(input => {
-            const type = input.type;
-
-            if (type === 'checkbox' || type === 'radio') {
-                input.checked = false;
-            } else {
-                input.value = '';
-            }
-        });
-    };
-
+export default function ClearInputButton({ onClear }) {
     return (
-        <button id="clearButton" className="btn btn-warning" onClick={handleClear}>
+        <Button
+            variant="contained"
+            color="warning"
+            onClick={onClear}
+            startIcon={<ClearIcon />}
+        >
             Clear
-        </button>
+        </Button>
     );
-};
-
-export default ClearInputButton;
+}

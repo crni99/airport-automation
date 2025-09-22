@@ -1,29 +1,42 @@
-import React  from 'react';
+import React from 'react';
 import TableActions from '../common/table/TableActions';
-import { Entities } from '../../utils/const';
+import { ENTITIES } from '../../utils/const';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
 
-export default function AirlinesListTable( {airlines }) {
+export default function AirlinesListTable({ airlines }) {
     return (
-        <div>
-            <hr />
-            <table className="table table-responsive table-striped">
-                <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>Name</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                    {airlines.map(airline => (
-                        <tr key={airline.id}>
-                            <td>{airline.id}</td>
-                            <td>{airline.name}</td>
-                            <TableActions entity={Entities.AIRLINES} id={airline.id} />
-                        </tr>
+        <TableContainer component={Paper}>
+            <Table stickyHeader aria-label="Airlines table">
+                <TableHead>
+                    <TableRow>
+                        <TableCell sx={{ width: '20%' }}>Id</TableCell>
+                        <TableCell sx={{ width: '60%' }}>Name</TableCell>
+                        <TableCell sx={{ width: '20%' }}>Actions</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {airlines.map((airline) => (
+                        <TableRow
+                            key={airline.id}
+                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                        >
+                            <TableCell component="th" scope="row">
+                                {airline.id}
+                            </TableCell>
+                            <TableCell>{airline.name}</TableCell>
+                            <TableCell>
+                                <TableActions entity={ENTITIES.AIRLINES} id={airline.id} />
+                            </TableCell>
+                        </TableRow>
                     ))}
-                </tbody>
-            </table>
-        </div>
-    )
+                </TableBody>
+            </Table>
+        </TableContainer>
+    );
 }

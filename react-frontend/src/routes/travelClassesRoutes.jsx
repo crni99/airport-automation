@@ -4,7 +4,7 @@ import TravelClassesList from "../components/travelClass/TravelClassesList";
 
 const TravelClassesRoutes = (
     <>
-        <Route path="/travelClasses" element={<TravelClassesList />} />
+        <Route path="/travel-classes" element={<TravelClassesList />} />
     </>
 );
 

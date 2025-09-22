@@ -1,6 +1,13 @@
+import React from 'react';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+
 export default function PageTitle({ title }) {
     return (
-            <h4 className="mb-4">{title}</h4>
-
-    )
+        <Box sx={{ mb: 4 }}>
+            <Typography variant="h4" component="h1">
+                {title}
+            </Typography>
+        </Box>
+    );
 }

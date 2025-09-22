@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getAuthToken } from '../utils/auth.js';
 import { useContext } from 'react';
-import { DataContext } from '../store/data-context.jsx';
+import { DataContext } from '../store/DataContext.jsx';
 import { generateErrorMessage, handleNetworkError } from '../utils/errorUtils.js';
-import { Entities } from '../utils/const.js';
+import { ENTITIES } from '../utils/const.js';
 
 export default function useFetch(dataType, dataId, page = 1, triggerFetch, rowsPerPage) {
     const dataCtx = useContext(DataContext);
@@ -80,46 +80,46 @@ export default function useFetch(dataType, dataId, page = 1, triggerFetch, rowsP
             url += `?${paginationParams}`;
 
             switch (dataType) {
-                case Entities.AIRLINES: {
+                case ENTITIES.AIRLINES: {
                     const searchName = document.getElementById('searchInput')?.value?.trim();
                     if (searchName) {
-                        url = `${apiUrl}/${Entities.AIRLINES}/ByName/${encodeURIComponent(searchName)}?${paginationParams}`;
+                        url = `${apiUrl}/${ENTITIES.AIRLINES}/ByName/${encodeURIComponent(searchName)}?${paginationParams}`;
                     }
                     break;
                 }
 
-                case Entities.API_USERS: {
+                case ENTITIES.API_USERS: {
                     const username = document.getElementById('username')?.value?.trim();
                     const password = document.getElementById('password')?.value?.trim();
                     const searchRole = document.getElementById('roleSelect')?.value?.trim();
 
                     if (username || password || searchRole) {
-                        url = `${apiUrl}/${Entities.API_USERS}/ByFilter?username=${encodeURIComponent(username || '')}&password=${encodeURIComponent(password || '')}&roles=${encodeURIComponent(searchRole || '')}&${paginationParams}`;
+                        url = `${apiUrl}/${ENTITIES.API_USERS}/ByFilter?username=${encodeURIComponent(username || '')}&password=${encodeURIComponent(password || '')}&roles=${encodeURIComponent(searchRole || '')}&${paginationParams}`;
                     }
                     break;
                 }
 
-                case Entities.DESTINATIONS: {
+                case ENTITIES.DESTINATIONS: {
                     const city = document.getElementById('city')?.value?.trim();
                     const airport = document.getElementById('airport')?.value?.trim();
 
                     if (city || airport) {
-                        url = `${apiUrl}/${Entities.DESTINATIONS}/search?city=${encodeURIComponent(city || '')}&airport=${encodeURIComponent(airport || '')}&${paginationParams}`;
+                        url = `${apiUrl}/${ENTITIES.DESTINATIONS}/search?city=${encodeURIComponent(city || '')}&airport=${encodeURIComponent(airport || '')}&${paginationParams}`;
                     }
                     break;
                 }
 
-                case Entities.FLIGHTS: {
+                case ENTITIES.FLIGHTS: {
                     const startDate = document.getElementById('startDate')?.value?.trim();
                     const endDate = document.getElementById('endDate')?.value?.trim();
 
                     if (startDate || endDate) {
-                        url = `${apiUrl}/${Entities.FLIGHTS}/byDate?startDate=${encodeURIComponent(startDate || '')}&endDate=${encodeURIComponent(endDate || '')}&${paginationParams}`;
+                        url = `${apiUrl}/${ENTITIES.FLIGHTS}/byDate?startDate=${encodeURIComponent(startDate || '')}&endDate=${encodeURIComponent(endDate || '')}&${paginationParams}`;
                     }
                     break;
                 }
 
-                case Entities.PASSENGERS: {
+                case ENTITIES.PASSENGERS: {
                     const firstName = document.getElementById('firstName')?.value?.trim();
                     const lastName = document.getElementById('lastName')?.value?.trim();
                     const uprn = document.getElementById('uprn')?.value?.trim();
@@ -128,36 +128,36 @@ export default function useFetch(dataType, dataId, page = 1, triggerFetch, rowsP
                     const phone = document.getElementById('phone')?.value?.trim();
 
                     if (firstName || lastName || uprn || passport || address || phone) {
-                        url = `${apiUrl}/${Entities.PASSENGERS}/byFilter?firstName=${encodeURIComponent(firstName || '')}&lastName=${encodeURIComponent(lastName || '')}&uprn=${encodeURIComponent(uprn || '')}&passport=${encodeURIComponent(passport || '')}&address=${encodeURIComponent(address || '')}&phone=${encodeURIComponent(phone || '')}&${paginationParams}`;
+                        url = `${apiUrl}/${ENTITIES.PASSENGERS}/byFilter?firstName=${encodeURIComponent(firstName || '')}&lastName=${encodeURIComponent(lastName || '')}&uprn=${encodeURIComponent(uprn || '')}&passport=${encodeURIComponent(passport || '')}&address=${encodeURIComponent(address || '')}&phone=${encodeURIComponent(phone || '')}&${paginationParams}`;
                     }
                     break;
                 }
 
-                case Entities.PILOTS: {
+                case ENTITIES.PILOTS: {
                     const firstName = document.getElementById('firstName')?.value?.trim();
                     const lastName = document.getElementById('lastName')?.value?.trim();
                     const uprn = document.getElementById('uprn')?.value?.trim();
                     const flyingHours = document.getElementById('flyingHours')?.value?.trim();
 
                     if (firstName || lastName || uprn || flyingHours) {
-                        url = `${apiUrl}/${Entities.PILOTS}/byFilter?firstName=${encodeURIComponent(firstName || '')}&lastName=${encodeURIComponent(lastName || '')}&uprn=${encodeURIComponent(uprn || '')}&flyingHours=${encodeURIComponent(flyingHours || '')}&${paginationParams}`;
+                        url = `${apiUrl}/${ENTITIES.PILOTS}/byFilter?firstName=${encodeURIComponent(firstName || '')}&lastName=${encodeURIComponent(lastName || '')}&uprn=${encodeURIComponent(uprn || '')}&flyingHours=${encodeURIComponent(flyingHours || '')}&${paginationParams}`;
                     }
                     break;
                 }
 
-                case Entities.PLANE_TICKETS: {
+                case ENTITIES.PLANE_TICKETS: {
                     const price = document.getElementById('price')?.value?.trim();
                     const purchaseDate = document.getElementById('purchaseDate')?.value?.trim();
                     const seatNumber = document.getElementById('seatNumber')?.value?.trim();
 
                     if (price || purchaseDate || seatNumber) {
-                        url = `${apiUrl}/${Entities.PLANE_TICKETS}/byFilter?price=${encodeURIComponent(price || '')}&purchaseDate=${encodeURIComponent(purchaseDate || '')}&seatNumber=${encodeURIComponent(seatNumber || '')}&${paginationParams}`;
+                        url = `${apiUrl}/${ENTITIES.PLANE_TICKETS}/byFilter?price=${encodeURIComponent(price || '')}&purchaseDate=${encodeURIComponent(purchaseDate || '')}&seatNumber=${encodeURIComponent(seatNumber || '')}&${paginationParams}`;
                     }
                     break;
                 }
 
-                case Entities.HEALTH_CHECKS: {
-                    url = `${apiUrl}/${Entities.HEALTH_CHECKS}`;
+                case ENTITIES.HEALTH_CHECKS: {
+                    url = `${apiUrl}/${ENTITIES.HEALTH_CHECKS}`;
                     break;
                 }
 

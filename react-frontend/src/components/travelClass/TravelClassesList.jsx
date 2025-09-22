@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 import useFetch from '../../hooks/useFetch';
-import LoadingSpinner from '../common/LoadingSpinner';
-import Alert from '../common/Alert';
 import TravelClassesListTable from "./TravelClassesListTable";
 import ListHeader from "../common/ListHeader";
-import { Entities } from '../../utils/const.js';
+import { ENTITIES } from '../../utils/const.js';
+import { Container, Box } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
+import CustomAlert from "../common/Alert.jsx";
 
 export default function TravelClassesList() {
     const [travelClasses, settravelClasses] = useState([]);
-    const { data, dataExist, error, isLoading, isError } = useFetch(Entities.TRAVEL_CLASSES, null, 1);
+    const { data, dataExist, error, isLoading, isError } = useFetch(ENTITIES.TRAVEL_CLASSES, null, 1);
 
     useEffect(() => {
         if (data) {
@@ -17,26 +18,31 @@ export default function TravelClassesList() {
     }, [data]);
 
     return (
-        <>
-            <br />
-            <ListHeader dataExist={dataExist} dataType={Entities.TRAVEL_CLASSES} />
-            {isLoading && <LoadingSpinner />}
-            {isError && error && (
-                <Alert alertType="error">
-                    <strong>{error.type}</strong>: {error.message}
-                </Alert>
-            )}
-            {!isError && !isLoading && (
-                <div className="form-horizontal">
-                    <div className="form-group">
+        <Container sx={{ mt: 4 }}>
+            <ListHeader
+                dataExist={dataExist}
+                dataType={ENTITIES.TRAVEL_CLASSES}
+            />
+
+            <Box sx={{ mt: 2 }}>
+                {isLoading && <CircularProgress sx={{ mb: 2 }}/>}
+
+                {isError && error && (
+                    <CustomAlert alertType='error' type={error.type} message={error.message} />
+                )}
+
+                {!isError && !isLoading && (
+                    <>
                         {travelClasses && travelClasses.length > 0 ? (
-                            <TravelClassesListTable travelClasses={travelClasses} />
+                            <>
+                                <TravelClassesListTable travelClasses={travelClasses} />
+                            </>
                         ) : (
-                            <Alert alertType="info" alertText="No travel classes available" />
+                            <CustomAlert alertType='info' type='Info' message='No travel classes available' />
                         )}
-                    </div>
-                </div>
-            )}
-        </>
+                    </>
+                )}
+            </Box>
+        </Container>
     );
 }

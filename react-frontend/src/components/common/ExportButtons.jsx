@@ -1,36 +1,64 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useExport } from '../../hooks/useExport';
-import LoadingSpinner from './LoadingSpinner'
 
-export default function CreateButton({ dataType }) {
+// MUI Components
+import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Stack from '@mui/material/Stack';
+
+// MUI Icons
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import DescriptionIcon from '@mui/icons-material/Description';
+import FileDownloadIcon from '@mui/icons-material/FileDownload'; // New icon for the main button
+
+export default function ExportButton({ dataType }) {
     const { triggerExport, isLoading } = useExport();
 
-    return (
-        <div className="d-flex" data-entity={dataType}>
-            <button
-                id="exportButtonPDF"
-                className="btn btn-danger me-3"
-                data-type="PDF"
-                onClick={() => triggerExport(dataType, 'pdf')}
-                disabled={isLoading}
-            >
-                <i className="fas fa-file-pdf text-white"></i>
-            </button>
-            <button
-                id="exportButtonEXCEL"
-                className="btn btn-success"
-                data-type="EXCEL"
-                onClick={() => triggerExport(dataType, 'excel')}
-                disabled={isLoading}
-            >
-                <i className="fas fa-file-excel text-white"></i>
-            </button>
+    const [anchorEl, setAnchorEl] = useState(null);
+    const open = Boolean(anchorEl);
 
-            {isLoading && (
-                <div className='ms-3'>
-                    <LoadingSpinner />
-                </div>
-            )}
-        </div>
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleExport = (format) => {
+        triggerExport(dataType, format);
+        handleClose();
+    };
+
+    return (
+        <Stack direction="row" spacing={2} alignItems="center">
+            <Button
+                variant="contained"
+                onClick={handleClick}
+                disabled={isLoading}
+                color="secondary"
+                startIcon={<FileDownloadIcon />}
+            >
+                Export
+            </Button>
+            <Menu
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+            >
+                <MenuItem onClick={() => handleExport('pdf')} disabled={isLoading}>
+                    <PictureAsPdfIcon sx={{ mr: 1, mb: 1 }} color="error" />
+                    PDF
+                </MenuItem>
+                <MenuItem onClick={() => handleExport('excel')} disabled={isLoading}>
+                    <DescriptionIcon sx={{ mr: 1 }} color="success" />
+                    Excel
+                </MenuItem>
+            </Menu>
+
+            {isLoading && <CircularProgress size={24} />}
+        </Stack>
     );
 }

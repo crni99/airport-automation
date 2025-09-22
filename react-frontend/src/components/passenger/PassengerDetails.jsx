@@ -4,21 +4,29 @@ import useFetch from '../../hooks/useFetch.jsx';
 import { deleteData } from '../../utils/delete.js';
 import { editData } from '../../utils/edit.js';
 import PageTitle from '../common/PageTitle.jsx';
-import LoadingSpinner from '../common/LoadingSpinner.jsx';
 import PageNavigationActions from '../common/pagination/PageNavigationActions.jsx';
 import Alert from '../common/Alert.jsx';
 import { useContext } from 'react';
-import { DataContext } from '../../store/data-context.jsx';
+import { DataContext } from '../../store/DataContext.jsx';
 import openMap from '../../utils/openMapHelper.js';
-import { Entities } from '../../utils/const.js';
+import { ENTITIES } from '../../utils/const.js';
 import MapEmbed from '../common/MapEmbed.jsx';
 import { DD } from '..//common/table/DD.jsx';
 import { DT } from '..//common/table/DT.jsx';
 
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import CircularProgress from '@mui/material/CircularProgress';
+import AlertTitle from '@mui/material/AlertTitle';
+import Link from '@mui/material/Link';
+import Paper from '@mui/material/Paper';
+import { Stack } from '@mui/material';
+
 export default function PassengerDetails() {
     const dataCtx = useContext(DataContext);
     const { id } = useParams();
-    const { data: passenger, dataExist, error, isLoading } = useFetch(Entities.PASSENGERS, id);
+    const { data: passenger, dataExist, error, isLoading } = useFetch(ENTITIES.PASSENGERS, id);
     const navigate = useNavigate();
 
     const [operationState, setOperationState] = useState({
@@ -32,9 +40,9 @@ export default function PassengerDetails() {
             let operationResult;
 
             if (operation === 'edit') {
-                operationResult = await editData(Entities.PASSENGERS, id, dataCtx.apiUrl, navigate);
+                operationResult = await editData(ENTITIES.PASSENGERS, id, dataCtx.apiUrl, navigate);
             } else if (operation === 'delete') {
-                operationResult = await deleteData(Entities.PASSENGERS, id, dataCtx.apiUrl, navigate);
+                operationResult = await deleteData(ENTITIES.PASSENGERS, id, dataCtx.apiUrl, navigate);
             }
             if (operationResult) {
                 setOperationState(prevState => ({ ...prevState, operationError: operationResult.message }));
@@ -47,48 +55,83 @@ export default function PassengerDetails() {
     };
 
     return (
-        <>
+        <Box sx={{ p: 3 }}>
             <PageTitle title='Passenger Details' />
-            {(isLoading || operationState.isPending) && <LoadingSpinner />}
-            {error && <Alert alertType="error" alertText={error.message} />}
-            {operationState.operationError && <Alert alertType="error" alertText={operationState.operationError} />}
+
+            {(isLoading || operationState.isPending) && (
+                <Stack direction="row" justifyContent="center" sx={{ mt: 4 }}>
+                    <CircularProgress />
+                </Stack>
+            )}
+
+            {error && (
+                <Alert severity="error" sx={{ mt: 2 }}>
+                    <AlertTitle>Error</AlertTitle>
+                    {error.message}
+                </Alert>
+            )}
+
+            {operationState.operationError && (
+                <Alert severity="error" sx={{ mt: 2 }}>
+                    <AlertTitle>Error</AlertTitle>
+                    {operationState.operationError}
+                </Alert>
+            )}
+
             {dataExist && (
                 <>
-                    <div className="container">
-                        <div className="row">
-                            <div className="col-md-6">
-                                <br />
-                                <dl className="row">
-                                    <DT className="col-sm-4 mt-2">Id</DT>
-                                    <DD className="col-sm-8 mt-2">{passenger.id}</DD>
-                                    <DT className="col-sm-4 mt-2">First Name</DT>
-                                    <DD className="col-sm-8 mt-2">{passenger.firstName}</DD>
-                                    <DT className="col-sm-4 mt-2">Last Name</DT>
-                                    <DD className="col-sm-8 mt-2">{passenger.lastName}</DD>
-                                    <DT className="col-sm-4 mt-2">UPRN</DT>
-                                    <DD className="col-sm-8 mt-2">{passenger.uprn}</DD>
-                                    <DT className="col-sm-4 mt-2">Passport</DT>
-                                    <DD className="col-sm-8 mt-2">{passenger.passport}</DD>
-                                    <DT className="col-sm-4 mt-2">Address</DT>
-                                    <DD
-                                        className="col-sm-8 mt-2 clickable-row link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
+                    <Grid container spacing={4} sx={{ mt: 3 }}>
+                        <Grid item xs={12} md={6}>
+                            <Box component="dl">
+                                <Box sx={{ mb: 3 }}>
+                                    <Typography component="dt" variant="subtitle1" sx={{ fontWeight: 'bold' }}>Id</Typography>
+                                    <Typography component="dd" variant="body1">{passenger.id}</Typography>
+                                </Box>
+                                <Box sx={{ mb: 3 }}>
+                                    <Typography component="dt" variant="subtitle1" sx={{ fontWeight: 'bold' }}>First Name</Typography>
+                                    <Typography component="dd" variant="body1">{passenger.firstName}</Typography>
+                                </Box>
+                                <Box sx={{ mb: 3 }}>
+                                    <Typography component="dt" variant="subtitle1" sx={{ fontWeight: 'bold' }}>Last Name</Typography>
+                                    <Typography component="dd" variant="body1">{passenger.lastName}</Typography>
+                                </Box>
+                                <Box sx={{ mb: 3 }}>
+                                    <Typography component="dt" variant="subtitle1" sx={{ fontWeight: 'bold' }}>UPRN</Typography>
+                                    <Typography component="dd" variant="body1">{passenger.uprn}</Typography>
+                                </Box>
+                                <Box sx={{ mb: 3 }}>
+                                    <Typography component="dt" variant="subtitle1" sx={{ fontWeight: 'bold' }}>Passport</Typography>
+                                    <Typography component="dd" variant="body1">{passenger.passport}</Typography>
+                                </Box>
+                                <Box sx={{ mb: 3 }}>
+                                    <Typography component="dt" variant="subtitle1" sx={{ fontWeight: 'bold' }}>Address</Typography>
+                                    <Link
+                                        component="dd"
+                                        variant="body1"
+                                        sx={{ cursor: 'pointer' }}
                                         onClick={() => openMap(passenger.address)}
                                     >
                                         {passenger.address}
-                                    </DD>
-                                    <DT className="col-sm-4 mt-2">Phone</DT>
-                                    <DD className="col-sm-8 mt-2">{passenger.phone}</DD>
-                                </dl>
-                                <PageNavigationActions dataType={Entities.PASSENGERS} dataId={id} onEdit={() => handleOperation('edit')}
-                                    onDelete={() => handleOperation('delete')} />
-                            </div>
-                            <div className="col-md-6 mt-4">
-                                <MapEmbed address={passenger.address} />
-                            </div>
-                        </div>
-                    </div>
+                                    </Link>
+                                </Box>
+                                <Box sx={{ mb: 3 }}>
+                                    <Typography component="dt" variant="subtitle1" sx={{ fontWeight: 'bold' }}>Phone</Typography>
+                                    <Typography component="dd" variant="body1">{passenger.phone}</Typography>
+                                </Box>
+                            </Box>
+                        </Grid>
+                        <Grid sx={{ mb: 3, width: '50%' }}>
+                            <MapEmbed address={passenger.address} />
+                        </Grid>
+                    </Grid>
+                    <PageNavigationActions
+                        dataType={ENTITIES.PASSENGERS}
+                        dataId={id}
+                        onEdit={() => handleOperation('edit')}
+                        onDelete={() => handleOperation('delete')}
+                    />
                 </>
             )}
-        </>
+        </Box>
     );
 }
