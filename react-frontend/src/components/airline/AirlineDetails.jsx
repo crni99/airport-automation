@@ -11,10 +11,7 @@ import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import Alert from '@mui/material/Alert';
-import { Stack } from '@mui/material';
 import CustomAlert from '../common/Alert.jsx';
-import { Container } from '@mui/material';
 
 export default function AirlineDetails() {
     const dataCtx = useContext(DataContext);
@@ -48,53 +45,51 @@ export default function AirlineDetails() {
     };
 
     return (
-        <Container sx={{ mt: 4 }}>
-            <Box sx={{ mt: 2 }}>
-                <PageTitle title='Airline Details' />
+        <Box sx={{ mt: 2 }}>
+            <PageTitle title='Airline Details' />
 
-                {(isLoading || operationState.isPending) && (
-                    <CircularProgress sx={{ mb: 2 }} />
-                )}
+            {(isLoading || operationState.isPending) && (
+                <CircularProgress sx={{ mb: 2 }} />
+            )}
 
-                {error && (
-                    <CustomAlert alertType='error' type={error.type} message={error.message} />
-                )}
+            {error && (
+                <CustomAlert alertType='error' type={error.type} message={error.message} />
+            )}
 
-                {operationState.operationError && (
-                    <CustomAlert alertType='error' type='Error' message={operationState.operationError} />
-                )}
+            {operationState.operationError && (
+                <CustomAlert alertType='error' type='Error' message={operationState.operationError} />
+            )}
 
-                {dataExist && (
-                    <Box sx={{ mt: 3 }}>
-                        <Grid container spacing={6}>
-                            <Grid>
-                                <Typography variant="subtitle1" component="dt">
-                                    Id
-                                </Typography>
-                                <Typography variant="body1" component="dd" sx={{ mt: 1 }}>
-                                    {airline.id}
-                                </Typography>
-                            </Grid>
-                            <Grid>
-                                <Typography variant="subtitle1" component="dt">
-                                    Name
-                                </Typography>
-                                <Typography variant="body1" component="dd" sx={{ mt: 1 }}>
-                                    {airline.name}
-                                </Typography>
-                            </Grid>
+            {dataExist && (
+                <Box sx={{ mt: 3 }}>
+                    <Grid container spacing={6}>
+                        <Grid>
+                            <Typography variant="subtitle1" component="dt">
+                                Id
+                            </Typography>
+                            <Typography variant="body1" component="dd" sx={{ mt: 1 }}>
+                                {airline.id}
+                            </Typography>
                         </Grid>
-                        <Box sx={{ mt: 4 }}>
-                            <PageNavigationActions
-                                dataType={ENTITIES.AIRLINES}
-                                dataId={id}
-                                onEdit={() => navigate(`/airlines/edit/${id}`)}
-                                onDelete={() => handleOperation('delete')}
-                            />
-                        </Box>
+                        <Grid>
+                            <Typography variant="subtitle1" component="dt">
+                                Name
+                            </Typography>
+                            <Typography variant="body1" component="dd" sx={{ mt: 1 }}>
+                                {airline.name}
+                            </Typography>
+                        </Grid>
+                    </Grid>
+                    <Box sx={{ mt: 4 }}>
+                        <PageNavigationActions
+                            dataType={ENTITIES.AIRLINES}
+                            dataId={id}
+                            onEdit={() => navigate(`/airlines/edit/${id}`)}
+                            onDelete={() => handleOperation('delete')}
+                        />
                     </Box>
-                )}
-            </Box>
-        </Container>
+                </Box>
+            )}
+        </Box>
     );
 }

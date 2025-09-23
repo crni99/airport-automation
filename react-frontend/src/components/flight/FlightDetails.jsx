@@ -8,11 +8,8 @@ import PageNavigationActions from '../common/pagination/PageNavigationActions.js
 import Alert from '../common/Alert.jsx';
 import { useContext } from 'react';
 import { DataContext } from '../../store/DataContext.jsx';
-import openDetails from "../../utils/openDetailsHelper";
 import { ENTITIES } from '../../utils/const.js';
 import openMap from '../../utils/openMapHelper.js';
-import { DD } from '..//common/table/DD.jsx';
-import { DT } from '..//common/table/DT.jsx';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import AlertTitle from '@mui/material/AlertTitle';
@@ -21,7 +18,6 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
-import Button from '@mui/material/Button';
 
 export default function FlightDetails() {
     const dataCtx = useContext(DataContext);

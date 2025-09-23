@@ -12,7 +12,6 @@ import PageTitle from '../common/PageTitle.jsx';
 import BackToListAction from '../common/pagination/BackToListAction.jsx';
 import { DataContext } from '../../store/DataContext.jsx';
 import CustomAlert from '../common/Alert.jsx';
-import { Container } from '@mui/material';
 
 export default function AirlineCreateForm() {
     const dataCtx = useContext(DataContext);
@@ -60,48 +59,46 @@ export default function AirlineCreateForm() {
     };
 
     return (
-        <Container sx={{ mt: 4 }}>
-            <Box sx={{ mt: 2 }}>
-                <PageTitle title='Create Airline' />
-                <Box
-                    component="form"
-                    autoComplete="off"
-                    onSubmit={handleSubmit}
-                >
-                    <Grid container spacing={3}>
-                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}>
-                            <TextField
-                                id="name"
-                                name="name"
-                                label="Name"
-                                variant="outlined"
-                                value={formData.name}
-                                onChange={handleChange}
-                                placeholder="Air Serbia"
-                                required
-                                error={!!formData.error}
-                                helperText={formData.error}
-                            />
-                        </Grid>
-                        <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>
-                            <Button
-                                type="submit"
-                                variant="contained"
-                                color="success"
-                                disabled={formData.isPending}
-                            >
-                                {formData.isPending ? <CircularProgress /> : 'Create'}
-                            </Button>
-                        </Grid>
+        <Box sx={{ mt: 2 }}>
+            <PageTitle title='Create Airline' />
+            <Box
+                component="form"
+                autoComplete="off"
+                onSubmit={handleSubmit}
+            >
+                <Grid container spacing={3}>
+                    <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}>
+                        <TextField
+                            id="name"
+                            name="name"
+                            label="Name"
+                            variant="outlined"
+                            value={formData.name}
+                            onChange={handleChange}
+                            placeholder="Air Serbia"
+                            required
+                            error={!!formData.error}
+                            helperText={formData.error}
+                        />
                     </Grid>
-                    {formData.error && (
-                        <CustomAlert alertType='error' type='Error' message={formData.error} />
-                    )}
-                </Box>
-                <Box sx={{ mt: 3 }}>
-                    <BackToListAction dataType={ENTITIES.AIRLINES} />
-                </Box>
+                    <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            color="success"
+                            disabled={formData.isPending}
+                        >
+                            {formData.isPending ? <CircularProgress /> : 'Create'}
+                        </Button>
+                    </Grid>
+                </Grid>
+                {formData.error && (
+                    <CustomAlert alertType='error' type='Error' message={formData.error} />
+                )}
             </Box>
-        </Container >
+            <Box sx={{ mt: 3 }}>
+                <BackToListAction dataType={ENTITIES.AIRLINES} />
+            </Box>
+        </Box>
     );
 }

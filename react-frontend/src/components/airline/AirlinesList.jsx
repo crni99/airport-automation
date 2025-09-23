@@ -4,7 +4,7 @@ import { ENTITIES } from '../../utils/const.js';
 import ListHeader from "../common/ListHeader";
 import AirlinesListTable from "./AirlinesListTable";
 import CustomAlert from "../common/Alert.jsx";
-import { Container, Box } from '@mui/material';
+import { Box } from '@mui/material';
 import Pagination from '../common/pagination/Pagination.jsx'
 import CircularProgress from '@mui/material/CircularProgress';
 
@@ -49,7 +49,7 @@ export default function AirlineList() {
     };
 
     return (
-        <Container sx={{ mt: 4 }}>
+        <>
             <ListHeader
                 dataExist={dataExist}
                 dataType={ENTITIES.AIRLINES}
@@ -57,8 +57,8 @@ export default function AirlineList() {
                 setTriggerFetch={setTriggerFetch}
             />
 
-            <Box sx={{ mt: 2 }}>
-                {isLoading && <CircularProgress sx={{ mb: 2 }}/>}
+            <Box sx={{ mt: 6 }}>
+                {isLoading && <CircularProgress sx={{ mb: 2 }} />}
 
                 {isError && error && (
                     <CustomAlert alertType='error' type={error.type} message={error.message} />
@@ -84,6 +84,6 @@ export default function AirlineList() {
                     </>
                 )}
             </Box>
-        </Container>
+        </>
     );
 }

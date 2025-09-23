@@ -4,19 +4,16 @@ import { useContext } from 'react';
 import { DataContext } from '../../store/DataContext.jsx';
 import { editData } from '../../utils/edit.js';
 import PageTitle from '../common/PageTitle.jsx';
-import Alert from '../common/Alert.jsx';
 import BackToListAction from '../common/pagination/BackToListAction.jsx';
 import useFetch from '../../hooks/useFetch.jsx';
 import { validateFields } from '../../utils/validation/validateFields.js';
 import { ENTITIES } from '../../utils/const.js';
-
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
-import AlertTitle from '@mui/material/AlertTitle';
 import Grid from '@mui/material/Grid';
-import { Stack } from '@mui/material';
+import CustomAlert from '../common/Alert.jsx';
 
 export default function PilotEditForm() {
     const dataCtx = useContext(DataContext);
@@ -91,31 +88,25 @@ export default function PilotEditForm() {
     };
 
     return (
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ mt: 2 }}>
             <PageTitle title='Edit Pilot' />
 
             {isLoading && (
-                <Stack direction="row" justifyContent="center" sx={{ mt: 4 }}>
-                    <CircularProgress />
-                </Stack>
+                <CircularProgress sx={{ mb: 2 }} />
             )}
 
             {isError && error && (
-                <Alert severity="error" sx={{ mt: 2 }}>
-                    <AlertTitle>{error.type}</AlertTitle>
-                    {error.message}
-                </Alert>
+                <CustomAlert alertType='error' type={error.type} message={error.message} />
             )}
 
             {!isLoading && !isError && (
                 <Box
                     component="form"
-                    sx={{ mt: 2, '& .MuiTextField-root': { mb: 3, width: '100%' } }}
                     autoComplete="off"
                     onSubmit={handleSubmit}
                 >
                     <Grid container spacing={2}>
-                        <Grid>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 6 }}>
                             <TextField
                                 id="firstName"
                                 name="firstName"
@@ -127,6 +118,8 @@ export default function PilotEditForm() {
                                 error={!!formData.error}
                                 helperText={formData.error}
                             />
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 6 }}>
                             <TextField
                                 id="lastName"
                                 name="lastName"
@@ -138,6 +131,8 @@ export default function PilotEditForm() {
                                 error={!!formData.error}
                                 helperText={formData.error}
                             />
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 6 }}>
                             <TextField
                                 id="uprn"
                                 name="uprn"
@@ -149,6 +144,8 @@ export default function PilotEditForm() {
                                 error={!!formData.error}
                                 helperText={formData.error}
                             />
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 6 }}>
                             <TextField
                                 id="flyingHours"
                                 name="flyingHours"
@@ -162,21 +159,20 @@ export default function PilotEditForm() {
                                 error={!!formData.error}
                                 helperText={formData.error}
                             />
+                        </Grid>
+                        <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>
                             <Button
                                 type="submit"
                                 variant="contained"
                                 color="success"
                                 disabled={formData.isPending}
                             >
-                                {formData.isPending ? <CircularProgress size={24} /> : 'Save Changes'}
+                                {formData.isPending ? <CircularProgress /> : 'Save Changes'}
                             </Button>
                         </Grid>
                     </Grid>
                     {formData.error && (
-                        <Alert severity="error" sx={{ mt: 2 }}>
-                            <AlertTitle>Error</AlertTitle>
-                            {formData.error}
-                        </Alert>
+                        <CustomAlert alertType='error' type='Error' message={formData.error} />
                     )}
                 </Box>
             )}

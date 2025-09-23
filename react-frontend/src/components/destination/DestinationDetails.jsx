@@ -6,8 +6,6 @@ import { editData } from '../../utils/edit.js';
 import { DataContext } from '../../store/DataContext.jsx';
 import { ENTITIES } from '../../utils/const.js';
 import openMap from '../../utils/openMapHelper.js'
-
-// MUI Components
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
@@ -15,10 +13,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import Link from '@mui/material/Link';
-import Paper from '@mui/material/Paper';
 import { Stack } from '@mui/material';
-
-// Custom Components
 import PageTitle from '../common/PageTitle.jsx';
 import PageNavigationActions from '../common/pagination/PageNavigationActions.jsx';
 import MapEmbed from '../common/MapEmbed.jsx';

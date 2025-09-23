@@ -4,7 +4,6 @@ import Pagination from '../common/pagination/Pagination';
 import ListHeader from "../common/ListHeader";
 import PlaneTicketsListTable from "./PlaneTicketsListTable";
 import { ENTITIES } from '../../utils/const.js';
-import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import CustomAlert from "../common/Alert.jsx";
@@ -52,7 +51,7 @@ export default function PlaneTicketsList() {
     }, [rowsPerPage]);
 
     return (
-        <Container sx={{ mt: 4 }}>
+        <>
             <ListHeader
                 dataExist={dataExist}
                 dataType={ENTITIES.PLANE_TICKETS}
@@ -60,8 +59,8 @@ export default function PlaneTicketsList() {
                 setTriggerFetch={setTriggerFetch}
             />
 
-            <Box sx={{ mt: 2 }}>
-                {isLoading && <CircularProgress sx={{ mb: 2 }}/>}
+            <Box sx={{ mt: 4 }}>
+                {isLoading && <CircularProgress sx={{ mb: 2 }} />}
 
                 {isError && error && (
                     <CustomAlert alertType='error' type={error.type} message={error.message} />
@@ -87,6 +86,6 @@ export default function PlaneTicketsList() {
                     </>
                 )}
             </Box>
-        </Container>
+        </>
     );
 }

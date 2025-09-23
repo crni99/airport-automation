@@ -6,7 +6,6 @@ import CircularProgress from '@mui/material/CircularProgress';
 import ListHeader from "../common/ListHeader";
 import DestinationsListTable from "./DestinationsListTable";
 import Pagination from '../common/pagination/Pagination';
-import { Container } from '@mui/material';
 import CustomAlert from "../common/Alert.jsx";
 
 export default function DestinationsList() {
@@ -52,7 +51,7 @@ export default function DestinationsList() {
     }, [rowsPerPage]);
 
     return (
-        <Container sx={{ mt: 4 }}>
+        <>
             <ListHeader
                 dataExist={dataExist}
                 dataType={ENTITIES.DESTINATIONS}
@@ -60,8 +59,8 @@ export default function DestinationsList() {
                 setTriggerFetch={setTriggerFetch}
             />
 
-            <Box sx={{ mt: 2 }}>
-                {isLoading && <CircularProgress sx={{ mb: 2 }}/>}
+            <Box sx={{ mt: 4 }}>
+                {isLoading && <CircularProgress sx={{ mb: 2 }} />}
 
                 {isError && error && (
                     <CustomAlert alertType='error' type={error.type} message={error.message} />
@@ -87,6 +86,6 @@ export default function DestinationsList() {
                     </>
                 )}
             </Box>
-        </Container>
+        </>
     );
 }

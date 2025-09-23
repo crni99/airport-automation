@@ -10,8 +10,6 @@ import { useContext } from 'react';
 import { DataContext } from '../../store/DataContext.jsx';
 import openDetails from "../../utils/openDetailsHelper.js";
 import { ENTITIES } from '../../utils/const.js';
-import { DD } from '..//common/table/DD.jsx';
-import { DT } from '..//common/table/DT.jsx';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';

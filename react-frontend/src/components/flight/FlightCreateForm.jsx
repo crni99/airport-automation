@@ -13,14 +13,11 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
-import AlertTitle from '@mui/material/AlertTitle';
 import Grid from '@mui/material/Grid';
-import Stack from '@mui/material/Stack';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { Container } from '@mui/material';
 import CustomAlert from '../common/Alert.jsx';
 
 export default function FlightCreateForm() {
@@ -140,135 +137,139 @@ export default function FlightCreateForm() {
     }
 
     return (
-        <Container sx={{ mt: 4 }}>
-            <Box sx={{ mt: 2 }}>
-                <PageTitle title='Create Flight' />
+        <Box sx={{ mt: 2 }}>
+            <PageTitle title='Create Flight' />
 
-                {(isLoadingAirlines || isLoadingDestinations || isLoadingPilots) && (
-                    <CircularProgress sx={{ mb: 2 }} />
-                )}
+            {(isLoadingAirlines || isLoadingDestinations || isLoadingPilots) && (
+                <CircularProgress sx={{ mb: 2 }} />
+            )}
 
-                <Box
-                    component="form"
-                    autoComplete="off"
-                    onSubmit={handleSubmit}
-                >
-                    <Grid container spacing={4}>
-                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
-                            <FormControl fullWidth >
-                                <InputLabel id="pilot-select-label">Pilot</InputLabel>
-                                <Select
-                                    labelId="pilot-select-label"
-                                    id="pilotId"
-                                    name="pilotId"
-                                    value={formData.pilotId}
-                                    label="Pilot"
-                                    onChange={handleChange}
-                                    required
-                                >
-                                    <MenuItem value="">Select Pilot</MenuItem>
-                                    {allPilots?.map((pilot) => (
-                                        <MenuItem key={`pilot-${pilot.id}`} value={pilot.id}>
-                                            {pilot.firstName} {pilot.lastName}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
-                            <FormControl fullWidth >
-                                <InputLabel id="airline-select-label">Airline</InputLabel>
-                                <Select
-                                    labelId="airline-select-label"
-                                    id="airlineId"
-                                    name="airlineId"
-                                    value={formData.airlineId}
-                                    label="Airline"
-                                    onChange={handleChange}
-                                    required
-                                >
-                                    <MenuItem value="">Select Airline</MenuItem>
-                                    {allAirlines?.map((airline) => (
-                                        <MenuItem key={`airline-${airline.id}`} value={airline.id}>
-                                            {airline.name}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
-                            <FormControl fullWidth >
-                                <InputLabel id="destination-select-label">Destination</InputLabel>
-                                <Select
-                                    labelId="destination-select-label"
-                                    id="destinationId"
-                                    name="destinationId"
-                                    value={formData.destinationId}
-                                    label="Destination"
-                                    onChange={handleChange}
-                                    required
-                                >
-                                    <MenuItem value="">Select Destination</MenuItem>
-                                    {allDestinations?.map((destination) => (
-                                        <MenuItem key={`destination-${destination.id}`} value={destination.id}>
-                                            {destination.city} {destination.airport}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}>
-                            <TextField
-                                id="departureDate"
-                                name="departureDate"
-                                label="Departure Date"
-                                type="date"
-                                variant="outlined"
-                                value={formData.departureDate}
+            <Box
+                component="form"
+                autoComplete="off"
+                onSubmit={handleSubmit}
+            >
+                <Grid container spacing={4}>
+                    <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
+                        <FormControl fullWidth >
+                            <InputLabel id="pilot-select-label">Pilot</InputLabel>
+                            <Select
+                                labelId="pilot-select-label"
+                                id="pilotId"
+                                name="pilotId"
+                                value={formData.pilotId}
+                                label="Pilot"
                                 onChange={handleChange}
                                 required
-                                fullWidth
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                            />
-                        </Grid>
-                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}>
-                            <TextField
-                                id="departureTime"
-                                name="departureTime"
-                                label="Departure Time"
-                                type="time"
-                                variant="outlined"
-                                value={formData.departureTime}
-                                onChange={handleChange}
-                                required
-                                fullWidth
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                            />
-                        </Grid>
-                        <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>
-                            <Button
-                                type="submit"
-                                variant="contained"
-                                color="success"
-                                disabled={formData.isPending}
                             >
-                                {formData.isPending ? <CircularProgress size={24} color="inherit" /> : 'Create'}
-                            </Button>
-                        </Grid>
+                                <MenuItem value="">Select Pilot</MenuItem>
+                                {allPilots?.map((pilot) => (
+                                    <MenuItem key={`pilot-${pilot.id}`} value={pilot.id}>
+                                        {pilot.firstName} {pilot.lastName}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
                     </Grid>
-
-                    {formData.error && (
-                        <CustomAlert alertType='error' type='Error' message={formData.error} />
-                    )}
-                </Box>
-                <Box sx={{ mt: 3 }}>
-                    <BackToListAction dataType={ENTITIES.FLIGHTS} />
-                </Box>
+                    <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
+                        <FormControl fullWidth >
+                            <InputLabel id="airline-select-label">Airline</InputLabel>
+                            <Select
+                                labelId="airline-select-label"
+                                id="airlineId"
+                                name="airlineId"
+                                value={formData.airlineId}
+                                label="Airline"
+                                onChange={handleChange}
+                                required
+                            >
+                                <MenuItem value="">Select Airline</MenuItem>
+                                {allAirlines?.map((airline) => (
+                                    <MenuItem key={`airline-${airline.id}`} value={airline.id}>
+                                        {airline.name}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
+                        <FormControl fullWidth >
+                            <InputLabel id="destination-select-label">Destination</InputLabel>
+                            <Select
+                                labelId="destination-select-label"
+                                id="destinationId"
+                                name="destinationId"
+                                value={formData.destinationId}
+                                label="Destination"
+                                onChange={handleChange}
+                                required
+                            >
+                                <MenuItem value="">Select Destination</MenuItem>
+                                {allDestinations?.map((destination) => (
+                                    <MenuItem key={`destination-${destination.id}`} value={destination.id}>
+                                        {destination.city} {destination.airport}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}>
+                        <TextField
+                            id="departureDate"
+                            name="departureDate"
+                            label="Departure Date"
+                            type="date"
+                            variant="outlined"
+                            value={formData.departureDate}
+                            onChange={handleChange}
+                            required
+                            fullWidth
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                        />
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}>
+                        <TextField
+                            id="departureTime"
+                            name="departureTime"
+                            label="Departure Time"
+                            type="time"
+                            variant="outlined"
+                            value={formData.departureTime}
+                            onChange={handleChange}
+                            required
+                            fullWidth
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                        />
+                    </Grid>
+                    <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            color="success"
+                            disabled={formData.isPending}
+                        >
+                            {formData.isPending ? <CircularProgress size={24} color="inherit" /> : 'Create'}
+                        </Button>
+                        <Button
+                            variant="outlined"
+                            onClick={handleLoadMore}
+                            disabled={isLoadingAirlines || isLoadingDestinations || isLoadingPilots}
+                        >
+                            Load More
+                        </Button>
+                    </Grid>
+                </Grid>
+                {formData.error && (
+                    <CustomAlert alertType='error' type='Error' message={formData.error} />
+                )}
             </Box>
-        </Container>
+            <Box sx={{ mt: 3 }}>
+                <BackToListAction dataType={ENTITIES.FLIGHTS} />
+            </Box>
+        </Box>
     );
 }

@@ -9,11 +9,8 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
-import Alert from '@mui/material/Alert';
-import AlertTitle from '@mui/material/AlertTitle';
 import PageTitle from '../common/PageTitle.jsx';
 import BackToListAction from '../common/pagination/BackToListAction.jsx';
-import { Container } from '@mui/material';
 import CustomAlert from '../common/Alert.jsx';
 
 export default function DestinationCreateForm() {
@@ -65,63 +62,61 @@ export default function DestinationCreateForm() {
     };
 
     return (
-        <Container sx={{ mt: 4 }}>
-            <Box sx={{ mt: 2 }}>
-                <PageTitle title='Create Destination' />
-                <Box
-                    component="form"
-                    autoComplete="off"
-                    onSubmit={handleSubmit}
-                >
-                    <Grid container spacing={3}>
-                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}>
-                            <TextField
-                                id="city"
-                                name="city"
-                                label="City"
-                                variant="outlined"
-                                value={formData.city}
-                                onChange={handleChange}
-                                placeholder="Belgrade"
-                                required
-                                error={!!formData.error}
-                                helperText={formData.error}
-                            />
-                        </Grid>
-                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}>
-                            <TextField
-                                id="airport"
-                                name="airport"
-                                label="Airport"
-                                variant="outlined"
-                                value={formData.airport}
-                                onChange={handleChange}
-                                placeholder="Belgrade Nikola Tesla Airport"
-                                required
-                                error={!!formData.error}
-                                helperText={formData.error}
-                            />
-                        </Grid>
-                        <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>
-                            <Button
-                                type="submit"
-                                variant="contained"
-                                color="success"
-                                disabled={formData.isPending}
-                            >
-                                {formData.isPending ? <CircularProgress /> : 'Create'}
-                            </Button>
-                        </Grid>
-                        {formData.error && (
-                            <CustomAlert alertType='error' type='Error' message={formData.error} />
-                        )}
+        <Box sx={{ mt: 2 }}>
+            <PageTitle title='Create Destination' />
+            <Box
+                component="form"
+                autoComplete="off"
+                onSubmit={handleSubmit}
+            >
+                <Grid container spacing={3}>
+                    <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}>
+                        <TextField
+                            id="city"
+                            name="city"
+                            label="City"
+                            variant="outlined"
+                            value={formData.city}
+                            onChange={handleChange}
+                            placeholder="Belgrade"
+                            required
+                            error={!!formData.error}
+                            helperText={formData.error}
+                        />
                     </Grid>
-                </Box>
+                    <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}>
+                        <TextField
+                            id="airport"
+                            name="airport"
+                            label="Airport"
+                            variant="outlined"
+                            value={formData.airport}
+                            onChange={handleChange}
+                            placeholder="Belgrade Nikola Tesla Airport"
+                            required
+                            error={!!formData.error}
+                            helperText={formData.error}
+                        />
+                    </Grid>
+                    <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            color="success"
+                            disabled={formData.isPending}
+                        >
+                            {formData.isPending ? <CircularProgress /> : 'Create'}
+                        </Button>
+                    </Grid>
+                    {formData.error && (
+                        <CustomAlert alertType='error' type='Error' message={formData.error} />
+                    )}
+                </Grid>
+            </Box>
 
-                <Box sx={{ mt: 3 }}>
-                    <BackToListAction dataType={ENTITIES.DESTINATIONS} />
-                </Box>
-            </Box >
-        </Container>
+            <Box sx={{ mt: 3 }}>
+                <BackToListAction dataType={ENTITIES.DESTINATIONS} />
+            </Box>
+        </Box >
     );
 }

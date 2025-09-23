@@ -2,19 +2,15 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createData } from '../../utils/create.js';
 import PageTitle from '../common/PageTitle.jsx';
-import Alert from '../common/Alert.jsx';
 import BackToListAction from '../common/pagination/BackToListAction.jsx';
 import { useContext } from 'react';
 import { DataContext } from '../../store/DataContext.jsx';
 import { validateFields } from '../../utils/validation/validateFields.js';
 import { ENTITIES } from '../../utils/const.js';
-import { Container } from '@mui/material';
 import CustomAlert from '../common/Alert.jsx';
-
 import {
     Box,
     CircularProgress,
-    AlertTitle,
     Grid,
     TextField,
     Button
@@ -76,92 +72,90 @@ export default function PilotCreateForm() {
     };
 
     return (
-        <Container sx={{ mt: 4 }}>
-            <Box sx={{ mt: 2 }}>
-                <PageTitle title='Create Pilot' />
-                <Box
-                    component="form"
-                    autoComplete="off"
-                    onSubmit={handleSubmit}
-                >
-                    <Grid container spacing={2}>
-                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 6 }}>
-                            <TextField
-                                id="firstName"
-                                name="firstName"
-                                label="First Name"
-                                variant="outlined"
-                                value={formData.firstName}
-                                onChange={handleChange}
-                                placeholder="Ognjen"
-                                required
-                                error={!!formData.error}
-                                helperText={formData.error}
-                            />
-                        </Grid>
-                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 6 }}>
-                            <TextField
-                                id="lastName"
-                                name="lastName"
-                                label="Last Name"
-                                variant="outlined"
-                                value={formData.lastName}
-                                onChange={handleChange}
-                                placeholder="Andjelic"
-                                required
-                                error={!!formData.error}
-                                helperText={formData.error}
-                            />
-                        </Grid>
-                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 6 }}>
-                            <TextField
-                                id="uprn"
-                                name="uprn"
-                                label="UPRN"
-                                variant="outlined"
-                                value={formData.uprn}
-                                onChange={handleChange}
-                                placeholder="0123456789112"
-                                required
-                                error={!!formData.error}
-                                helperText={formData.error}
-                            />
-                        </Grid>
-                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 6 }}>
-                            <TextField
-                                id="flyingHours"
-                                name="flyingHours"
-                                label="Flying Hours"
-                                type="number"
-                                variant="outlined"
-                                value={formData.flyingHours}
-                                onChange={handleChange}
-                                placeholder="60"
-                                required
-                                inputProps={{ min: "0", max: "40000" }}
-                                error={!!formData.error}
-                                helperText={formData.error}
-                            />
-                        </Grid>
-                        <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>
-                            <Button
-                                type="submit"
-                                variant="contained"
-                                color="success"
-                                disabled={formData.isPending}
-                            >
-                                {formData.isPending ? <CircularProgress /> : 'Create'}
-                            </Button>
-                        </Grid>
+        <Box sx={{ mt: 2 }}>
+            <PageTitle title='Create Pilot' />
+            <Box
+                component="form"
+                autoComplete="off"
+                onSubmit={handleSubmit}
+            >
+                <Grid container spacing={2}>
+                    <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 6 }}>
+                        <TextField
+                            id="firstName"
+                            name="firstName"
+                            label="First Name"
+                            variant="outlined"
+                            value={formData.firstName}
+                            onChange={handleChange}
+                            placeholder="Ognjen"
+                            required
+                            error={!!formData.error}
+                            helperText={formData.error}
+                        />
                     </Grid>
-                    {formData.error && (
-                        <CustomAlert alertType='error' type='Error' message={formData.error} />
-                    )}
-                </Box>
-                <Box sx={{ mt: 3 }}>
-                    <BackToListAction dataType={ENTITIES.PILOTS} />
-                </Box>
+                    <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 6 }}>
+                        <TextField
+                            id="lastName"
+                            name="lastName"
+                            label="Last Name"
+                            variant="outlined"
+                            value={formData.lastName}
+                            onChange={handleChange}
+                            placeholder="Andjelic"
+                            required
+                            error={!!formData.error}
+                            helperText={formData.error}
+                        />
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 6 }}>
+                        <TextField
+                            id="uprn"
+                            name="uprn"
+                            label="UPRN"
+                            variant="outlined"
+                            value={formData.uprn}
+                            onChange={handleChange}
+                            placeholder="0123456789112"
+                            required
+                            error={!!formData.error}
+                            helperText={formData.error}
+                        />
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 6 }}>
+                        <TextField
+                            id="flyingHours"
+                            name="flyingHours"
+                            label="Flying Hours"
+                            type="number"
+                            variant="outlined"
+                            value={formData.flyingHours}
+                            onChange={handleChange}
+                            placeholder="60"
+                            required
+                            inputProps={{ min: "0", max: "40000" }}
+                            error={!!formData.error}
+                            helperText={formData.error}
+                        />
+                    </Grid>
+                    <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            color="success"
+                            disabled={formData.isPending}
+                        >
+                            {formData.isPending ? <CircularProgress /> : 'Create'}
+                        </Button>
+                    </Grid>
+                </Grid>
+                {formData.error && (
+                    <CustomAlert alertType='error' type='Error' message={formData.error} />
+                )}
             </Box>
-        </Container>
+            <Box sx={{ mt: 3 }}>
+                <BackToListAction dataType={ENTITIES.PILOTS} />
+            </Box>
+        </Box>
     );
 }

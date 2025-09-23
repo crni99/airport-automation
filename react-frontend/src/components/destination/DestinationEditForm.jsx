@@ -9,12 +9,10 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
-import Alert from '@mui/material/Alert';
-import AlertTitle from '@mui/material/AlertTitle';
 import Grid from '@mui/material/Grid';
-import { Stack } from '@mui/material';
 import PageTitle from '../common/PageTitle.jsx';
 import BackToListAction from '../common/pagination/BackToListAction.jsx';
+import CustomAlert from '../common/Alert.jsx';
 
 export default function DestinationEditForm() {
     const dataCtx = useContext(DataContext);
@@ -86,20 +84,15 @@ export default function DestinationEditForm() {
 
 
     return (
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ mt: 2}}>
             <PageTitle title='Edit Destination' />
 
             {isLoading && (
-                <Stack direction="row" justifyContent="center" sx={{ mt: 4 }}>
-                    <CircularProgress />
-                </Stack>
+                <CircularProgress sx={{ mb: 2 }} />
             )}
 
             {isError && error && (
-                <Alert severity="error" sx={{ mt: 2 }}>
-                    <AlertTitle>{error.type}</AlertTitle>
-                    {error.message}
-                </Alert>
+                <CustomAlert alertType='error' type={error.type} message={error.message} />
             )}
 
             <Box
@@ -108,8 +101,8 @@ export default function DestinationEditForm() {
                 autoComplete="off"
                 onSubmit={handleSubmit}
             >
-                <Grid container spacing={2}>
-                    <Grid>
+                <Grid container spacing={3}>
+                    <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}>
                         <TextField
                             id="city"
                             name="city"
@@ -121,6 +114,8 @@ export default function DestinationEditForm() {
                             error={!!formData.error}
                             helperText={formData.error}
                         />
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}>
                         <TextField
                             id="airport"
                             name="airport"
@@ -132,21 +127,20 @@ export default function DestinationEditForm() {
                             error={!!formData.error}
                             helperText={formData.error}
                         />
+                    </Grid>
+                    <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>
                         <Button
                             type="submit"
                             variant="contained"
                             color="success"
                             disabled={formData.isPending}
                         >
-                            {formData.isPending ? <CircularProgress size={24} /> : 'Save Changes'}
+                            {formData.isPending ? <CircularProgress /> : 'Save Changes'}
                         </Button>
                     </Grid>
                 </Grid>
                 {formData.error && (
-                    <Alert severity="error" sx={{ mt: 2 }}>
-                        <AlertTitle>Error</AlertTitle>
-                        {formData.error}
-                    </Alert>
+                    <CustomAlert alertType='error' type='Error' message={formData.error} />
                 )}
             </Box>
             <Box sx={{ mt: 3 }}>

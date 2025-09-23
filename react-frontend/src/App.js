@@ -12,8 +12,7 @@ import HealthCheck from './components/common/HealthCheck';
 import Unauthorized from './components/common/Unauthorized';
 import ApiUsersRoutes from './routes/apiUserRoutes';
 import ProtectedRouteV3 from './routes/ProtectedRouteV3';
-
-import Box from '@mui/material/Box';
+import { Container, Box } from '@mui/material';
 
 import Navbar from './components/common/header/Navbar';
 import { getAuthToken } from "./utils/auth";
@@ -22,7 +21,7 @@ function App() {
   const isLoggedIn = getAuthToken() !== null;
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ display: 'flex', flexGrow: 1 }}>
         {isLoggedIn && (
           <Box
@@ -41,19 +40,19 @@ function App() {
             <Route path="/health-check" element={<HealthCheck />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
             <Route element={<ProtectedRouteV3 />}>
-              {AirlineRoutes}
-              {DestinationsRoutes}
-              {TravelClassesRoutes}
-              {PassengersRoutes}
-              {PilotsRoutes}
-              {ApiUsersRoutes}
-              {FlightsRoutes}
-              {PlaneTicketsRoutes}
+              <Route path="/airlines/*" element={<Container sx={{ mt: 4 }}>{AirlineRoutes}</Container>} />
+              <Route path="/destinations/*" element={<Container sx={{ mt: 4 }}>{DestinationsRoutes}</Container>} />
+              <Route path="/travel-classes/*" element={<Container sx={{ mt: 4 }}>{TravelClassesRoutes}</Container>} />
+              <Route path="/passengers/*" element={<Container sx={{ mt: 4 }}>{PassengersRoutes}</Container>} />
+              <Route path="/pilots/*" element={<Container sx={{ mt: 4 }}>{PilotsRoutes}</Container>} />
+              <Route path="/api-users/*" element={<Container sx={{ mt: 4 }}>{ApiUsersRoutes}</Container>} />
+              <Route path="/flights/*" element={<Container sx={{ mt: 4 }}>{FlightsRoutes}</Container>} />
+              <Route path="/plane-tickets/*" element={<Container sx={{ mt: 4 }}>{PlaneTicketsRoutes}</Container>} />
             </Route>
           </Routes>
         </Box>
       </Box>
-    </Box>
+    </Box >
   );
 }
 

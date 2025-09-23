@@ -13,7 +13,6 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Grid from '@mui/material/Grid';
-import { Stack } from '@mui/material';
 
 export default function AirlineEditForm() {
     const dataCtx = useContext(DataContext);
@@ -75,11 +74,11 @@ export default function AirlineEditForm() {
     };
 
     return (
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ mt: 2 }}>
             <PageTitle title='Edit Airline' />
 
             {isLoading && (
-                <CircularProgress sx={{ mb: 2 }}/>
+                <CircularProgress sx={{ mb: 2 }} />
             )}
 
             {isError && error && (
@@ -90,11 +89,10 @@ export default function AirlineEditForm() {
                 <Box
                     component="form"
                     autoComplete="off"
-                    sx={{ mt: 2, '& .MuiTextField-root': { mb: 3, width: '100%' } }}
                     onSubmit={handleSubmit}
                 >
-                    <Grid container spacing={2}>
-                        <Grid>
+                    <Grid container spacing={3}>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}>
                             <TextField
                                 id="name"
                                 name="name"
@@ -106,6 +104,8 @@ export default function AirlineEditForm() {
                                 error={!!formData.error}
                                 helperText={formData.error}
                             />
+                        </Grid>
+                        <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>
                             <Button
                                 type="submit"
                                 variant="contained"

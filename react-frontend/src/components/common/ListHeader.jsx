@@ -13,7 +13,7 @@ export default function ListHeader({ dataExist, dataType, createButtonTitle, set
     const disableCreateButton = isUser === 'User' || dataType === ENTITIES.API_USERS || dataType === ENTITIES.TRAVEL_CLASSES;
 
     return (
-        <Box sx={{ mt: 2, mb: 4 }}>
+        <Box sx={{ mt: 5, mb: 4 }}>
             <Stack
                 direction={{ xs: 'column', md: 'row' }}
                 justifyContent="space-between"

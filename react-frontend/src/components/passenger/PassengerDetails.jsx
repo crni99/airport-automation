@@ -11,16 +11,10 @@ import { DataContext } from '../../store/DataContext.jsx';
 import openMap from '../../utils/openMapHelper.js';
 import { ENTITIES } from '../../utils/const.js';
 import MapEmbed from '../common/MapEmbed.jsx';
-import { DD } from '..//common/table/DD.jsx';
-import { DT } from '..//common/table/DT.jsx';
-
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 import AlertTitle from '@mui/material/AlertTitle';
 import Link from '@mui/material/Link';
-import Paper from '@mui/material/Paper';
 import { Stack } from '@mui/material';
 
 export default function PassengerDetails() {

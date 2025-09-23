@@ -4,7 +4,6 @@ import { useContext } from 'react';
 import { DataContext } from '../../store/DataContext.jsx';
 import { editData } from '../../utils/edit.js';
 import PageTitle from '../common/PageTitle.jsx';
-import Alert from '../common/Alert.jsx';
 import BackToListAction from '../common/pagination/BackToListAction.jsx';
 import useFetch from '../../hooks/useFetch.jsx';
 import { validateFields } from '../../utils/validation/validateFields.js';
@@ -13,8 +12,8 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
-import AlertTitle from '@mui/material/AlertTitle';
 import Grid from '@mui/material/Grid';
+import CustomAlert from '../common/Alert.jsx';
 
 export default function PlaneTicketEditForm() {
     const dataCtx = useContext(DataContext);
@@ -96,34 +95,25 @@ export default function PlaneTicketEditForm() {
     };
 
     return (
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ mt: 2 }}>
             <PageTitle title='Edit Plane Ticket' />
+
             {isLoading && (
-                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-                    <CircularProgress />
-                </Box>
+                <CircularProgress sx={{ mb: 2 }} />
             )}
+
             {isError && error && (
-                <Alert severity="error" sx={{ mt: 2 }}>
-                    <AlertTitle>Error</AlertTitle>
-                    {error.message}
-                </Alert>
+                <CustomAlert alertType='error' type={error.type} message={error.message} />
             )}
-            {formData.error && (
-                <Alert severity="error" sx={{ mt: 2 }}>
-                    <AlertTitle>Error</AlertTitle>
-                    {formData.error}
-                </Alert>
-            )}
+
             {!isLoading && !isError && (
                 <Box
                     component="form"
-                    sx={{ mt: 2, '& .MuiTextField-root': { mb: 3, width: '100%' } }}
                     autoComplete="off"
                     onSubmit={handleSubmit}
                 >
-                    <Grid container spacing={4}>
-                        <Grid item xs={12} md={4}>
+                    <Grid container spacing={3}>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}>
                             <TextField
                                 id="id"
                                 name="id"
@@ -133,8 +123,53 @@ export default function PlaneTicketEditForm() {
                                 value={id}
                                 InputProps={{ readOnly: true }}
                                 fullWidth
-                                sx={{ mb: 3 }}
+                                disabled
                             />
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}>
+                            <TextField
+                                id="passengerId"
+                                name="passengerId"
+                                label="Passenger Id"
+                                type="number"
+                                variant="outlined"
+                                value={formData.passengerId}
+                                InputProps={{ readOnly: true }}
+                                required
+                                fullWidth
+                                disabled
+                            />
+
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}>
+                            <TextField
+                                id="travelClassId"
+                                name="travelClassId"
+                                label="Travel Class Id"
+                                type="number"
+                                variant="outlined"
+                                value={formData.travelClassId}
+                                InputProps={{ readOnly: true }}
+                                required
+                                fullWidth
+                                disabled
+                            />
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}>
+                            <TextField
+                                id="flightId"
+                                name="flightId"
+                                label="Flight Id"
+                                type="number"
+                                variant="outlined"
+                                value={formData.flightId}
+                                InputProps={{ readOnly: true }}
+                                required
+                                fullWidth
+                                disabled
+                            />
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
                             <TextField
                                 id="price"
                                 name="price"
@@ -145,8 +180,22 @@ export default function PlaneTicketEditForm() {
                                 onChange={handleChange}
                                 required
                                 fullWidth
-                                sx={{ mb: 3 }}
                             />
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
+                            <TextField
+                                id="seatNumber"
+                                name="seatNumber"
+                                label="Seat Number"
+                                type="number"
+                                variant="outlined"
+                                value={formData.seatNumber}
+                                onChange={handleChange}
+                                required
+                                fullWidth
+                            />
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
                             <TextField
                                 id="purchaseDate"
                                 name="purchaseDate"
@@ -160,69 +209,22 @@ export default function PlaneTicketEditForm() {
                                 InputLabelProps={{
                                     shrink: true,
                                 }}
-                                sx={{ mb: 3 }}
                             />
-                            <TextField
-                                id="seatNumber"
-                                name="seatNumber"
-                                label="Seat Number"
-                                type="number"
-                                variant="outlined"
-                                value={formData.seatNumber}
-                                onChange={handleChange}
-                                required
-                                fullWidth
-                                sx={{ mb: 3 }}
-                            />
+                        </Grid>
+                        <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>
                             <Button
                                 type="submit"
                                 variant="contained"
                                 color="success"
                                 disabled={formData.isPending}
                             >
-                                {formData.isPending ? <CircularProgress size={24} color="inherit" /> : 'Save Changes'}
+                                {formData.isPending ? <CircularProgress /> : 'Save Changes'}
                             </Button>
                         </Grid>
-                        <Grid item xs={12} md={4}>
-                            <TextField
-                                id="passengerId"
-                                name="passengerId"
-                                label="Passenger Id"
-                                type="number"
-                                variant="outlined"
-                                value={formData.passengerId}
-                                InputProps={{ readOnly: true }}
-                                required
-                                fullWidth
-                                sx={{ mb: 3 }}
-                            />
-                            <TextField
-                                id="travelClassId"
-                                name="travelClassId"
-                                label="Travel Class Id"
-                                type="number"
-                                variant="outlined"
-                                value={formData.travelClassId}
-                                InputProps={{ readOnly: true }}
-                                required
-                                fullWidth
-                                sx={{ mb: 3 }}
-                            />
-                            <TextField
-                                id="flightId"
-                                name="flightId"
-                                label="Flight Id"
-                                type="number"
-                                variant="outlined"
-                                value={formData.flightId}
-                                InputProps={{ readOnly: true }}
-                                required
-                                fullWidth
-                                sx={{ mb: 3 }}
-                                disabled
-                            />
-                        </Grid>
                     </Grid>
+                    {formData.error && (
+                        <CustomAlert alertType='error' type='Error' message={formData.error} />
+                    )}
                 </Box>
             )}
             <Box sx={{ mt: 3 }}>

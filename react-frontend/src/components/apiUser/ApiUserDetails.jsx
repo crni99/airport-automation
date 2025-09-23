@@ -7,8 +7,6 @@ import PageTitle from '../common/PageTitle.jsx';
 import PageNavigationActions from '../common/pagination/PageNavigationActions.jsx';
 import { DataContext } from '../../store/DataContext.jsx';
 import { ENTITIES } from '../../utils/const.js';
-
-// Material-UI Components
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import Grid from '@mui/material/Grid';

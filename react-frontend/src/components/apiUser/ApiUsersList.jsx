@@ -6,7 +6,6 @@ import ListHeader from "../common/ListHeader";
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import Pagination from '../common/pagination/Pagination';
-import { Container } from '@mui/material';
 import CustomAlert from "../common/Alert.jsx";
 
 export default function ApiUsersList() {
@@ -38,8 +37,8 @@ export default function ApiUsersList() {
     }, [data]);
 
     useEffect(() => {
-            setTriggerFetch(true);
-        }, [rowsPerPage, pageNumber]);
+        setTriggerFetch(true);
+    }, [rowsPerPage, pageNumber]);
 
     function handlePageChange(newPageNumber) {
         setPageNumber(newPageNumber);
@@ -52,7 +51,7 @@ export default function ApiUsersList() {
     }
 
     return (
-        <Container sx={{ mt: 4 }}>
+        <>
             <ListHeader
                 dataExist={dataExist}
                 dataType={ENTITIES.API_USERS}
@@ -60,8 +59,8 @@ export default function ApiUsersList() {
                 setTriggerFetch={setTriggerFetch}
             />
 
-            <Box sx={{ mt: 2 }}>
-                {isLoading && <CircularProgress sx={{ mb: 2 }}/>}
+            <Box sx={{ mt: 4 }}>
+                {isLoading && <CircularProgress sx={{ mb: 2 }} />}
 
                 {isError && error && (
                     <CustomAlert alertType='error' type={error.type} message={error.message} />
@@ -87,6 +86,6 @@ export default function ApiUsersList() {
                     </>
                 )}
             </Box>
-        </Container>
+        </>
     );
 }

@@ -5,17 +5,15 @@ import { editData } from '../../utils/edit.js';
 import useFetch from '../../hooks/useFetch.jsx';
 import { validateFields } from '../../utils/validation/validateFields.js';
 import { ENTITIES } from '../../utils/const.js';
-
-// Material-UI Components
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
-import Alert from '@mui/material/Alert';
-import AlertTitle from '@mui/material/AlertTitle';
 import PageTitle from '../common/PageTitle.jsx';
 import BackToListAction from '../common/pagination/BackToListAction.jsx';
-import { Stack, MenuItem } from '@mui/material';
+import { MenuItem } from '@mui/material';
+import Grid from '@mui/material/Grid';
+import CustomAlert from '../common/Alert.jsx';
 
 export default function ApiUserEditForm() {
     const dataCtx = useContext(DataContext);
@@ -90,31 +88,25 @@ export default function ApiUserEditForm() {
     };
 
     return (
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ mt: 2 }}>
             <PageTitle title="Edit Api User" />
 
             {isLoading && (
-                <Stack direction="row" justifyContent="center" sx={{ mt: 4 }}>
-                    <CircularProgress />
-                </Stack>
+                <CircularProgress sx={{ mb: 2 }} />
             )}
 
             {isError && error && (
-                <Alert severity="error" sx={{ mt: 2 }}>
-                    <AlertTitle>{error.type}</AlertTitle>
-                    {error.message}
-                </Alert>
+                <CustomAlert alertType='error' type={error.type} message={error.message} />
             )}
 
             {!isLoading && !isError && (
-                <>
-
-                    <Box
-                        component="form"
-                        onSubmit={handleSubmit}
-                        sx={{ mt: 2, '& .MuiTextField-root': { width: '50%' } }}
-                    >
-                        <Stack spacing={3}>
+                <Box
+                    component="form"
+                    autoComplete="off"
+                    onSubmit={handleSubmit}
+                >
+                    <Grid container spacing={3}>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}>
                             <TextField
                                 id="userName"
                                 name="userName"
@@ -126,6 +118,8 @@ export default function ApiUserEditForm() {
                                 error={!!formData.error}
                                 helperText={formData.error}
                             />
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}>
                             <TextField
                                 id="password"
                                 name="password"
@@ -137,6 +131,8 @@ export default function ApiUserEditForm() {
                                 error={!!formData.error}
                                 helperText={formData.error}
                             />
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}>
                             <TextField
                                 id="roles"
                                 name="roles"
@@ -153,28 +149,25 @@ export default function ApiUserEditForm() {
                                 <MenuItem value="Admin">Admin</MenuItem>
                                 <MenuItem value="User">User</MenuItem>
                             </TextField>
-
-                        </Stack>
-                        {formData.error && (
-                            <Alert severity="error" sx={{ mt: 2 }}>
-                                {formData.error}
-                            </Alert>
-                        )}
-                    </Box>
-                    <Button
-                        type="submit"
-                        variant="contained"
-                        color="success"
-                        disabled={formData.isPending}
-                        sx={{ mt: 3 }}
-                    >
-                        {formData.isPending ? <CircularProgress size={24} /> : 'Save Changes'}
-                    </Button>
-                </>
+                        </Grid>
+                        <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                color="success"
+                                disabled={formData.isPending}
+                            >
+                                {formData.isPending ? <CircularProgress /> : 'Save Changes'}
+                            </Button>
+                        </Grid>
+                    </Grid>
+                    {formData.error && (
+                        <CustomAlert alertType='error' type='Error' message={formData.error} />
+                    )}
+                </Box>
             )}
-
             <Box sx={{ mt: 3 }}>
-                <BackToListAction dataType={ENTITIES.API_USERS} />
+                <BackToListAction dataType={ENTITIES.AIRLINES} />
             </Box>
         </Box>
     );

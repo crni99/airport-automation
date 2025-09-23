@@ -15,11 +15,11 @@ const Pagination = ({
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                mt: 2,
+                mt: 3,
             }}
         >
             <Typography variant="body2" color="text.secondary">
-                Page {pageNumber} of {totalPages}
+                &nbsp;&nbsp;&nbsp;&nbsp;Page {pageNumber} of {totalPages}
             </Typography>
             <TablePagination
                 component="div"

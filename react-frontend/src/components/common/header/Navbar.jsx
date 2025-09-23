@@ -1,6 +1,5 @@
 import React from 'react';
 import Drawer from '@mui/material/Drawer';
-import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
@@ -15,6 +14,7 @@ import Brightness7Icon from '@mui/icons-material/Brightness7';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { handleSignOut, getAuthToken, getRole } from "../../../utils/auth";
 import { useTheme } from '../../../store/ThemeContext';
+import Box from '@mui/material/Box';
 
 const Navbar = () => {
 
@@ -39,67 +39,79 @@ const Navbar = () => {
             sx={{
                 '& .MuiDrawer-paper': {
                     width: '240px',
+                    boxSizing: 'border-box',
+                    display: 'flex',
+                    flexDirection: 'column',
                 },
             }}
         >
             <List>
-                <ListItem>
+                <ListItem sx={{ paddingLeft: 4 }}>
                     <ListItemText>
                         Airport Automation
                     </ListItemText>
                 </ListItem>
             </List>
-            <Toolbar />
             <Divider />
-            <List>
-                {filteredMainNavbarItems.map((item) => (
-                    <ListItem key={item.id} disablePadding>
-                        <ListItemButton
-                            onClick={() => navigate(item.route)}
-                            selected={pathname === `/${item.route}`}
-                        >
-                            <ListItemIcon>
-                                {item.icon}
-                            </ListItemIcon>
-                            <ListItemText primary={item.label} />
-                        </ListItemButton>
-                    </ListItem>
-                ))}
-            </List>
-            <Divider />
-            <List>
-                <ListItem key='healthcheck' disablePadding>
-                    <ListItemButton
-                        onClick={() => navigate('health-check')}
-                        selected={pathname === '/health-check'}
-                    >
-                        <ListItemIcon>
-                            <MonitorHeartIcon />
-                        </ListItemIcon>
-                        <ListItemText primary='Health Check' />
-                    </ListItemButton>
-                </ListItem>
-                <ListItem key='themeSwitch' disablePadding>
-                    <ListItemButton onClick={toggleTheme}>
-                        <ListItemIcon>
-                            {theme === 'light' ? <Brightness4Icon /> : <Brightness7Icon />}
-                        </ListItemIcon>
-                        <ListItemText primary={theme === 'light' ? 'Dark Mode' : 'Light Mode'} />
-                    </ListItemButton>
-                </ListItem>
-            </List>
-            <Divider />
-            {isLoggedIn && (
+
+            {/* Main content box that grows and centers its children */}
+            <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <Divider />
                 <List>
-                    <ListItem key='sign-out' disablePadding>
-                        <ListItemButton onClick={handleSignOutClick}>
-                            <ListItemIcon>
-                                <LogoutIcon />
-                            </ListItemIcon>
-                            <ListItemText primary='Sign out' />
-                        </ListItemButton>
-                    </ListItem>
+                    {filteredMainNavbarItems.map((item) => (
+                        <ListItem key={item.id} disablePadding>
+                            <ListItemButton
+                                onClick={() => navigate(item.route)}
+                                selected={pathname === `/${item.route}`}
+                            >
+                                <ListItemIcon>
+                                    {item.icon}
+                                </ListItemIcon>
+                                <ListItemText primary={item.label} />
+                            </ListItemButton>
+                        </ListItem>
+                    ))}
                 </List>
+                <Divider />
+            </Box>
+
+            {/* Logout section at the bottom */}
+            {isLoggedIn && (
+                <>
+                    <Divider sx={{ mt: 12 }} />
+                    <List>
+                        <ListItem key='healthcheck' disablePadding>
+                            <ListItemButton
+                                onClick={() => navigate('health-check')}
+                                selected={pathname === '/health-check'}
+                            >
+                                <ListItemIcon>
+                                    <MonitorHeartIcon />
+                                </ListItemIcon>
+                                <ListItemText primary='Health Check' />
+                            </ListItemButton>
+                        </ListItem>
+                        <ListItem key='themeSwitch' disablePadding>
+                            <ListItemButton onClick={toggleTheme}>
+                                <ListItemIcon>
+                                    {theme === 'light' ? <Brightness4Icon /> : <Brightness7Icon />}
+                                </ListItemIcon>
+                                <ListItemText primary={theme === 'light' ? 'Dark Mode' : 'Light Mode'} />
+                            </ListItemButton>
+                        </ListItem>
+                    </List>
+                    <Divider />
+                    <List>
+                        <ListItem key='sign-out' disablePadding>
+                            <ListItemButton onClick={handleSignOutClick}>
+                                <ListItemIcon>
+                                    <LogoutIcon />
+                                </ListItemIcon>
+                                <ListItemText primary='Sign out' />
+                            </ListItemButton>
+                        </ListItem>
+                    </List>
+                </>
             )}
         </Drawer>
     );

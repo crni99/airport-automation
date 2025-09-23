@@ -12,13 +12,11 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
-import AlertTitle from '@mui/material/AlertTitle';
 import Grid from '@mui/material/Grid';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { Container } from '@mui/material';
 import CustomAlert from '../common/Alert.jsx';
 
 export default function PlaneTicketCreateForm() {
@@ -138,153 +136,151 @@ export default function PlaneTicketCreateForm() {
     }
 
     return (
-        <Container sx={{ mt: 4 }}>
-            <Box sx={{ mt: 2 }}>
-                <PageTitle title='Create Plane Ticket' />
-                <Box
-                    component="form"
-                    autoComplete="off"
-                    onSubmit={handleSubmit}
-                >
-                    <Grid container spacing={3}>
-                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
-                            <FormControl fullWidth >
-                                <InputLabel id="passenger-select-label">Passenger</InputLabel>
-                                <Select
-                                    labelId="passenger-select-label"
-                                    id="passengerId"
-                                    name="passengerId"
-                                    value={formData.passengerId}
-                                    label="Passenger"
-                                    onChange={handleChange}
-                                    required
-                                >
-                                    <MenuItem value="">
-                                        <em>Select Passenger</em>
-                                    </MenuItem>
-                                    {allPassengers.map((passenger) => (
-                                        <MenuItem key={`passenger-${passenger.id}`} value={passenger.id}>
-                                            {passenger.firstName} {passenger.lastName}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
-                            <FormControl fullWidth >
-                                <InputLabel id="flight-select-label">Flight</InputLabel>
-                                <Select
-                                    labelId="flight-select-label"
-                                    id="flightId"
-                                    name="flightId"
-                                    value={formData.flightId}
-                                    label="Flight"
-                                    onChange={handleChange}
-                                    required
-                                >
-                                    <MenuItem value="">
-                                        <em>Select Flight</em>
-                                    </MenuItem>
-                                    {allFlights.map((flight) => (
-                                        <MenuItem key={`flight-${flight.id}`} value={flight.id}>
-                                            {flight.departureDate} {flight.departureTime}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
-                            <FormControl fullWidth >
-                                <InputLabel id="travel-class-select-label">Travel Class</InputLabel>
-                                <Select
-                                    labelId="travel-class-select-label"
-                                    id="travelClassId"
-                                    name="travelClassId"
-                                    value={formData.travelClassId}
-                                    label="Travel Class"
-                                    onChange={handleChange}
-                                    required
-                                >
-                                    <MenuItem value="">
-                                        <em>Select Travel Class</em>
-                                    </MenuItem>
-                                    {allTravelClasses.map((travelClass) => (
-                                        <MenuItem key={`travel-class-${travelClass.id}`} value={travelClass.id}>
-                                            {travelClass.type}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
-                            <TextField
-                                id="price"
-                                name="price"
-                                label="Price"
-                                type="number"
-                                variant="outlined"
-                                value={formData.price}
+        <Box sx={{ mt: 2 }}>
+            <PageTitle title='Create Plane Ticket' />
+            <Box
+                component="form"
+                autoComplete="off"
+                onSubmit={handleSubmit}
+            >
+                <Grid container spacing={3}>
+                    <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
+                        <FormControl fullWidth >
+                            <InputLabel id="passenger-select-label">Passenger</InputLabel>
+                            <Select
+                                labelId="passenger-select-label"
+                                id="passengerId"
+                                name="passengerId"
+                                value={formData.passengerId}
+                                label="Passenger"
                                 onChange={handleChange}
                                 required
-                                fullWidth
-                            />
-                        </Grid>
-                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
-                            <TextField
-                                id="seatNumber"
-                                name="seatNumber"
-                                label="Seat Number"
-                                type="number"
-                                variant="outlined"
-                                value={formData.seatNumber}
-                                onChange={handleChange}
-                                required
-                                fullWidth
-                            />
-                        </Grid>
-                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
-                            <TextField
-                                id="purchaseDate"
-                                name="purchaseDate"
-                                label="Purchase Date"
-                                type="date"
-                                variant="outlined"
-                                value={formData.purchaseDate}
-                                onChange={handleChange}
-                                required
-                                fullWidth
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                            />
-                        </Grid>
-                        <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>
-                            <Button
-                                type="submit"
-                                variant="contained"
-                                color="success"
-                                disabled={formData.isPending}
-                                sx={{ mr: 3 }}
                             >
-                                {formData.isPending ? <CircularProgress /> : 'Create'}
-                            </Button>
-                            <Button
-                                variant="outlined"
-                                onClick={handleLoadMore}
-                                disabled={isLoadingPassengers || isLoadingTravelClasses || isLoadingFlights}
-                            >
-                                Load More
-                            </Button>
-                        </Grid>
+                                <MenuItem value="">
+                                    <em>Select Passenger</em>
+                                </MenuItem>
+                                {allPassengers.map((passenger) => (
+                                    <MenuItem key={`passenger-${passenger.id}`} value={passenger.id}>
+                                        {passenger.firstName} {passenger.lastName}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
                     </Grid>
-                    {formData.error && (
-                        <CustomAlert alertType='error' type='Error' message={formData.error} />
-                    )}
-                </Box>
-                <Box sx={{ mt: 3 }}>
-                    <BackToListAction dataType={ENTITIES.PLANE_TICKETS} />
-                </Box>
+                    <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
+                        <FormControl fullWidth >
+                            <InputLabel id="flight-select-label">Flight</InputLabel>
+                            <Select
+                                labelId="flight-select-label"
+                                id="flightId"
+                                name="flightId"
+                                value={formData.flightId}
+                                label="Flight"
+                                onChange={handleChange}
+                                required
+                            >
+                                <MenuItem value="">
+                                    <em>Select Flight</em>
+                                </MenuItem>
+                                {allFlights.map((flight) => (
+                                    <MenuItem key={`flight-${flight.id}`} value={flight.id}>
+                                        {flight.departureDate} {flight.departureTime}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
+                        <FormControl fullWidth >
+                            <InputLabel id="travel-class-select-label">Travel Class</InputLabel>
+                            <Select
+                                labelId="travel-class-select-label"
+                                id="travelClassId"
+                                name="travelClassId"
+                                value={formData.travelClassId}
+                                label="Travel Class"
+                                onChange={handleChange}
+                                required
+                            >
+                                <MenuItem value="">
+                                    <em>Select Travel Class</em>
+                                </MenuItem>
+                                {allTravelClasses.map((travelClass) => (
+                                    <MenuItem key={`travel-class-${travelClass.id}`} value={travelClass.id}>
+                                        {travelClass.type}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
+                        <TextField
+                            id="price"
+                            name="price"
+                            label="Price"
+                            type="number"
+                            variant="outlined"
+                            value={formData.price}
+                            onChange={handleChange}
+                            required
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
+                        <TextField
+                            id="seatNumber"
+                            name="seatNumber"
+                            label="Seat Number"
+                            type="number"
+                            variant="outlined"
+                            value={formData.seatNumber}
+                            onChange={handleChange}
+                            required
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
+                        <TextField
+                            id="purchaseDate"
+                            name="purchaseDate"
+                            label="Purchase Date"
+                            type="date"
+                            variant="outlined"
+                            value={formData.purchaseDate}
+                            onChange={handleChange}
+                            required
+                            fullWidth
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                        />
+                    </Grid>
+                    <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            color="success"
+                            disabled={formData.isPending}
+                            sx={{ mr: 3 }}
+                        >
+                            {formData.isPending ? <CircularProgress /> : 'Create'}
+                        </Button>
+                        <Button
+                            variant="outlined"
+                            onClick={handleLoadMore}
+                            disabled={isLoadingPassengers || isLoadingTravelClasses || isLoadingFlights}
+                        >
+                            Load More
+                        </Button>
+                    </Grid>
+                </Grid>
+                {formData.error && (
+                    <CustomAlert alertType='error' type='Error' message={formData.error} />
+                )}
             </Box>
-        </Container>
+            <Box sx={{ mt: 3 }}>
+                <BackToListAction dataType={ENTITIES.PLANE_TICKETS} />
+            </Box>
+        </Box>
     );
 }

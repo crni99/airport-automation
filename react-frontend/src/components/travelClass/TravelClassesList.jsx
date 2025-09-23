@@ -3,7 +3,7 @@ import useFetch from '../../hooks/useFetch';
 import TravelClassesListTable from "./TravelClassesListTable";
 import ListHeader from "../common/ListHeader";
 import { ENTITIES } from '../../utils/const.js';
-import { Container, Box } from '@mui/material';
+import { Box } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import CustomAlert from "../common/Alert.jsx";
 
@@ -18,14 +18,14 @@ export default function TravelClassesList() {
     }, [data]);
 
     return (
-        <Container sx={{ mt: 4 }}>
+        <>
             <ListHeader
                 dataExist={dataExist}
                 dataType={ENTITIES.TRAVEL_CLASSES}
             />
 
-            <Box sx={{ mt: 2 }}>
-                {isLoading && <CircularProgress sx={{ mb: 2 }}/>}
+            <Box sx={{ mt: 4 }}>
+                {isLoading && <CircularProgress sx={{ mb: 2 }} />}
 
                 {isError && error && (
                     <CustomAlert alertType='error' type={error.type} message={error.message} />
@@ -43,6 +43,6 @@ export default function TravelClassesList() {
                     </>
                 )}
             </Box>
-        </Container>
+        </>
     );
 }

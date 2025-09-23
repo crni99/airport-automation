@@ -39,13 +39,14 @@ export default function SearchInputWithButton({ type, setTriggerFetch, isUser })
         switch (type) {
             case ENTITIES.AIRLINES:
                 return (
-                    <Stack direction="row" spacing={4} alignItems="center">
+                    <Stack direction="row" spacing={2} alignItems="center">
                         <TextField
                             label="Search by Name"
                             id="searchInput"
                             placeholder="Air Serbia"
                             value={searchTerms.searchInput || ''}
                             onChange={handleInputChange}
+                            size='small'
                         />
                         <SearchButton onClick={handleSearch} />
                         <ClearInputButton onClear={handleClear} />
@@ -55,28 +56,13 @@ export default function SearchInputWithButton({ type, setTriggerFetch, isUser })
             case ENTITIES.API_USERS:
                 return (
                     <Stack direction="row" spacing={2} alignItems="center">
-                        <FormControl sx={{ minWidth: 120 }}>
-                            <InputLabel id="role-select-label">Role</InputLabel>
-                            <Select
-                                labelId="role-select-label"
-                                id="role"
-                                name="role"
-                                value={searchTerms.role || ''}
-                                label="Role"
-                                onChange={handleInputChange}
-                            >
-                                <MenuItem value="">Select a role</MenuItem>
-                                <MenuItem value="User">User</MenuItem>
-                                <MenuItem value="Admin">Admin</MenuItem>
-                                <MenuItem value="SuperAdmin">Super Admin</MenuItem>
-                            </Select>
-                        </FormControl>
                         <TextField
                             id="username"
                             label="Username"
                             placeholder="Enter username"
                             value={searchTerms.username || ''}
                             onChange={handleInputChange}
+                            size='small'
                         />
                         <TextField
                             id="password"
@@ -85,7 +71,25 @@ export default function SearchInputWithButton({ type, setTriggerFetch, isUser })
                             type="password"
                             value={searchTerms.password || ''}
                             onChange={handleInputChange}
+                            size='small'
                         />
+                        <FormControl sx={{ minWidth: 120 }}>
+                            <InputLabel id="role-select-label" size='small'>Role</InputLabel>
+                            <Select
+                                labelId="role-select-label"
+                                id="role"
+                                name="role"
+                                value={searchTerms.role || ''}
+                                label="Role"
+                                onChange={handleInputChange}
+                                size='small'
+                            >
+                                <MenuItem value="">Select a role</MenuItem>
+                                <MenuItem value="User">User</MenuItem>
+                                <MenuItem value="Admin">Admin</MenuItem>
+                                <MenuItem value="SuperAdmin">Super Admin</MenuItem>
+                            </Select>
+                        </FormControl>
                         <SearchButton onClick={handleSearch} />
                         <ClearInputButton onClear={handleClear} />
                     </Stack>
@@ -99,6 +103,7 @@ export default function SearchInputWithButton({ type, setTriggerFetch, isUser })
                             placeholder="Belgrade"
                             value={searchTerms.city || ''}
                             onChange={handleInputChange}
+                            size='small'
                         />
                         <TextField
                             label="Airport"
@@ -106,6 +111,7 @@ export default function SearchInputWithButton({ type, setTriggerFetch, isUser })
                             placeholder="Belgrade Nikola Tesla"
                             value={searchTerms.airport || ''}
                             onChange={handleInputChange}
+                            size='small'
                         />
                         <SearchButton onClick={handleSearch} />
                         <ClearInputButton onClear={handleClear} />
@@ -122,6 +128,7 @@ export default function SearchInputWithButton({ type, setTriggerFetch, isUser })
                             InputLabelProps={{ shrink: true }}
                             value={searchTerms.startDate || ''}
                             onChange={handleInputChange}
+                            size='small'
                         />
                         <TextField
                             id="endDate"
@@ -130,6 +137,7 @@ export default function SearchInputWithButton({ type, setTriggerFetch, isUser })
                             InputLabelProps={{ shrink: true }}
                             value={searchTerms.endDate || ''}
                             onChange={handleInputChange}
+                            size='small'
                         />
                         <SearchButton onClick={handleSearch} />
                         <ClearInputButton onClear={handleClear} />
@@ -145,6 +153,7 @@ export default function SearchInputWithButton({ type, setTriggerFetch, isUser })
                             placeholder="Ognjen"
                             value={searchTerms.firstName || ''}
                             onChange={handleInputChange}
+                            size='small'
                         />
                         <TextField
                             id="lastName"
@@ -152,6 +161,7 @@ export default function SearchInputWithButton({ type, setTriggerFetch, isUser })
                             placeholder="Andjelic"
                             value={searchTerms.lastName || ''}
                             onChange={handleInputChange}
+                            size='small'
                         />
                         <TextField
                             id="uprn"
@@ -160,6 +170,7 @@ export default function SearchInputWithButton({ type, setTriggerFetch, isUser })
                             placeholder="1234567890123"
                             value={searchTerms.uprn || ''}
                             onChange={handleInputChange}
+                            size='small'
                         />
                         <TextField
                             id="passport"
@@ -167,6 +178,7 @@ export default function SearchInputWithButton({ type, setTriggerFetch, isUser })
                             placeholder="P12345678"
                             value={searchTerms.passport || ''}
                             onChange={handleInputChange}
+                            size='small'
                         />
                         <TextField
                             id="address"
@@ -174,6 +186,7 @@ export default function SearchInputWithButton({ type, setTriggerFetch, isUser })
                             placeholder="123 Main Street, New York, United States"
                             value={searchTerms.address || ''}
                             onChange={handleInputChange}
+                            size='small'
                         />
                         <TextField
                             id="phone"
@@ -182,6 +195,7 @@ export default function SearchInputWithButton({ type, setTriggerFetch, isUser })
                             placeholder="123-456-7890"
                             value={searchTerms.phone || ''}
                             onChange={handleInputChange}
+                            size='small'
                         />
                         <SearchButton onClick={handleSearch} />
                         <ClearInputButton onClear={handleClear} />
@@ -197,6 +211,7 @@ export default function SearchInputWithButton({ type, setTriggerFetch, isUser })
                             placeholder="Ognjen"
                             value={searchTerms.firstName || ''}
                             onChange={handleInputChange}
+                            size='small'
                         />
                         <TextField
                             id="lastName"
@@ -204,6 +219,7 @@ export default function SearchInputWithButton({ type, setTriggerFetch, isUser })
                             placeholder="Andjelic"
                             value={searchTerms.lastName || ''}
                             onChange={handleInputChange}
+                            size='small'
                         />
                         <TextField
                             id="uprn"
@@ -212,6 +228,7 @@ export default function SearchInputWithButton({ type, setTriggerFetch, isUser })
                             placeholder="1234567890123"
                             value={searchTerms.uprn || ''}
                             onChange={handleInputChange}
+                            size='small'
                         />
                         <TextField
                             id="flyingHours"
@@ -220,6 +237,7 @@ export default function SearchInputWithButton({ type, setTriggerFetch, isUser })
                             placeholder="10"
                             value={searchTerms.flyingHours || ''}
                             onChange={handleInputChange}
+                            size='small'
                         />
                         <SearchButton onClick={handleSearch} />
                         <ClearInputButton onClear={handleClear} />
