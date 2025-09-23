@@ -35,21 +35,23 @@ function App() {
           </Box>
         )}
         <Box component="main" sx={{ flexGrow: 1, overflowY: 'auto' }}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/health-check" element={<HealthCheck />} />
-            <Route path="/unauthorized" element={<Unauthorized />} />
-            <Route element={<ProtectedRouteV3 />}>
-              <Route path="/airlines/*" element={<Container sx={{ mt: 4 }}>{AirlineRoutes}</Container>} />
-              <Route path="/destinations/*" element={<Container sx={{ mt: 4 }}>{DestinationsRoutes}</Container>} />
-              <Route path="/travel-classes/*" element={<Container sx={{ mt: 4 }}>{TravelClassesRoutes}</Container>} />
-              <Route path="/passengers/*" element={<Container sx={{ mt: 4 }}>{PassengersRoutes}</Container>} />
-              <Route path="/pilots/*" element={<Container sx={{ mt: 4 }}>{PilotsRoutes}</Container>} />
-              <Route path="/api-users/*" element={<Container sx={{ mt: 4 }}>{ApiUsersRoutes}</Container>} />
-              <Route path="/flights/*" element={<Container sx={{ mt: 4 }}>{FlightsRoutes}</Container>} />
-              <Route path="/plane-tickets/*" element={<Container sx={{ mt: 4 }}>{PlaneTicketsRoutes}</Container>} />
-            </Route>
-          </Routes>
+          <Container>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/health-check" element={<HealthCheck />} />
+              <Route path="/unauthorized" element={<Unauthorized />} />
+              <Route element={<ProtectedRouteV3 />}>
+                {AirlineRoutes}
+                {DestinationsRoutes}
+                {TravelClassesRoutes}
+                {PassengersRoutes}
+                {PilotsRoutes}
+                {ApiUsersRoutes}
+                {FlightsRoutes}
+                {PlaneTicketsRoutes}
+              </Route>
+            </Routes>
+          </Container>
         </Box>
       </Box>
     </Box >

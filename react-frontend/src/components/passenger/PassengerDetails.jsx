@@ -16,6 +16,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import AlertTitle from '@mui/material/AlertTitle';
 import Link from '@mui/material/Link';
 import { Stack } from '@mui/material';
+import { Box, Grid } from '@mui/material';
 
 export default function PassengerDetails() {
     const dataCtx = useContext(DataContext);
