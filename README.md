@@ -25,7 +25,7 @@ cd airport-automation/backend/AirportAutomationApi
 ```bash
 dotnet ef database update
 ```
-5. **In Visual Studio or JetBrains Rider:**
+5. **In your IDE (e.g., Visual Studio / JetBrains Rider):**
 - Set `AirportAutomationApi` (Web API) and `AirportAutomationWeb` (MVC Web) as the startup projects.
 - This ensures the API and MVC frontend run together.
 6. Start the application
@@ -186,6 +186,7 @@ ___
 ### Managing Data Presentation and User Input
 - Handle dynamic data presentation using MVC templates and model binding to ensure consistent and user-friendly data display.
 - Develop user input forms with validation to maintain data accuracy and integrity.
+- Utilize the modern, responsive design and components of Bootstrap 5 for consistent and high-quality UI styling.
 
 ### Client-Side Scripting and AJAX Requests
 - Leverage JavaScript, jQuery, and AJAX to build responsive and interactive user interfaces, enabling asynchronous data fetching and partial page updates without full reloads.
@@ -208,6 +209,7 @@ ___
 ### User Interface Design
 - Build the frontend using functional components and React Hooks.
 - Design a responsive, mobile-friendly layout with modern styling techniques.
+- Utilize the rich set of components from Material UI (MUI) to implement a sleek, professional, and accessible user interface based on Material Design principles.
 
 ### State Management
 - Manage application state via Context API or Redux.
