@@ -27,9 +27,7 @@ export default function FlightsListTable({ flights }) {
                             key={flight.id}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
-                            <TableCell component="th" scope="row">
-                                {flight.id}
-                            </TableCell>
+                            <TableCell>{flight.id}</TableCell>
                             <TableCell>{flight.departureDate}</TableCell>
                             <TableCell>{flight.departureTime}</TableCell>
                             <TableCell>

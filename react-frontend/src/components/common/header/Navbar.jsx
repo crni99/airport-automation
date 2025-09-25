@@ -8,6 +8,7 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
 import { MAIN_NAVBAR_ITEMS, ROLES } from '../../../utils/const';
 import { useNavigate, useLocation } from "react-router-dom";
+import ConnectingAirportsIcon from '@mui/icons-material/ConnectingAirports';
 import MonitorHeartIcon from '@mui/icons-material/MonitorHeart';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
@@ -46,7 +47,10 @@ const Navbar = () => {
             }}
         >
             <List>
-                <ListItem sx={{ paddingLeft: 4 }}>
+                <ListItem>
+                    <ListItemIcon>
+                        <ConnectingAirportsIcon />
+                    </ListItemIcon>
                     <ListItemText>
                         Airport Automation
                     </ListItemText>

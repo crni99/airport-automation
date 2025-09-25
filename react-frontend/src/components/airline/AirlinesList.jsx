@@ -57,7 +57,7 @@ export default function AirlineList() {
                 setTriggerFetch={setTriggerFetch}
             />
 
-            <Box sx={{ mt: 6 }}>
+            <Box sx={{ mt: 5 }}>
                 {isLoading && <CircularProgress sx={{ mb: 2 }} />}
 
                 {isError && error && (

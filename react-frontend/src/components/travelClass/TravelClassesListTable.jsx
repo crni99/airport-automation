@@ -23,9 +23,7 @@ export default function TravelClassesListTable({ travelClasses }) {
                             key={travelClass.id}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
-                            <TableCell component="th" scope="row">
-                                {travelClass.id}
-                            </TableCell>
+                            <TableCell>{travelClass.id}</TableCell>
                             <TableCell>{travelClass.type}</TableCell>
                         </TableRow>
                     ))}

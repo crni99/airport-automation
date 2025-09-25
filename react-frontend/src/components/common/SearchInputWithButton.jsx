@@ -41,7 +41,7 @@ export default function SearchInputWithButton({ type, setTriggerFetch, isUser })
                 return (
                     <Stack direction="row" spacing={2} alignItems="center">
                         <TextField
-                            label="Search by Name"
+                            label="Name"
                             id="searchInput"
                             placeholder="Air Serbia"
                             value={searchTerms.searchInput || ''}

@@ -28,9 +28,7 @@ export default function PlaneTicketsListTable({ planeTickets }) {
                             key={planeTicket.id}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
-                            <TableCell component="th" scope="row">
-                                {planeTicket.id}
-                            </TableCell>
+                            <TableCell>{planeTicket.id}</TableCell>
                             <TableCell>{planeTicket.price}</TableCell>
                             <TableCell>{planeTicket.purchaseDate}</TableCell>
                             <TableCell>{planeTicket.seatNumber}</TableCell>

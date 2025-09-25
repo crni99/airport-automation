@@ -1,8 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { DataContext } from '../../store/DataContext';
 import { getAuthToken, authenticateUser } from '../../utils/auth';
-
-// Material-UI Components
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
@@ -11,7 +9,6 @@ import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import MuiAlert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
-import Footer from './Footer';
 
 export default function Home() {
     const dataCtx = useContext(DataContext);
@@ -150,7 +147,6 @@ export default function Home() {
                     )}
                 </Box>
             </Box>
-            <Footer />
         </Box>
     );
 }

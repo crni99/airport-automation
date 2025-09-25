@@ -24,7 +24,7 @@ export default function TravelClassesList() {
                 dataType={ENTITIES.TRAVEL_CLASSES}
             />
 
-            <Box sx={{ mt: 4 }}>
+            <Box sx={{ mt: 5 }}>
                 {isLoading && <CircularProgress sx={{ mb: 2 }} />}
 
                 {isError && error && (

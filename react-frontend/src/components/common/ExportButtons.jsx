@@ -33,7 +33,7 @@ export default function ExportButton({ dataType }) {
     };
 
     return (
-        <Stack direction="row" spacing={2} alignItems="center" sx={{ pl: 3}}>
+        <Stack direction="row" spacing={2} alignItems="center">
             <Button
                 variant="contained"
                 onClick={handleClick}

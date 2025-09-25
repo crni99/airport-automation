@@ -28,12 +28,10 @@ export default function ApiUsersListTable({ apiUsers }) {
                             key={apiUser.apiUserId}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
-                            <TableCell component="th" scope="row" >
-                                {apiUser.apiUserId}
-                            </TableCell>
+                            <TableCell>{apiUser.apiUserId}</TableCell>
                             <TableCell>{apiUser.userName}</TableCell>
-                            <TableCell >{apiUser.password}</TableCell>
-                            <TableCell >{apiUser.roles}</TableCell>
+                            <TableCell>{apiUser.password}</TableCell>
+                            <TableCell>{apiUser.roles}</TableCell>
                             <TableCell>
                                 <TableActions entity={ENTITIES.API_USERS} id={apiUser.id} />
                             </TableCell>

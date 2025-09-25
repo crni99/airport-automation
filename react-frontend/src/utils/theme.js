@@ -47,6 +47,23 @@ let lightTheme = createTheme(baseTheme, {
                 },
             },
         },
+        MuiTableRow: {
+            styleOverrides: {
+                root: {
+                    "& th": {
+                        // backgroundColor: "#0a1929",
+                        fontWeight: 'bold',
+                        fontSize: '0.9rem',
+                    },
+                    '&:nth-of-type(odd)': {
+                        // backgroundColor: '#212529',
+                    },
+                    '&:nth-of-type(even)': {
+                        // backgroundColor: '#2c3035',
+                    },
+                },
+            },
+        },
         MuiDrawer: {
             styleOverrides: {
                 paper: {
@@ -131,8 +148,17 @@ let lightTheme = createTheme(baseTheme, {
         MuiListItemText: {
             styleOverrides: {
                 primary: {
-                    fontSize: 14,
+                    fontSize: '16px',
                     fontWeight: baseTheme.typography.fontWeightMedium,
+                    '@media (max-height: 750px)': {
+                        fontSize: '14px',
+                    },
+                    '@media (max-height: 705px)': {
+                        fontSize: '12px',
+                    },
+                    '@media (max-height: 670px)': {
+                        fontSize: '10px',
+                    },
                 },
             },
         },
@@ -170,7 +196,7 @@ let darkTheme = createTheme(baseTheme, {
             contrastText: '#fff',
         },
         background: {
-            default: '#193f66',
+            default: '#121212',
             paper: '#1d1d1d',
         },
         text: {
@@ -194,6 +220,35 @@ let darkTheme = createTheme(baseTheme, {
                     paddingBottom: '12px',
                     paddingLeft: '16px',
                 },
+            },
+        },
+        MuiTableRow: {
+            styleOverrides: {
+                root: {
+                    "& th": {
+                        backgroundColor: "#0a1929",
+                        fontWeight: 'bold',
+                        fontSize: '0.9rem',
+                    },
+                    '&:nth-of-type(odd)': {
+                        backgroundColor: '#212529',
+                    },
+                    '&:nth-of-type(even)': {
+                        backgroundColor: '#2c3035',
+                    },
+                },
+            },
+        },
+        MuiTablePagination: {
+            styleOverrides: {
+                root: ({ ownerState, theme }) => ({
+                    '& .MuiIconButton-root': {
+                        color: 'white',
+                    },
+                    '& .MuiIconButton-root.Mui-disabled': {
+                        color: 'rgba(255, 255, 255, 0.7)',
+                    },
+                }),
             },
         },
         MuiDrawer: {
@@ -280,8 +335,17 @@ let darkTheme = createTheme(baseTheme, {
         MuiListItemText: {
             styleOverrides: {
                 primary: {
-                    fontSize: 14,
+                    fontSize: '16px',
                     fontWeight: baseTheme.typography.fontWeightMedium,
+                    '@media (max-height: 750px)': {
+                        fontSize: '14px',
+                    },
+                    '@media (max-height: 705px)': {
+                        fontSize: '12px',
+                    },
+                    '@media (max-height: 670px)': {
+                        fontSize: '10px',
+                    },
                 },
             },
         },
@@ -303,6 +367,20 @@ let darkTheme = createTheme(baseTheme, {
                 root: {
                     width: 32,
                     height: 32,
+                },
+            },
+        },
+        MuiSelect: {
+            styleOverrides: {
+                icon: {
+                    color: 'white',
+                },
+            },
+        },
+        MuiNativeSelect: {
+            styleOverrides: {
+                icon: {
+                    color: 'white',
                 },
             },
         },

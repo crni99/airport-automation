@@ -29,9 +29,7 @@ export default function PilotsListTable({ pilots }) {
                             key={pilot.id}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
-                            <TableCell component="th" scope="row">
-                                {pilot.id}
-                            </TableCell>
+                            <TableCell>{pilot.id}</TableCell>
                             <TableCell>{pilot.firstName}</TableCell>
                             <TableCell>{pilot.lastName}</TableCell>
                             <TableCell>{pilot.uprn}</TableCell>

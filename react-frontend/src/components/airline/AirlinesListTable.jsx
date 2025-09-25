@@ -26,9 +26,7 @@ export default function AirlinesListTable({ airlines }) {
                             key={airline.id}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
-                            <TableCell component="th" scope="row">
-                                {airline.id}
-                            </TableCell>
+                            <TableCell>{airline.id}</TableCell>
                             <TableCell>{airline.name}</TableCell>
                             <TableCell>
                                 <TableActions entity={ENTITIES.AIRLINES} id={airline.id} />

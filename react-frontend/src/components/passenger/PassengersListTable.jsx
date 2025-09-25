@@ -33,15 +33,14 @@ export default function PassengersListTable({ passengers }) {
                             key={passenger.id}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
-                            <TableCell component="th" scope="row">
-                                {passenger.id}
-                            </TableCell>
+                            <TableCell>{passenger.id}</TableCell>
                             <TableCell>{passenger.firstName}</TableCell>
                             <TableCell>{passenger.lastName}</TableCell>
                             <TableCell>{passenger.uprn}</TableCell>
                             <TableCell>{passenger.passport}</TableCell>
                             <TableCell>
                                 <Link
+                                    sx={{ color: '#009be5' }}
                                     component="button"
                                     variant="body2"
                                     onClick={() => openMap(passenger.address)}

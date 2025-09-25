@@ -74,9 +74,7 @@ export default function HealthCheck() {
                                 <TableBody>
                                     {Object.keys(data.entries).map((key) => (
                                         <TableRow key={key}>
-                                            <TableCell component="th" scope="row">
-                                                {key}
-                                            </TableCell>
+                                            <TableCell>{key}</TableCell>
                                             <TableCell>{data.entries[key].description}</TableCell>
                                             <TableCell>{data.entries[key].duration}</TableCell>
                                             <TableCell>

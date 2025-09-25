@@ -16,6 +16,7 @@ const Pagination = ({
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 mt: 3,
+                mb: 2
             }}
         >
             <Typography variant="body2" color="text.secondary">

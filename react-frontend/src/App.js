@@ -13,8 +13,8 @@ import Unauthorized from './components/common/Unauthorized';
 import ApiUsersRoutes from './routes/apiUserRoutes';
 import ProtectedRouteV3 from './routes/ProtectedRouteV3';
 import { Container, Box } from '@mui/material';
-
 import Navbar from './components/common/header/Navbar';
+import Footer from './components/common/Footer';
 import { getAuthToken } from "./utils/auth";
 
 function App() {
@@ -52,6 +52,9 @@ function App() {
               </Route>
             </Routes>
           </Container>
+          {!isLoggedIn && (
+            <Footer />
+          )}
         </Box>
       </Box>
     </Box >
