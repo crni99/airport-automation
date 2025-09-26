@@ -20,7 +20,7 @@ export default function DestinationsListTable({ destinations }) {
                         <TableCell sx={{ width: '10%' }}>Id</TableCell>
                         <TableCell sx={{ width: '25%' }}>City</TableCell>
                         <TableCell sx={{ width: '45%' }}>Airport</TableCell>
-                        <TableCell sx={{ width: '20%' }}>Actions</TableCell>
+                        <TableCell sx={{ width: '20%' }} align="center">Actions</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>

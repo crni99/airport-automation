@@ -17,10 +17,10 @@ export default function PilotsListTable({ pilots }) {
                     <TableRow>
                         <TableCell sx={{ width: '10%'}}>Id</TableCell>
                         <TableCell sx={{ width: '20%'}}>First Name</TableCell>
-                        <TableCell sx={{ width: '30%'}}>Last Name</TableCell>
-                        <TableCell sx={{ width: '15%'}}>UPRN</TableCell>
+                        <TableCell sx={{ width: '20%'}}>Last Name</TableCell>
+                        <TableCell sx={{ width: '20%'}}>UPRN</TableCell>
                         <TableCell sx={{ width: '10%'}}>Flying Hours</TableCell>
-                        <TableCell sx={{ width: '15%'}}>Actions</TableCell>
+                        <TableCell sx={{ width: '20%'}} align="center">Actions</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>

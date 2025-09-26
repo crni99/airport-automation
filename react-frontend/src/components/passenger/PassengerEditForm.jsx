@@ -95,7 +95,7 @@ export default function PassengerEditForm() {
     };
 
     return (
-        <Box sx={{ mt: 2 }}>
+        <Box sx={{ mt: 5 }}>
             <PageTitle title='Edit Passenger' />
 
             {isLoading && (
@@ -124,6 +124,7 @@ export default function PassengerEditForm() {
                                 required
                                 error={!!formData.error}
                                 helperText={formData.error}
+                                sx={{ width: '80%' }}
                             />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
@@ -137,6 +138,7 @@ export default function PassengerEditForm() {
                                 required
                                 error={!!formData.error}
                                 helperText={formData.error}
+                                sx={{ width: '80%' }}
                             />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
@@ -150,6 +152,7 @@ export default function PassengerEditForm() {
                                 required
                                 error={!!formData.error}
                                 helperText={formData.error}
+                                sx={{ width: '80%' }}
                             />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
@@ -163,6 +166,7 @@ export default function PassengerEditForm() {
                                 required
                                 error={!!formData.error}
                                 helperText={formData.error}
+                                sx={{ width: '80%' }}
                             />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
@@ -176,6 +180,7 @@ export default function PassengerEditForm() {
                                 required
                                 error={!!formData.error}
                                 helperText={formData.error}
+                                sx={{ width: '80%' }}
                             />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
@@ -189,6 +194,7 @@ export default function PassengerEditForm() {
                                 required
                                 error={!!formData.error}
                                 helperText={formData.error}
+                                sx={{ width: '80%' }}
                             />
                         </Grid>
                         <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>

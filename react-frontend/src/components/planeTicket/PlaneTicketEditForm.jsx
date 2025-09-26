@@ -95,7 +95,7 @@ export default function PlaneTicketEditForm() {
     };
 
     return (
-        <Box sx={{ mt: 2 }}>
+        <Box sx={{ mt: 5 }}>
             <PageTitle title='Edit Plane Ticket' />
 
             {isLoading && (
@@ -123,7 +123,6 @@ export default function PlaneTicketEditForm() {
                                 value={id}
                                 InputProps={{ readOnly: true }}
                                 fullWidth
-                                disabled
                             />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}>
@@ -137,7 +136,6 @@ export default function PlaneTicketEditForm() {
                                 InputProps={{ readOnly: true }}
                                 required
                                 fullWidth
-                                disabled
                             />
 
                         </Grid>
@@ -152,7 +150,6 @@ export default function PlaneTicketEditForm() {
                                 InputProps={{ readOnly: true }}
                                 required
                                 fullWidth
-                                disabled
                             />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}>
@@ -166,7 +163,6 @@ export default function PlaneTicketEditForm() {
                                 InputProps={{ readOnly: true }}
                                 required
                                 fullWidth
-                                disabled
                             />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
@@ -211,7 +207,7 @@ export default function PlaneTicketEditForm() {
                                 }}
                             />
                         </Grid>
-                        <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>
+                        <Grid size={{ xs: 12 }} sx={{ mt: 3 }}>
                             <Button
                                 type="submit"
                                 variant="contained"

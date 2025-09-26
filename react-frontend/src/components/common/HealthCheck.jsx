@@ -51,7 +51,7 @@ export default function HealthCheck() {
                             ) : (
                                 <Chip label={data.status} color="error" />
                             )}
-                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold', pl: 4 }}>
                                 Total Duration:
                             </Typography>
                             <Typography variant="body1">
@@ -65,10 +65,10 @@ export default function HealthCheck() {
                             <Table aria-label="health check table">
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell sx={{ fontWeight: 'bold' }}>Name</TableCell>
-                                        <TableCell sx={{ fontWeight: 'bold' }}>Description</TableCell>
-                                        <TableCell sx={{ fontWeight: 'bold' }}>Duration</TableCell>
-                                        <TableCell sx={{ fontWeight: 'bold' }}>Status</TableCell>
+                                        <TableCell sx={{ width: '20%' }}>Name</TableCell>
+                                        <TableCell sx={{ width: '40%' }}>Description</TableCell>
+                                        <TableCell sx={{ width: '20%' }}>Duration</TableCell>
+                                        <TableCell sx={{ width: '20%' }} align="center">Status</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -77,7 +77,7 @@ export default function HealthCheck() {
                                             <TableCell>{key}</TableCell>
                                             <TableCell>{data.entries[key].description}</TableCell>
                                             <TableCell>{data.entries[key].duration}</TableCell>
-                                            <TableCell>
+                                            <TableCell align="center">
                                                 {data.entries[key].status === "Healthy" ? (
                                                     <Chip label={data.entries[key].status} color="success" />
                                                 ) : (

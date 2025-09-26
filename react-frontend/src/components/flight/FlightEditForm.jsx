@@ -95,7 +95,7 @@ export default function FlightEditForm() {
     };
 
     return (
-        <Box sx={{ mt: 2 }}>
+        <Box sx={{ mt: 5 }}>
             <PageTitle title='Edit Flight' />
 
             {isLoading && (
@@ -123,7 +123,6 @@ export default function FlightEditForm() {
                                 value={id}
                                 InputProps={{ readOnly: true }}
                                 fullWidth
-                                disabled
                             />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6, lg: 3, xl: 3 }}>
@@ -137,7 +136,6 @@ export default function FlightEditForm() {
                                 InputProps={{ readOnly: true }}
                                 required
                                 fullWidth
-                                disabled
                             />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6, lg: 3, xl: 3 }}>
@@ -151,7 +149,6 @@ export default function FlightEditForm() {
                                 InputProps={{ readOnly: true }}
                                 required
                                 fullWidth
-                                disabled
                             />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6, lg: 3, xl: 3 }}>
@@ -165,7 +162,6 @@ export default function FlightEditForm() {
                                 InputProps={{ readOnly: true }}
                                 required
                                 fullWidth
-                                disabled
                             />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6, lg: 3, xl: 3 }}>
@@ -200,7 +196,7 @@ export default function FlightEditForm() {
                                 }}
                             />
                         </Grid>
-                        <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>
+                        <Grid size={{ xs: 12 }} sx={{ mt: 1 }}>
                             <Button
                                 type="submit"
                                 variant="contained"

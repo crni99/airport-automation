@@ -18,7 +18,7 @@ export default function FlightsListTable({ flights }) {
                         <TableCell sx={{ width: '20%' }}>Id</TableCell>
                         <TableCell sx={{ width: '30%' }}>Departure Date</TableCell>
                         <TableCell sx={{ width: '30%' }}>Departure Time</TableCell>
-                        <TableCell sx={{ width: '20%' }}>Actions</TableCell>
+                        <TableCell sx={{ width: '20%' }} align="center">Actions</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>

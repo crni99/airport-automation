@@ -19,12 +19,12 @@ export default function PassengersListTable({ passengers }) {
                     <TableRow>
                         <TableCell sx={{ width: '10%' }}>Id</TableCell>
                         <TableCell sx={{ width: '10%' }}>First Name</TableCell>
-                        <TableCell sx={{ width: '15%' }}>Last Name</TableCell>
+                        <TableCell sx={{ width: '10%' }}>Last Name</TableCell>
                         <TableCell sx={{ width: '10%' }}>UPRN</TableCell>
                         <TableCell sx={{ width: '10%' }}>Passport</TableCell>
-                        <TableCell sx={{ width: '20%' }}>Address</TableCell>
+                        <TableCell sx={{ width: '25%' }}>Address</TableCell>
                         <TableCell sx={{ width: '15%' }}>Phone</TableCell>
-                        <TableCell sx={{ width: '10%' }}>Actions</TableCell>
+                        <TableCell sx={{ width: '10%' }} align="center">Actions</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>

@@ -84,7 +84,7 @@ export default function DestinationEditForm() {
 
 
     return (
-        <Box sx={{ mt: 2}}>
+        <Box sx={{ mt: 5}}>
             <PageTitle title='Edit Destination' />
 
             {isLoading && (
@@ -97,7 +97,6 @@ export default function DestinationEditForm() {
 
             <Box
                 component="form"
-                sx={{ mt: 2, '& .MuiTextField-root': { mb: 3, width: '100%' } }}
                 autoComplete="off"
                 onSubmit={handleSubmit}
             >
@@ -113,6 +112,7 @@ export default function DestinationEditForm() {
                             required
                             error={!!formData.error}
                             helperText={formData.error}
+                            sx={{ width: '100%' }}
                         />
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}>
@@ -126,6 +126,7 @@ export default function DestinationEditForm() {
                             required
                             error={!!formData.error}
                             helperText={formData.error}
+                            sx={{ width: '150%' }}
                         />
                     </Grid>
                     <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>

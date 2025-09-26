@@ -2,15 +2,11 @@ import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { deleteData } from '../../../utils/delete.js';
 import { DataContext } from '../../../store/DataContext.jsx';
-
-// Material-UI components
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Alert from '@mui/material/Alert';
-
-// Material-UI Icons
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -43,7 +39,7 @@ const TableActions = ({ entity, id, entityType, currentUserRole }) => {
 
     return (
         <Box>
-            <Stack direction="row" spacing={1} alignItems="center">
+            <Stack direction="row" spacing={1} alignItems="center" sx={{ width: '100%', justifyContent: 'center' }} >
                 <Tooltip title="Open" arrow>
                     <IconButton
                         component="a"

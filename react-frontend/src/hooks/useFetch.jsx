@@ -91,10 +91,10 @@ export default function useFetch(dataType, dataId, page = 1, triggerFetch, rowsP
                 case ENTITIES.API_USERS: {
                     const username = document.getElementById('username')?.value?.trim();
                     const password = document.getElementById('password')?.value?.trim();
-                    const searchRole = document.getElementById('roleSelect')?.value?.trim();
+                    const searchRole = document.getElementById('role')?.value?.trim();
 
                     if (username || password || searchRole) {
-                        url = `${apiUrl}/${ENTITIES.API_USERS}/ByFilter?username=${encodeURIComponent(username || '')}&password=${encodeURIComponent(password || '')}&roles=${encodeURIComponent(searchRole || '')}&${paginationParams}`;
+                        url = `${apiUrl}/${ENTITIES.API_USERS}/ByFilter?userName=${encodeURIComponent(username || '')}&password=${encodeURIComponent(password || '')}&roles=${encodeURIComponent(searchRole || '')}&${paginationParams}`;
                     }
                     break;
                 }

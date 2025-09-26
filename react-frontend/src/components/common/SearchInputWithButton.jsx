@@ -19,6 +19,7 @@ export default function SearchInputWithButton({ type, setTriggerFetch, isUser })
     }, [type]);
 
     const handleSearch = () => {
+        console.log(searchTerms);
         setTriggerFetch(true);
     };
 

@@ -74,7 +74,7 @@ export default function AirlineEditForm() {
     };
 
     return (
-        <Box sx={{ mt: 2 }}>
+        <Box sx={{ mt: 5 }}>
             <PageTitle title='Edit Airline' />
 
             {isLoading && (

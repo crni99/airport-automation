@@ -7,7 +7,6 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import TableActions from '../common/table/TableActions';
-import { ENTITIES } from '../../utils/const';
 
 export default function ApiUsersListTable({ apiUsers }) {
     return (
@@ -19,7 +18,7 @@ export default function ApiUsersListTable({ apiUsers }) {
                         <TableCell sx={{ width: '20%'}}>Username</TableCell>
                         <TableCell sx={{ width: '30%'}}>Password</TableCell>
                         <TableCell sx={{ width: '20%'}}>Roles</TableCell>
-                        <TableCell sx={{ width: '10%'}}>Actions</TableCell>
+                        <TableCell sx={{ width: '10%'}} align="center">Actions</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -33,7 +32,7 @@ export default function ApiUsersListTable({ apiUsers }) {
                             <TableCell>{apiUser.password}</TableCell>
                             <TableCell>{apiUser.roles}</TableCell>
                             <TableCell>
-                                <TableActions entity={ENTITIES.API_USERS} id={apiUser.id} />
+                                <TableActions entity='api-users' id={apiUser.apiUserId} />
                             </TableCell>
                         </TableRow>
                     ))}

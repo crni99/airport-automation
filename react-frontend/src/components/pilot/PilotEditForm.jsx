@@ -88,7 +88,7 @@ export default function PilotEditForm() {
     };
 
     return (
-        <Box sx={{ mt: 2 }}>
+        <Box sx={{ mt: 5 }}>
             <PageTitle title='Edit Pilot' />
 
             {isLoading && (
@@ -117,6 +117,7 @@ export default function PilotEditForm() {
                                 required
                                 error={!!formData.error}
                                 helperText={formData.error}
+                                sx={{ width: '80%' }}
                             />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 6 }}>
@@ -130,6 +131,7 @@ export default function PilotEditForm() {
                                 required
                                 error={!!formData.error}
                                 helperText={formData.error}
+                                sx={{ width: '80%' }}
                             />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 6 }}>
@@ -143,6 +145,7 @@ export default function PilotEditForm() {
                                 required
                                 error={!!formData.error}
                                 helperText={formData.error}
+                                sx={{ width: '80%' }}
                             />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 6 }}>
@@ -158,9 +161,10 @@ export default function PilotEditForm() {
                                 inputProps={{ min: "0", max: "40000" }}
                                 error={!!formData.error}
                                 helperText={formData.error}
+                                sx={{ width: '80%' }}
                             />
                         </Grid>
-                        <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>
+                        <Grid size={{ xs: 12 }} sx={{ mt: 3 }}>
                             <Button
                                 type="submit"
                                 variant="contained"

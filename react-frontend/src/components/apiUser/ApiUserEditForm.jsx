@@ -88,7 +88,7 @@ export default function ApiUserEditForm() {
     };
 
     return (
-        <Box sx={{ mt: 2 }}>
+        <Box sx={{ mt: 5 }}>
             <PageTitle title="Edit Api User" />
 
             {isLoading && (
@@ -117,6 +117,7 @@ export default function ApiUserEditForm() {
                                 required
                                 error={!!formData.error}
                                 helperText={formData.error}
+                                sx={{ width: '80%' }}
                             />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}>
@@ -125,11 +126,11 @@ export default function ApiUserEditForm() {
                                 name="password"
                                 label="Password"
                                 variant="outlined"
-                                value={formData.password}
                                 onChange={handleChange}
                                 required
                                 error={!!formData.error}
                                 helperText={formData.error}
+                                sx={{ width: '80%' }}
                             />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}>
@@ -144,6 +145,7 @@ export default function ApiUserEditForm() {
                                 required
                                 error={!!formData.error}
                                 helperText={formData.error}
+                                sx={{ width: '80%' }}
                             >
                                 <MenuItem value="SuperAdmin">SuperAdmin</MenuItem>
                                 <MenuItem value="Admin">Admin</MenuItem>
