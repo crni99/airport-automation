@@ -85,8 +85,8 @@ ___
 ## 📡 [Backend - ASP.NET Core Web API](https://github.com/crni99/airport-automation/tree/main/backend/AirportAutomationApi) 🡥
 
 ### Database Setup and Management
-- SQL Server (or a relevant relational database) is used as the primary data store.
-- Manage the database schema and migrations via Entity Framework Core to ensure version control and smooth schema evolution.
+- **`SQL Server`** (or a relevant relational database) is used as the primary data store.
+- Manage the database schema and migrations via **`Entity Framework Core`** to ensure version control and smooth schema evolution.
 - Map EF Core entities directly to database tables to facilitate efficient data access and manipulation.
 
 ### Defining RESTful API Endpoints and Implementing Logic to Serve Requested Resources via HTTP
@@ -98,7 +98,7 @@ ___
 - Implement input validation techniques to enhance the reliability of the API.
 
 ### API Behavior Customization
-- Customize model validation error responses to conform to RFC 9457, with detailed problem details and trace identifiers for easier debugging.
+- Customize model validation error responses to conform to **`RFC 9457`**, with detailed problem details and trace identifiers for easier debugging.
 
 ### Working with Services and Dependency Injection
 - Employ services and dependency injection to promote modularity and maintainability in the codebase.
@@ -118,23 +118,23 @@ ___
 ### Exporting Data to PDF and Excel
 - Implement endpoints to export data in PDF and Excel formats for reporting and offline analysis.
 - Ensure exported documents preserve formatting and reflect applied filters or search criteria.
-- Use QuestPDF to generate high-quality, customizable PDF documents.
-- Use ClosedXML to create Excel files with structured data, formatting, and support for advanced Excel features.
+- Use **`QuestPDF`** to generate high-quality, customizable **`PDF`** documents.
+- Use **`ClosedXML`** to create Excel files with structured data, formatting, and support for advanced **`Excel`** features.
 
 ### Securing API and CORS Implementation
 - Secure the API using robust authentication and authorization mechanisms.
-- Handle authentication with JWT tokens to enable secure, stateless client-server communication.
-- Configure CORS to allow authorized cross-origin requests while maintaining protection against unauthorized access.
+- Handle authentication with **`JWT tokens`** to enable secure, stateless client-server communication.
+- Configure **`CORS`** to allow authorized cross-origin requests while maintaining protection against unauthorized access.
 
 ### Role-Based Authorization
 - Implement role-based access control with policies:
-  - `RequireSuperAdminRole`
-  - `RequireAdminRole`
-  - `RequireUserRole`
+  - **`RequireSuperAdminRole`**
+  - **`RequireAdminRole`**
+  - **`RequireUserRole`**
 - Enable fine-grained endpoint access control based on user roles to ensure secure handling of sensitive data.
 
 ### CORS Policy
-- Enable a global CORS policy (`_AllowAll`) to facilitate frontend-backend communication during development.
+- Enable a global CORS policy (**`_AllowAll`**) to facilitate frontend-backend communication during development.
 - Plan for more restrictive CORS policies in production environments for enhanced security.
 
 ### Versioning and Documenting API with Swagger
@@ -144,14 +144,14 @@ ___
 
 ### Logging and Exception Handling for Error Management
 - Integrate Serilog for structured, centralized logging, with configuration sourced from app settings.
-- Add custom middleware (`RequestLogContextMiddleware`) to enrich logs with request context, such as trace identifiers.
-- Implement global exception handler middleware (`GlobalExceptionHandler`) to standardize error responses and capture unhandled exceptions.
+- Add custom middleware (**`RequestLogContextMiddleware`**) to enrich logs with request context, such as trace identifiers.
+- Implement global exception handler middleware (**`GlobalExceptionHandler`**) to standardize error responses and capture unhandled exceptions.
 
 ### Middleware Customization
 - Implement custom middleware to enhance logging context and provide consistent exception handling, improving diagnostics and debugging.
 
 ### Configuration Management
-- Centralize all configurations (e.g., Serilog, rate limiting, authentication secrets, pagination settings) in `appsettings.json` for better maintainability and environment flexibility.
+- Centralize all configurations (e.g., Serilog, rate limiting, authentication secrets, pagination settings) in **`appsettings.json`** for better maintainability and environment flexibility.
 
 ### API Rate Limiting
 - Implement a rate limiter to protect API resources from abuse, mitigate DDoS attacks, and enhance overall API performance.
@@ -170,11 +170,11 @@ ___
 ## 🌐 [MVC Web Frontend](https://github.com/crni99/airport-automation/tree/main/mvc-frontend/AirportAutomationWeb) 🡥
 
 ### Consuming APIs with HttpClientFactory
-- Implement efficient and reusable API calls using `HttpClientFactory` to improve performance, manage resources effectively, and avoid socket exhaustion.
-- Centralize `HttpClient` configuration to ensure consistent request headers, including JSON content type, user agent, and authorization tokens.
+- Implement efficient and reusable API calls using **`HttpClientFactory`** to improve performance, manage resources effectively, and avoid socket exhaustion.
+- Centralize **`HttpClient`** configuration to ensure consistent request headers, including JSON content type, user agent, and authorization tokens.
 
 ### Generic and Typed API Interaction
-- Utilize generic methods for CRUD operations (`EditData<T>`, `DeleteData<T>`, etc.) to enable type-safe, reusable API communication across different data models.
+- Utilize generic methods for CRUD operations (**`CreateData<T>`**, **`ReadData<T>`**, etc.) to enable type-safe, reusable API communication across different data models.
 - Dynamically construct API endpoints based on model types with custom pluralization rules for flexible routing.
 - Support advanced filtering through dynamically built query strings tailored to each data model's specific filter requirements.
 - Implement pagination and optional retrieval of all data items for optimized data loading and exporting.
@@ -186,7 +186,7 @@ ___
 ### Managing Data Presentation and User Input
 - Handle dynamic data presentation using MVC templates and model binding to ensure consistent and user-friendly data display.
 - Develop user input forms with validation to maintain data accuracy and integrity.
-- Utilize the modern, responsive design and components of Bootstrap 5 for consistent and high-quality UI styling.
+- Utilize the modern, responsive design and components of **`Bootstrap 5`** for consistent and high-quality UI styling.
 
 ### Client-Side Scripting and AJAX Requests
 - Leverage JavaScript, jQuery, and AJAX to build responsive and interactive user interfaces, enabling asynchronous data fetching and partial page updates without full reloads.
@@ -198,7 +198,7 @@ ___
 
 ### Ensuring Web Application Security
 - Enforce HTTPS to secure data transmission between client and server.
-- Implement protections against common vulnerabilities such as Cross-Site Scripting (XSS), Cross-Site Request Forgery (CSRF), and control Cross-Origin Resource Sharing (CORS).
+- Implement protections against common vulnerabilities such as **`Cross-Site Scripting (XSS)`**, **`Cross-Site Request Forgery (CSRF)`**, and control **`Cross-Origin Resource Sharing (CORS)`**.
 - Secure API calls with bearer token authorization headers automatically added to all HTTP requests.
 ___
 <br />
@@ -207,24 +207,24 @@ ___
 ## ⚛️ [React Frontend](https://github.com/crni99/airport-automation/tree/main/react-frontend/src) 🡥
 
 ### User Interface Design
-- Build the frontend using functional components and React Hooks.
+- Build the frontend using functional components and **`React Hooks`**.
 - Design a responsive, mobile-friendly layout with modern styling techniques.
-- Utilize the rich set of components from Material UI (MUI) to implement a sleek, professional, and accessible user interface based on Material Design principles.
+- Utilize the rich set of components from `Material UI (MUI)` to implement a sleek, professional, and accessible user interface based on Material Design principles.
 
 ### State Management
-- Manage application state via Context API or Redux.
-- Handle asynchronous operations efficiently using the native `fetch` API and middleware where necessary.
+- Manage application state via **`Context API`** or **`Redux`**.
+- Handle asynchronous operations efficiently using the native **`fetch`** API and middleware where necessary.
 
 ### Data Fetching and Integration
 - Fully integrate with the backend API to retrieve and manage data such as flights, passengers, and airport operations.
 - Dynamically render components based on API responses and user interactions.
 
 ### Form Handling and Validation
-- Manage form inputs (e.g., bookings, user data) with **React Hook Form**.
+- Manage form inputs (e.g., bookings, user data) with **`React Hook Form`**.
 - Provide real-time validation with user-friendly error handling and feedback.
 
 ### Routing and Navigation
-- Handle navigation using **React Router**, including dynamic and nested routes for scalability.
+- Handle navigation using **`React Router`**, including dynamic and nested routes for scalability.
 - Enable seamless page transitions without full reloads.
 
 ### Exporting Data to PDF and Excel
@@ -234,11 +234,11 @@ ___
 - Provide download links directly in the UI for quick access to exported files.
 
 ### Security and Authentication
-- Implement secure user login using **JWT-based authentication**.
+- Implement secure user login using **`JWT-based authentication`**.
 - Apply role-based access control to restrict features based on user permissions.
 
 ### Performance Optimization
-- Improve performance through **lazy loading**, **code splitting**, and **memoization**.
+- Improve performance through **`lazy loading`**, **`code splitting`**, and **`memoization`**.
 - Optimize re-renders using React best practices to enhance responsiveness.
 ___
 <br />
@@ -252,7 +252,7 @@ ___
 
 <a name="-mirroring"></a>
 ## 🔄 [Mirroring](https://github.com/crni99/airport-automation/blob/main/.github/workflows/mirror-to-gitlab-and-bitbucket.yml) 🡥
-- The project is mirrored from GitHub to GitLab and Bitbucket, where custom GitHub Actions are configured to automatically trigger CI/CD pipelines on code changes.
+- The project is mirrored from **`GitHub`** to **`GitLab`** and **`Bitbucket`**, where custom **`GitHub Actions`** are configured to automatically trigger **`CI/CD pipelines`** on code changes.
 - This mirroring setup ensures continuous integration and deployment on both GitLab and Bitbucket by synchronizing code changes pushed to GitHub.
 - Both GitLab and Bitbucket automatically pick up the changes pushed from GitHub, triggering their respective CI/CD pipelines for seamless integration and deployment.
 ___
