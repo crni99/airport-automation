@@ -5,7 +5,6 @@ import { deleteData } from '../../utils/delete.js';
 import { editData } from '../../utils/edit.js';
 import PageTitle from '../common/PageTitle.jsx';
 import PageNavigationActions from '../common/pagination/PageNavigationActions.jsx';
-import Alert from '../common/Alert.jsx';
 import { useContext } from 'react';
 import { DataContext } from '../../store/DataContext.jsx';
 import { ENTITIES } from '../../utils/const.js';
@@ -13,7 +12,7 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
-import { Stack } from '@mui/material';
+import CustomAlert from '../common/Alert.jsx';
 
 export default function PilotDetails() {
     const dataCtx = useContext(DataContext);
@@ -47,25 +46,19 @@ export default function PilotDetails() {
     };
 
     return (
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ mt: 5 }}>
             <PageTitle title="Pilot Details" />
 
             {(isLoading || operationState.isPending) && (
-                <Stack direction="row" justifyContent="center" sx={{ mt: 4 }}>
-                    <CircularProgress />
-                </Stack>
+                <CircularProgress sx={{ mb: 0 }} />
             )}
 
             {error && (
-                <Alert severity="error" sx={{ mt: 2 }}>
-                    <Box component="span" sx={{ fontWeight: 'bold' }}>{error.type}</Box>: {error.message}
-                </Alert>
+                <CustomAlert alertType='error' type={error.type} message={error.message} />
             )}
 
             {operationState.operationError && (
-                <Alert severity="error" sx={{ mt: 2 }}>
-                    {operationState.operationError}
-                </Alert>
+                <CustomAlert alertType='error' type='Error' message={operationState.operationError} />
             )}
 
             {dataExist && (
@@ -112,7 +105,7 @@ export default function PilotDetails() {
                             </Typography>
                         </Grid>
                     </Grid>
-                    <Box sx={{ mt: 3 }}>
+                    <Box sx={{ mt: 5 }}>
                         <PageNavigationActions
                             dataType={ENTITIES.PILOTS}
                             dataId={id}

@@ -11,7 +11,7 @@ import Paper from '@mui/material/Paper';
 
 export default function AirlinesListTable({ airlines }) {
     return (
-        <TableContainer component={Paper}>
+        <TableContainer component={Paper} sx={{ maxHeight: 500 }}>
             <Table stickyHeader aria-label="Airlines table">
                 <TableHead>
                     <TableRow>

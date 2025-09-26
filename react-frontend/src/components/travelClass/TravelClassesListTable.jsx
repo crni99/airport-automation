@@ -13,8 +13,8 @@ export default function TravelClassesListTable({ travelClasses }) {
             <Table stickyHeader aria-label="Travel Classes table">
                 <TableHead>
                     <TableRow>
-                        <TableCell>Id</TableCell>
-                        <TableCell>Type</TableCell>
+                        <TableCell sx={{ p: 2}}>Id</TableCell>
+                        <TableCell sx={{ p: 2}}>Type</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -23,8 +23,8 @@ export default function TravelClassesListTable({ travelClasses }) {
                             key={travelClass.id}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
-                            <TableCell>{travelClass.id}</TableCell>
-                            <TableCell>{travelClass.type}</TableCell>
+                            <TableCell sx={{ p: 2}}>{travelClass.id}</TableCell>
+                            <TableCell sx={{ p: 2}}>{travelClass.type}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>

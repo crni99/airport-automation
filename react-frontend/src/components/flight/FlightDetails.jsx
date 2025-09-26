@@ -5,19 +5,17 @@ import { deleteData } from '../../utils/delete.js';
 import { editData } from '../../utils/edit.js';
 import PageTitle from '../common/PageTitle.jsx';
 import PageNavigationActions from '../common/pagination/PageNavigationActions.jsx';
-import Alert from '../common/Alert.jsx';
 import { useContext } from 'react';
 import { DataContext } from '../../store/DataContext.jsx';
 import { ENTITIES } from '../../utils/const.js';
 import openMap from '../../utils/openMapHelper.js';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
-import AlertTitle from '@mui/material/AlertTitle';
-import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
+import CustomAlert from '../common/Alert.jsx';
 
 export default function FlightDetails() {
     const dataCtx = useContext(DataContext);
@@ -51,27 +49,19 @@ export default function FlightDetails() {
     };
 
     return (
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ mt: 5 }}>
             <PageTitle title='Flight Details' />
 
             {(isLoading || operationState.isPending) && (
-                <Stack direction="row" justifyContent="center" sx={{ mt: 4 }}>
-                    <CircularProgress />
-                </Stack>
+                <CircularProgress sx={{ mb: 0 }} />
             )}
 
             {error && (
-                <Alert severity="error" sx={{ mt: 2 }}>
-                    <AlertTitle>Error</AlertTitle>
-                    {error.message}
-                </Alert>
+                <CustomAlert alertType='error' type={error.type} message={error.message} />
             )}
 
             {operationState.operationError && (
-                <Alert severity="error" sx={{ mt: 2 }}>
-                    <AlertTitle>Error</AlertTitle>
-                    {operationState.operationError}
-                </Alert>
+                <CustomAlert alertType='error' type='Error' message={operationState.operationError} />
             )}
 
             {dataExist && (
@@ -79,27 +69,25 @@ export default function FlightDetails() {
                     <Box sx={{ mt: 3 }}>
                         <Grid container spacing={8}>
                             <Grid item xs={12} sm={6}>
-                                <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>Id:</Typography>
+                                <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>Id</Typography>
                                 <Typography variant="body1" component="div">{flight.id}</Typography>
                             </Grid>
                             <Grid item xs={12} sm={6}>
-                                <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>Departure Date:</Typography>
+                                <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>Departure Date</Typography>
                                 <Typography variant="body1" component="div">{flight.departureDate}</Typography>
                             </Grid>
                             <Grid item xs={12} sm={6}>
-                                <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>Departure Time:</Typography>
+                                <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>Departure Time</Typography>
                                 <Typography variant="body1" component="div">{flight.departureTime}</Typography>
                             </Grid>
                         </Grid>
                     </Box>
-
-                    <Divider sx={{ my: 3 }} />
-
+                    <Divider sx={{ my: 4 }} />
                     <Box>
-                        <Typography variant="h6" gutterBottom>Airline Details</Typography>
+                        <Typography variant="h4" gutterBottom>Airline Details</Typography>
                         <Grid container spacing={8}>
                             <Grid item xs={12} sm={6}>
-                                <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>Id:</Typography>
+                                <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>Id</Typography>
                                 <Link
                                     component="button"
                                     variant="body1"
@@ -109,19 +97,17 @@ export default function FlightDetails() {
                                 </Link>
                             </Grid>
                             <Grid item xs={12} sm={6}>
-                                <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>Name:</Typography>
+                                <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>Name</Typography>
                                 <Typography variant="body1" component="div">{flight.airline.name}</Typography>
                             </Grid>
                         </Grid>
                     </Box>
-
-                    <Divider sx={{ my: 3 }} />
-
+                    <Divider sx={{ my: 4 }} />
                     <Box>
-                        <Typography variant="h6" gutterBottom>Destination Details</Typography>
+                        <Typography variant="h4" gutterBottom>Destination Details</Typography>
                         <Grid container spacing={8}>
                             <Grid item xs={12} sm={6}>
-                                <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>Id:</Typography>
+                                <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>Id</Typography>
                                 <Link
                                     component="button"
                                     variant="body1"
@@ -131,7 +117,7 @@ export default function FlightDetails() {
                                 </Link>
                             </Grid>
                             <Grid item xs={12} sm={6}>
-                                <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>City:</Typography>
+                                <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>City</Typography>
                                 <Link
                                     component="button"
                                     variant="body1"
@@ -141,7 +127,7 @@ export default function FlightDetails() {
                                 </Link>
                             </Grid>
                             <Grid item xs={12} sm={6}>
-                                <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>Airport:</Typography>
+                                <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>Airport</Typography>
                                 <Link
                                     component="button"
                                     variant="body1"
@@ -152,14 +138,12 @@ export default function FlightDetails() {
                             </Grid>
                         </Grid>
                     </Box>
-
-                    <Divider sx={{ my: 3 }} />
-
+                    <Divider sx={{ my: 4 }} />
                     <Box sx={{ mb: 3 }}>
-                        <Typography variant="h6" gutterBottom>Pilot Details</Typography>
+                        <Typography variant="h4" gutterBottom>Pilot Details</Typography>
                         <Grid container spacing={8}>
                             <Grid item xs={12} sm={6}>
-                                <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>Id:</Typography>
+                                <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>Id</Typography>
                                 <Link
                                     component="button"
                                     variant="body1"
@@ -169,25 +153,32 @@ export default function FlightDetails() {
                                 </Link>
                             </Grid>
                             <Grid item xs={12} sm={6}>
-                                <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>First Name:</Typography>
+                                <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>First Name</Typography>
                                 <Typography variant="body1" component="div">{flight.pilot.firstName}</Typography>
                             </Grid>
                             <Grid item xs={12} sm={6}>
-                                <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>Last Name:</Typography>
+                                <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>Last Name</Typography>
                                 <Typography variant="body1" component="div">{flight.pilot.lastName}</Typography>
                             </Grid>
                             <Grid item xs={12} sm={6}>
-                                <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>UPRN:</Typography>
+                                <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>UPRN</Typography>
                                 <Typography variant="body1" component="div">{flight.pilot.uprn}</Typography>
                             </Grid>
                             <Grid item xs={12} sm={6}>
-                                <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>Flying Hours:</Typography>
+                                <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>Flying Hours</Typography>
                                 <Typography variant="body1" component="div">{flight.pilot.flyingHours}</Typography>
                             </Grid>
                         </Grid>
                     </Box>
-
-                    <PageNavigationActions dataType={ENTITIES.FLIGHTS} dataId={id} onEdit={() => handleOperation('edit')} onDelete={() => handleOperation('delete')} />
+                    <Divider sx={{ my: 4 }} />
+                    <Box sx={{ mt: 5 }}>
+                        <PageNavigationActions
+                            dataType={ENTITIES.FLIGHTS}
+                            dataId={id}
+                            onEdit={() => handleOperation('edit')}
+                            onDelete={() => handleOperation('delete')}
+                        />
+                    </Box>
                 </>
             )}
         </Box>

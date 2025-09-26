@@ -136,7 +136,7 @@ export default function PlaneTicketCreateForm() {
     }
 
     return (
-        <Box sx={{ mt: 2 }}>
+        <Box sx={{ mt: 5 }}>
             <PageTitle title='Create Plane Ticket' />
             <Box
                 component="form"
@@ -255,7 +255,7 @@ export default function PlaneTicketCreateForm() {
                             }}
                         />
                     </Grid>
-                    <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>
+                    <Grid size={{ xs: 12 }} sx={{ mt: 3 }}>
                         <Button
                             type="submit"
                             variant="contained"

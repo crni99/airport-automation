@@ -59,7 +59,7 @@ export default function AirlineCreateForm() {
     };
 
     return (
-        <Box sx={{ mt: 2 }}>
+        <Box sx={{ mt: 5 }}>
             <PageTitle title='Create Airline' />
             <Box
                 component="form"

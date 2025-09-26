@@ -5,18 +5,17 @@ import { deleteData } from '../../utils/delete.js';
 import { editData } from '../../utils/edit.js';
 import PageTitle from '../common/PageTitle.jsx';
 import PageNavigationActions from '../common/pagination/PageNavigationActions.jsx';
-import Alert from '../common/Alert.jsx';
 import { useContext } from 'react';
 import { DataContext } from '../../store/DataContext.jsx';
 import openDetails from "../../utils/openDetailsHelper.js";
 import { ENTITIES } from '../../utils/const.js';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
-import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
-import AlertTitle from '@mui/material/AlertTitle';
 import Divider from '@mui/material/Divider';
+import CustomAlert from '../common/Alert.jsx';
 
 export default function PlaneTicketDetails() {
     const dataCtx = useContext(DataContext);
@@ -50,28 +49,24 @@ export default function PlaneTicketDetails() {
     };
 
     return (
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ mt: 5 }}>
             <PageTitle title='Plane Ticket Details' />
+
             {(isLoading || operationState.isPending) && (
-                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-                    <CircularProgress />
-                </Box>
+                <CircularProgress sx={{ mb: 0 }} />
             )}
+
             {error && (
-                <Alert severity="error" sx={{ mt: 2 }}>
-                    <AlertTitle>Error</AlertTitle>
-                    {error.message}
-                </Alert>
+                <CustomAlert alertType='error' type={error.type} message={error.message} />
             )}
+
             {operationState.operationError && (
-                <Alert severity="error" sx={{ mt: 2 }}>
-                    <AlertTitle>Error</AlertTitle>
-                    {operationState.operationError}
-                </Alert>
+                <CustomAlert alertType='error' type='Error' message={operationState.operationError} />
             )}
+
             {dataExist && (
-                <Box sx={{ mt: 2 }}>
-                    <Grid container spacing={2}>
+                <Box sx={{ mt: 3 }}>
+                    <Grid container spacing={8}>
                         <Grid item xs={12} sm={6}>
                             <Typography variant="subtitle1" fontWeight="bold">Id</Typography>
                             <Typography>{planeTicket.id}</Typography>
@@ -89,18 +84,18 @@ export default function PlaneTicketDetails() {
                             <Typography>{planeTicket.seatNumber}</Typography>
                         </Grid>
                     </Grid>
-                    <Divider sx={{ my: 3 }} />
-                    <Typography variant="h6" gutterBottom>Passenger Details</Typography>
-                    <Grid container spacing={2}>
+                    <Divider sx={{ my: 4 }} />
+                    <Typography variant="h4" gutterBottom>Passenger Details</Typography>
+                    <Grid container spacing={8}>
                         <Grid item xs={12} sm={6}>
-                            <Typography variant="subtitle1" fontWeight="bold">Id</Typography>
-                            <Button
-                                variant="contained"
-                                size="small"
+                            <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>Id</Typography>
+                            <Link
+                                component="button"
+                                variant="body1"
                                 onClick={() => openDetails('Passengers', planeTicket.passenger.id)}
                             >
                                 {planeTicket.passenger.id}
-                            </Button>
+                            </Link>
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <Typography variant="subtitle1" fontWeight="bold">First Name</Typography>
@@ -111,36 +106,36 @@ export default function PlaneTicketDetails() {
                             <Typography>{planeTicket.passenger.lastName}</Typography>
                         </Grid>
                     </Grid>
-                    <Divider sx={{ my: 3 }} />
-                    <Typography variant="h6" gutterBottom>Travel Class Details</Typography>
-                    <Grid container spacing={2}>
+                    <Divider sx={{ my: 4 }} />
+                    <Typography variant="h4" gutterBottom>Travel Class Details</Typography>
+                    <Grid container spacing={8}>
                         <Grid item xs={12} sm={6}>
-                            <Typography variant="subtitle1" fontWeight="bold">Id</Typography>
-                            <Button
-                                variant="contained"
-                                size="small"
+                            <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>Id</Typography>
+                            <Link
+                                component="button"
+                                variant="body1"
                                 onClick={() => openDetails('TravelClasses', planeTicket.travelClass.id)}
                             >
                                 {planeTicket.travelClass.id}
-                            </Button>
+                            </Link>
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <Typography variant="subtitle1" fontWeight="bold">Type</Typography>
                             <Typography>{planeTicket.travelClass.type}</Typography>
                         </Grid>
                     </Grid>
-                    <Divider sx={{ my: 3 }} />
-                    <Typography variant="h6" gutterBottom>Flight Details</Typography>
-                    <Grid container spacing={2}>
+                    <Divider sx={{ my: 4 }} />
+                    <Typography variant="h4" gutterBottom>Flight Details</Typography>
+                    <Grid container spacing={8}>
                         <Grid item xs={12} sm={6}>
-                            <Typography variant="subtitle1" fontWeight="bold">Id</Typography>
-                            <Button
-                                variant="contained"
-                                size="small"
+                            <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>Id</Typography>
+                            <Link
+                                component="button"
+                                variant="body1"
                                 onClick={() => openDetails('Flights', planeTicket.flight.id)}
                             >
                                 {planeTicket.flight.id}
-                            </Button>
+                            </Link>
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <Typography variant="subtitle1" fontWeight="bold">Departure Date</Typography>
@@ -151,12 +146,15 @@ export default function PlaneTicketDetails() {
                             <Typography>{planeTicket.flight.departureTime}</Typography>
                         </Grid>
                     </Grid>
-                    <PageNavigationActions
-                        dataType={ENTITIES.PLANE_TICKETS}
-                        dataId={id}
-                        onEdit={() => handleOperation('edit')}
-                        onDelete={() => handleOperation('delete')}
-                    />
+                    <Divider sx={{ my: 4 }} />
+                    <Box sx={{ mt: 5 }}>
+                        <PageNavigationActions
+                            dataType={ENTITIES.PLANE_TICKETS}
+                            dataId={id}
+                            onEdit={() => handleOperation('edit')}
+                            onDelete={() => handleOperation('delete')}
+                        />
+                    </Box>
                 </Box>
             )}
         </Box>

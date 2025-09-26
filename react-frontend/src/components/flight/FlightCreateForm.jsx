@@ -137,7 +137,7 @@ export default function FlightCreateForm() {
     }
 
     return (
-        <Box sx={{ mt: 2 }}>
+        <Box sx={{ mt: 5 }}>
             <PageTitle title='Create Flight' />
 
             {(isLoadingAirlines || isLoadingDestinations || isLoadingPilots) && (
@@ -245,7 +245,7 @@ export default function FlightCreateForm() {
                             }}
                         />
                     </Grid>
-                    <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>
+                    <Grid size={{ xs: 12 }} sx={{ mt: 1 }}>
                         <Button
                             type="submit"
                             variant="contained"
@@ -255,6 +255,7 @@ export default function FlightCreateForm() {
                             {formData.isPending ? <CircularProgress size={24} color="inherit" /> : 'Create'}
                         </Button>
                         <Button
+                            sx={{ ml: 3 }}
                             variant="outlined"
                             onClick={handleLoadMore}
                             disabled={isLoadingAirlines || isLoadingDestinations || isLoadingPilots}

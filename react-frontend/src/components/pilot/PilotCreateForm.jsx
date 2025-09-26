@@ -72,7 +72,7 @@ export default function PilotCreateForm() {
     };
 
     return (
-        <Box sx={{ mt: 2 }}>
+        <Box sx={{ mt: 5 }}>
             <PageTitle title='Create Pilot' />
             <Box
                 component="form"
@@ -138,7 +138,7 @@ export default function PilotCreateForm() {
                             helperText={formData.error}
                         />
                     </Grid>
-                    <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>
+                    <Grid size={{ xs: 12 }} sx={{ mt: 3 }}>
                         <Button
                             type="submit"
                             variant="contained"

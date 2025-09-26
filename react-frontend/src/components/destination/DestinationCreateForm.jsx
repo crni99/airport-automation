@@ -62,7 +62,7 @@ export default function DestinationCreateForm() {
     };
 
     return (
-        <Box sx={{ mt: 2 }}>
+        <Box sx={{ mt: 5 }}>
             <PageTitle title='Create Destination' />
             <Box
                 component="form"
@@ -113,7 +113,6 @@ export default function DestinationCreateForm() {
                     )}
                 </Grid>
             </Box>
-
             <Box sx={{ mt: 3 }}>
                 <BackToListAction dataType={ENTITIES.DESTINATIONS} />
             </Box>

@@ -45,11 +45,11 @@ export default function AirlineDetails() {
     };
 
     return (
-        <Box sx={{ mt: 2 }}>
+        <Box sx={{ mt: 5 }}>
             <PageTitle title='Airline Details' />
 
             {(isLoading || operationState.isPending) && (
-                <CircularProgress sx={{ mb: 2 }} />
+                <CircularProgress sx={{ mb: 0 }} />
             )}
 
             {error && (
@@ -64,23 +64,19 @@ export default function AirlineDetails() {
                 <Box sx={{ mt: 3 }}>
                     <Grid container spacing={6}>
                         <Grid>
-                            <Typography variant="subtitle1" component="dt">
-                                Id
-                            </Typography>
-                            <Typography variant="body1" component="dd" sx={{ mt: 1 }}>
+                            <Typography variant="subtitle1" fontWeight="bold">Id</Typography>
+                            <Typography variant="body1" sx={{ mt: 1 }}>
                                 {airline.id}
                             </Typography>
                         </Grid>
                         <Grid>
-                            <Typography variant="subtitle1" component="dt">
-                                Name
-                            </Typography>
-                            <Typography variant="body1" component="dd" sx={{ mt: 1 }}>
+                            <Typography variant="subtitle1" fontWeight="bold">Name</Typography>
+                            <Typography variant="body1" sx={{ mt: 1 }}>
                                 {airline.name}
                             </Typography>
                         </Grid>
                     </Grid>
-                    <Box sx={{ mt: 4 }}>
+                    <Box sx={{ mt: 5 }}>
                         <PageNavigationActions
                             dataType={ENTITIES.AIRLINES}
                             dataId={id}

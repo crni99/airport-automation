@@ -5,7 +5,6 @@ import { deleteData } from '../../utils/delete.js';
 import { editData } from '../../utils/edit.js';
 import PageTitle from '../common/PageTitle.jsx';
 import PageNavigationActions from '../common/pagination/PageNavigationActions.jsx';
-import Alert from '../common/Alert.jsx';
 import { useContext } from 'react';
 import { DataContext } from '../../store/DataContext.jsx';
 import openMap from '../../utils/openMapHelper.js';
@@ -13,10 +12,9 @@ import { ENTITIES } from '../../utils/const.js';
 import MapEmbed from '../common/MapEmbed.jsx';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
-import AlertTitle from '@mui/material/AlertTitle';
 import Link from '@mui/material/Link';
-import { Stack } from '@mui/material';
 import { Box, Grid } from '@mui/material';
+import CustomAlert from '../common/Alert.jsx';
 
 export default function PassengerDetails() {
     const dataCtx = useContext(DataContext);
@@ -50,32 +48,24 @@ export default function PassengerDetails() {
     };
 
     return (
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ mt: 5 }}>
             <PageTitle title='Passenger Details' />
 
             {(isLoading || operationState.isPending) && (
-                <Stack direction="row" justifyContent="center" sx={{ mt: 4 }}>
-                    <CircularProgress />
-                </Stack>
+                <CircularProgress sx={{ mb: 0 }} />
             )}
 
             {error && (
-                <Alert severity="error" sx={{ mt: 2 }}>
-                    <AlertTitle>Error</AlertTitle>
-                    {error.message}
-                </Alert>
+                <CustomAlert alertType='error' type={error.type} message={error.message} />
             )}
 
             {operationState.operationError && (
-                <Alert severity="error" sx={{ mt: 2 }}>
-                    <AlertTitle>Error</AlertTitle>
-                    {operationState.operationError}
-                </Alert>
+                <CustomAlert alertType='error' type='Error' message={operationState.operationError} />
             )}
 
             {dataExist && (
                 <>
-                    <Grid container spacing={4} sx={{ mt: 3 }}>
+                    <Grid container spacing={24} sx={{ mt: 3 }}>
                         <Grid item xs={12} md={6}>
                             <Box component="dl">
                                 <Box sx={{ mb: 3 }}>
@@ -114,17 +104,19 @@ export default function PassengerDetails() {
                                     <Typography component="dd" variant="body1">{passenger.phone}</Typography>
                                 </Box>
                             </Box>
+                            <Box sx={{ mt: 5 }}>
+                                <PageNavigationActions
+                                    dataType={ENTITIES.PASSENGERS}
+                                    dataId={id}
+                                    onEdit={() => handleOperation('edit')}
+                                    onDelete={() => handleOperation('delete')}
+                                />
+                            </Box>
                         </Grid>
                         <Grid sx={{ mb: 3, width: '50%' }}>
                             <MapEmbed address={passenger.address} />
                         </Grid>
                     </Grid>
-                    <PageNavigationActions
-                        dataType={ENTITIES.PASSENGERS}
-                        dataId={id}
-                        onEdit={() => handleOperation('edit')}
-                        onDelete={() => handleOperation('delete')}
-                    />
                 </>
             )}
         </Box>

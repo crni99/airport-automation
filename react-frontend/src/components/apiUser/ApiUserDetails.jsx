@@ -11,8 +11,7 @@ import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import Alert from '@mui/material/Alert';
-import { Stack } from '@mui/material';
+import CustomAlert from '../common/Alert.jsx';
 
 export default function ApiUserDetails() {
     const dataCtx = useContext(DataContext);
@@ -46,25 +45,19 @@ export default function ApiUserDetails() {
     };
 
     return (
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ mt: 5 }}>
             <PageTitle title="Api User Details" />
 
             {(isLoading || operationState.isPending) && (
-                <Stack direction="row" justifyContent="center" sx={{ mt: 4 }}>
-                    <CircularProgress />
-                </Stack>
+                <CircularProgress sx={{ mb: 0 }} />
             )}
 
             {error && (
-                <Alert severity="error" sx={{ mt: 2 }}>
-                    <Box component="span" sx={{ fontWeight: 'bold' }}>{error.type}</Box>: {error.message}
-                </Alert>
+                <CustomAlert alertType='error' type={error.type} message={error.message} />
             )}
 
             {operationState.operationError && (
-                <Alert severity="error" sx={{ mt: 2 }}>
-                    {operationState.operationError}
-                </Alert>
+                <CustomAlert alertType='error' type='Error' message={operationState.operationError} />
             )}
 
             {dataExist && (
@@ -103,7 +96,7 @@ export default function ApiUserDetails() {
                             </Typography>
                         </Grid>
                     </Grid>
-                    <Box sx={{ mt: 3 }}>
+                    <Box sx={{ mt: 5 }}>
                         <PageNavigationActions
                             dataType={ENTITIES.API_USERS}
                             dataId={id}

@@ -10,13 +10,11 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
-import Alert from '@mui/material/Alert';
-import AlertTitle from '@mui/material/AlertTitle';
 import Link from '@mui/material/Link';
-import { Stack } from '@mui/material';
 import PageTitle from '../common/PageTitle.jsx';
 import PageNavigationActions from '../common/pagination/PageNavigationActions.jsx';
 import MapEmbed from '../common/MapEmbed.jsx';
+import CustomAlert from '../common/Alert.jsx';
 
 export default function DestinationDetails() {
     const dataCtx = useContext(DataContext);
@@ -50,27 +48,19 @@ export default function DestinationDetails() {
     };
 
     return (
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ mt: 5 }}>
             <PageTitle title='Destination Details' />
 
             {(isLoading || operationState.isPending) && (
-                <Stack direction="row" justifyContent="center" sx={{ mt: 4 }}>
-                    <CircularProgress />
-                </Stack>
+                <CircularProgress sx={{ mb: 0 }} />
             )}
 
             {error && (
-                <Alert severity="error" sx={{ mt: 2 }}>
-                    <AlertTitle>Error</AlertTitle>
-                    {error.message}
-                </Alert>
+                <CustomAlert alertType='error' type={error.type} message={error.message} />
             )}
 
             {operationState.operationError && (
-                <Alert severity="error" sx={{ mt: 2 }}>
-                    <AlertTitle>Error</AlertTitle>
-                    {operationState.operationError}
-                </Alert>
+                <CustomAlert alertType='error' type='Error' message={operationState.operationError} />
             )}
 
             {dataExist && (
@@ -105,17 +95,20 @@ export default function DestinationDetails() {
                                     </Link>
                                 </Box>
                             </Box>
+                            <Box sx={{ mt: 5 }}>
+                                <PageNavigationActions
+                                    dataType={ENTITIES.DESTINATIONS}
+                                    dataId={id}
+                                    onEdit={() => handleOperation('edit')}
+                                    onDelete={() => handleOperation('delete')}
+                                />
+                            </Box>
                         </Grid>
                         <Grid sx={{ mb: 3, width: '50%' }}>
                             <MapEmbed address={`${destination.city} ${destination.airport}`} />
                         </Grid>
                     </Grid>
-                    <PageNavigationActions
-                        dataType={ENTITIES.DESTINATIONS}
-                        dataId={id}
-                        onEdit={() => handleOperation('edit')}
-                        onDelete={() => handleOperation('delete')}
-                    />
+
                 </>
             )}
         </Box>

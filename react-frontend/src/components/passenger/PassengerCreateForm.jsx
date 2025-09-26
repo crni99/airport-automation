@@ -74,7 +74,7 @@ export default function PassengerCreateForm() {
     };
 
     return (
-        <Box sx={{ mt: 2 }}>
+        <Box sx={{ mt: 5 }}>
             <PageTitle title='Create Passenger' />
             <Box
                 component="form"
