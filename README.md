@@ -123,6 +123,7 @@ ___
 
 ### Securing API and CORS Implementation
 - Secure the API using robust authentication and authorization mechanisms.
+- Passwords are securely stored using the **`BCrypt`** hashing algorithm, which incorporates a robust salt and adaptive iteration count to defend against brute-force and rainbow table attacks.
 - Handle authentication with **`JWT tokens`** to enable secure, stateless client-server communication.
 - Configure **`CORS`** to allow authorized cross-origin requests while maintaining protection against unauthorized access.
 
