@@ -40,7 +40,6 @@ export default function PassengersListTable({ passengers }) {
                             <TableCell>{passenger.passport}</TableCell>
                             <TableCell>
                                 <Link
-                                    sx={{ color: '#009be5' }}
                                     component="button"
                                     variant="body2"
                                     onClick={() => openMap(passenger.address)}

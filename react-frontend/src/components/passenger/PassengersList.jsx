@@ -59,7 +59,7 @@ export default function PassengersList() {
                 setTriggerFetch={setTriggerFetch}
             />
 
-            <Box sx={{ mt: 5 }}>
+            <Box sx={{ mt: 3, mb: -1 }}>
                 {isLoading && <CircularProgress sx={{ mb: 2 }} />}
 
                 {isError && error && (
