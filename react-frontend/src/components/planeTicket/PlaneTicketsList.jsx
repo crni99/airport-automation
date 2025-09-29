@@ -54,7 +54,7 @@ export default function PlaneTicketsList() {
         <>
             <ListHeader
                 dataExist={dataExist}
-                dataType='plane-tickets'
+                dataType={ENTITIES.PLANE_TICKETS}
                 createButtonTitle="Create Ticket"
                 setTriggerFetch={setTriggerFetch}
             />

@@ -36,9 +36,14 @@ export default function SearchInputWithButton({ type, setTriggerFetch, createBut
         setSearchTerms({});
     };
 
+    var pathType = type;
+    if (type === ENTITIES.PLANE_TICKETS) {
+        pathType = 'plane-tickets';
+    }
     const createButton = !disableCreateButton && (
-        <CreateButton destination={`/${type}/Create`} title={createButtonTitle} />
+        <CreateButton destination={`/${pathType}/Create`} title={createButtonTitle} />
     );
+
     const exportButtonsOrSpace = isUser !== 'User' && (
         <ExportButtons dataType={type} />
     );
@@ -290,6 +295,46 @@ export default function SearchInputWithButton({ type, setTriggerFetch, createBut
                                     onChange={handleInputChange}
                                     size='small'
                                     sx={{ width: '15%' }}
+                                />
+                                <SearchButton onClick={handleSearch} />
+                                <ClearInputButton onClear={handleClear} />
+                                {exportButtonsOrSpace}
+                            </Stack>
+                        </Box>
+                    </>
+                );
+            case ENTITIES.PLANE_TICKETS:
+                return (
+                    <>
+                        {createButton}
+                        <Box sx={{ width: { xs: '100%', md: 'auto' } }}>
+                            <Stack direction="row" spacing={2} alignItems="center">
+                                <TextField
+                                    id="price"
+                                    label="Price"
+                                    type="number"
+                                    placeholder="600"
+                                    value={searchTerms.price || ''}
+                                    onChange={handleInputChange}
+                                    size='small'
+                                />
+                                <TextField
+                                    id="purchaseDate"
+                                    label="Purchase Date"
+                                    type="date"
+                                    InputLabelProps={{ shrink: true }}
+                                    value={searchTerms.purchaseDate || ''}
+                                    onChange={handleInputChange}
+                                    size='small'
+                                />
+                                <TextField
+                                    id="seatNumber"
+                                    label="Seat Number"
+                                    type="number"
+                                    placeholder="160"
+                                    value={searchTerms.seatNumber || ''}
+                                    onChange={handleInputChange}
+                                    size='small'
                                 />
                                 <SearchButton onClick={handleSearch} />
                                 <ClearInputButton onClear={handleClear} />

@@ -1,17 +1,13 @@
 import React, { useState } from 'react';
 import { useExport } from '../../hooks/useExport';
-
-// MUI Components
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
-
-// MUI Icons
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import DescriptionIcon from '@mui/icons-material/Description';
-import FileDownloadIcon from '@mui/icons-material/FileDownload'; // New icon for the main button
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 
 export default function ExportButton({ dataType }) {
     const { triggerExport, isLoading } = useExport();

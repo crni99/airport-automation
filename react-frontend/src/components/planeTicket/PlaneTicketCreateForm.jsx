@@ -222,6 +222,7 @@ export default function PlaneTicketCreateForm() {
                             variant="outlined"
                             value={formData.price}
                             onChange={handleChange}
+                            placeholder="600"
                             required
                             fullWidth
                         />
@@ -235,6 +236,7 @@ export default function PlaneTicketCreateForm() {
                             variant="outlined"
                             value={formData.seatNumber}
                             onChange={handleChange}
+                            placeholder="120"
                             required
                             fullWidth
                         />

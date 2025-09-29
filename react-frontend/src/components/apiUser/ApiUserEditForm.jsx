@@ -169,7 +169,7 @@ export default function ApiUserEditForm() {
                 </Box>
             )}
             <Box sx={{ mt: 3 }}>
-                <BackToListAction dataType={ENTITIES.AIRLINES} />
+                <BackToListAction dataType={ENTITIES.API_USERS} />
             </Box>
         </Box>
     );
