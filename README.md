@@ -14,11 +14,16 @@ git clone https://github.com/crni99/airport-automation.git
 ```bash
 cd airport-automation/backend/AirportAutomationApi
 ```
-3. **Replace the connection string**
-- Open `appsettings.json` and update the `DefaultConnection` value to point to your local SQL Server instance:
+3. **Configure Database Provider and Connection String**
+- Open `appsettings.json` and choose your preferred database provider.
+- Update the `DatabaseProvider` value to match your choice (`SqlServer`, `Postgres`, or `MySql`).
+- Update the corresponding connection string with your local server details, credentials, and port.
 ```json
+"DatabaseProvider": "SqlServer", // <- CHANGE this to your selected provider!
 "ConnectionStrings": {
-  "Default": "Server=YOUR_SERVER_NAME;Database=AirportAutomation;Trusted_Connection=True;MultipleActiveResultSets=true"
+  "SqlServerConnection": "Data Source=YOUR_SQL_SERVER_INSTANCE;Initial Catalog=AirportAutomation;Integrated Security=True;TrustServerCertificate=True;MultipleActiveResultSets=true;",
+  "PostgresConnection": "Host=localhost;Port=5432;Username=YOUR_USER;Password=YOUR_PASSWORD;Database=AirportAutomation",
+  "MySqlConnection": "Server=localhost;Port=3306;Database=AirportAutomation;Uid=YOUR_USER;Pwd=YOUR_PASSWORD;"
 }
 ```
 4. **Run migrations and seed the database**
