@@ -17,9 +17,11 @@ namespace AirportAutomation.Api.Repositories
 		{
 			return _context.ApiUser.FirstOrDefault(user => user.UserName.Equals(username));
 		}
+
 		public void Dispose()
 		{
 			_context.Dispose();
 		}
+
 	}
 }

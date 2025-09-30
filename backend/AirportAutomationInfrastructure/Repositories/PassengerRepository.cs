@@ -97,6 +97,19 @@ namespace AirportAutomation.Infrastructure.Repositories
 				.ToListAsync(cancellationToken);
 		}
 
+		public async Task<bool> ExistsByUPRN(string uprn)
+		{
+			return await _context.Passenger
+								 .AsNoTracking()
+								 .AnyAsync(p => p.UPRN == uprn);
+		}
+
+		public async Task<bool> ExistsByPassport(string passport)
+		{
+			return await _context.Passenger
+								 .AsNoTracking()
+								 .AnyAsync(p => p.Passport == passport);
+		}
 
 		public async Task<PassengerEntity> PostPassenger(PassengerEntity passenger)
 		{

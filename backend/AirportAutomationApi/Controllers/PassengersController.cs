@@ -7,6 +7,7 @@ using AirportAutomation.Core.FilterExtensions;
 using AirportAutomation.Core.Filters;
 using AirportAutomation.Core.Interfaces.IServices;
 using AutoMapper;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -231,14 +232,21 @@ namespace AirportAutomation.Api.Controllers
 		/// <response code="400">If the request is invalid or if there's a validation error.</response>
 		/// <response code="401">If the user is not authenticated.</response>
 		/// <response code="403">If the authenticated user does not have permission to access the requested resource.</response>
+		/// <response code="409">Conflict. Passenger with UPRN or Passport already exists.</response>
 		[HttpPost]
 		[Authorize(Policy = "RequireAdminRole")]
 		[ProducesResponseType(201, Type = typeof(PassengerDto))]
 		[ProducesResponseType(400)]
 		[ProducesResponseType(401)]
 		[ProducesResponseType(403)]
+		[ProducesResponseType(409)]
 		public async Task<ActionResult<PassengerDto>> PostPassenger(PassengerCreateDto passengerCreateDto)
 		{
+			if (await _passengerService.ExistsByUPRN(passengerCreateDto.UPRN) || await _passengerService.ExistsByPassport(passengerCreateDto.Passport))
+			{
+				_logger.LogInformation("Passenger with UPRN {UPRN} or Passport {Passport} already exists.", passengerCreateDto.UPRN, passengerCreateDto.Passport);
+				return Conflict("Passenger with UPRN or Passport already exists.");
+			}
 			var passenger = _mapper.Map<PassengerEntity>(passengerCreateDto);
 			await _passengerService.PostPassenger(passenger);
 			var passengerDto = _mapper.Map<PassengerDto>(passenger);

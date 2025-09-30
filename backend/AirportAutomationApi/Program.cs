@@ -14,6 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using QuestPDF.Infrastructure;
 using Serilog;
+using System;
 using System.Security.Claims;
 using System.Text;
 
@@ -77,7 +78,8 @@ builder.Services.AddSwaggerGen(setupAction =>
 
 	});
 
-	/* setupAction.SwaggerDoc("v2", new OpenApiInfo
+	/*
+	setupAction.SwaggerDoc("v2", new OpenApiInfo
 	{
 		Description = "Airport Automation Api - Version 2",
 		Title = "AirportAutomationApi",
@@ -89,7 +91,8 @@ builder.Services.AddSwaggerGen(setupAction =>
 			Url = new Uri("https://github.com/crni99")
 		},
 
-	}); */
+	});
+	*/
 
 	setupAction.AddSecurityDefinition("AirportAutomationApiBearerAuth", new OpenApiSecurityScheme()
 	{
@@ -120,9 +123,34 @@ builder.Services.AddSwaggerGen(setupAction =>
 
 BinderConfiguration.Binders(builder.Services);
 
-builder.Services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(
-	builder.Configuration.GetConnectionString("Default")
-));
+var databaseProvider = builder.Configuration.GetValue<string>("DatabaseProvider");
+var connectionString = builder.Configuration.GetConnectionString(databaseProvider + "Connection");
+
+builder.Services.AddDbContext<DatabaseContext>(options =>
+{
+	switch (databaseProvider?.ToLowerInvariant())
+	{
+		case "mysql":
+			var serverVersion = ServerVersion.AutoDetect(connectionString);
+			options.UseMySql(connectionString, serverVersion);
+			break;
+
+		case "postgres":
+		case "postgresql":
+		case "npgsql":
+			options.UseNpgsql(connectionString).UseInternalServiceProvider(builder.Services.BuildServiceProvider());
+			break;
+
+		case "sqlserver":
+		case "mssql":
+		case "tsql":
+			options.UseSqlServer(connectionString);
+			break;
+
+		default:
+			throw new Exception($"Unsupported provider: {databaseProvider}");
+	}
+});
 
 builder.Services.AddAuthentication(options =>
 	{

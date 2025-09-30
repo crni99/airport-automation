@@ -11,6 +11,8 @@ namespace AirportAutomation.Core.Interfaces.IServices
 		Task<PassengerEntity?> GetPassenger(int id);
 		Task<IList<PassengerEntity?>> GetPassengersByName(CancellationToken cancellationToken, int page, int pageSize, string firstName, string lastName);
 		Task<IList<PassengerEntity?>> GetPassengersByFilter(CancellationToken cancellationToken, int page, int pageSize, PassengerSearchFilter filter);
+		Task<bool> ExistsByUPRN(string uprn);
+		Task<bool> ExistsByPassport(string passport);
 		Task<PassengerEntity> PostPassenger(PassengerEntity passenger);
 		Task PutPassenger(PassengerEntity passenger);
 		Task<PassengerEntity> PatchPassenger(int id, JsonPatchDocument passengerDocument);

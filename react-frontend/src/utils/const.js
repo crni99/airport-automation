@@ -19,6 +19,18 @@ export const ENTITIES = {
     HEALTH_CHECKS: 'HealthCheck',
 };
 
+export const ENTITY_PATHS = {
+    AIRLINES: 'airlines',
+    API_USERS: 'api-users',
+    DESTINATIONS: 'destinations',
+    FLIGHTS: 'flights',
+    PASSENGERS: 'passengers',
+    PILOTS: 'pilots',
+    PLANE_TICKETS: 'plane-tickets',
+    TRAVEL_CLASSES: 'travel-classes',
+    HEALTH_CHECKS: 'health-checks',
+}
+
 export const ROLES = {
     SUPER_ADMIN: 'SuperAdmin',
     ADMIN: 'Admin',

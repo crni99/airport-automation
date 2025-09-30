@@ -40,6 +40,16 @@ namespace AirportAutomation.Application.Services
 			return await _passengerRepository.GetPassengersByFilter(cancellationToken, page, pageSize, filter);
 		}
 
+		public async Task<bool> ExistsByUPRN(string uprn)
+		{
+			return await _passengerRepository.ExistsByUPRN(uprn);
+		}
+
+		public async Task<bool> ExistsByPassport(string passport)
+		{
+			return await _passengerRepository.ExistsByPassport(passport);
+		}
+
 		public async Task<PassengerEntity> PostPassenger(PassengerEntity passenger)
 		{
 			return await _passengerRepository.PostPassenger(passenger);
