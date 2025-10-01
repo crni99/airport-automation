@@ -138,7 +138,7 @@ builder.Services.AddDbContext<DatabaseContext>(options =>
 		case "postgres":
 		case "postgresql":
 		case "npgsql":
-			options.UseNpgsql(connectionString).UseInternalServiceProvider(builder.Services.BuildServiceProvider());
+			options.UseNpgsql(connectionString);
 			break;
 
 		case "sqlserver":
@@ -231,17 +231,14 @@ var app = builder.Build();
 
 app.UseStaticFiles();
 
-if (app.Environment.IsDevelopment())
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-	app.UseSwagger();
-	app.UseSwaggerUI(c =>
-	{
-		c.SwaggerEndpoint("/swagger/v1/swagger.json", "Airport Automation API V1");
-		// c.SwaggerEndpoint("/swagger/v2/swagger.json", "Airport Automation API V2");
-		c.DefaultModelsExpandDepth(-1);
-		c.InjectJavascript("/swagger-ui/swagger-theme-toggle.js");
-	});
-}
+	c.SwaggerEndpoint("/swagger/v1/swagger.json", "Airport Automation API V1");
+	// c.SwaggerEndpoint("/swagger/v2/swagger.json", "Airport Automation API V2");
+	c.DefaultModelsExpandDepth(-1);
+	c.InjectJavascript("/swagger-ui/swagger-theme-toggle.js");
+});
 
 app.UseHttpsRedirection();
 app.UseMiddleware<RequestLogContextMiddleware>();
