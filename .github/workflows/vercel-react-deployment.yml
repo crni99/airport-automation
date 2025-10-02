@@ -1,0 +1,29 @@
+name: Vercel React Frontend Deployment
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'react-frontend/**'
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+
+      - name: Deploy React Frontend to Vercel Production
+        uses: vercel/actions-deploy@v2
+        with:
+          vercel-token: ${{ secrets.VERCEL_ACCESS_TOKEN }}
+          
+          working-directory: ./react-frontend
+          
+          vercel-args: '--prod'
