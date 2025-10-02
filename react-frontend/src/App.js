@@ -16,6 +16,7 @@ import { Container, Box } from '@mui/material';
 import Navbar from './components/common/header/Navbar';
 import Footer from './components/common/Footer';
 import { getAuthToken } from "./utils/auth";
+import { ENTITY_PATHS } from './utils/const';
 
 function App() {
   const isLoggedIn = getAuthToken() !== null;
@@ -38,7 +39,7 @@ function App() {
           <Container>
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/health-check" element={<HealthCheck />} />
+              <Route path={ENTITY_PATHS.HEALTH_CHECKS} element={<HealthCheck />} />
               <Route path="/unauthorized" element={<Unauthorized />} />
               <Route element={<ProtectedRouteV3 />}>
                 {AirlineRoutes}

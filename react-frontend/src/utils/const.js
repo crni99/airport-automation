@@ -20,15 +20,15 @@ export const ENTITIES = {
 };
 
 export const ENTITY_PATHS = {
-    AIRLINES: 'airlines',
-    API_USERS: 'api-users',
-    DESTINATIONS: 'destinations',
-    FLIGHTS: 'flights',
-    PASSENGERS: 'passengers',
-    PILOTS: 'pilots',
-    PLANE_TICKETS: 'plane-tickets',
-    TRAVEL_CLASSES: 'travel-classes',
-    HEALTH_CHECKS: 'health-checks',
+    AIRLINES: '/airlines',
+    API_USERS: '/api-users',
+    DESTINATIONS: 'd/estinations',
+    FLIGHTS: '/flights',
+    PASSENGERS: '/passengers',
+    PILOTS: '/pilots',
+    PLANE_TICKETS: '/plane-tickets',
+    TRAVEL_CLASSES: '/travel-classes',
+    HEALTH_CHECKS: '/health-checks',
 }
 
 export const ROLES = {

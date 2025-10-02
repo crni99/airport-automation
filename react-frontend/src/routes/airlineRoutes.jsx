@@ -5,15 +5,26 @@ import AirlineDetails from "../components/airline/AirlineDetails";
 import AirlineCreateForm from "../components/airline/AirlineCreateForm";
 import AirlineEditForm from "../components/airline/AirlineEditForm";
 import ProtectedRoute from "../routes/ProtectedRoute";
+import { ENTITY_PATHS } from '../utils/const';
 
 const AirlinesRoutes = (
     <>
-        <Route path="/airlines" element={<AirlinesList />} />
-        <Route path="/airlines/:id" element={<AirlineDetails />} />
-        <Route path="/airlines/create" 
-            element={<ProtectedRoute element={<AirlineCreateForm />} />} />
-        <Route path="/airlines/edit/:id" 
-            element={<ProtectedRoute element={<AirlineEditForm />} />} />
+        <Route
+            path={ENTITY_PATHS.AIRLINES}
+            element={<AirlinesList />}
+        />
+        <Route
+            path={`${ENTITY_PATHS.AIRLINES}/:id`}
+            element={<AirlineDetails />}
+        />
+        <Route
+            path={`${ENTITY_PATHS.AIRLINES}/create`}
+            element={<ProtectedRoute element={<AirlineCreateForm />} />}
+        />
+        <Route
+            path={`${ENTITY_PATHS.AIRLINES}/edit/:id`}
+            element={<ProtectedRoute element={<AirlineEditForm />} />}
+        />
     </>
 );
 
