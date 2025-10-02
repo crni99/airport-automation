@@ -20,26 +20,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Install Vercel CLI
-        run: npm install --global vercel@latest
-        shell: bash
-
-      - name: Pull Vercel Environment Information
-        run: vercel pull --yes --environment=production --token=$VERCEL_ACCESS_TOKEN
-        working-directory: react-frontend
-        shell: bash
-
-      - name: Install dependencies
-        run: npm install
-        working-directory: react-frontend
-        shell: bash
-
-      - name: Build React app
-        run: npm run build
-        working-directory: react-frontend
-        shell: bash
-
-      - name: Deploy Project Artifacts to Vercel
-        run: vercel deploy --prebuilt --prod --token=$VERCEL_ACCESS_TOKEN
-        working-directory: react-frontend
-        shell: bash
+      - name: Deploy to Vercel (let Vercel build everything)
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_ACCESS_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: react-frontend
+          vercel-args: '--prod'
