@@ -1,6 +1,6 @@
 {
   "builds": [
-    { "src": "package.json", "use": "@vercel/static-build" }
+    { "src": "react-frontend/package.json", "use": "@vercel/static-build" }
   ],
-  "outputDirectory": "build"
+  "outputDirectory": "react-frontend/build"
 }
