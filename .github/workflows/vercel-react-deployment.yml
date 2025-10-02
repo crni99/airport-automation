@@ -15,9 +15,6 @@ on:
 jobs:
   deploy-production:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: react-frontend
 
     steps:
       - name: Checkout repository
@@ -25,15 +22,24 @@ jobs:
 
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
+        shell: bash
 
       - name: Pull Vercel Environment Information
         run: vercel pull --yes --environment=production --token=$VERCEL_ACCESS_TOKEN
+        working-directory: react-frontend
+        shell: bash
 
       - name: Install dependencies
         run: npm install
+        working-directory: react-frontend
+        shell: bash
 
       - name: Build React app
         run: npm run build
+        working-directory: react-frontend
+        shell: bash
 
       - name: Deploy Project Artifacts to Vercel
         run: vercel deploy --prebuilt --prod --token=$VERCEL_ACCESS_TOKEN
+        working-directory: react-frontend
+        shell: bash
