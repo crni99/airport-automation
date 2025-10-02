@@ -1,4 +1,9 @@
-name: Vercel React Frontend Deployment
+name: Vercel Frontend Deployment
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+  VERCEL_TOKEN: ${{ secrets.VERCEL_ACCESS_TOKEN }}
 
 on:
   push:
@@ -8,25 +13,27 @@ on:
       - 'react-frontend/**'
 
 jobs:
-  deploy:
+  deploy-production:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: react-frontend
 
     steps:
-      - name: Checkout repository code
-        uses: actions/checkout@v4
-      
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=production --token=$VERCEL_TOKEN
+
       - name: Install dependencies
         run: npm install
-        working-directory: react-frontend
-      
-      - name: Build React app
-        run: npm run build
-        working-directory: react-frontend
 
-      - name: Deploy React Frontend to Vercel Production
-        uses: amondnet/vercel-action@v41.1.4
-        with:
-          vercel-token: ${{ secrets.VERCEL_ACCESS_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod'
+      - name: Build Project Artifacts
+        run: vercel build --prod --token=$VERCEL_TOKEN
+
+      - name: Deploy Project Artifacts to Vercel
+        run: vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
