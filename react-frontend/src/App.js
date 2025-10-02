@@ -19,6 +19,7 @@ import { getAuthToken } from "./utils/auth";
 import { ENTITY_PATHS } from './utils/const';
 
 function App() {
+  
   const isLoggedIn = getAuthToken() !== null;
 
   return (
