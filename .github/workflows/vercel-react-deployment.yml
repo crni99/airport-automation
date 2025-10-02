@@ -10,17 +10,24 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout repository code
         uses: actions/checkout@v4
+      
+      - name: Install dependencies
+        run: npm install
+        working-directory: react-frontend
+      
+      - name: Build React app
+        run: npm run build
+        working-directory: react-frontend
 
       - name: Deploy React Frontend to Vercel Production
         uses: amondnet/vercel-action@v41.1.4
         with:
-            vercel-token: ${{ secrets.VERCEL_ACCESS_TOKEN }}
-            vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-            vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-            working-directory: .
-            vercel-args: '--prod'
-
+          vercel-token: ${{ secrets.VERCEL_ACCESS_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: react-frontend
+          vercel-args: '--prod'
