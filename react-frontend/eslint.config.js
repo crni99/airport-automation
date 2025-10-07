@@ -1,4 +1,3 @@
-
 module.exports = {
   parserOptions: {
     ecmaVersion: 2021,
@@ -11,7 +10,7 @@ module.exports = {
     'plugin:react-hooks/recommended',
   ],
   env: {
-    browser: true
+    browser: true,
   },
   settings: {
     react: {
@@ -24,5 +23,21 @@ module.exports = {
     'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': 'warn',
     'react/prop-types': 'off',
+    'array-callback-return': 'error',
   },
+
+  overrides: [
+    {
+      files: ['public/service-worker.js'],
+      env: {
+        worker: true,
+        browser: false,
+        es2021: true,
+      },
+
+      rules: {
+        'no-restricted-globals': ['error', 'window', 'document', 'localStorage', 'navigator'],
+      },
+    },
+  ],
 };
