@@ -28,15 +28,17 @@ module.exports = {
 
   overrides: [
     {
-      files: ['public/service-worker.js'],
+      files: ['**/service-worker.js'],
       env: {
         worker: true,
         browser: false,
         es2021: true,
       },
-
+      globals: {
+        self: 'readonly',
+      },
       rules: {
-        'no-restricted-globals': ['error', 'window', 'document', 'localStorage', 'navigator'],
+        'array-callback-return': 'error',
       },
     },
   ],
