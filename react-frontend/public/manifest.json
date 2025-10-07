@@ -4,30 +4,75 @@
   "description": "An automation system for managing airport operations.",
   "icons": [
     {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "src": "/images/icons/16x16.png",
+      "sizes": "16x16",
+      "type": "image/png"
     },
     {
-      "src": "logo192.png",
-      "type": "image/png",
-      "sizes": "192x192"
+      "src": "/images/icons/32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
     },
     {
-      "src": "logo512.png",
-      "type": "image/png",
-      "sizes": "512x512"
+      "src": "/images/icons/72x72.png",
+      "sizes": "72x72",
+      "type": "image/png"
     },
     {
-      "src": "maskable_icon.png",
-      "type": "image/png",
+      "src": "/images/icons/96x96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/icons/120x120.png",
+      "sizes": "120x120",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/icons/128x128.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/icons/144x144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/icons/152x152.png",
+      "sizes": "152x152",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/icons/180x180.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/icons/192x192.png",
       "sizes": "192x192",
-      "purpose": "any maskable"
+      "type": "image/png"
+    },
+    {
+      "src": "/images/icons/384x384.png",
+      "sizes": "384x384",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/icons/512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/icons/512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
-  "start_url": "/",
-  "scope": "/",
-  "display": "standalone",
+  "start_url": "https://airport-automation.vercel.app/",
+  "scope": "https://airport-automation.vercel.app/",
+  "display": "fullscreen",
   "theme_color": "#009be5",
   "background_color": "#1D1D1D",
   "id": "/?pwa-app-id=airport-automation",
