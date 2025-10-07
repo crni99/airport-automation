@@ -246,6 +246,10 @@ ___
 ### Performance Optimization
 - Improve performance through **`lazy loading`**, **`code splitting`**, and **`memoization`**.
 - Optimize re-renders using React best practices to enhance responsiveness.
+
+### Progressive Web App (PWA) Support
+- Implement a complete web app manifest (manifest.json) including appropriate names, unique ID, theme colors (#009be5), and icons (including a maskable icon).
+- Ensure the application meets all core PWA installability criteria (served over HTTPS, valid manifest, and service worker) to allow users to install it as a native application on their devices.
 ___
 <br />
 
