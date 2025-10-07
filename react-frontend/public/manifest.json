@@ -5,67 +5,67 @@
   "icons": [
     {
       "src": "/images/icons/16x16.png",
-      "sizes": "16x16",
+      "sizes": "icon-16x16",
       "type": "image/png"
     },
     {
       "src": "/images/icons/32x32.png",
-      "sizes": "32x32",
+      "sizes": "icon-32x32",
       "type": "image/png"
     },
     {
       "src": "/images/icons/72x72.png",
-      "sizes": "72x72",
+      "sizes": "icon-72x72",
       "type": "image/png"
     },
     {
       "src": "/images/icons/96x96.png",
-      "sizes": "96x96",
+      "sizes": "icon-96x96",
       "type": "image/png"
     },
     {
       "src": "/images/icons/120x120.png",
-      "sizes": "120x120",
+      "sizes": "icon-120x120",
       "type": "image/png"
     },
     {
       "src": "/images/icons/128x128.png",
-      "sizes": "128x128",
+      "sizes": "icon-128x128",
       "type": "image/png"
     },
     {
       "src": "/images/icons/144x144.png",
-      "sizes": "144x144",
+      "sizes": "icon-144x144",
       "type": "image/png"
     },
     {
       "src": "/images/icons/152x152.png",
-      "sizes": "152x152",
+      "sizes": "icon-152x152",
       "type": "image/png"
     },
     {
       "src": "/images/icons/180x180.png",
-      "sizes": "180x180",
+      "sizes": "icon-180x180",
       "type": "image/png"
     },
     {
       "src": "/images/icons/192x192.png",
-      "sizes": "192x192",
+      "sizes": "icon-192x192",
       "type": "image/png"
     },
     {
       "src": "/images/icons/384x384.png",
-      "sizes": "384x384",
+      "sizes": "icon-384x384",
       "type": "image/png"
     },
     {
       "src": "/images/icons/512x512.png",
-      "sizes": "512x512",
+      "sizes": "icon-512x512",
       "type": "image/png"
     },
     {
       "src": "/images/icons/512x512.png",
-      "sizes": "512x512",
+      "sizes": "icon-512x512",
       "type": "image/png",
       "purpose": "maskable"
     }
