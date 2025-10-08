@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using QuestPDF.Infrastructure;
@@ -237,7 +238,8 @@ app.UseSwaggerUI(c =>
 	c.SwaggerEndpoint("/swagger/v1/swagger.json", "Airport Automation API V1");
 	// c.SwaggerEndpoint("/swagger/v2/swagger.json", "Airport Automation API V2");
 	c.DefaultModelsExpandDepth(-1);
-	c.InjectJavascript("/swagger-ui/swagger-theme-toggle.js");
+	c.InjectStylesheet("/swagger-ui/swagger-ui-overrides.css");
+	c.InjectJavascript("/swagger-ui/swagger-ui.js");
 });
 
 app.UseHttpsRedirection();

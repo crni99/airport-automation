@@ -66,3 +66,29 @@
         }
     });
 })();
+
+(function () {
+    window.addEventListener("load", function () {
+        setTimeout(function () {
+            var existingLinks = document.querySelectorAll("link[rel*='icon']");
+            existingLinks.forEach(function (link) {
+                link.remove();
+            });
+
+            var link32 = document.createElement('link');
+            link32.rel = 'icon';
+            link32.type = 'image/x-icon';
+            link32.href = '/swagger-ui/favicon.ico';
+            link32.sizes = '32x32';
+            document.head.appendChild(link32);
+
+            // Inject your new 16x16 favicon
+            var link16 = document.createElement('link');
+            link16.rel = 'icon';
+            link16.type = 'image/x-icon';
+            link16.href = '/swagger-ui/favicon.ico';
+            link16.sizes = '16x16';
+            document.head.appendChild(link16);
+        }, 100);
+    });
+})();
