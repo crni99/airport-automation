@@ -1,4 +1,66 @@
-﻿(function waitForAuthWrapper() {
+﻿(function () {
+    window.addEventListener("load", function () {
+        setTimeout(function () {
+            var existingLinks = document.querySelectorAll("link[rel*='icon']");
+            existingLinks.forEach(function (link) {
+                link.remove();
+            });
+
+            var link32 = document.createElement('link');
+            link32.rel = 'icon';
+            link32.type = 'image/x-icon';
+            link32.href = '/swagger-ui/favicon.ico';
+            link32.sizes = '32x32';
+            document.head.appendChild(link32);
+
+            var link16 = document.createElement('link');
+            link16.rel = 'icon';
+            link16.type = 'image/x-icon';
+            link16.href = '/swagger-ui/favicon.ico';
+            link16.sizes = '16x16';
+            document.head.appendChild(link16);
+        }, 100);
+    });
+})();
+
+(function () {
+    window.addEventListener("load", function () {
+        setTimeout(function () {
+            const contactDiv = document.querySelector('.info__contact');
+
+            if (contactDiv) {
+                const websiteWrapperDiv = contactDiv.querySelector('div');
+                websiteWrapperDiv.classList.add('contact-link')
+                const websiteLink = websiteWrapperDiv ? websiteWrapperDiv.querySelector('a') : null;
+
+                if (websiteLink) {
+                    websiteLink.href = "https://www.linkedin.com/in/ognj3n";
+                    websiteLink.innerHTML = `Ognjen Andjelic ─ LinkedIn`;
+
+                    const githubWrapperDiv = document.createElement('div');
+                    githubWrapperDiv.classList.add('contact-link');
+                    const githubLink = document.createElement('a');
+
+                    githubLink.href = "https://github.com/crni99";
+                    githubLink.target = "_blank";
+                    githubLink.rel = "noopener noreferrer";
+                    githubLink.classList.add("link");
+
+                    githubLink.innerHTML = `Ognjen Andjelic ─ GitHub`;
+                    githubWrapperDiv.appendChild(githubLink);
+
+                    if (websiteWrapperDiv.nextElementSibling) {
+                        contactDiv.insertBefore(githubWrapperDiv, websiteWrapperDiv.nextElementSibling);
+                    } else {
+                        contactDiv.appendChild(githubWrapperDiv);
+                    }
+                }
+            }
+        }, 200);
+    });
+})();
+
+(function waitForAuthWrapper() {
     const authWrapper = document.querySelector('div.auth-wrapper');
     if (!authWrapper) {
         setTimeout(waitForAuthWrapper, 100);
@@ -64,31 +126,5 @@
         } else {
             disableDarkTheme();
         }
-    });
-})();
-
-(function () {
-    window.addEventListener("load", function () {
-        setTimeout(function () {
-            var existingLinks = document.querySelectorAll("link[rel*='icon']");
-            existingLinks.forEach(function (link) {
-                link.remove();
-            });
-
-            var link32 = document.createElement('link');
-            link32.rel = 'icon';
-            link32.type = 'image/x-icon';
-            link32.href = '/swagger-ui/favicon.ico';
-            link32.sizes = '32x32';
-            document.head.appendChild(link32);
-
-            // Inject your new 16x16 favicon
-            var link16 = document.createElement('link');
-            link16.rel = 'icon';
-            link16.type = 'image/x-icon';
-            link16.href = '/swagger-ui/favicon.ico';
-            link16.sizes = '16x16';
-            document.head.appendChild(link16);
-        }, 100);
     });
 })();

@@ -178,7 +178,7 @@ namespace AirportAutomation.Api.Controllers
 		}
 
 		/// <summary>
-		/// Retrieves a paginated list of pilots matching the specified search filter criteria.
+		/// Endpoint for retrieving a paginated list of pilots matching the specified search filter criteria.
 		/// </summary>
 		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <param name="filter">The search filter containing pilot fields to filter by.</param>

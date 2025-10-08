@@ -128,7 +128,7 @@ namespace AirportAutomation.Api.Controllers
 		}
 
 		/// <summary>
-		/// Endpoint for retrieving a paginated list of flights containing the specified name.
+		/// Endpoint for retrieving a paginated list of flights containing the specified date.
 		/// </summary>
 		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <param name="startDate">The start date for the search.</param>

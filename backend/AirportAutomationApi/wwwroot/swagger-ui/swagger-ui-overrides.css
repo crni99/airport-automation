@@ -1,3 +1,13 @@
 .topbar-wrapper .link img {
     content: url('AirportAutomationLogo.svg') !important;
 }
+
+.contact-link {
+    margin-top: 4px;
+    margin-bottom: 4px;
+    font-weight: bold;
+}
+
+.info__contact > a {
+    font-weight: bold;
+}

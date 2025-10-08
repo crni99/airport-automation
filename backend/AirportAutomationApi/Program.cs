@@ -68,7 +68,7 @@ builder.Services.AddSwaggerGen(setupAction =>
 	setupAction.SwaggerDoc("v1", new OpenApiInfo
 	{
 		Description = "Airport Automation Api - Version 1",
-		Title = "AirportAutomationApi",
+		Title = "Airport Automation Api",
 		Version = "v1",
 		Contact = new OpenApiContact
 		{
@@ -76,22 +76,20 @@ builder.Services.AddSwaggerGen(setupAction =>
 			Email = "andjelicb.ognjen@gmail.com",
 			Url = new Uri("https://github.com/crni99")
 		},
-
 	});
 
 	/*
 	setupAction.SwaggerDoc("v2", new OpenApiInfo
 	{
-		Description = "Airport Automation Api - Version 2",
-		Title = "AirportAutomationApi",
-		Version = "v2",
+		Description = "Airport Automation Api - Version 1",
+		Title = "Airport Automation Api",
+		Version = "v1",
 		Contact = new OpenApiContact
 		{
 			Name = "Ognjen Andjelic",
 			Email = "andjelicb.ognjen@gmail.com",
 			Url = new Uri("https://github.com/crni99")
 		},
-
 	});
 	*/
 
