@@ -37,7 +37,7 @@ export default function HealthCheck() {
                 )}
 
                 {isError && error && (
-                    <CustomAlert alertType='error' type='Error' message={extractErrorMessage(error)} />
+                    <CustomAlert alertType='error' type='Error' message={extractErrorMessage(error)} sx={{ mb:3 }} />
                 )}
 
                 {data && dataExist && !isError ? (

@@ -28,7 +28,7 @@ export const ENTITY_PATHS = {
     PILOTS: '/pilots',
     PLANE_TICKETS: '/plane-tickets',
     TRAVEL_CLASSES: '/travel-classes',
-    HEALTH_CHECKS: '/health-checks',
+    HEALTH_CHECKS: '/health-check',
 }
 
 export const ROLES = {

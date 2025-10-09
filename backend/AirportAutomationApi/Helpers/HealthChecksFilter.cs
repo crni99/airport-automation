@@ -37,9 +37,8 @@ namespace AirportAutomation.Api.Helpers
 
 			var entriesProperties = new Dictionary<string, OpenApiSchema>
 			{
-				{ "SqlServerHealthCheck", new OpenApiSchema() { Type = "object" } },
+				{ "ApiHealthCheck", new OpenApiSchema() { Type = "object" } },
 				{ "DatabaseHealthCheck", new OpenApiSchema() { Type = "object" } },
-				{ "ApiHealthCheck", new OpenApiSchema() { Type = "object" } }
 			};
 
 			var properties = new Dictionary<string, OpenApiSchema>

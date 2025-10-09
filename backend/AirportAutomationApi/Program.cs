@@ -223,7 +223,6 @@ builder.Services.AddHttpClient();
 builder.Services
 	.AddHealthChecks()
 	.AddCheck<ApiHealthCheck>("API")
-	.AddCheck<SqlServerHealthCheck>("SQL Server")
 	.AddCheck<DatabaseHealthCheck>("Database");
 
 var app = builder.Build();
