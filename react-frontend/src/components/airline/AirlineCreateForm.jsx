@@ -93,7 +93,7 @@ export default function AirlineCreateForm() {
                     </Grid>
                 </Grid>
                 {formData.error && (
-                    <CustomAlert alertType='error' type='Error' message={formData.error} />
+                    <CustomAlert alertType='error' type='Error' message={formData.error} sx={{mt: 3}} />
                 )}
             </Box>
             <Box sx={{ mt: 3 }}>

@@ -183,7 +183,7 @@ export default function PassengerCreateForm() {
                         </Button>
                     </Grid>
                     {formData.error && (
-                        <CustomAlert alertType='error' type='Error' message={formData.error} />
+                        <CustomAlert alertType='error' type='Error' message={formData.error} sx={{mt: 3}} />
                     )}
                 </Grid>
             </Box>

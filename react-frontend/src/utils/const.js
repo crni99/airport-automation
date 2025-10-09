@@ -22,7 +22,7 @@ export const ENTITIES = {
 export const ENTITY_PATHS = {
     AIRLINES: '/airlines',
     API_USERS: '/api-users',
-    DESTINATIONS: 'd/estinations',
+    DESTINATIONS: '/destinations',
     FLIGHTS: '/flights',
     PASSENGERS: '/passengers',
     PILOTS: '/pilots',

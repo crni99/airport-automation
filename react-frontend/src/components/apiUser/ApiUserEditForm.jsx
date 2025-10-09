@@ -164,7 +164,7 @@ export default function ApiUserEditForm() {
                         </Grid>
                     </Grid>
                     {formData.error && (
-                        <CustomAlert alertType='error' type='Error' message={formData.error} />
+                        <CustomAlert alertType='error' type='Error' message={formData.error} sx={{mt: 3}} />
                     )}
                 </Box>
             )}

@@ -105,8 +105,8 @@ export default function Home() {
                         <Grid container justifyContent="center">
                             <Grid>
                                 <Stack spacing={2}>
-                                    {message && <MuiAlert severity="error">{message}</MuiAlert>}
-                                    {error && <MuiAlert severity="error">{error}</MuiAlert>}
+                                    {message && <MuiAlert severity="error" sx={{ marginBottom: '24px !important' }} >{message}</MuiAlert>}
+                                    {error && <MuiAlert severity="error" sx={{ marginBottom: '24px !important' }} >{error}</MuiAlert>}
                                     {loading ? (
                                         <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
                                             <CircularProgress />
