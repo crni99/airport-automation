@@ -1,76 +1,76 @@
 -- Drop the database if it exists
-DROP DATABASE IF EXISTS AirportAutomation;
+DROP DATABASE IF EXISTS "AirportAutomation";
 
 -- Create the database
-CREATE DATABASE AirportAutomation;
+CREATE DATABASE "AirportAutomation";
 
 -- Start a transaction
 BEGIN;
 
 -- Create the tables
-CREATE TABLE Passenger (
-  Id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  FirstName VARCHAR(50) NOT NULL,
-  LastName VARCHAR(50) NOT NULL,
-  UPRN VARCHAR(13) NOT NULL UNIQUE,
-  Passport VARCHAR(9) NOT NULL UNIQUE,
-  Address VARCHAR(200) NOT NULL,
-  Phone VARCHAR(30) NOT NULL
+CREATE TABLE "Passenger" (
+  "Id" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  "FirstName" VARCHAR(50) NOT NULL,
+  "LastName" VARCHAR(50) NOT NULL,
+  "UPRN" VARCHAR(13) NOT NULL UNIQUE,
+  "Passport" VARCHAR(9) NOT NULL UNIQUE,
+  "Address" VARCHAR(200) NOT NULL,
+  "Phone" VARCHAR(30) NOT NULL
 );
 
-CREATE TABLE TravelClass (
-  Id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  Type VARCHAR(20) NOT NULL
+CREATE TABLE "TravelClass" (
+  "Id" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  "Type" VARCHAR(20) NOT NULL
 );
 
-CREATE TABLE Destination (
-  Id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  City VARCHAR(255) NOT NULL,
-  Airport VARCHAR(255) NOT NULL
+CREATE TABLE "Destination" (
+  "Id" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  "City" VARCHAR(255) NOT NULL,
+  "Airport" VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE Pilot (
-  Id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  FirstName VARCHAR(50) NOT NULL,
-  LastName VARCHAR(50) NOT NULL,
-  UPRN VARCHAR(13) NOT NULL,
-  FlyingHours INT NOT NULL
+CREATE TABLE "Pilot" (
+  "Id" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  "FirstName" VARCHAR(50) NOT NULL,
+  "LastName" VARCHAR(50) NOT NULL,
+  "UPRN" VARCHAR(13) NOT NULL,
+  "FlyingHours" INT NOT NULL
 );
 
-CREATE TABLE Airline (
-  Id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  Name VARCHAR(255) NOT NULL
+CREATE TABLE "Airline" (
+  "Id" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  "Name" VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE Flight (
-  Id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  DepartureDate DATE NOT NULL,
-  DepartureTime TIME NOT NULL,
-  AirlineId INT REFERENCES Airline (Id),
-  DestinationId INT REFERENCES Destination (Id),
-  PilotId INT REFERENCES Pilot (Id)
+CREATE TABLE "Flight" (
+  "Id" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  "DepartureDate" DATE NOT NULL,
+  "DepartureTime" TIME NOT NULL,
+  "AirlineId" INT REFERENCES "Airline" ("Id"),
+  "DestinationId" INT REFERENCES "Destination" ("Id"),
+  "PilotId" INT REFERENCES "Pilot" ("Id")
 );
 
-CREATE TABLE PlaneTicket (
-  Id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  Price DECIMAL(8,2) NOT NULL,
-  PurchaseDate DATE NOT NULL,
-  SeatNumber INT NOT NULL,
-  PassengerId INT REFERENCES Passenger (Id),
-  TravelClassId INT REFERENCES TravelClass (Id),
-  FlightId INT REFERENCES Flight (Id),
-  UNIQUE (FlightId, SeatNumber)
+CREATE TABLE "PlaneTicket" (
+  "Id" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  "Price" DECIMAL(8,2) NOT NULL,
+  "PurchaseDate" DATE NOT NULL,
+  "SeatNumber" INT NOT NULL,
+  "PassengerId" INT REFERENCES "Passenger" ("Id"),
+  "TravelClassId" INT REFERENCES "TravelClass" ("Id"),
+  "FlightId" INT REFERENCES "Flight" ("Id"),
+  UNIQUE ("FlightId", "SeatNumber")
 );
 
-CREATE TABLE ApiUser (
-  ApiUserId INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  UserName VARCHAR(50) NOT NULL UNIQUE,
-  Password VARCHAR(100) NOT NULL,
-  Roles VARCHAR(50) NOT NULL
+CREATE TABLE "ApiUser" (
+  "ApiUserId" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  "UserName" VARCHAR(50) NOT NULL UNIQUE,
+  "Password" VARCHAR(100) NOT NULL,
+  "Roles" VARCHAR(50) NOT NULL
 );
 
 -- Insert data into the tables
-INSERT INTO Passenger (FirstName, LastName, UPRN, Passport, Address, Phone)
+INSERT INTO "Passenger" ("FirstName", "LastName", "UPRN", "Passport", "Address", "Phone")
 VALUES
   ('John', 'Doe', '1234567890123', 'P12345678', '123 Main Street, New York, United States', '123-456-7890'),
   ('Jane', 'Smith', '9876543210987', 'S87654321', '456 Elm Street, London, United Kingdom', '987-654-3210'),
@@ -98,14 +98,14 @@ VALUES
   ('Liam', 'Rodriguez', '5555555555555', 'S55555555', '456 Birch Lane, Miami, United States', '000-111-2222'),
   ('Sophia', 'Brown', '1231231231231', 'P12312312', '789 Cedar Drive, San Francisco, United States', '333-444-5555');
 
-INSERT INTO TravelClass (Type)
+INSERT INTO "TravelClass" ("Type")
 VALUES
   ('Economy'),
   ('Premium Economy'),
   ('Business'),
   ('First');
 
-INSERT INTO Destination (City, Airport)
+INSERT INTO "Destination" ("City", "Airport")
 VALUES
   ('New York', 'John F. Kennedy International Airport'),
   ('London', 'Heathrow Airport'),
@@ -124,7 +124,7 @@ VALUES
   ('Mumbai', 'Chhatrapati Shivaji Maharaj International Airport'),
   ('Toronto', 'Toronto Pearson International Airport');
 
-INSERT INTO Pilot (FirstName, LastName, UPRN, FlyingHours)
+INSERT INTO "Pilot" ("FirstName", "LastName", "UPRN", "FlyingHours")
 VALUES
   ('Alex', 'Walker', '1234567890123', 10),
   ('Olivia', 'Harris', '9876543210987', 8),
@@ -139,7 +139,7 @@ VALUES
   ('Carter', 'Walker', '9012345678900', 13),
   ('Grace', 'Lewis', '6789012345671', 16);
 
-INSERT INTO Airline (Name)
+INSERT INTO "Airline" ("Name")
 VALUES
   ('Delta Air Lines'),
   ('American Airlines'),
@@ -157,34 +157,34 @@ VALUES
   ('KLM Royal Dutch Airlines'),
   ('ANA All Nippon Airways');
 
-INSERT INTO Flight (DepartureDate, DepartureTime, AirlineId, DestinationId, PilotId)
+INSERT INTO "Flight" ("DepartureDate", "DepartureTime", "AirlineId", "DestinationId", "PilotId")
 VALUES
-  ('2023-06-07', '08:30:00', 1, 1, 1),
-  ('2023-06-08', '12:45:00', 2, 2, 2),
-  ('2023-06-09', '16:20:00', 3, 3, 3),
-  ('2023-06-10', '09:15:00', 4, 4, 4),
-  ('2023-06-11', '14:55:00', 5, 5, 5),
-  ('2023-06-12', '10:10:00', 6, 6, 6),
-  ('2023-06-13', '11:30:00', 7, 7, 7),
-  ('2023-06-14', '15:40:00', 8, 8, 8),
-  ('2023-06-15', '18:20:00', 9, 9, 9),
-  ('2023-06-16', '20:05:00', 10, 10, 10);
+  ('2025-08-07', '08:30:00', 1, 1, 1),
+  ('2025-08-08', '12:45:00', 2, 2, 2),
+  ('2025-08-09', '16:20:00', 3, 3, 3),
+  ('2025-08-10', '09:15:00', 4, 4, 4),
+  ('2025-08-11', '14:55:00', 5, 5, 5),
+  ('2025-08-12', '10:10:00', 6, 6, 6),
+  ('2025-08-13', '11:30:00', 7, 7, 7),
+  ('2025-08-14', '15:40:00', 8, 8, 8),
+  ('2025-08-15', '18:20:00', 9, 9, 9),
+  ('2025-08-16', '20:05:00', 10, 10, 10);
 
-INSERT INTO PlaneTicket (Price, PurchaseDate, SeatNumber, PassengerId, TravelClassId, FlightId)
+INSERT INTO "PlaneTicket" ("Price", "PurchaseDate", "SeatNumber", "PassengerId", "TravelClassId", "FlightId")
 VALUES
-  (200.00, '2023-06-07', 15, 1, 1, 1),
-  (300.00, '2023-06-08', 10, 2, 2, 2),
-  (400.00, '2023-06-09', 7, 3, 3, 3),
-  (500.00, '2023-06-10', 3, 4, 4, 4),
-  (600.00, '2023-06-11', 6, 5, 2, 5),
-  (700.00, '2023-06-12', 12, 6, 3, 6),
-  (800.00, '2023-06-13', 5, 7, 1, 7),
-  (900.00, '2023-06-14', 8, 8, 2, 8),
-  (1000.00, '2023-06-15', 11, 9, 3, 9),
-  (1100.00, '2023-06-16', 2, 10, 1, 10);
+  (200.00, '2025-07-07', 15, 1, 1, 1),
+  (300.00, '2025-07-08', 10, 2, 2, 2),
+  (400.00, '2025-07-09', 7, 3, 3, 3),
+  (500.00, '2025-07-10', 3, 4, 4, 4),
+  (600.00, '2025-07-11', 6, 5, 2, 5),
+  (700.00, '2025-07-12', 12, 6, 3, 6),
+  (800.00, '2025-07-13', 5, 7, 1, 7),
+  (900.00, '2025-07-14', 8, 8, 2, 8),
+  (1000.00, '2025-07-15', 11, 9, 3, 9),
+  (1100.00, '2025-07-16', 2, 10, 1, 10);
 
 -- Username and Password are the same!
-INSERT INTO ApiUser (UserName, Password, Roles)
+INSERT INTO "ApiUser" ("UserName", "Password", "Roles")
 VALUES
   ('og', '$2a$12$LCGwPPXCmcID1OU/ZkQtoOfEC5UMWxmvMPX4ja27X8eZ/tdTZ1v1y', 'SuperAdmin'),
   ('aa', '$2a$12$f4CJk4AtefsjoVLDmeGSxeM.K9exNoxMheSHIWyORCmIujPTMJuTG', 'Admin'),
