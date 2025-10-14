@@ -1,12 +1,6 @@
 import { getAuthToken } from '../utils/auth.js';
 import { generateErrorMessage, handleNetworkError } from '../utils/errorUtils.js';
 
-/*
-Input Validation: 
-Ensure proper validation of input parameters (dataType and dataId) before constructing the request URL 
-to prevent potential security vulnerabilities or data corruption.
-*/
-
 export async function deleteData(dataType, dataId, apiUrl, navigate) {
     try {
         const authToken = getAuthToken();
@@ -22,6 +16,7 @@ export async function deleteData(dataType, dataId, apiUrl, navigate) {
             headers: headers
         });
 
+        console.log('RESPONSE: ', response);
         if (response.ok || response.status === 204) {
             navigate(`/${dataType}`);
         } else {

@@ -1,6 +1,6 @@
 import React from "react";
 import { Route } from "react-router-dom";
-import TravelClassesList from "../components/travelClass/TravelClassesList";
+import TravelClassesList from "../pages/travelClass/TravelClassesList";
 
 const TravelClassesRoutes = (
     <>

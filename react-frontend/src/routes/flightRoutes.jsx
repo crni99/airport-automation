@@ -1,9 +1,9 @@
 import React from "react";
 import { Route } from "react-router-dom";
-import FlightsList from "../components/flight/FlightsList";
-import FlightDetails from "../components/flight/FlightDetails";
-import FlightCreateForm from "../components/flight/FlightCreateForm";
-import FlightEditForm from "../components/flight/FlightEditForm";
+import FlightsList from "../pages/flight/FlightsList";
+import FlightDetails from "../pages/flight/FlightDetails";
+import FlightCreateForm from "../pages/flight/FlightCreateForm";
+import FlightEditForm from "../pages/flight/FlightEditForm";
 import ProtectedRoute from "./ProtectedRoute";
 import { ENTITY_PATHS } from '../utils/const';
 

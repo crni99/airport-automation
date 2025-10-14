@@ -1,9 +1,9 @@
 import React from "react";
 import { Route } from "react-router-dom";
-import PilotsList from "../components/pilot/PilotsList";
-import PilotDetails from "../components/pilot/PilotDetails";
-import PilotCreateForm from "../components/pilot/PilotCreateForm";
-import PilotEditForm from "../components/pilot/PilotEditForm";
+import PilotsList from "../pages/pilot/PilotsList";
+import PilotDetails from "../pages/pilot/PilotDetails";
+import PilotCreateForm from "../pages/pilot/PilotCreateForm";
+import PilotEditForm from "../pages/pilot/PilotEditForm";
 import ProtectedRoute from "../routes/ProtectedRoute";
 import { ENTITY_PATHS } from '../utils/const';
 

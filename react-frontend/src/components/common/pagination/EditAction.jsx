@@ -7,7 +7,15 @@ export default function EditAction({ dataType, dataId }) {
     const navigate = useNavigate();
 
     const handleEdit = () => {
-        navigate(`/${dataType}/Edit/${dataId}`);
+        if (dataType === 'ApiUsers') {
+            navigate(`/api-users/Edit/${dataId}`);
+        }
+        else if (dataType === 'PlaneTickets') {
+            navigate(`/plane-tickets/Edit/${dataId}`);
+        }
+        else {
+            navigate(`/${dataType}/Edit/${dataId}`);
+        }
     };
 
     return (

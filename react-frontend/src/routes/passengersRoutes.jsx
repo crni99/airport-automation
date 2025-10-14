@@ -1,9 +1,9 @@
 import React from "react";
 import { Route } from "react-router-dom";
-import PassengersList from "../components/passenger/PassengersList";
-import PassengerDetails from "../components/passenger/PassengerDetails";
-import PassengerCreateForm from "../components/passenger/PassengerCreateForm";
-import PassengerEditForm from "../components/passenger/PassengerEditForm";
+import PassengersList from "../pages/passenger/PassengersList";
+import PassengerDetails from "../pages/passenger/PassengerDetails";
+import PassengerCreateForm from "../pages/passenger/PassengerCreateForm";
+import PassengerEditForm from "../pages/passenger/PassengerEditForm";
 import ProtectedRoute from "../routes/ProtectedRoute";
 import { ENTITY_PATHS } from '../utils/const';
 

@@ -6,10 +6,11 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import Alert from '@mui/material/Alert';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import Snackbar from '@mui/material/Snackbar';
+import { Alert } from '@mui/material';
 
 const TableActions = ({ entity, id, entityType, currentUserRole }) => {
     const [isDeleting, setIsDeleting] = useState(false);
@@ -17,6 +18,13 @@ const TableActions = ({ entity, id, entityType, currentUserRole }) => {
 
     const dataCtx = useContext(DataContext);
     const navigate = useNavigate();
+
+    const handleCloseSnackbar = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setDeleteError(null);
+    };
 
     const handleDelete = async () => {
         setIsDeleting(true);
@@ -27,7 +35,7 @@ const TableActions = ({ entity, id, entityType, currentUserRole }) => {
                 setDeleteError(result.message);
             }
         } catch (error) {
-            setDeleteError(error.message);
+            setDeleteError(error.message || 'An unknown error occurred during deletion.');
         } finally {
             setIsDeleting(false);
         }
@@ -83,11 +91,21 @@ const TableActions = ({ entity, id, entityType, currentUserRole }) => {
                     </>
                 )}
             </Stack>
-            {deleteError && (
-                <Alert severity="error" sx={{ mt: 1 }}>
+            <Snackbar
+                open={!!deleteError}
+                autoHideDuration={6000}
+                onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            >
+                <Alert
+                    severity='error'
+                    sx={{ width: '100%' }}
+                    onClose={handleCloseSnackbar}
+                    variant="filled"
+                >
                     {deleteError}
                 </Alert>
-            )}
+            </Snackbar>
         </Box>
     );
 };
