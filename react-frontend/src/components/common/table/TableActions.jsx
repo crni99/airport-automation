@@ -9,11 +9,11 @@ import Tooltip from '@mui/material/Tooltip';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import Snackbar from '@mui/material/Snackbar';
-import { Alert } from '@mui/material';
+import { CustomSnackbar } from '../CustomSnackbar.jsx';
 
 const TableActions = ({ entity, id, entityType, currentUserRole }) => {
     const [isDeleting, setIsDeleting] = useState(false);
+    const [successMessage, setSuccessMessage] = useState(null);
     const [deleteError, setDeleteError] = useState(null);
 
     const dataCtx = useContext(DataContext);
@@ -24,6 +24,7 @@ const TableActions = ({ entity, id, entityType, currentUserRole }) => {
             return;
         }
         setDeleteError(null);
+        setSuccessMessage(null);
     };
 
     const handleDelete = async () => {
@@ -32,7 +33,10 @@ const TableActions = ({ entity, id, entityType, currentUserRole }) => {
         try {
             const result = await deleteData(entity, id, dataCtx.apiUrl, navigate);
             if (result?.message) {
-                setDeleteError(result.message);
+                setSuccessMessage(result.message);
+                setTimeout(() => {
+                    navigate('/');
+                }, 3000);
             }
         } catch (error) {
             setDeleteError(error.message || 'An unknown error occurred during deletion.');
@@ -91,21 +95,18 @@ const TableActions = ({ entity, id, entityType, currentUserRole }) => {
                     </>
                 )}
             </Stack>
-            <Snackbar
-                open={!!deleteError}
-                autoHideDuration={6000}
+            <CustomSnackbar
+                message={deleteError}
+                severity='error'
                 onClose={handleCloseSnackbar}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-            >
-                <Alert
-                    severity='error'
-                    sx={{ width: '100%' }}
-                    onClose={handleCloseSnackbar}
-                    variant="filled"
-                >
-                    {deleteError}
-                </Alert>
-            </Snackbar>
+                duration={6000}
+            />
+            <CustomSnackbar
+                message={successMessage}
+                severity='success'
+                onClose={handleCloseSnackbar}
+                duration={3000}
+            />
         </Box>
     );
 };

@@ -9,6 +9,7 @@ import FlightsRoutes from './routes/flightRoutes';
 import PlaneTicketsRoutes from './routes/planeTicketRoutes';
 import Home from './pages/Home';
 import HealthCheck from './components/common/HealthCheck';
+import NotFound from './pages/NotFound';
 import Unauthorized from './pages/Unauthorized';
 import ApiUsersRoutes from './routes/apiUserRoutes';
 import ProtectedRouteV3 from './routes/ProtectedRouteV3';
@@ -51,6 +52,7 @@ function App() {
                 {FlightsRoutes}
                 {PlaneTicketsRoutes}
               </Route>
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </Container>
           {!isLoggedIn && (
