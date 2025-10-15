@@ -9,7 +9,7 @@ import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import { CustomSnackbar } from "../../components/common/CustomSnackbar.jsx";
+import DetailActionSnackbarManager from '../../components/common/feedback/DetailActionSnackbarManager.jsx';
 import { useDataOperation } from '../../hooks/useDataOperation.jsx';
 
 export default function ApiUserDetails() {
@@ -32,29 +32,11 @@ export default function ApiUserDetails() {
                 <CircularProgress sx={{ mb: 0 }} />
             )}
 
-            {operationState.operationSuccess && (
-                <CustomSnackbar
-                    severity='success'
-                    message={operationState.operationSuccess}
-                    onClose={handleCloseSnackbar}
-                />
-            )}
-
-            {error && (
-                <CustomSnackbar
-                    severity='error'
-                    message={error.message}
-                    onClose={handleCloseSnackbar}
-                />
-            )}
-
-            {operationState.operationError && (
-                <CustomSnackbar
-                    severity='error'
-                    message={operationState.operationError.message}
-                    onClose={handleCloseSnackbar}
-                />
-            )}
+            <DetailActionSnackbarManager
+                operationState={operationState}
+                error={error}
+                handleCloseSnackbar={handleCloseSnackbar}
+            />
 
             {dataExist && (
                 <Box sx={{ mt: 3 }}>

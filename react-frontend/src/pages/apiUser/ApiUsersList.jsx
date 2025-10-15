@@ -6,7 +6,7 @@ import ListHeader from "../../components/common/ListHeader";
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import Pagination from '../../components/common/pagination/Pagination';
-import CustomAlert from "../../components/common/Alert.jsx";
+import CustomAlert from "../../components/common/feedback/CustomAlert.jsx";
 
 export default function ApiUsersList() {
     const [triggerFetch, setTriggerFetch] = useState(false);

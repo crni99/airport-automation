@@ -1,112 +1,102 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useContext } from 'react';
-import { DataContext } from '../../store/DataContext.jsx';
-import { editData } from '../../utils/edit.js';
+import React, { useCallback } from 'react';
+import { useParams } from 'react-router-dom';
+import { useEditForm } from '../../hooks/useEditForm.jsx';
+import { ENTITIES } from '../../utils/const.js';
 import PageTitle from '../../components/common/PageTitle.jsx';
 import BackToListAction from '../../components/common/pagination/BackToListAction.jsx';
-import useFetch from '../../hooks/useFetch.jsx';
-import { validateFields } from '../../utils/validation/validateFields.js';
-import { ENTITIES } from '../../utils/const.js';
+import UpdateSnackbarManager from '../../components/common/feedback/UpdateSnackbarManager.jsx';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Grid from '@mui/material/Grid';
-import CustomAlert from "../../components/common/Alert.jsx";
+
+const initialFormData = {
+    firstName: '',
+    lastName: '',
+    uprn: '',
+    passport: '',
+    address: '',
+    phone: ''
+};
+
+const requiredFields = [
+    'firstName',
+    'lastName',
+    'uprn',
+    'passport',
+    'address',
+    'phone'
+];
+
+const transformPassengerForAPI = (formData, currentId) => ({
+    Id: currentId,
+    FirstName: formData.firstName,
+    LastName: formData.lastName,
+    UPRN: formData.uprn,
+    Passport: formData.passport,
+    Address: formData.address,
+    Phone: formData.phone
+});
+
+const transformPassengerForForm = (fetchedData) => ({
+    firstName: fetchedData.firstName || '',
+    lastName: fetchedData.lastName || '',
+    uprn: fetchedData.uprn || '',
+    passport: fetchedData.passport || '',
+    address: fetchedData.address || '',
+    phone: fetchedData.phone || '',
+});
 
 export default function PassengerEditForm() {
-    const dataCtx = useContext(DataContext);
     const { id } = useParams();
-    const navigate = useNavigate();
 
-    const [formData, setFormData] = useState({
-        firstName: '',
-        lastName: '',
-        uprn: '',
-        passport: '',
-        address: '',
-        phone: '',
-        error: null,
-        isPending: false,
-    });
+    const {
+        firstName,
+        lastName,
+        uprn,
+        passport,
+        address,
+        phone,
+        success,
+        formError,
+        isPending,
+        isFetching,
+        isFetchError,
+        fetchError,
+        handleChange,
+        handleSubmit,
+        setFormData,
+    } = useEditForm(
+        ENTITIES.PASSENGERS,
+        id,
+        initialFormData,
+        requiredFields,
+        transformPassengerForAPI,
+        transformPassengerForForm
+    );
 
-    const { data: passengerData, isLoading, isError, error } = useFetch(ENTITIES.PASSENGERS, id);
+    const handleCloseSnackbar = useCallback(() => {
+        setFormData(prev => ({ ...prev, success: null, formError: null }));
+    }, [setFormData]);
 
-    useEffect(() => {
-        if (passengerData) {
-            setFormData((prevState) => ({
-                ...prevState,
-                firstName: passengerData.firstName || '',
-                lastName: passengerData.lastName || '',
-                uprn: passengerData.uprn || '',
-                passport: passengerData.passport || '',
-                address: passengerData.address || '',
-                phone: passengerData.phone || '',
-            }));
-        }
-    }, [passengerData]);
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-
-        const errorMessage = validateFields(ENTITIES.PASSENGERS, formData, ['firstName', 'lastName', 'uprn', 'passport', 'address', 'phone']);
-        if (errorMessage) {
-            setFormData({
-                ...formData,
-                error: errorMessage,
-            });
-            return;
-        }
-
-        const passenger = {
-            Id: id,
-            FirstName: formData.firstName,
-            LastName: formData.lastName,
-            UPRN: formData.uprn,
-            Passport: formData.passport,
-            Address: formData.address,
-            Phone: formData.phone
-        };
-
-        setFormData((prevState) => ({ ...prevState, isPending: true }));
-
-        try {
-            const edit = await editData(passenger, ENTITIES.PASSENGERS, id, dataCtx.apiUrl, navigate);
-
-            if (edit) {
-                console.error('Error updating passenger:', edit.message);
-                setFormData({ ...formData, error: edit.message, isPending: false });
-            } else {
-                setFormData({ name: '', error: null, isPending: false });
-            }
-        } catch (err) {
-            console.error('Error during API call:', err);
-            setFormData({ ...formData, error: 'Failed to update passenger. Please try again.', isPending: false });
-        }
-    };
-
-    const handleChange = (event) => {
-        const { name, value } = event.target;
-        setFormData((prev) => {
-            const newError = validateFields(ENTITIES.PASSENGERS, { ...prev, [name]: value }, ['firstName', 'lastName', 'uprn', 'passport', 'address', 'phone']);
-            return { ...prev, [name]: value, error: newError };
-        });
-    };
 
     return (
         <Box sx={{ mt: 5 }}>
             <PageTitle title='Edit Passenger' />
 
-            {isLoading && (
+            {(isFetching || isPending) && (
                 <CircularProgress sx={{ mb: 2 }} />
             )}
 
-            {isError && error && (
-                <CustomAlert alertType='error' type={error.type} message={error.message} />
-            )}
+            <UpdateSnackbarManager
+                success={success}
+                formError={formError}
+                fetchError={isFetchError ? fetchError : null}
+                handleCloseSnackbar={handleCloseSnackbar}
+            />
 
-            {!isLoading && !isError && (
+            {!isFetching && !isFetchError && (
                 <Box
                     component="form"
                     autoComplete="off"
@@ -119,11 +109,11 @@ export default function PassengerEditForm() {
                                 name="firstName"
                                 label="First Name"
                                 variant="outlined"
-                                value={formData.firstName}
+                                value={firstName}
                                 onChange={handleChange}
                                 required
-                                error={!!formData.error}
-                                helperText={formData.error}
+                                error={!!formError}
+                                helperText={formError}
                                 sx={{ width: '80%' }}
                             />
                         </Grid>
@@ -133,11 +123,11 @@ export default function PassengerEditForm() {
                                 name="lastName"
                                 label="Last Name"
                                 variant="outlined"
-                                value={formData.lastName}
+                                value={lastName}
                                 onChange={handleChange}
                                 required
-                                error={!!formData.error}
-                                helperText={formData.error}
+                                error={!!formError}
+                                helperText={formError}
                                 sx={{ width: '80%' }}
                             />
                         </Grid>
@@ -147,11 +137,11 @@ export default function PassengerEditForm() {
                                 name="uprn"
                                 label="UPRN"
                                 variant="outlined"
-                                value={formData.uprn}
+                                value={uprn}
                                 onChange={handleChange}
                                 required
-                                error={!!formData.error}
-                                helperText={formData.error}
+                                error={!!formError}
+                                helperText={formError}
                                 sx={{ width: '80%' }}
                             />
                         </Grid>
@@ -161,11 +151,11 @@ export default function PassengerEditForm() {
                                 name="passport"
                                 label="Passport"
                                 variant="outlined"
-                                value={formData.passport}
+                                value={passport}
                                 onChange={handleChange}
                                 required
-                                error={!!formData.error}
-                                helperText={formData.error}
+                                error={!!formError}
+                                helperText={formError}
                                 sx={{ width: '80%' }}
                             />
                         </Grid>
@@ -175,11 +165,11 @@ export default function PassengerEditForm() {
                                 name="address"
                                 label="Address"
                                 variant="outlined"
-                                value={formData.address}
+                                value={address}
                                 onChange={handleChange}
                                 required
-                                error={!!formData.error}
-                                helperText={formData.error}
+                                error={!!formError}
+                                helperText={formError}
                                 sx={{ width: '80%' }}
                             />
                         </Grid>
@@ -189,11 +179,11 @@ export default function PassengerEditForm() {
                                 name="phone"
                                 label="Phone"
                                 variant="outlined"
-                                value={formData.phone}
+                                value={phone}
                                 onChange={handleChange}
                                 required
-                                error={!!formData.error}
-                                helperText={formData.error}
+                                error={!!formError}
+                                helperText={formError}
                                 sx={{ width: '80%' }}
                             />
                         </Grid>
@@ -202,15 +192,12 @@ export default function PassengerEditForm() {
                                 type="submit"
                                 variant="contained"
                                 color="success"
-                                disabled={formData.isPending}
+                                disabled={isPending || !!formError}
                             >
-                                {formData.isPending ? <CircularProgress /> : 'Save Changes'}
+                                {isPending ? <CircularProgress size={24} /> : 'Save Changes'}
                             </Button>
                         </Grid>
                     </Grid>
-                    {formData.error && (
-                        <CustomAlert alertType='error' type='Error' message={formData.error} sx={{mt: 3}} />
-                    )}
                 </Box>
             )}
             <Box sx={{ mt: 3 }}>

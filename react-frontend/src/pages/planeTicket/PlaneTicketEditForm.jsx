@@ -13,7 +13,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Grid from '@mui/material/Grid';
-import CustomAlert from "../../components/common/Alert.jsx";
+import CustomAlert from "../../components/common/feedback/CustomAlert.jsx";
 
 export default function PlaneTicketEditForm() {
     const dataCtx = useContext(DataContext);

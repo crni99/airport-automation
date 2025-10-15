@@ -3,7 +3,7 @@ import useFetch from '../../hooks/useFetch';
 import { ENTITIES } from '../../utils/const.js';
 import ListHeader from "../../components/common/ListHeader";
 import AirlinesListTable from "../../components/tables/AirlinesListTable.jsx";
-import CustomAlert from "../../components/common/Alert.jsx";
+import CustomAlert from "../../components/common/feedback/CustomAlert.jsx";
 import { Box } from '@mui/material';
 import Pagination from '../../components/common/pagination/Pagination.jsx'
 import CircularProgress from '@mui/material/CircularProgress';

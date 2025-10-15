@@ -6,7 +6,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import ListHeader from "../../components/common/ListHeader";
 import DestinationsListTable from "../../components/tables/DestinationsListTable.jsx";
 import Pagination from '../../components/common/pagination/Pagination';
-import CustomAlert from "../../components/common/Alert.jsx";
+import CustomAlert from "../../components/common/feedback/CustomAlert.jsx";
 
 export default function DestinationsList() {
     const [pageNumber, setPageNumber] = useState(1);

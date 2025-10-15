@@ -11,7 +11,7 @@ import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import PageTitle from '../../components/common/PageTitle.jsx';
 import BackToListAction from '../../components/common/pagination/BackToListAction.jsx';
-import CustomAlert from "../../components/common/Alert.jsx";
+import CustomAlert from "../../components/common/feedback/CustomAlert.jsx";
 
 export default function DestinationCreateForm() {
     const dataCtx = useContext(DataContext);

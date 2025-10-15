@@ -9,7 +9,7 @@ import Tooltip from '@mui/material/Tooltip';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { CustomSnackbar } from '../CustomSnackbar.jsx';
+import { CustomSnackbar } from '../feedback/CustomSnackbar.jsx';
 
 const TableActions = ({ entity, id, entityType, currentUserRole }) => {
     const [isDeleting, setIsDeleting] = useState(false);

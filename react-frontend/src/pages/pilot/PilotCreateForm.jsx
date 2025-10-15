@@ -7,7 +7,7 @@ import { useContext } from 'react';
 import { DataContext } from '../../store/DataContext.jsx';
 import { validateFields } from '../../utils/validation/validateFields.js';
 import { ENTITIES } from '../../utils/const.js';
-import CustomAlert from "../../components/common/Alert.jsx";
+import CustomAlert from "../../components/common/feedback/CustomAlert.jsx";
 import {
     Box,
     CircularProgress,

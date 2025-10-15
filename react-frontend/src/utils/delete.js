@@ -20,7 +20,7 @@ export async function deleteData(dataType, dataId, apiUrl, navigate) {
         if (response.ok || response.status === 204) {
             return {
                 success: true,
-                message: 'Data is successfully deleted.'
+                message: 'Data successfully deleted.'
             };
         } else {
             const errorMessage = await generateErrorMessage(response, dataType, dataId);

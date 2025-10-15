@@ -11,7 +11,7 @@ import Grid from '@mui/material/Grid';
 import PageTitle from '../../components/common/PageTitle.jsx';
 import BackToListAction from '../../components/common/pagination/BackToListAction.jsx';
 import { DataContext } from '../../store/DataContext.jsx';
-import CustomAlert from "../../components/common/Alert.jsx";
+import CustomAlert from "../../components/common/feedback/CustomAlert.jsx";
 
 export default function AirlineCreateForm() {
     const dataCtx = useContext(DataContext);

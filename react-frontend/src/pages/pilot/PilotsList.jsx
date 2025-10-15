@@ -5,7 +5,7 @@ import PilotsListTable from "../../components/tables/PilotsListTable.jsx";
 import { ENTITIES } from '../../utils/const.js';
 import { Box } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
-import CustomAlert from "../../components/common/Alert.jsx";
+import CustomAlert from "../../components/common/feedback/CustomAlert.jsx";
 import Pagination from '../../components/common/pagination/Pagination.jsx'
 
 export default function PilotsList() {

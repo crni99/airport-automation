@@ -12,7 +12,7 @@ import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import CircularProgress from '@mui/material/CircularProgress';
 import Divider from '@mui/material/Divider';
-import { CustomSnackbar } from "../../components/common/CustomSnackbar.jsx";
+import DetailActionSnackbarManager from '../../components/common/feedback/DetailActionSnackbarManager.jsx';
 import { useDataOperation } from '../../hooks/useDataOperation.jsx';
 
 export default function PlaneTicketDetails() {
@@ -34,29 +34,11 @@ export default function PlaneTicketDetails() {
                 <CircularProgress sx={{ mb: 0 }} />
             )}
 
-            {operationState.operationSuccess && (
-                <CustomSnackbar
-                    severity='success'
-                    message={operationState.operationSuccess}
-                    onClose={handleCloseSnackbar}
-                />
-            )}
-
-            {error && (
-                <CustomSnackbar
-                    severity='error'
-                    message={error.message}
-                    onClose={handleCloseSnackbar}
-                />
-            )}
-
-            {operationState.operationError && (
-                <CustomSnackbar
-                    severity='error'
-                    message={operationState.operationError.message}
-                    onClose={handleCloseSnackbar}
-                />
-            )}
+            <DetailActionSnackbarManager
+                operationState={operationState}
+                error={error}
+                handleCloseSnackbar={handleCloseSnackbar}
+            />
 
             {dataExist && (
                 <Box sx={{ mt: 3 }}>

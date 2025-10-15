@@ -5,7 +5,7 @@ import ListHeader from "../../components/common/ListHeader.jsx";
 import { ENTITIES } from '../../utils/const.js';
 import { Box } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
-import CustomAlert from "../../components/common/Alert.jsx";
+import CustomAlert from "../../components/common/feedback/CustomAlert.jsx";
 
 export default function TravelClassesList() {
     const [travelClasses, settravelClasses] = useState([]);

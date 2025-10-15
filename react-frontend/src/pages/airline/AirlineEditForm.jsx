@@ -1,91 +1,71 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { DataContext } from '../../store/DataContext.jsx';
-import { editData } from '../../utils/edit.js';
-import useFetch from '../../hooks/useFetch.jsx';
-import { validateFields } from '../../utils/validation/validateFields.js';
+import React, { useCallback } from 'react';
+import { useParams } from 'react-router-dom';
+import { useEditForm } from '../../hooks/useEditForm.jsx';
 import { ENTITIES } from '../../utils/const.js';
 import PageTitle from '../../components/common/PageTitle.jsx';
 import BackToListAction from '../../components/common/pagination/BackToListAction.jsx';
-import CustomAlert from "../../components/common/Alert.jsx";
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Grid from '@mui/material/Grid';
+import UpdateSnackbarManager from '../../components/common/feedback/UpdateSnackbarManager.jsx';
+
+const initialFormData = { name: '' };
+const requiredFields = ['name'];
+
+const transformAirlineForAPI = (formData, currentId) => ({
+    Id: currentId,
+    Name: formData.name,
+});
+
+const transformAirlineForForm = (fetchedData) => ({
+    name: fetchedData.name || '',
+});
 
 export default function AirlineEditForm() {
-    const dataCtx = useContext(DataContext);
     const { id } = useParams();
-    const navigate = useNavigate();
 
-    const [formData, setFormData] = useState({
-        name: '',
-        error: null,
-        isPending: false,
-    });
+    const {
+        name,
+        success,
+        formError,
+        isPending,
+        isFetching,
+        isFetchError,
+        fetchError,
+        handleChange,
+        handleSubmit,
+        setFormData,
+    } = useEditForm(
+        ENTITIES.AIRLINES,
+        id,
+        initialFormData,
+        requiredFields,
+        transformAirlineForAPI,
+        transformAirlineForForm
+    );
 
-    const { data: airlineData, isLoading, isError, error } = useFetch(ENTITIES.AIRLINES, id);
-
-    useEffect(() => {
-        if (airlineData) {
-            setFormData((prevState) => ({ ...prevState, name: airlineData.name || '' }));
-        }
-    }, [airlineData]);
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-
-        const errorMessage = validateFields(ENTITIES.AIRLINES, formData, ['name']);
-        if (errorMessage) {
-            setFormData({
-                ...formData,
-                error: errorMessage,
-            });
-            return;
-        }
-
-        const airline = {
-            Id: id,
-            Name: formData.name,
-        };
-
-        setFormData((prevState) => ({ ...prevState, isPending: true, error: null }));
-
-        try {
-            const result = await editData(airline, ENTITIES.AIRLINES, id, dataCtx.apiUrl, navigate);
-
-            if (result && result.message) {
-                setFormData({ ...formData, error: result.message, isPending: false });
-            } else {
-                setFormData({ name: '', error: null, isPending: false });
-            }
-        } catch (err) {
-            setFormData({ ...formData, error: 'Failed to update airline. Please try again.', isPending: false });
-        }
-    };
-
-    const handleChange = (event) => {
-        const { name, value } = event.target;
-        setFormData((prev) => {
-            const newError = validateFields(ENTITIES.AIRLINES, { ...prev, [name]: value }, ['name']);
-            return { ...prev, [name]: value, error: newError };
-        });
-    };
+    const handleCloseSnackbar = useCallback(() => {
+        setFormData(prev => ({ ...prev, success: null, formError: null }));
+    }, [setFormData]);
 
     return (
         <Box sx={{ mt: 5 }}>
-            <PageTitle title='Edit Airline' />
+            <PageTitle title="Edit Airline" />
 
-            {isLoading && (
+            {(isFetching || isPending) && (
                 <CircularProgress sx={{ mb: 2 }} />
             )}
 
-            {isError && error && (
-                <CustomAlert alertType='error' type={error.type} message={error.message} />
-            )}
+            <UpdateSnackbarManager
+                success={success}
+                formError={formError}
+                fetchError={fetchError}
+                handleCloseSnackbar={handleCloseSnackbar}
+            />
 
-            {!isLoading && !isError && (
+            {!isFetching && !isFetchError && (
                 <Box
                     component="form"
                     autoComplete="off"
@@ -98,11 +78,11 @@ export default function AirlineEditForm() {
                                 name="name"
                                 label="Name"
                                 variant="outlined"
-                                value={formData.name}
+                                value={name}
                                 onChange={handleChange}
                                 required
-                                error={!!formData.error}
-                                helperText={formData.error}
+                                error={!!formError}
+                                helperText={formError}
                             />
                         </Grid>
                         <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>
@@ -110,15 +90,12 @@ export default function AirlineEditForm() {
                                 type="submit"
                                 variant="contained"
                                 color="success"
-                                disabled={formData.isPending}
+                                disabled={isPending || !!formError}
                             >
-                                {formData.isPending ? <CircularProgress /> : 'Save Changes'}
+                                {isPending ? <CircularProgress size={24} /> : 'Save Changes'}
                             </Button>
                         </Grid>
                     </Grid>
-                    {formData.error && (
-                        <CustomAlert alertType='error' type='Error' message={formData.error} sx={{mt: 3}} />
-                    )}
                 </Box>
             )}
             <Box sx={{ mt: 3 }}>

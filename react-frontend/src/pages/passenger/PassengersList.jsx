@@ -6,7 +6,7 @@ import PassengersListTable from "../../components/tables/PassengersListTable.jsx
 import { ENTITIES } from '../../utils/const.js';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
-import CustomAlert from "../../components/common/Alert.jsx";
+import CustomAlert from "../../components/common/feedback/CustomAlert.jsx";
 
 export default function PassengersList() {
     const [pageNumber, setPageNumber] = useState(1);
