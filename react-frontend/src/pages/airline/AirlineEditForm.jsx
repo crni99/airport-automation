@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { useEditForm } from '../../hooks/useEditForm.jsx';
-import { ENTITIES } from '../../utils/const.js';
+import { ENTITIES, ENTITY_PATHS } from '../../utils/const.js';
 import PageTitle from '../../components/common/PageTitle.jsx';
 import BackToListAction from '../../components/common/pagination/BackToListAction.jsx';
 import Box from '@mui/material/Box';
@@ -39,6 +39,7 @@ export default function AirlineEditForm() {
         setFormData,
     } = useEditForm(
         ENTITIES.AIRLINES,
+        ENTITY_PATHS.AIRLINES,
         id,
         initialFormData,
         requiredFields,

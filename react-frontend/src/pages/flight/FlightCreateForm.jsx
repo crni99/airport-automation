@@ -223,9 +223,7 @@ export default function FlightCreateForm() {
                             onChange={handleChange}
                             required
                             fullWidth
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
+                            slotProps={{ inputLabel: { shrink: true } }}
                         />
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}>
@@ -239,9 +237,7 @@ export default function FlightCreateForm() {
                             onChange={handleChange}
                             required
                             fullWidth
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
+                            slotProps={{ inputLabel: { shrink: true } }}
                         />
                     </Grid>
                     <Grid size={{ xs: 12 }} sx={{ mt: 1 }}>

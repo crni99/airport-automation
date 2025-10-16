@@ -1,112 +1,95 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useContext } from 'react';
-import { DataContext } from '../../store/DataContext.jsx';
-import { editData } from '../../utils/edit.js';
+import React, { useCallback } from 'react';
+import { useParams } from 'react-router-dom';
 import PageTitle from '../../components/common/PageTitle.jsx';
 import BackToListAction from '../../components/common/pagination/BackToListAction.jsx';
-import useFetch from '../../hooks/useFetch.jsx';
-import { validateFields } from '../../utils/validation/validateFields.js';
-import { ENTITIES } from '../../utils/const.js';
+import { ENTITIES, ENTITY_PATHS } from '../../utils/const.js';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Grid from '@mui/material/Grid';
-import CustomAlert from "../../components/common/feedback/CustomAlert.jsx";
+import UpdateSnackbarManager from '../../components/common/feedback/UpdateSnackbarManager.jsx';
+import { useEditForm } from '../../hooks/useEditForm.jsx';
+
+const initialFormData = {
+    price: '',
+    purchaseDate: '',
+    seatNumber: '',
+    passengerId: '',
+    travelClassId: '',
+    flightId: '',
+};
+
+const requiredFields = ['price', 'purchaseDate', 'seatNumber', 'passengerId', 'travelClassId', 'flightId'];
+
+const transformPlaneTicketForAPI = (formData, currentId) => ({
+    Id: currentId,
+    Price: formData.price,
+    PurchaseDate: formData.purchaseDate,
+    SeatNumber: formData.seatNumber,
+    PassengerId: formData.passengerId,
+    TravelClassId: formData.travelClassId,
+    FlightId: formData.flightId,
+});
+
+const transformPlaneTicketForForm = (fetchedData) => ({
+    price: String(fetchedData.price || ''),
+    purchaseDate: fetchedData.purchaseDate || '',
+    seatNumber: fetchedData.seatNumber || '',
+    passengerId: String(fetchedData.passengerId || ''),
+    travelClassId: String(fetchedData.travelClassId || ''),
+    flightId: String(fetchedData.flightId || ''),
+});
 
 export default function PlaneTicketEditForm() {
-    const dataCtx = useContext(DataContext);
     const { id } = useParams();
-    const navigate = useNavigate();
 
-    const [formData, setFormData] = useState({
-        price: '',
-        purchaseDate: '',
-        seatNumber: '',
-        passengerId: '',
-        travelClassId: '',
-        flightId: '',
-        error: null,
-        isPending: false,
-    });
+    const {
+        price,
+        purchaseDate,
+        seatNumber,
+        passengerId,
+        travelClassId,
+        flightId,
+        success,
+        formError,
+        isPending,
+        isFetching,
+        isFetchError,
+        fetchError,
+        handleChange,
+        handleSubmit,
+        setFormData,
+    } = useEditForm(
+        ENTITIES.PLANE_TICKETS,
+        ENTITY_PATHS.PLANE_TICKETS,
+        id,
+        initialFormData,
+        requiredFields,
+        transformPlaneTicketForAPI,
+        transformPlaneTicketForForm
+    );
 
-    const { data: planeTicket, isLoading, isError, error } = useFetch(ENTITIES.PLANE_TICKETS, id);
-
-    useEffect(() => {
-        if (planeTicket) {
-            setFormData((prevState) => ({
-                ...prevState,
-                price: planeTicket.price || '',
-                purchaseDate: planeTicket.purchaseDate || '',
-                seatNumber: planeTicket.seatNumber || '',
-                passengerId: planeTicket.passengerId || '',
-                travelClassId: planeTicket.travelClassId || '',
-                flightId: planeTicket.flightId || '',
-            }));
-        }
-    }, [planeTicket]);
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-
-        const errorMessage = validateFields(ENTITIES.PLANE_TICKETS, formData, ['price', 'purchaseDate', 'seatNumber', 'passengerId', 'travelClassId', 'flightId']);
-        if (errorMessage) {
-            setFormData({
-                ...formData,
-                error: errorMessage,
-            });
-            return;
-        }
-
-        const planeTicket = {
-            Id: id,
-            Price: formData.price,
-            PurchaseDate: formData.purchaseDate,
-            SeatNumber: formData.seatNumber,
-            PassengerId: formData.passengerId,
-            TravelClassId: formData.travelClassId,
-            FlightId: formData.flightId,
-        };
-
-        setFormData((prevState) => ({ ...prevState, isPending: true }));
-
-        try {
-            const edit = await editData(planeTicket, ENTITIES.PLANE_TICKETS, id, dataCtx.apiUrl, navigate);
-
-            if (edit) {
-                console.error('Error updating plane ticket:', edit.message);
-                setFormData({ ...formData, error: edit.message, isPending: false });
-            } else {
-                setFormData({ name: '', error: null, isPending: false });
-            }
-        } catch (err) {
-            console.error('Error during API call:', err);
-            setFormData({ ...formData, error: 'Failed to update plane ticket. Please try again.', isPending: false });
-        }
-    };
-
-    const handleChange = (event) => {
-        const { name, value } = event.target;
-        setFormData((prev) => {
-            const newError = validateFields(ENTITIES.PLANE_TICKETS, { ...prev, [name]: value }, ['price', 'purchaseDate', 'seatNumber', 'passengerId', 'travelClassId', 'flightId']);
-            return { ...prev, [name]: value, error: newError };
-        });
-    };
+    const handleCloseSnackbar = useCallback(() => {
+        setFormData(prev => ({ ...prev, success: null, formError: null }));
+    }, [setFormData]);
 
     return (
         <Box sx={{ mt: 5 }}>
             <PageTitle title='Edit Plane Ticket' />
 
-            {isLoading && (
+            {(isFetching || isPending) && (
                 <CircularProgress sx={{ mb: 2 }} />
             )}
 
-            {isError && error && (
-                <CustomAlert alertType='error' type={error.type} message={error.message} />
-            )}
+            <UpdateSnackbarManager
+                success={success}
+                formError={formError}
+                fetchError={isFetchError ? fetchError : null}
+                handleCloseSnackbar={handleCloseSnackbar}
+            />
 
-            {!isLoading && !isError && (
+            {!isFetching && !isFetchError && (
                 <Box
                     component="form"
                     autoComplete="off"
@@ -121,7 +104,7 @@ export default function PlaneTicketEditForm() {
                                 type="number"
                                 variant="outlined"
                                 value={id}
-                                InputProps={{ readOnly: true }}
+                                slotProps={{ inputLabel: { shrink: true } }}
                                 fullWidth
                             />
                         </Grid>
@@ -132,8 +115,8 @@ export default function PlaneTicketEditForm() {
                                 label="Passenger Id"
                                 type="number"
                                 variant="outlined"
-                                value={formData.passengerId}
-                                InputProps={{ readOnly: true }}
+                                value={passengerId}
+                                slotProps={{ inputLabel: { shrink: true } }}
                                 required
                                 fullWidth
                             />
@@ -146,8 +129,8 @@ export default function PlaneTicketEditForm() {
                                 label="Travel Class Id"
                                 type="number"
                                 variant="outlined"
-                                value={formData.travelClassId}
-                                InputProps={{ readOnly: true }}
+                                value={travelClassId}
+                                slotProps={{ inputLabel: { shrink: true } }}
                                 required
                                 fullWidth
                             />
@@ -159,8 +142,8 @@ export default function PlaneTicketEditForm() {
                                 label="Flight Id"
                                 type="number"
                                 variant="outlined"
-                                value={formData.flightId}
-                                InputProps={{ readOnly: true }}
+                                value={flightId}
+                                slotProps={{ inputLabel: { shrink: true } }}
                                 required
                                 fullWidth
                             />
@@ -172,10 +155,12 @@ export default function PlaneTicketEditForm() {
                                 label="Price"
                                 type="number"
                                 variant="outlined"
-                                value={formData.price}
+                                value={price}
                                 onChange={handleChange}
                                 required
                                 fullWidth
+                                error={!!formError && requiredFields.includes('price')}
+                                helperText={formError && requiredFields.includes('price') ? formError : ''}
                             />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
@@ -185,10 +170,12 @@ export default function PlaneTicketEditForm() {
                                 label="Seat Number"
                                 type="number"
                                 variant="outlined"
-                                value={formData.seatNumber}
+                                value={seatNumber}
                                 onChange={handleChange}
                                 required
                                 fullWidth
+                                error={!!formError && requiredFields.includes('seatNumber')}
+                                helperText={formError && requiredFields.includes('seatNumber') ? formError : ''}
                             />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
@@ -198,13 +185,13 @@ export default function PlaneTicketEditForm() {
                                 label="Purchase Date"
                                 type="date"
                                 variant="outlined"
-                                value={formData.purchaseDate}
+                                value={purchaseDate}
                                 onChange={handleChange}
                                 required
                                 fullWidth
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
+                                slotProps={{ inputLabel: { shrink: true } }}
+                                error={!!formError && requiredFields.includes('purchaseDate')}
+                                helperText={formError && requiredFields.includes('purchaseDate') ? formError : ''}
                             />
                         </Grid>
                         <Grid size={{ xs: 12 }} sx={{ mt: 3 }}>
@@ -212,15 +199,12 @@ export default function PlaneTicketEditForm() {
                                 type="submit"
                                 variant="contained"
                                 color="success"
-                                disabled={formData.isPending}
+                                disabled={isPending || !!formError}
                             >
-                                {formData.isPending ? <CircularProgress /> : 'Save Changes'}
+                                {isPending ? <CircularProgress size={24} /> : 'Save Changes'}
                             </Button>
                         </Grid>
                     </Grid>
-                    {formData.error && (
-                        <CustomAlert alertType='error' type='Error' message={formData.error} />
-                    )}
                 </Box>
             )}
             <Box sx={{ mt: 3 }}>

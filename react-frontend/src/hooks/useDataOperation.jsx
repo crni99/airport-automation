@@ -51,7 +51,7 @@ export const useDataOperation = (entityType, entityId, apiUrl, redirectPath) => 
                 if (operation === 'delete') {
                     setTimeout(() => {
                         navigate(redirectPath);
-                    }, 3000);
+                    }, 2000);
                 }
             }
         } catch (error) {

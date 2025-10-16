@@ -153,7 +153,7 @@ export default function SearchInputWithButton({ type, setTriggerFetch, createBut
                                     id="startDate"
                                     label="Start Date"
                                     type="date"
-                                    InputLabelProps={{ shrink: true }}
+                                    slotProps={{ inputLabel: { shrink: true } }}
                                     value={searchTerms.startDate || ''}
                                     onChange={handleInputChange}
                                     size='small'
@@ -162,7 +162,7 @@ export default function SearchInputWithButton({ type, setTriggerFetch, createBut
                                     id="endDate"
                                     label="End Date"
                                     type="date"
-                                    InputLabelProps={{ shrink: true }}
+                                    slotProps={{ inputLabel: { shrink: true } }}
                                     value={searchTerms.endDate || ''}
                                     onChange={handleInputChange}
                                     size='small'
@@ -322,7 +322,7 @@ export default function SearchInputWithButton({ type, setTriggerFetch, createBut
                                     id="purchaseDate"
                                     label="Purchase Date"
                                     type="date"
-                                    InputLabelProps={{ shrink: true }}
+                                    slotProps={{ inputLabel: { shrink: true } }}
                                     value={searchTerms.purchaseDate || ''}
                                     onChange={handleInputChange}
                                     size='small'

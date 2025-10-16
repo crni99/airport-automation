@@ -5,7 +5,7 @@ import { editData } from '../utils/edit.js';
 import useFetch from './useFetch.jsx';
 import { validateFields } from '../utils/validation/validateFields.js';
 
-export const useEditForm = (dataType, dataId, initialDataShape, requiredFields, transformDataForAPI, transformDataForForm) => {
+export const useEditForm = (dataType, dataPath, dataId, initialDataShape, requiredFields, transformDataForAPI, transformDataForForm) => {
     const dataCtx = useContext(DataContext);
     const navigate = useNavigate();
 
@@ -72,8 +72,8 @@ export const useEditForm = (dataType, dataId, initialDataShape, requiredFields, 
                     formError: null,
                 }));
                 setTimeout(() => {
-                    navigate(`/${dataType}/${dataId}`);
-                }, 3000);
+                    navigate(`${dataPath}/${dataId}`);
+                }, 2000);
             } else {
                 setFormData((prevState) => ({ ...prevState, success: null, formError: 'Update failed with an unknown response.', isPending: false }));
             }
@@ -88,7 +88,7 @@ export const useEditForm = (dataType, dataId, initialDataShape, requiredFields, 
                 isPending: false
             }));
         }
-    }, [dataType, dataId, formData, requiredFields, transformDataForAPI, dataCtx.apiUrl, navigate]);
+    }, [dataType, dataPath, dataId, formData, requiredFields, transformDataForAPI, dataCtx.apiUrl, navigate]);
 
     return {
         ...formData,

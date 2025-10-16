@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { useEditForm } from '../../hooks/useEditForm.jsx';
-import { ENTITIES } from '../../utils/const.js';
+import { ENTITIES, ENTITY_PATHS } from '../../utils/const.js';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -45,6 +45,7 @@ export default function ApiUserEditForm() {
         setFormData,
     } = useEditForm(
         ENTITIES.API_USERS,
+        ENTITY_PATHS.API_USERS,
         id,
         initialFormData,
         requiredFields,

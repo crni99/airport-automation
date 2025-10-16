@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { useEditForm } from '../../hooks/useEditForm.jsx';
-import { ENTITIES } from '../../utils/const.js';
+import { ENTITIES, ENTITY_PATHS } from '../../utils/const.js';
 import PageTitle from '../../components/common/PageTitle.jsx';
 import BackToListAction from '../../components/common/pagination/BackToListAction.jsx';
 import UpdateSnackbarManager from '../../components/common/feedback/UpdateSnackbarManager.jsx';
@@ -69,6 +69,7 @@ export default function PassengerEditForm() {
         setFormData,
     } = useEditForm(
         ENTITIES.PASSENGERS,
+        ENTITY_PATHS.PASSENGERS,
         id,
         initialFormData,
         requiredFields,

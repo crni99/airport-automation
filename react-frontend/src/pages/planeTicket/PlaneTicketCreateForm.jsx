@@ -251,9 +251,7 @@ export default function PlaneTicketCreateForm() {
                             onChange={handleChange}
                             required
                             fullWidth
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
+                            slotProps={{ inputLabel: { shrink: true } }}
                         />
                     </Grid>
                     <Grid size={{ xs: 12 }} sx={{ mt: 3 }}>
