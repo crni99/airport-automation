@@ -32,7 +32,7 @@ export default function NotFound() {
                         </Typography>
                     </AlertTitle>
                     <Typography variant="body1">
-                        We couldn't find the page you were looking for.
+                        We couldn&apos;t find the page you were looking for.
                     </Typography>
                     <Typography variant="body1" sx={{ pb: 2 }}>
                         Please check the URL and try again.
