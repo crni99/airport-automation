@@ -1,8 +1,8 @@
-import { getAuthToken } from '../utils/auth.js';
-import { generateErrorMessage, handleNetworkError } from '../utils/errorUtils.js';
+import { getAuthToken } from './auth.js';
+import { generateErrorMessage, handleNetworkError } from './errorUtils.js';
 import { CustomAPIError } from './CustomError.js';
 
-export async function deleteData(dataType, dataId, apiUrl, navigate) {
+export async function deleteData(dataType, dataId, apiUrl) {
     try {
         const authToken = getAuthToken();
         const headers = {
@@ -27,17 +27,15 @@ export async function deleteData(dataType, dataId, apiUrl, navigate) {
             throw new CustomAPIError('API_ERROR', errorMessage);
         }
     } catch (error) {
-        const networkErrorMessage = handleNetworkError(error);
+        const networkErrorObject = handleNetworkError(error);
 
-        if (networkErrorMessage) {
-            if (!(networkErrorMessage instanceof Error)) {
-                throw new CustomAPIError('NETWORK_ERROR', networkErrorMessage.message);
-            }
-            throw networkErrorMessage;
+        if (networkErrorObject) {
+            throw new CustomAPIError('NETWORK_ERROR', networkErrorObject.message);
         }
-        if (error instanceof CustomAPIError || error.type === 'API_ERROR') {
+        if (error instanceof CustomAPIError) {
             throw error;
-        } else {
+        }
+        else {
             console.error('Error deleting data:', error);
             const message = error.message || 'An unexpected error occurred during the delete operation.';
             throw new CustomAPIError('UNEXPECTED_ERROR', message);

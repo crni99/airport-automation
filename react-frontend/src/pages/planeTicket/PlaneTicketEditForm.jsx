@@ -9,7 +9,7 @@ import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Grid from '@mui/material/Grid';
 import UpdateSnackbarManager from '../../components/common/feedback/UpdateSnackbarManager.jsx';
-import { useEditForm } from '../../hooks/useEditForm.jsx';
+import { useUpdateOperation } from '../../hooks/useUpdateOperation.jsx';
 
 const initialFormData = {
     price: '',
@@ -60,7 +60,7 @@ export default function PlaneTicketEditForm() {
         handleChange,
         handleSubmit,
         setFormData,
-    } = useEditForm(
+    } = useUpdateOperation(
         ENTITIES.PLANE_TICKETS,
         ENTITY_PATHS.PLANE_TICKETS,
         id,

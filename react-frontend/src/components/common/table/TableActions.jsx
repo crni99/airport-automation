@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { deleteData } from '../../../utils/delete.js';
+import { deleteData } from '../../../utils/httpDelete.js';
 import { DataContext } from '../../../store/DataContext.jsx';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';

@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { useEditForm } from '../../hooks/useEditForm.jsx';
+import { useUpdateOperation } from '../../hooks/useUpdateOperation.jsx';
 import { ENTITIES, ENTITY_PATHS } from '../../utils/const.js';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
@@ -43,7 +43,7 @@ export default function ApiUserEditForm() {
         handleChange,
         handleSubmit,
         setFormData,
-    } = useEditForm(
+    } = useUpdateOperation(
         ENTITIES.API_USERS,
         ENTITY_PATHS.API_USERS,
         id,

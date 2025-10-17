@@ -1,33 +1,43 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { useParams } from 'react-router-dom';
 import useFetch from '../../hooks/useFetch';
+import { useNavigate } from 'react-router-dom';
 import PageTitle from '../../components/common/PageTitle.jsx';
 import PageNavigationActions from '../../components/common/pagination/PageNavigationActions';
-import { DataContext } from '../../store/DataContext';
 import { ENTITIES, ENTITY_PATHS } from '../../utils/const.js';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import DetailActionSnackbarManager from '../../components/common/feedback/DetailActionSnackbarManager.jsx';
-import { useDataOperation } from '../../hooks/useDataOperation.jsx';
+import { useDeleteOperation } from '../../hooks/useDeleteOperation.jsx';
 
 export default function AirlineDetails() {
-    const dataCtx = useContext(DataContext);
     const { id } = useParams();
     const { data: airline, dataExist, error, isLoading } = useFetch(ENTITIES.AIRLINES, id);
-    const { operationState, handleCloseSnackbar, handleOperation } = useDataOperation(
+
+    const navigate = useNavigate();
+
+    const { operationState, handleCloseSnackbar, handleOperation } = useDeleteOperation(
         ENTITIES.AIRLINES,
         id,
-        dataCtx.apiUrl,
         ENTITY_PATHS.AIRLINES
     );
+
+    if (isLoading) {
+        return (
+            <Box sx={{ mt: 5 }}>
+                <PageTitle title='Airline Details' />
+                <CircularProgress sx={{ mb: 0 }} />
+            </Box>
+        );
+    }
 
     return (
         <Box sx={{ mt: 5 }}>
             <PageTitle title='Airline Details' />
 
-            {(isLoading || operationState.isPending) && (
+            {operationState.isPending && (
                 <CircularProgress sx={{ mb: 0 }} />
             )}
 
@@ -57,7 +67,7 @@ export default function AirlineDetails() {
                         <PageNavigationActions
                             dataType={ENTITIES.AIRLINES}
                             dataId={id}
-                            onEdit={() => handleOperation('edit')}
+                            onEdit={() => navigate(`${ENTITY_PATHS.AIRLINES}/edit/${id}`)}
                             onDelete={() => handleOperation('delete')}
                         />
                     </Box>

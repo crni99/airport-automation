@@ -1,11 +1,11 @@
 import { useState, useEffect, useContext, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DataContext } from '../store/DataContext.jsx';
-import { editData } from '../utils/edit.js';
+import { updateData } from '../utils/httpUpdate.js';
 import useFetch from './useFetch.jsx';
 import { validateFields } from '../utils/validation/validateFields.js';
 
-export const useEditForm = (dataType, dataPath, dataId, initialDataShape, requiredFields, transformDataForAPI, transformDataForForm) => {
+export const useUpdateOperation = (dataType, dataPath, dataId, initialDataShape, requiredFields, transformDataForAPI, transformDataForForm) => {
     const dataCtx = useContext(DataContext);
     const navigate = useNavigate();
 
@@ -62,7 +62,7 @@ export const useEditForm = (dataType, dataPath, dataId, initialDataShape, requir
         setFormData((prevState) => ({ ...prevState, isPending: true, formError: null, success: null }));
 
         try {
-            const result = await editData(apiPayload, dataType, dataId, dataCtx.apiUrl);
+            const result = await updateData(apiPayload, dataType, dataId, dataCtx.apiUrl);
 
             if (result && result.success) {
                 setFormData((prevState) => ({

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createData } from '../../utils/create.js';
+import { createData } from '../../utils/httpCreate.js';
 import PageTitle from '../../components/common/PageTitle.jsx';
 import BackToListAction from '../../components/common/pagination/BackToListAction.jsx';
 import { useContext } from 'react';

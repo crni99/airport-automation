@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import PageTitle from '../../components/common/PageTitle.jsx';
 import BackToListAction from '../../components/common/pagination/BackToListAction.jsx';
-import { useEditForm } from '../../hooks/useEditForm.jsx';
+import { useUpdateOperation } from '../../hooks/useUpdateOperation.jsx';
 import { ENTITIES, ENTITY_PATHS } from '../../utils/const.js';
 import { formatTime } from '../../utils/formatting.js';
 import Box from '@mui/material/Box';
@@ -61,7 +61,7 @@ export default function FlightEditForm() {
         handleChange,
         handleSubmit,
         setFormData,
-    } = useEditForm(
+    } = useUpdateOperation(
         ENTITIES.FLIGHTS,
         ENTITY_PATHS.FLIGHTS,
         id,

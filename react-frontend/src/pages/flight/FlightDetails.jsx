@@ -1,9 +1,8 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import useFetch from '../../hooks/useFetch.jsx';
 import PageTitle from '../../components/common/PageTitle.jsx';
 import PageNavigationActions from '../../components/common/pagination/PageNavigationActions.jsx';
-import { DataContext } from '../../store/DataContext.jsx';
 import { ENTITIES, ENTITY_PATHS } from '../../utils/const.js';
 import openMap from '../../utils/openMapHelper.js';
 import Box from '@mui/material/Box';
@@ -13,20 +12,20 @@ import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import DetailActionSnackbarManager from '../../components/common/feedback/DetailActionSnackbarManager.jsx';
-import { useDataOperation } from '../../hooks/useDataOperation.jsx';
+import { useDeleteOperation } from '../../hooks/useDeleteOperation.jsx';
 
 export default function FlightDetails() {
-    const dataCtx = useContext(DataContext);
     const { id } = useParams();
     const { data: flight, dataExist, error, isLoading } = useFetch(ENTITIES.FLIGHTS, id);
-    const { operationState, handleCloseSnackbar, handleOperation } = useDataOperation(
-        ENTITIES.FLIGHTS,
-        id,
-        dataCtx.apiUrl,
-        ENTITY_PATHS.FLIGHTS
-    );
+
     const navigate = useNavigate();
 
+    const { operationState, handleCloseSnackbar, handleOperation } = useDeleteOperation(
+        ENTITIES.FLIGHTS,
+        id,
+        ENTITY_PATHS.FLIGHTS
+    );
+    
     return (
         <Box sx={{ mt: 5 }}>
             <PageTitle title='Flight Details' />
@@ -152,7 +151,7 @@ export default function FlightDetails() {
                         <PageNavigationActions
                             dataType={ENTITIES.FLIGHTS}
                             dataId={id}
-                            onEdit={() => handleOperation('edit')}
+                            onEdit={() => navigate(`${ENTITY_PATHS.FLIGHTS}/edit/${id}`)}
                             onDelete={() => handleOperation('delete')}
                         />
                     </Box>

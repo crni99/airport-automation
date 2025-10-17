@@ -1,26 +1,25 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import useFetch from '../../hooks/useFetch.jsx';
 import PageTitle from '../../components/common/PageTitle.jsx';
 import PageNavigationActions from '../../components/common/pagination/PageNavigationActions.jsx';
-import { DataContext } from '../../store/DataContext.jsx';
 import { ENTITIES, ENTITY_PATHS } from '../../utils/const.js';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import DetailActionSnackbarManager from '../../components/common/feedback/DetailActionSnackbarManager.jsx';
-import { useDataOperation } from '../../hooks/useDataOperation.jsx';
+import { useDeleteOperation } from '../../hooks/useDeleteOperation.jsx';
 
 export default function ApiUserDetails() {
-    const navigate = useNavigate();
-    const dataCtx = useContext(DataContext);
     const { id } = useParams();
     const { data: apiUser, dataExist, error, isLoading } = useFetch(ENTITIES.API_USERS, id);
-    const { operationState, handleCloseSnackbar, handleOperation } = useDataOperation(
+
+    const navigate = useNavigate();
+
+    const { operationState, handleCloseSnackbar, handleOperation } = useDeleteOperation(
         ENTITIES.API_USERS,
         id,
-        dataCtx.apiUrl,
         ENTITY_PATHS.API_USERS
     );
 

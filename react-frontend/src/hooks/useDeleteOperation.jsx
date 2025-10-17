@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { deleteData } from '../utils/delete.js';
-import { editData } from '../utils/edit.js';
+import { deleteData } from '../utils/httpDelete.js';
+import { DataContext } from '../store/DataContext.jsx';
 
-export const useDataOperation = (entityType, entityId, apiUrl, redirectPath) => {
+export const useDeleteOperation = (entityType, entityId, redirectPath) => {
+    const dataCtx = useContext(DataContext);
     const navigate = useNavigate();
 
     const [operationState, setOperationState] = useState({
@@ -25,6 +26,12 @@ export const useDataOperation = (entityType, entityId, apiUrl, redirectPath) => 
     };
 
     const handleOperation = async (operation) => {
+
+        if (operation !== 'delete') {
+            console.warn(`useDataOperation called with unsupported operation: ${operation}`);
+            return;
+        }
+
         setOperationState(prevState => ({
             ...prevState,
             isPending: true,
@@ -33,26 +40,20 @@ export const useDataOperation = (entityType, entityId, apiUrl, redirectPath) => 
         }));
 
         try {
-            let operationResult;
-
-            if (operation === 'edit') {
-                operationResult = await editData(entityType, entityId, apiUrl, navigate);
-            } else if (operation === 'delete') {
-                operationResult = await deleteData(entityType, entityId, apiUrl, navigate);
-            }
+            const operationResult = await deleteData(entityType, entityId, dataCtx.apiUrl);
 
             if (operationResult && operationResult.success) {
                 setOperationState(prevState => ({
                     ...prevState,
                     operationSuccess: operationResult.message,
-                    ...(operation === 'delete' && { isPending: false }),
                 }));
 
-                if (operation === 'delete') {
-                    setTimeout(() => {
-                        navigate(redirectPath);
-                    }, 2000);
-                }
+                setTimeout(() => {
+                    setOperationState(prevState => ({ ...prevState, isPending: false }));
+                    navigate(redirectPath);
+                }, 2000);
+            } else {
+                throw new Error(operationResult?.message || 'Delete operation failed with no message.');
             }
         } catch (error) {
             const errorMessage = error.message || 'An unknown error occurred.';
@@ -60,12 +61,9 @@ export const useDataOperation = (entityType, entityId, apiUrl, redirectPath) => 
 
             setOperationState(prevState => ({
                 ...prevState,
+                isPending: false,
                 operationError: { type: errorType, message: errorMessage }
             }));
-        } finally {
-            if (operation !== 'delete') {
-                setOperationState(prevState => ({ ...prevState, isPending: false }));
-            }
         }
     };
 

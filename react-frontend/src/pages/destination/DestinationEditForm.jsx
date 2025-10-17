@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { useEditForm } from '../../hooks/useEditForm.jsx';
+import { useUpdateOperation } from '../../hooks/useUpdateOperation.jsx';
 import { ENTITIES, ENTITY_PATHS } from '../../utils/const.js';
 import PageTitle from '../../components/common/PageTitle.jsx';
 import BackToListAction from '../../components/common/pagination/BackToListAction.jsx';
@@ -40,7 +40,7 @@ export default function DestinationEditForm() {
         handleChange,
         handleSubmit,
         setFormData,
-    } = useEditForm(
+    } = useUpdateOperation(
         ENTITIES.DESTINATIONS,
         ENTITY_PATHS.DESTINATIONS,
         id,

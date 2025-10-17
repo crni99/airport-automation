@@ -1,7 +1,6 @@
-import React, { useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import React from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import useFetch from '../../hooks/useFetch.jsx';
-import { DataContext } from '../../store/DataContext.jsx';
 import { ENTITIES, ENTITY_PATHS } from '../../utils/const.js';
 import openMap from '../../utils/openMapHelper.js'
 import Box from '@mui/material/Box';
@@ -13,16 +12,17 @@ import PageTitle from '../../components/common/PageTitle.jsx';
 import PageNavigationActions from '../../components/common/pagination/PageNavigationActions.jsx';
 import MapEmbed from '../../components/common/MapEmbed.jsx';
 import DetailActionSnackbarManager from '../../components/common/feedback/DetailActionSnackbarManager.jsx';
-import { useDataOperation } from '../../hooks/useDataOperation.jsx';
+import { useDeleteOperation } from '../../hooks/useDeleteOperation.jsx';
 
 export default function DestinationDetails() {
-    const dataCtx = useContext(DataContext);
     const { id } = useParams();
     const { data: destination, dataExist, error, isLoading } = useFetch(ENTITIES.DESTINATIONS, id);
-    const { operationState, handleCloseSnackbar, handleOperation } = useDataOperation(
+
+    const navigate = useNavigate();
+
+    const { operationState, handleCloseSnackbar, handleOperation } = useDeleteOperation(
         ENTITIES.DESTINATIONS,
         id,
-        dataCtx.apiUrl,
         ENTITY_PATHS.DESTINATIONS
     );
 
@@ -76,7 +76,7 @@ export default function DestinationDetails() {
                                 <PageNavigationActions
                                     dataType={ENTITIES.DESTINATIONS}
                                     dataId={id}
-                                    onEdit={() => handleOperation('edit')}
+                                    onEdit={() => navigate(`${ENTITY_PATHS.DESTINATIONS}/edit/${id}`)}
                                     onDelete={() => handleOperation('delete')}
                                 />
                             </Box>
