@@ -9,7 +9,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Grid from '@mui/material/Grid';
-import UpdateSnackbarManager from '../../components/common/feedback/UpdateSnackbarManager.jsx';
+import UpdateOperationSnackbarManager from '../../components/common/feedback/UpdateOperationSnackbarManager.jsx';
 
 const initialFormData = { name: '' };
 const requiredFields = ['name'];
@@ -59,7 +59,7 @@ export default function AirlineEditForm() {
                 <CircularProgress sx={{ mb: 2 }} />
             )}
 
-            <UpdateSnackbarManager
+            <UpdateOperationSnackbarManager
                 success={success}
                 formError={formError}
                 fetchError={fetchError}

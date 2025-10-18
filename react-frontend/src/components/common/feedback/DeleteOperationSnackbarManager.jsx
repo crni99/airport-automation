@@ -1,7 +1,7 @@
 import React from 'react';
 import { CustomSnackbar } from './CustomSnackbar';
 
-const OperationSnackbarManager = ({ operationState, error, handleCloseSnackbar }) => {
+const DeleteOperationSnackbarManager = ({ operationState, error, handleCloseSnackbar }) => {
     if (operationState?.operationSuccess) {
         return (
             <CustomSnackbar
@@ -32,4 +32,4 @@ const OperationSnackbarManager = ({ operationState, error, handleCloseSnackbar }
     return null;
 };
 
-export default OperationSnackbarManager;
+export default DeleteOperationSnackbarManager;

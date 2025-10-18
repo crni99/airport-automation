@@ -1,9 +1,5 @@
-import React, { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { createData } from '../../utils/httpCreate.js';
-import { DataContext } from '../../store/DataContext.jsx';
-import { validateFields } from '../../utils/validation/validateFields.js';
-import { ENTITIES } from '../../utils/const.js';
+import React, { useCallback } from 'react';
+import { ENTITIES, ENTITY_PATHS } from '../../utils/const.js';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
@@ -11,59 +7,49 @@ import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import PageTitle from '../../components/common/PageTitle.jsx';
 import BackToListAction from '../../components/common/pagination/BackToListAction.jsx';
-import CustomAlert from "../../components/common/feedback/CustomAlert.jsx";
+import CreateOperationSnackbarManager from '../../components/common/feedback/CreateOperationSnackbarManager.jsx';
+import { useCreateOperation } from '../../hooks/useCreateOperation.jsx';
+
+const initialFormData = { city: '', airport: '' };
+const requiredFields = ['city', 'airport'];
+
+const transformDestinationForAPI = (formData) => ({
+    City: formData.city,
+    Airport: formData.airport
+});
 
 export default function DestinationCreateForm() {
-    const dataCtx = useContext(DataContext);
-    const navigate = useNavigate();
-    const [formData, setFormData] = useState({
-        city: '',
-        airport: '',
-        error: null,
-        isPending: false,
-    });
+    const {
+        city,
+        airport,
+        success,
+        formError,
+        isPending,
+        handleChange,
+        handleSubmit,
+        setFormData,
+    } = useCreateOperation(
+        ENTITIES.DESTINATIONS,
+        ENTITY_PATHS.DESTINATIONS,
+        initialFormData,
+        requiredFields,
+        transformDestinationForAPI
+    );
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-
-        const errorMessage = validateFields(ENTITIES.DESTINATIONS, formData, ['city', 'airport']);
-        if (errorMessage) {
-            setFormData({
-                ...formData,
-                error: errorMessage,
-            });
-            return;
-        }
-
-        const destination = { City: formData.city, Airport: formData.airport };
-        setFormData({ ...formData, isPending: true, error: null });
-
-        try {
-            const create = await createData(destination, ENTITIES.DESTINATIONS, dataCtx.apiUrl, navigate);
-
-            if (create) {
-                console.error('Error creating destination:', create.message);
-                setFormData({ ...formData, error: create.message, isPending: false });
-            } else {
-                setFormData({ city: '', airport: '', error: null, isPending: false });
-            }
-        } catch (err) {
-            console.error('Error during API call:', err);
-            setFormData({ ...formData, error: 'Failed to create destination. Please try again.', isPending: false });
-        }
-    };
-
-    const handleChange = (event) => {
-        const { name, value } = event.target;
-        setFormData((prev) => {
-            const newError = validateFields(ENTITIES.DESTINATIONS, { ...prev, [name]: value }, ['city', 'airport']);
-            return { ...prev, [name]: value, error: newError };
-        });
-    };
+    const handleCloseSnackbar = useCallback(() => {
+        setFormData(prev => ({ ...prev, success: null, formError: null }));
+    }, [setFormData]);
 
     return (
         <Box sx={{ mt: 5 }}>
             <PageTitle title='Create Destination' />
+
+            <CreateOperationSnackbarManager
+                success={success}
+                formError={formError}
+                handleCloseSnackbar={handleCloseSnackbar}
+            />
+
             <Box
                 component="form"
                 autoComplete="off"
@@ -76,12 +62,12 @@ export default function DestinationCreateForm() {
                             name="city"
                             label="City"
                             variant="outlined"
-                            value={formData.city}
+                            value={city}
                             onChange={handleChange}
                             placeholder="Belgrade"
                             required
-                            error={!!formData.error}
-                            helperText={formData.error}
+                            error={!!formError}
+                            helperText={formError}
                             sx={{ width: '100%' }}
                         />
                     </Grid>
@@ -91,12 +77,12 @@ export default function DestinationCreateForm() {
                             name="airport"
                             label="Airport"
                             variant="outlined"
-                            value={formData.airport}
+                            value={airport}
                             onChange={handleChange}
                             placeholder="Belgrade Nikola Tesla Airport"
                             required
-                            error={!!formData.error}
-                            helperText={formData.error}
+                            error={!!formError}
+                            helperText={formError}
                             sx={{ width: '150%' }}
                         />
                     </Grid>
@@ -105,14 +91,11 @@ export default function DestinationCreateForm() {
                             type="submit"
                             variant="contained"
                             color="success"
-                            disabled={formData.isPending}
+                            disabled={isPending}
                         >
-                            {formData.isPending ? <CircularProgress /> : 'Create'}
+                            {isPending ? <CircularProgress size={24} /> : 'Create'}
                         </Button>
                     </Grid>
-                    {formData.error && (
-                        <CustomAlert alertType='error' type='Error' message={formData.error} sx={{mt: 3}} />
-                    )}
                 </Grid>
             </Box>
             <Box sx={{ mt: 3 }}>

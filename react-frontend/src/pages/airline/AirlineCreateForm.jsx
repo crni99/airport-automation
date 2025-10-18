@@ -1,8 +1,5 @@
-import React, { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { createData } from '../../utils/httpCreate.js';
-import { validateFields } from '../../utils/validation/validateFields.js';
-import { ENTITIES } from '../../utils/const.js';
+import React, { useCallback } from 'react';
+import { ENTITIES, ENTITY_PATHS } from '../../utils/const.js';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -10,57 +7,47 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Grid from '@mui/material/Grid';
 import PageTitle from '../../components/common/PageTitle.jsx';
 import BackToListAction from '../../components/common/pagination/BackToListAction.jsx';
-import { DataContext } from '../../store/DataContext.jsx';
-import CustomAlert from "../../components/common/feedback/CustomAlert.jsx";
+import CreateOperationSnackbarManager from '../../components/common/feedback/CreateOperationSnackbarManager.jsx';
+import { useCreateOperation } from '../../hooks/useCreateOperation.jsx';
+
+const initialFormData = { name: '' };
+const requiredFields = ['name'];
+
+const transformAirlineForAPI = (data) => ({
+    Name: data.name
+});
 
 export default function AirlineCreateForm() {
-    const dataCtx = useContext(DataContext);
-    const navigate = useNavigate();
-    const [formData, setFormData] = useState({
-        name: '',
-        error: null,
-        isPending: false,
-    });
+    const {
+        name,
+        success,
+        formError,
+        isPending,
+        handleChange,
+        handleSubmit,
+        setFormData,
+    } = useCreateOperation(
+        ENTITIES.AIRLINES,
+        ENTITY_PATHS.AIRLINES,
+        initialFormData,
+        requiredFields,
+        transformAirlineForAPI
+    );
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-
-        const errorMessage = validateFields(ENTITIES.AIRLINES, formData, ['name']);
-        if (errorMessage) {
-            setFormData({
-                ...formData,
-                error: errorMessage,
-            });
-            return;
-        }
-
-        const airline = { Name: formData.name };
-        setFormData({ ...formData, isPending: true, error: null });
-
-        try {
-            const result = await createData(airline, ENTITIES.AIRLINES, dataCtx.apiUrl, navigate);
-
-            if (result && result.message) {
-                setFormData({ ...formData, error: result.message, isPending: false });
-            } else {
-                setFormData({ name: '', error: null, isPending: false });
-            }
-        } catch (err) {
-            setFormData({ ...formData, error: 'Failed to create airline. Please try again.', isPending: false });
-        }
-    };
-
-    const handleChange = (event) => {
-        const { name, value } = event.target;
-        setFormData((prev) => {
-            const newError = validateFields('Airline', { ...prev, [name]: value }, ['name']);
-            return { ...prev, [name]: value, error: newError };
-        });
-    };
+    const handleCloseSnackbar = useCallback(() => {
+        setFormData(prev => ({ ...prev, success: null, formError: null }));
+    }, [setFormData]);
 
     return (
         <Box sx={{ mt: 5 }}>
             <PageTitle title='Create Airline' />
+
+            <CreateOperationSnackbarManager
+                success={success}
+                formError={formError}
+                handleCloseSnackbar={handleCloseSnackbar}
+            />
+
             <Box
                 component="form"
                 autoComplete="off"
@@ -73,12 +60,12 @@ export default function AirlineCreateForm() {
                             name="name"
                             label="Name"
                             variant="outlined"
-                            value={formData.name}
+                            value={name}
                             onChange={handleChange}
                             placeholder="Air Serbia"
                             required
-                            error={!!formData.error}
-                            helperText={formData.error}
+                            error={!!formError}
+                            helperText={!!formError}
                         />
                     </Grid>
                     <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>
@@ -86,15 +73,12 @@ export default function AirlineCreateForm() {
                             type="submit"
                             variant="contained"
                             color="success"
-                            disabled={formData.isPending}
+                            disabled={isPending}
                         >
-                            {formData.isPending ? <CircularProgress /> : 'Create'}
+                            {isPending ? <CircularProgress /> : 'Create'}
                         </Button>
                     </Grid>
                 </Grid>
-                {formData.error && (
-                    <CustomAlert alertType='error' type='Error' message={formData.error} sx={{mt: 3}} />
-                )}
             </Box>
             <Box sx={{ mt: 3 }}>
                 <BackToListAction dataType={ENTITIES.AIRLINES} />

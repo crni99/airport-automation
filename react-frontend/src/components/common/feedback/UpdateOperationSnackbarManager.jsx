@@ -1,7 +1,7 @@
 import React from 'react';
 import { CustomSnackbar } from './CustomSnackbar';
 
-const UpdateSnackbarManager = ({ success, formError, fetchError, handleCloseSnackbar }) => {
+const UpdateOperationSnackbarManager = ({ success, formError, fetchError, handleCloseSnackbar }) => {
     if (success) {
         return (
             <CustomSnackbar
@@ -30,8 +30,7 @@ const UpdateSnackbarManager = ({ success, formError, fetchError, handleCloseSnac
             />
         );
     }
-
     return null;
 };
 
-export default UpdateSnackbarManager;
+export default UpdateOperationSnackbarManager;

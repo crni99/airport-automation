@@ -11,7 +11,7 @@ import Link from '@mui/material/Link';
 import PageTitle from '../../components/common/PageTitle.jsx';
 import PageNavigationActions from '../../components/common/pagination/PageNavigationActions.jsx';
 import MapEmbed from '../../components/common/MapEmbed.jsx';
-import DetailActionSnackbarManager from '../../components/common/feedback/DetailActionSnackbarManager.jsx';
+import DeleteOperationSnackbarManager from '../../components/common/feedback/DeleteOperationSnackbarManager.jsx';
 import { useDeleteOperation } from '../../hooks/useDeleteOperation.jsx';
 
 export default function DestinationDetails() {
@@ -34,7 +34,7 @@ export default function DestinationDetails() {
                 <CircularProgress sx={{ mb: 0 }} />
             )}
 
-            <DetailActionSnackbarManager
+            <DeleteOperationSnackbarManager
                 operationState={operationState}
                 error={error}
                 handleCloseSnackbar={handleCloseSnackbar}

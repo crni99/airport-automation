@@ -4,7 +4,7 @@ import { useUpdateOperation } from '../../hooks/useUpdateOperation.jsx';
 import { ENTITIES, ENTITY_PATHS } from '../../utils/const.js';
 import PageTitle from '../../components/common/PageTitle.jsx';
 import BackToListAction from '../../components/common/pagination/BackToListAction.jsx';
-import UpdateSnackbarManager from '../../components/common/feedback/UpdateSnackbarManager.jsx';
+import UpdateOperationSnackbarManager from '../../components/common/feedback/UpdateOperationSnackbarManager.jsx';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -62,7 +62,7 @@ export default function DestinationEditForm() {
                 <CircularProgress sx={{ mb: 2 }} />
             )}
 
-            <UpdateSnackbarManager
+            <UpdateOperationSnackbarManager
                 success={success}
                 formError={formError}
                 fetchError={fetchError}

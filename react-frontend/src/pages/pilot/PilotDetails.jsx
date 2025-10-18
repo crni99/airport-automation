@@ -8,7 +8,7 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
-import DetailActionSnackbarManager from '../../components/common/feedback/DetailActionSnackbarManager.jsx';
+import DeleteOperationSnackbarManager from '../../components/common/feedback/DeleteOperationSnackbarManager.jsx';
 import { useDeleteOperation } from '../../hooks/useDeleteOperation.jsx';
 
 export default function PilotDetails() {
@@ -31,7 +31,7 @@ export default function PilotDetails() {
                 <CircularProgress sx={{ mb: 0 }} />
             )}
 
-            <DetailActionSnackbarManager
+            <DeleteOperationSnackbarManager
                 operationState={operationState}
                 error={error}
                 handleCloseSnackbar={handleCloseSnackbar}

@@ -1,28 +1,46 @@
-import React, { useState, useContext, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import useFetch from '../../hooks/useFetch.jsx';
-import { useNavigate } from 'react-router-dom';
-import { createData } from '../../utils/httpCreate.js';
+import { ENTITIES, ENTITY_PATHS } from '../../utils/const.js';
 import PageTitle from '../../components/common/PageTitle.jsx';
 import BackToListAction from '../../components/common/pagination/BackToListAction.jsx';
-import { DataContext } from '../../store/DataContext.jsx';
-import { validateFields } from '../../utils/validation/validateFields.js';
-import { ENTITIES } from '../../utils/const.js';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import CircularProgress from '@mui/material/CircularProgress';
-import Grid from '@mui/material/Grid';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import CustomAlert from "../../components/common/feedback/CustomAlert.jsx";
+import CustomAlert from '../../components/common/feedback/CustomAlert.jsx';
+import CreateOperationSnackbarManager from '../../components/common/feedback/CreateOperationSnackbarManager.jsx';
+import { useCreateOperation } from '../../hooks/useCreateOperation.jsx';
+import {
+    Box,
+    CircularProgress,
+    Grid,
+    TextField,
+    Button,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem
+} from '@mui/material';
+
+const initialFormData = {
+    price: '',
+    purchaseDate: '',
+    seatNumber: '',
+    passengerId: '',
+    travelClassId: '',
+    flightId: '',
+};
+
+const requiredFields = ['price', 'purchaseDate', 'seatNumber', 'passengerId', 'travelClassId', 'flightId'];
+
+const transformTicketForAPI = (formData) => ({
+    Price: parseFloat(formData.price),
+    PurchaseDate: formData.purchaseDate,
+    SeatNumber: parseInt(formData.seatNumber, 10),
+    PassengerId: parseInt(formData.passengerId, 10),
+    TravelClassId: parseInt(formData.travelClassId, 10),
+    FlightId: parseInt(formData.flightId, 10),
+});
 
 export default function PlaneTicketCreateForm() {
-
     const [pageNumber, setPageNumber] = useState(1);
     const isInitialLoad = useRef(true);
-
     const [allPassengers, setAllPassengers] = useState([]);
     const [allTravelClasses, setAllTravelClasses] = useState([]);
     const [allFlights, setAllFlights] = useState([]);
@@ -31,112 +49,80 @@ export default function PlaneTicketCreateForm() {
     const { data: travelClasses, error: errorTravelClasses, isLoading: isLoadingTravelClasses } = useFetch(ENTITIES.TRAVEL_CLASSES, null, pageNumber);
     const { data: flights, error: errorFlights, isLoading: isLoadingFlights } = useFetch(ENTITIES.FLIGHTS, null, pageNumber);
 
-    const dataCtx = useContext(DataContext);
-    const navigate = useNavigate();
+    const {
+        price,
+        purchaseDate,
+        seatNumber,
+        passengerId,
+        travelClassId,
+        flightId,
+        success,
+        formError,
+        isPending,
+        handleChange,
+        handleSubmit,
+        setFormData,
+    } = useCreateOperation(
+        ENTITIES.PLANE_TICKETS,
+        ENTITY_PATHS.PLANE_TICKETS,
+        initialFormData,
+        requiredFields,
+        transformTicketForAPI
+    );
 
-    const [formData, setFormData] = useState({
-        price: '',
-        purchaseDate: '',
-        seatNumber: '',
-        passengerId: '',
-        travelClassId: '',
-        flightId: '',
-        error: null,
-        isPending: false,
-    });
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-
-        const errorMessage = validateFields(ENTITIES.PLANE_TICKETS, formData, ['price', 'purchaseDate', 'seatNumber', 'passengerId', 'travelClassId', 'flightId']);
-        if (errorMessage) {
-            setFormData({
-                ...formData,
-                error: errorMessage,
-            });
-            return;
-        }
-
-        const planeTicket = {
-            Price: formData.price,
-            PurchaseDate: formData.purchaseDate,
-            SeatNumber: formData.seatNumber,
-            PassengerId: formData.passengerId,
-            TravelClassId: formData.travelClassId,
-            FlightId: formData.flightId,
-        };
-
-        setFormData({ ...formData, isPending: true, error: null });
-
-        try {
-            const create = await createData(planeTicket, ENTITIES.PLANE_TICKETS, dataCtx.apiUrl, navigate);
-
-            if (create) {
-                console.error('Error creating plane ticket:', create.message);
-                setFormData({ ...formData, error: create.message, isPending: false });
-            } else {
-                setFormData({ ...formData, error: null, isPending: false });
-            }
-        } catch (err) {
-            console.error('Error during API call:', err);
-            setFormData({ ...formData, error: 'Failed to create plane ticket. Please try again.', isPending: false });
-        }
-    };
-
-    const handleChange = (event) => {
-        const { name, value } = event.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
-    };
-
-    const handleLoadMore = () => {
-        setPageNumber((prevPageNumber) => prevPageNumber + 1);
-    };
+    const handleCloseSnackbar = useCallback(() => {
+        setFormData(prev => ({ ...prev, success: null, formError: null }));
+    }, [setFormData]);
 
     useEffect(() => {
         if (isInitialLoad.current) {
             isInitialLoad.current = false;
             return;
         }
-        if (passengers?.data && passengers.data.length > 0) {
-            setAllPassengers((prev) => {
-                const newPassengers = passengers.data.filter(
-                    (passenger) => !prev.some((prevPassenger) => prevPassenger.id === passenger.id)
-                );
-                return [...prev, ...newPassengers];
-            });
-        }
-        if (travelClasses?.data && travelClasses.data.length > 0) {
-            setAllTravelClasses((prev) => {
-                const newTravelClasses = travelClasses.data.filter(
-                    (travelClass) => !prev.some((prevTravelClass) => prevTravelClass.id === travelClass.id)
-                );
-                return [...prev, ...newTravelClasses];
-            });
-        }
-        if (flights?.data && flights.data.length > 0) {
-            setAllFlights((prev) => {
-                const newFlights = flights.data.filter(
-                    (flight) => !prev.some((prevFlight) => prevFlight.id === flight.id)
-                );
-                return [...prev, ...newFlights];
-            });
-        }
-    }, [pageNumber, passengers?.data, travelClasses?.data, flights?.data]);
 
-    if (isLoadingPassengers || isLoadingTravelClasses || isLoadingFlights) {
-        return <CircularProgress />
+        const updateData = (newData, setter) => {
+            if (newData?.data && newData.data.length > 0) {
+                setter((prev) => {
+                    const newItems = newData.data.filter(
+                        (item) => !prev.some((prevItem) => prevItem.id === item.id)
+                    );
+                    return [...prev, ...newItems];
+                });
+            }
+        };
+
+        updateData(passengers, setAllPassengers);
+        updateData(travelClasses, setAllTravelClasses);
+        updateData(flights, setAllFlights);
+
+    }, [pageNumber, passengers, travelClasses, flights, setAllPassengers, setAllTravelClasses, setAllFlights]);
+
+
+    const handleLoadMore = () => {
+        setPageNumber((prevPageNumber) => prevPageNumber + 1);
+    };
+
+    const isDataLoading = isLoadingPassengers || isLoadingTravelClasses || isLoadingFlights;
+    const dataError = errorPassengers || errorTravelClasses || errorFlights;
+
+    if (dataError) {
+        return <Box sx={{ mt: 5 }}><CustomAlert alertType='danger' type='Error' message='Error loading dependency data.' /></Box>;
     }
 
-    if (errorPassengers || errorTravelClasses || errorFlights) {
-        return <CustomAlert alertType='danger' alertText='Error loading data..' />;
+    if (isDataLoading && allPassengers.length === 0 && allTravelClasses.length === 0 && allFlights.length === 0) {
+        return <CircularProgress sx={{ mt: 5 }} />;
     }
 
     return (
         <Box sx={{ mt: 5 }}>
             <PageTitle title='Create Plane Ticket' />
+
+            <CreateOperationSnackbarManager
+                success={success}
+                formError={formError}
+                handleCloseSnackbar={handleCloseSnackbar}
+            />
+
             <Box
                 component="form"
                 autoComplete="off"
@@ -150,10 +136,11 @@ export default function PlaneTicketCreateForm() {
                                 labelId="passenger-select-label"
                                 id="passengerId"
                                 name="passengerId"
-                                value={formData.passengerId}
+                                value={passengerId}
                                 label="Passenger"
                                 onChange={handleChange}
                                 required
+                                error={!!formError}
                             >
                                 <MenuItem value="">
                                     <em>Select Passenger</em>
@@ -173,10 +160,11 @@ export default function PlaneTicketCreateForm() {
                                 labelId="flight-select-label"
                                 id="flightId"
                                 name="flightId"
-                                value={formData.flightId}
+                                value={flightId}
                                 label="Flight"
                                 onChange={handleChange}
                                 required
+                                error={!!formError}
                             >
                                 <MenuItem value="">
                                     <em>Select Flight</em>
@@ -196,10 +184,11 @@ export default function PlaneTicketCreateForm() {
                                 labelId="travel-class-select-label"
                                 id="travelClassId"
                                 name="travelClassId"
-                                value={formData.travelClassId}
+                                value={travelClassId}
                                 label="Travel Class"
                                 onChange={handleChange}
                                 required
+                                error={!!formError}
                             >
                                 <MenuItem value="">
                                     <em>Select Travel Class</em>
@@ -219,11 +208,13 @@ export default function PlaneTicketCreateForm() {
                             label="Price"
                             type="number"
                             variant="outlined"
-                            value={formData.price}
+                            value={price}
                             onChange={handleChange}
                             placeholder="600"
                             required
                             fullWidth
+                            error={!!formError}
+                            helperText={formError}
                         />
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
@@ -231,13 +222,14 @@ export default function PlaneTicketCreateForm() {
                             id="seatNumber"
                             name="seatNumber"
                             label="Seat Number"
-                            type="number"
                             variant="outlined"
-                            value={formData.seatNumber}
+                            value={seatNumber}
                             onChange={handleChange}
-                            placeholder="120"
+                            placeholder="12A"
                             required
                             fullWidth
+                            error={!!formError}
+                            helperText={formError}
                         />
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
@@ -247,11 +239,13 @@ export default function PlaneTicketCreateForm() {
                             label="Purchase Date"
                             type="date"
                             variant="outlined"
-                            value={formData.purchaseDate}
+                            value={purchaseDate}
                             onChange={handleChange}
                             required
                             fullWidth
-                            slotProps={{ inputLabel: { shrink: true } }}
+                            InputLabelProps={{ shrink: true }}
+                            error={!!formError}
+                            helperText={formError}
                         />
                     </Grid>
                     <Grid size={{ xs: 12 }} sx={{ mt: 3 }}>
@@ -259,23 +253,20 @@ export default function PlaneTicketCreateForm() {
                             type="submit"
                             variant="contained"
                             color="success"
-                            disabled={formData.isPending}
+                            disabled={isPending || isDataLoading}
                             sx={{ mr: 3 }}
                         >
-                            {formData.isPending ? <CircularProgress /> : 'Create'}
+                            {isPending ? <CircularProgress size={24} color="inherit" /> : 'Create'}
                         </Button>
                         <Button
                             variant="outlined"
                             onClick={handleLoadMore}
-                            disabled={isLoadingPassengers || isLoadingTravelClasses || isLoadingFlights}
+                            disabled={isDataLoading}
                         >
-                            Load More
+                            {isDataLoading ? <CircularProgress size={24} color="inherit" /> : 'Load More'}
                         </Button>
                     </Grid>
                 </Grid>
-                {formData.error && (
-                    <CustomAlert alertType='error' type='Error' message={formData.error} sx={{mt: 3}} />
-                )}
             </Box>
             <Box sx={{ mt: 3 }}>
                 <BackToListAction dataType={ENTITIES.PLANE_TICKETS} />

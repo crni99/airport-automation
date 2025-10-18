@@ -10,7 +10,7 @@ import PageTitle from '../../components/common/PageTitle.jsx';
 import BackToListAction from '../../components/common/pagination/BackToListAction.jsx';
 import { MenuItem } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import UpdateSnackbarManager from '../../components/common/feedback/UpdateSnackbarManager.jsx';
+import UpdateOperationSnackbarManager from '../../components/common/feedback/UpdateOperationSnackbarManager.jsx';
 
 const initialFormData = { userName: '', password: '', roles: '' };
 const requiredFields = ['userName', 'roles'];
@@ -65,7 +65,7 @@ export default function ApiUserEditForm() {
                 <CircularProgress sx={{ mb: 2 }} />
             )}
 
-            <UpdateSnackbarManager
+            <UpdateOperationSnackbarManager
                 success={success}
                 formError={formError}
                 fetchError={fetchError}
