@@ -26,13 +26,42 @@ cd airport-automation/backend/AirportAutomationApi
   "MySqlConnection": "Server=localhost;Port=3306;Database=AirportAutomation;Uid=YOUR_USER;Pwd=YOUR_PASSWORD;"
 }
 ```
-4. **Run migrations and seed the database**
-```bash
-dotnet ef database update
-```
+4. **Initialize the database**
+- You will need to run the appropriate SQL script for your chosen provider to create and seed the database. 
+- These scripts are located in **[Data](https://github.com/crni99/airport-automation/tree/main/backend/AirportAutomationInfrastructure/Data)** folder.
+<table>
+  <thead>
+    <tr>
+      <th>Database Provider</th>
+      <th>SQL File to Run</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>SqlServer</code></td>
+      <td><a href="https://github.com/crni99/airport-automation/blob/main/backend/AirportAutomationInfrastructure/Data/create_airport_automation_db_mssql.sql"><code>create_airport_automation_db_mssql.sql 🡥</code></a></td>
+      <td>Execute script against SQL Server instance.</td>
+    </tr>
+    <tr>
+      <td><code>Postgres</code></td>
+      <td><a href="https://github.com/crni99/airport-automation/blob/main/backend/AirportAutomationInfrastructure/Data/create_airport_automation_db_npgsql.sql"><code>create_airport_automation_db_npgsql.sql 🡥</code></a></td>
+      <td>Execute script against PostgreSQL server (e.g., via pgAdmin).</td>
+    </tr>
+    <tr>
+      <td><code>MySql</code></td>
+      <td><a href="https://github.com/crni99/airport-automation/blob/main/backend/AirportAutomationInfrastructure/Data/create_airport_automation_db_mysql.sql"><code>create_airport_automation_db_mysql.sql 🡥</code></a></td>
+      <td>Execute script against MySQL server (e.g., via MySQL Workbench).</td>
+    </tr>
+  </tbody>
+</table>
+
 5. **In your IDE (e.g., Visual Studio / JetBrains Rider):**
 - Set `AirportAutomationApi` (Web API) and `AirportAutomationWeb` (MVC Web) as the startup projects.
 - This ensures the API and MVC frontend run together.
+- Alternatively (using CLI/VS Code): Open two separate terminal windows in the `airport-automation/backend` directory and run the following commands concurrently:
+    1. For the **Web API**: `dotnet run --project AirportAutomationApi/AirportAutomationApi.csproj`
+    2. For the **MVC Frontend**: `dotnet run --project AirportAutomationWeb/AirportAutomationWeb.csproj`
 6. Start the application
 ```bash
 dotnet run
@@ -269,7 +298,7 @@ ___
 <br />
 
 <a name="-demo-credentials"></a>
-## 🔐 [Demo Credentials](https://github.com/crni99/airport-automation/blob/main/backend/AirportAutomationInfrastructure/Data/createDB.sql#L213-L218) 🡥
+## 🔐 [Demo Credentials](https://github.com/crni99/airport-automation/blob/main/backend/AirportAutomationInfrastructure/Data/create_airport_automation_db_mssql.sql#L213-L218) 🡥
 
 > **Note:** These demo credentials are provided for testing and demonstration purposes only.
 
