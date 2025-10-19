@@ -40,17 +40,17 @@ cd airport-automation/backend/AirportAutomationApi
   <tbody>
     <tr>
       <td><code>SqlServer</code></td>
-      <td><a href="https://github.com/crni99/airport-automation/blob/main/backend/AirportAutomationInfrastructure/Data/create_airport_automation_db_mssql.sql"><code>create_airport_automation_db_mssql.sql 🡥</code></a></td>
+      <td><a href="https://github.com/crni99/airport-automation/blob/main/backend/AirportAutomationInfrastructure/Data/create_airport_automation_db_mssql.sql"><code>mssql.sql 🡥</code></a></td>
       <td>Execute script against SQL Server instance.</td>
     </tr>
     <tr>
       <td><code>Postgres</code></td>
-      <td><a href="https://github.com/crni99/airport-automation/blob/main/backend/AirportAutomationInfrastructure/Data/create_airport_automation_db_npgsql.sql"><code>create_airport_automation_db_npgsql.sql 🡥</code></a></td>
+      <td><a href="https://github.com/crni99/airport-automation/blob/main/backend/AirportAutomationInfrastructure/Data/create_airport_automation_db_npgsql.sql"><code>npgsql.sql 🡥</code></a></td>
       <td>Execute script against PostgreSQL server (e.g., via pgAdmin).</td>
     </tr>
     <tr>
       <td><code>MySql</code></td>
-      <td><a href="https://github.com/crni99/airport-automation/blob/main/backend/AirportAutomationInfrastructure/Data/create_airport_automation_db_mysql.sql"><code>create_airport_automation_db_mysql.sql 🡥</code></a></td>
+      <td><a href="https://github.com/crni99/airport-automation/blob/main/backend/AirportAutomationInfrastructure/Data/create_airport_automation_db_mysql.sql"><code>mysql.sql 🡥</code></a></td>
       <td>Execute script against MySQL server (e.g., via MySQL Workbench).</td>
     </tr>
   </tbody>
