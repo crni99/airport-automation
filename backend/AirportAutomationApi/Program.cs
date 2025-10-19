@@ -239,6 +239,10 @@ app.UseSwaggerUI(c =>
 	c.InjectJavascript("/swagger-ui/swagger-ui.js");
 });
 
+if (!app.Environment.IsDevelopment())
+{
+	app.UseHsts();
+}
 app.UseHttpsRedirection();
 app.UseMiddleware<RequestLogContextMiddleware>();
 app.UseSerilogRequestLogging();
