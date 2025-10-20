@@ -141,7 +141,7 @@ export default function PlaneTicketCreateForm() {
                                 label="Passenger"
                                 onChange={handleChange}
                                 error={!!validationError?.passengerId}
-                                helperText={validationError?.passengerId || ' '}
+                                helpertext={validationError?.passengerId || ' '}
                             >
                                 <MenuItem value="">
                                     <em>Select Passenger</em>
@@ -165,7 +165,7 @@ export default function PlaneTicketCreateForm() {
                                 label="Flight"
                                 onChange={handleChange}
                                 error={!!validationError?.flightId}
-                                helperText={validationError?.flightId || ' '}
+                                helpertext={validationError?.flightId || ' '}
                             >
                                 <MenuItem value="">
                                     <em>Select Flight</em>
@@ -189,7 +189,7 @@ export default function PlaneTicketCreateForm() {
                                 label="Travel Class"
                                 onChange={handleChange}
                                 error={!!validationError?.travelClassId}
-                                helperText={validationError?.travelClassId || ' '}
+                                helpertext={validationError?.travelClassId || ' '}
                             >
                                 <MenuItem value="">
                                     <em>Select Travel Class</em>

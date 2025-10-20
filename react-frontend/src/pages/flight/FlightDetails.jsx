@@ -44,15 +44,15 @@ export default function FlightDetails() {
                 <>
                     <Box sx={{ mt: 3 }}>
                         <Grid container spacing={8}>
-                            <Grid item xs={12} sm={6}>
+                            <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
                                 <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>Id</Typography>
                                 <Typography variant="body1" component="div">{flight.id}</Typography>
                             </Grid>
-                            <Grid item xs={12} sm={6}>
+                            <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
                                 <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>Departure Date</Typography>
                                 <Typography variant="body1" component="div">{flight.departureDate}</Typography>
                             </Grid>
-                            <Grid item xs={12} sm={6}>
+                            <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
                                 <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>Departure Time</Typography>
                                 <Typography variant="body1" component="div">{flight.departureTime}</Typography>
                             </Grid>
@@ -62,17 +62,17 @@ export default function FlightDetails() {
                     <Box>
                         <Typography variant="h4" gutterBottom>Airline Details</Typography>
                         <Grid container spacing={8}>
-                            <Grid item xs={12} sm={6}>
+                            <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
                                 <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>Id</Typography>
                                 <Link
                                     component="button"
                                     variant="body1"
                                     onClick={() => navigate(`/airlines/${flight.airline.id}`)}
                                 >
-                                    {flight.airline.id}
+                                    {flight.airline.id} 🡥
                                 </Link>
                             </Grid>
-                            <Grid item xs={12} sm={6}>
+                            <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
                                 <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>Name</Typography>
                                 <Typography variant="body1" component="div">{flight.airline.name}</Typography>
                             </Grid>
@@ -82,34 +82,34 @@ export default function FlightDetails() {
                     <Box>
                         <Typography variant="h4" gutterBottom>Destination Details</Typography>
                         <Grid container spacing={8}>
-                            <Grid item xs={12} sm={6}>
+                            <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
                                 <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>Id</Typography>
                                 <Link
                                     component="button"
                                     variant="body1"
                                     onClick={() => navigate(`/destinations/${flight.destination.id}`)}
                                 >
-                                    {flight.destination.id}
+                                    {flight.destination.id} 🡥
                                 </Link>
                             </Grid>
-                            <Grid item xs={12} sm={6}>
+                            <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
                                 <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>City</Typography>
                                 <Link
                                     component="button"
                                     variant="body1"
                                     onClick={() => openMap(flight.destination.city)}
                                 >
-                                    {flight.destination.city}
+                                    {flight.destination.city} 🡥
                                 </Link>
                             </Grid>
-                            <Grid item xs={12} sm={6}>
+                            <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
                                 <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>Airport</Typography>
                                 <Link
                                     component="button"
                                     variant="body1"
                                     onClick={() => openMap(flight.destination.airport)}
                                 >
-                                    {flight.destination.airport}
+                                    {flight.destination.airport} 🡥
                                 </Link>
                             </Grid>
                         </Grid>
@@ -118,29 +118,29 @@ export default function FlightDetails() {
                     <Box sx={{ mb: 3 }}>
                         <Typography variant="h4" gutterBottom>Pilot Details</Typography>
                         <Grid container spacing={8}>
-                            <Grid item xs={12} sm={6}>
+                            <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
                                 <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>Id</Typography>
                                 <Link
                                     component="button"
                                     variant="body1"
                                     onClick={() => navigate(`/pilots/${flight.pilot.id}`)}
                                 >
-                                    {flight.pilot.id}
+                                    {flight.pilot.id} 🡥
                                 </Link>
                             </Grid>
-                            <Grid item xs={12} sm={6}>
+                            <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
                                 <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>First Name</Typography>
                                 <Typography variant="body1" component="div">{flight.pilot.firstName}</Typography>
                             </Grid>
-                            <Grid item xs={12} sm={6}>
+                            <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
                                 <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>Last Name</Typography>
                                 <Typography variant="body1" component="div">{flight.pilot.lastName}</Typography>
                             </Grid>
-                            <Grid item xs={12} sm={6}>
+                            <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
                                 <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>UPRN</Typography>
                                 <Typography variant="body1" component="div">{flight.pilot.uprn}</Typography>
                             </Grid>
-                            <Grid item xs={12} sm={6}>
+                            <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
                                 <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>Flying Hours</Typography>
                                 <Typography variant="body1" component="div">{flight.pilot.flyingHours}</Typography>
                             </Grid>

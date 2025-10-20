@@ -44,19 +44,19 @@ export default function PlaneTicketDetails() {
             {dataExist && (
                 <Box sx={{ mt: 3 }}>
                     <Grid container spacing={8}>
-                        <Grid item xs={12} sm={6}>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
                             <Typography variant="subtitle1" fontWeight="bold">Id</Typography>
                             <Typography>{planeTicket.id}</Typography>
                         </Grid>
-                        <Grid item xs={12} sm={6}>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
                             <Typography variant="subtitle1" fontWeight="bold">Price (€)</Typography>
                             <Typography>{currencyFormatter.format(planeTicket.price)}</Typography>
                         </Grid>
-                        <Grid item xs={12} sm={6}>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
                             <Typography variant="subtitle1" fontWeight="bold">Purchase Date</Typography>
                             <Typography>{planeTicket.purchaseDate}</Typography>
                         </Grid>
-                        <Grid item xs={12} sm={6}>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
                             <Typography variant="subtitle1" fontWeight="bold">Seat Number</Typography>
                             <Typography>{planeTicket.seatNumber}</Typography>
                         </Grid>
@@ -64,21 +64,21 @@ export default function PlaneTicketDetails() {
                     <Divider sx={{ my: 4 }} />
                     <Typography variant="h4" gutterBottom>Passenger Details</Typography>
                     <Grid container spacing={8}>
-                        <Grid item xs={12} sm={6}>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
                             <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>Id</Typography>
                             <Link
                                 component="button"
                                 variant="body1"
                                 onClick={() => openDetails('Passengers', planeTicket.passenger.id)}
                             >
-                                {planeTicket.passenger.id}
+                                {planeTicket.passenger.id} 🡥
                             </Link>
                         </Grid>
-                        <Grid item xs={12} sm={6}>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
                             <Typography variant="subtitle1" fontWeight="bold">First Name</Typography>
                             <Typography>{planeTicket.passenger.firstName}</Typography>
                         </Grid>
-                        <Grid item xs={12} sm={6}>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
                             <Typography variant="subtitle1" fontWeight="bold">Last Name</Typography>
                             <Typography>{planeTicket.passenger.lastName}</Typography>
                         </Grid>
@@ -86,17 +86,17 @@ export default function PlaneTicketDetails() {
                     <Divider sx={{ my: 4 }} />
                     <Typography variant="h4" gutterBottom>Travel Class Details</Typography>
                     <Grid container spacing={8}>
-                        <Grid item xs={12} sm={6}>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
                             <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>Id</Typography>
                             <Link
                                 component="button"
                                 variant="body1"
                                 onClick={() => openDetails('TravelClasses', planeTicket.travelClass.id)}
                             >
-                                {planeTicket.travelClass.id}
+                                {planeTicket.travelClass.id} 🡥
                             </Link>
                         </Grid>
-                        <Grid item xs={12} sm={6}>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
                             <Typography variant="subtitle1" fontWeight="bold">Type</Typography>
                             <Typography>{planeTicket.travelClass.type}</Typography>
                         </Grid>
@@ -104,21 +104,21 @@ export default function PlaneTicketDetails() {
                     <Divider sx={{ my: 4 }} />
                     <Typography variant="h4" gutterBottom>Flight Details</Typography>
                     <Grid container spacing={8}>
-                        <Grid item xs={12} sm={6}>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
                             <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>Id</Typography>
                             <Link
                                 component="button"
                                 variant="body1"
                                 onClick={() => openDetails('Flights', planeTicket.flight.id)}
                             >
-                                {planeTicket.flight.id}
+                                {planeTicket.flight.id} 🡥
                             </Link>
                         </Grid>
-                        <Grid item xs={12} sm={6}>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
                             <Typography variant="subtitle1" fontWeight="bold">Departure Date</Typography>
                             <Typography>{planeTicket.flight.departureDate}</Typography>
                         </Grid>
-                        <Grid item xs={12} sm={6}>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
                             <Typography variant="subtitle1" fontWeight="bold">Departure Time</Typography>
                             <Typography>{planeTicket.flight.departureTime}</Typography>
                         </Grid>

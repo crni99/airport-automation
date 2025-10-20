@@ -42,7 +42,7 @@ export default function PassengerDetails() {
             {dataExist && (
                 <>
                     <Grid container spacing={24} sx={{ mt: 3 }}>
-                        <Grid item xs={12} md={6}>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
                             <Box component="dl">
                                 <Box sx={{ mb: 3 }}>
                                     <Typography component="dt" variant="subtitle1" sx={{ fontWeight: 'bold' }}>Id</Typography>
@@ -80,6 +80,10 @@ export default function PassengerDetails() {
                                     <Typography component="dd" variant="body1">{passenger.phone}</Typography>
                                 </Box>
                             </Box>
+
+                        </Grid>
+                        <Grid sx={{ mb: 3, width: '50%' }}>
+                            <MapEmbed address={passenger.address} />
                             <Box sx={{ mt: 5, mb: 5 }}>
                                 <PageNavigationActions
                                     dataType={ENTITIES.PASSENGERS}
@@ -88,9 +92,6 @@ export default function PassengerDetails() {
                                     onDelete={() => handleOperation('delete')}
                                 />
                             </Box>
-                        </Grid>
-                        <Grid sx={{ mb: 3, width: '50%' }}>
-                            <MapEmbed address={passenger.address} />
                         </Grid>
                     </Grid>
                 </>

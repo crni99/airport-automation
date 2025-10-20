@@ -138,7 +138,7 @@ export default function FlightCreateForm() {
                                 label="Pilot"
                                 onChange={handleChange}
                                 error={!!validationError?.pilotId}
-                                helperText={validationError?.pilotId || ' '}
+                                helpertext={validationError?.pilotId || ' '}
                             >
                                 <MenuItem value="">Select Pilot</MenuItem>
                                 {allPilots.map((pilot) => (
@@ -160,7 +160,7 @@ export default function FlightCreateForm() {
                                 label="Airline"
                                 onChange={handleChange}
                                 error={!!validationError?.airlineId}
-                                helperText={validationError?.airlineId || ' '}
+                                helpertext={validationError?.airlineId || ' '}
                             >
                                 <MenuItem value="">Select Airline</MenuItem>
                                 {allAirlines.map((airline) => (
@@ -182,7 +182,7 @@ export default function FlightCreateForm() {
                                 label="Destination"
                                 onChange={handleChange}
                                 error={!!validationError?.destinationId}
-                                helperText={validationError?.destinationId || ' '}
+                                helpertext={validationError?.destinationId || ' '}
                             >
                                 <MenuItem value="">Select Destination</MenuItem>
                                 {allDestinations.map((destination) => (
