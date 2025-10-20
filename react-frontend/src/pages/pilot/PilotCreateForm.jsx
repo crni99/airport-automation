@@ -25,7 +25,6 @@ const transformPilotForAPI = (formData) => ({
     FirstName: formData.firstName,
     LastName: formData.lastName,
     UPRN: formData.uprn,
-    // Ensure flyingHours is treated as a number in the API payload
     FlyingHours: Number(formData.flyingHours),
 });
 
@@ -37,6 +36,7 @@ export default function PilotCreateForm() {
         flyingHours,
         success,
         formError,
+        validationError,
         isPending,
         handleChange,
         handleSubmit,
@@ -50,7 +50,7 @@ export default function PilotCreateForm() {
     );
 
     const handleCloseSnackbar = useCallback(() => {
-        setFormData(prev => ({ ...prev, success: null, formError: null }));
+        setFormData(prev => ({ ...prev, success: null, formError: null, validationError: null }));
     }, [setFormData]);
 
     return (
@@ -78,9 +78,8 @@ export default function PilotCreateForm() {
                             value={firstName}
                             onChange={handleChange}
                             placeholder="Ognjen"
-                            required
-                            error={!!formError}
-                            helperText={formError}
+                            error={!!validationError?.firstName}
+                            helperText={validationError?.firstName || ' '}
                             sx={{ width: '80%' }}
                         />
                     </Grid>
@@ -93,9 +92,8 @@ export default function PilotCreateForm() {
                             value={lastName}
                             onChange={handleChange}
                             placeholder="Andjelic"
-                            required
-                            error={!!formError}
-                            helperText={formError}
+                            error={!!validationError?.lastName}
+                            helperText={validationError?.lastName || ' '}
                             sx={{ width: '80%' }}
                         />
                     </Grid>
@@ -108,9 +106,8 @@ export default function PilotCreateForm() {
                             value={uprn}
                             onChange={handleChange}
                             placeholder="0123456789112"
-                            required
-                            error={!!formError}
-                            helperText={formError}
+                            error={!!validationError?.uprn}
+                            helperText={validationError?.uprn || ' '}
                             sx={{ width: '80%' }}
                         />
                     </Grid>
@@ -124,10 +121,9 @@ export default function PilotCreateForm() {
                             value={flyingHours}
                             onChange={handleChange}
                             placeholder="60"
-                            required
-                            inputProps={{ min: "0", max: "40000" }}
-                            error={!!formError}
-                            helperText={formError}
+                            slotProps={{ input: { min: "0", max: "40000" } }}
+                            error={!!validationError?.flyingHours}
+                            helperText={validationError?.flyingHours || ' '}
                             sx={{ width: '80%' }}
                         />
                     </Grid>

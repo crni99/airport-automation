@@ -33,6 +33,7 @@ export default function DestinationEditForm() {
         airport,
         success,
         formError,
+        validationError,
         isPending,
         isFetching,
         isFetchError,
@@ -51,7 +52,7 @@ export default function DestinationEditForm() {
     );
 
     const handleCloseSnackbar = useCallback(() => {
-        setFormData(prev => ({ ...prev, success: null, formError: null }));
+        setFormData(prev => ({ ...prev, success: null, formError: null, validationError: null }));
     }, [setFormData]);
 
     return (
@@ -84,9 +85,8 @@ export default function DestinationEditForm() {
                                 variant="outlined"
                                 value={city}
                                 onChange={handleChange}
-                                required
-                                error={!!formError}
-                                helperText={formError}
+                                error={!!validationError?.city}
+                                helperText={validationError?.city || ' '}
                                 sx={{ width: '100%' }}
                             />
                         </Grid>
@@ -98,9 +98,8 @@ export default function DestinationEditForm() {
                                 variant="outlined"
                                 value={airport}
                                 onChange={handleChange}
-                                required
-                                error={!!formError}
-                                helperText={formError}
+                                error={!!validationError?.airport}
+                                helperText={validationError?.airport || ' '}
                                 sx={{ width: '150%' }}
                             />
                         </Grid>

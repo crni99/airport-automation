@@ -56,6 +56,7 @@ export default function FlightCreateForm() {
         pilotId,
         success,
         formError,
+        validationError,
         isPending,
         handleChange,
         handleSubmit,
@@ -69,7 +70,7 @@ export default function FlightCreateForm() {
     );
 
     const handleCloseSnackbar = useCallback(() => {
-        setFormData(prev => ({ ...prev, success: null, formError: null }));
+        setFormData(prev => ({ ...prev, success: null, formError: null, validationError: null }));
     }, [setFormData]);
 
     useEffect(() => {
@@ -136,7 +137,8 @@ export default function FlightCreateForm() {
                                 value={pilotId}
                                 label="Pilot"
                                 onChange={handleChange}
-                                required
+                                error={!!validationError?.pilotId}
+                                helperText={validationError?.pilotId || ' '}
                             >
                                 <MenuItem value="">Select Pilot</MenuItem>
                                 {allPilots.map((pilot) => (
@@ -157,7 +159,8 @@ export default function FlightCreateForm() {
                                 value={airlineId}
                                 label="Airline"
                                 onChange={handleChange}
-                                required
+                                error={!!validationError?.airlineId}
+                                helperText={validationError?.airlineId || ' '}
                             >
                                 <MenuItem value="">Select Airline</MenuItem>
                                 {allAirlines.map((airline) => (
@@ -178,7 +181,8 @@ export default function FlightCreateForm() {
                                 value={destinationId}
                                 label="Destination"
                                 onChange={handleChange}
-                                required
+                                error={!!validationError?.destinationId}
+                                helperText={validationError?.destinationId || ' '}
                             >
                                 <MenuItem value="">Select Destination</MenuItem>
                                 {allDestinations.map((destination) => (
@@ -198,9 +202,10 @@ export default function FlightCreateForm() {
                             variant="outlined"
                             value={departureDate}
                             onChange={handleChange}
-                            required
                             fullWidth
-                            InputLabelProps={{ shrink: true }}
+                            slotProps={{ inputLabel: { shrink: true } }}
+                            error={!!validationError?.departureDate}
+                            helperText={validationError?.departureDate || ' '}
                         />
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}>
@@ -212,9 +217,10 @@ export default function FlightCreateForm() {
                             variant="outlined"
                             value={departureTime}
                             onChange={handleChange}
-                            required
                             fullWidth
-                            InputLabelProps={{ shrink: true }}
+                            slotProps={{ inputLabel: { shrink: true } }}
+                            error={!!validationError?.departureTime}
+                            helperText={validationError?.departureTime || ' '}
                         />
                     </Grid>
                     <Grid size={{ xs: 12 }} sx={{ mt: 1 }}>

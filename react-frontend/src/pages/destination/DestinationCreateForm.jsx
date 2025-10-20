@@ -24,6 +24,7 @@ export default function DestinationCreateForm() {
         airport,
         success,
         formError,
+        validationError,
         isPending,
         handleChange,
         handleSubmit,
@@ -37,7 +38,7 @@ export default function DestinationCreateForm() {
     );
 
     const handleCloseSnackbar = useCallback(() => {
-        setFormData(prev => ({ ...prev, success: null, formError: null }));
+        setFormData(prev => ({ ...prev, success: null, formError: null, validationError: null }));
     }, [setFormData]);
 
     return (
@@ -65,9 +66,8 @@ export default function DestinationCreateForm() {
                             value={city}
                             onChange={handleChange}
                             placeholder="Belgrade"
-                            required
-                            error={!!formError}
-                            helperText={formError}
+                            error={!!validationError?.city}
+                            helperText={validationError?.city || ' '}
                             sx={{ width: '100%' }}
                         />
                     </Grid>
@@ -80,9 +80,8 @@ export default function DestinationCreateForm() {
                             value={airport}
                             onChange={handleChange}
                             placeholder="Belgrade Nikola Tesla Airport"
-                            required
-                            error={!!formError}
-                            helperText={formError}
+                            error={!!validationError?.airport}
+                            helperText={validationError?.airport || ' '}
                             sx={{ width: '150%' }}
                         />
                     </Grid>

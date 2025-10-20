@@ -60,6 +60,7 @@ export default function PassengerEditForm() {
         phone,
         success,
         formError,
+        validationError,
         isPending,
         isFetching,
         isFetchError,
@@ -78,7 +79,7 @@ export default function PassengerEditForm() {
     );
 
     const handleCloseSnackbar = useCallback(() => {
-        setFormData(prev => ({ ...prev, success: null, formError: null }));
+        setFormData(prev => ({ ...prev, success: null, formError: null, validationError: null }));
     }, [setFormData]);
 
 
@@ -113,8 +114,8 @@ export default function PassengerEditForm() {
                                 value={firstName}
                                 onChange={handleChange}
                                 required
-                                error={!!formError}
-                                helperText={formError}
+                                error={!!validationError?.firstName}
+                                helperText={validationError?.firstName || ' '}
                                 sx={{ width: '80%' }}
                             />
                         </Grid>
@@ -127,8 +128,8 @@ export default function PassengerEditForm() {
                                 value={lastName}
                                 onChange={handleChange}
                                 required
-                                error={!!formError}
-                                helperText={formError}
+                                error={!!validationError?.lastName}
+                                helperText={validationError?.lastName || ' '}
                                 sx={{ width: '80%' }}
                             />
                         </Grid>
@@ -141,8 +142,8 @@ export default function PassengerEditForm() {
                                 value={uprn}
                                 onChange={handleChange}
                                 required
-                                error={!!formError}
-                                helperText={formError}
+                                error={!!validationError?.uprn}
+                                helperText={validationError?.uprn || ' '}
                                 sx={{ width: '80%' }}
                             />
                         </Grid>
@@ -155,8 +156,8 @@ export default function PassengerEditForm() {
                                 value={passport}
                                 onChange={handleChange}
                                 required
-                                error={!!formError}
-                                helperText={formError}
+                                error={!!validationError?.passport}
+                                helperText={validationError?.passport || ' '}
                                 sx={{ width: '80%' }}
                             />
                         </Grid>
@@ -169,8 +170,8 @@ export default function PassengerEditForm() {
                                 value={address}
                                 onChange={handleChange}
                                 required
-                                error={!!formError}
-                                helperText={formError}
+                                error={!!validationError?.address}
+                                helperText={validationError?.address || ' '}
                                 sx={{ width: '80%' }}
                             />
                         </Grid>
@@ -183,8 +184,8 @@ export default function PassengerEditForm() {
                                 value={phone}
                                 onChange={handleChange}
                                 required
-                                error={!!formError}
-                                helperText={formError}
+                                error={!!validationError?.phone}
+                                helperText={validationError?.phone || ' '}
                                 sx={{ width: '80%' }}
                             />
                         </Grid>

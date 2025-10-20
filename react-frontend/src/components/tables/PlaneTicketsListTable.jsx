@@ -7,6 +7,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import TableActions from '../common/table/TableActions';
+import { currencyFormatter } from '../../utils/formatting';
 
 export default function PlaneTicketsListTable({ planeTickets }) {
     return (
@@ -15,7 +16,7 @@ export default function PlaneTicketsListTable({ planeTickets }) {
                 <TableHead>
                     <TableRow>
                         <TableCell sx={{ width: '20%' }}>Id</TableCell>
-                        <TableCell sx={{ width: '20%' }}>Price</TableCell>
+                        <TableCell sx={{ width: '20%' }}>Price (€)</TableCell>
                         <TableCell sx={{ width: '20%' }}>Purchase Date</TableCell>
                         <TableCell sx={{ width: '20%' }}>Seat Number</TableCell>
                         <TableCell sx={{ width: '20%' }} align="center">Actions</TableCell>
@@ -28,7 +29,7 @@ export default function PlaneTicketsListTable({ planeTickets }) {
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
                             <TableCell>{planeTicket.id}</TableCell>
-                            <TableCell>{planeTicket.price}</TableCell>
+                            <TableCell>{currencyFormatter.format(planeTicket.price)}</TableCell>
                             <TableCell>{planeTicket.purchaseDate}</TableCell>
                             <TableCell>{planeTicket.seatNumber}</TableCell>
                             <TableCell>

@@ -118,7 +118,7 @@ export default function Home() {
                                                     label="Username"
                                                     id="UserName"
                                                     name="UserName"
-                                                    inputProps={{ maxLength: 50 }}
+                                                    slotProps={{ htmlInput: { maxLength: 50 } }}
                                                     fullWidth
                                                     required
                                                     value={userName}
@@ -129,7 +129,7 @@ export default function Home() {
                                                     id="Password"
                                                     name="Password"
                                                     type="password"
-                                                    inputProps={{ maxLength: 50 }}
+                                                    slotProps={{ htmlInput: { maxLength: 50 } }}
                                                     fullWidth
                                                     required
                                                     value={password}

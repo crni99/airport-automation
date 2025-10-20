@@ -13,6 +13,7 @@ export const useUpdateOperation = (dataType, dataPath, dataId, initialDataShape,
         ...initialDataShape,
         success: null,
         formError: null,
+        validationError: null,
         isPending: false,
     });
 
@@ -27,7 +28,8 @@ export const useUpdateOperation = (dataType, dataPath, dataId, initialDataShape,
                 ...prevState,
                 ...transformed,
                 success: null,
-                formError: null
+                formError: null,
+                validationError: null
             }));
         }
     }, [fetchedData, transformDataForFormCallback]);
@@ -40,7 +42,8 @@ export const useUpdateOperation = (dataType, dataPath, dataId, initialDataShape,
                 ...prev,
                 [name]: value,
                 success: null,
-                formError: newError
+                formError: null,
+                validationError: newError
             };
         });
     }, [dataType, requiredFields]);
@@ -53,13 +56,14 @@ export const useUpdateOperation = (dataType, dataPath, dataId, initialDataShape,
             setFormData((prev) => ({
                 ...prev,
                 success: null,
-                formError: validationMessage,
+                formError: null,
+                validationError: validationMessage
             }));
             return;
         }
         const apiPayload = transformDataForAPI(formData, dataId);
 
-        setFormData((prevState) => ({ ...prevState, isPending: true, formError: null, success: null }));
+        setFormData((prevState) => ({ ...prevState, isPending: true, formError: null, validationError: null, success: null }));
 
         try {
             const result = await updateData(apiPayload, dataType, dataId, dataCtx.apiUrl);
@@ -70,12 +74,13 @@ export const useUpdateOperation = (dataType, dataPath, dataId, initialDataShape,
                     success: result.message,
                     isPending: false,
                     formError: null,
+                    validationError: null
                 }));
                 setTimeout(() => {
                     navigate(`${dataPath}/${dataId}`);
                 }, 2000);
             } else {
-                setFormData((prevState) => ({ ...prevState, success: null, formError: 'Update failed with an unknown response.', isPending: false }));
+                setFormData((prevState) => ({ ...prevState, success: null, formError: 'Update failed with an unknown response.', validationError: null, isPending: false }));
             }
         } catch (err) {
             console.error('Submission Error:', err);
@@ -85,6 +90,7 @@ export const useUpdateOperation = (dataType, dataPath, dataId, initialDataShape,
                 ...prevState,
                 success: null,
                 formError: errorMessage,
+                validationError: null,
                 isPending: false
             }));
         }

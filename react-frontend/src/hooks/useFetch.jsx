@@ -1,56 +1,59 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getAuthToken } from '../utils/auth.js';
 import { useContext } from 'react';
 import { DataContext } from '../store/DataContext.jsx';
-import { generateErrorMessage, handleNetworkError } from '../utils/errorUtils.js';
-import { ENTITIES } from '../utils/const.js';
+import { fetchData } from '../utils/httpFetch.js'; 
+import { handleNetworkError } from '../utils/errorUtils.js';
 
 export default function useFetch(dataType, dataId, page = 1, triggerFetch, rowsPerPage) {
     const dataCtx = useContext(DataContext);
-
     const [data, setData] = useState(null);
     const [dataExist, setDataExist] = useState(false);
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isError, setIsError] = useState(false);
 
-    const handleResponse = useCallback(async (response) => {
-        try {
-            if (response.ok) {
-                if (response.status === 204) {
-                    setData([]);
-                    setDataExist(false);
-                } else {
-                    const responseData = await response.json();
-                    setData(responseData);
-                    setDataExist(true);
-                }
-            } else {
-                throw new Error(await generateErrorMessage(response, dataType, dataId));
-            }
-        } catch (error) {
-            handleFetchError(error);
+    const handleFetchError = useCallback((error) => {
+        const networkError = handleNetworkError(error);
+        
+        let errorData = {};
+        if (networkError) {
+            errorData = {
+                type: networkError.type || 'Network Error',
+                message: networkError.message || 'A network issue occurred.'
+            };
+        } else {
+            errorData = {
+                type: error.type || error.name || 'Fetch Error',
+                message: error.message || 'An unknown error occurred.'
+            };
         }
-    }, [dataType, dataId]);
+        
+        setError(errorData);
+        setIsError(true);
+    }, []);
 
     useEffect(() => {
         const controller = new AbortController();
         const signal = controller.signal;
 
-        async function fetchData() {
+        async function doFetch() {
             setIsLoading(true);
+            setError(null);
+            setIsError(false);
+            
             try {
-                if (!dataCtx || !dataCtx.apiUrl) {
-                    throw new Error('API URL is not available');
-                }
-                const url = buildURL(dataCtx.apiUrl, dataType, dataId, page, rowsPerPage);
-                const response = await fetch(url, {
-                    headers: buildHeaders(),
-                    signal,
-                });
+                const result = await fetchData(
+                    dataType, 
+                    dataId, 
+                    dataCtx.apiUrl, 
+                    page, 
+                    rowsPerPage, 
+                    signal
+                );
 
                 if (!signal.aborted) {
-                    await handleResponse(response);
+                    setData(result.data);
+                    setDataExist(result.dataExist);
                 }
             } catch (error) {
                 if (error.name !== 'AbortError') {
@@ -62,137 +65,13 @@ export default function useFetch(dataType, dataId, page = 1, triggerFetch, rowsP
                 }
             }
         }
-        fetchData();
+        
+        doFetch();
 
         return () => {
             controller.abort();
         };
-    }, [dataType, dataId, page, dataCtx, handleResponse, triggerFetch, rowsPerPage]);
-
-
-    function buildURL(apiUrl, dataType, dataId, page, pageSize) {
-        let url = `${apiUrl}/${dataType}`;
-
-        if (dataId !== null) {
-            url += `/${dataId}`;
-        } else {
-            let paginationParams = `page=${page}&pageSize=${pageSize || 10}`;
-            url += `?${paginationParams}`;
-
-            switch (dataType) {
-                case ENTITIES.AIRLINES: {
-                    const searchName = document.getElementById('searchInput')?.value?.trim();
-                    if (searchName) {
-                        url = `${apiUrl}/${ENTITIES.AIRLINES}/ByName/${encodeURIComponent(searchName)}?${paginationParams}`;
-                    }
-                    break;
-                }
-
-                case ENTITIES.API_USERS: {
-                    const username = document.getElementById('username')?.value?.trim();
-                    const password = document.getElementById('password')?.value?.trim();
-                    const searchRole = document.querySelector('input[name="role"]')?.value?.trim();
-
-                    if (username || password || searchRole) {
-                        url = `${apiUrl}/${ENTITIES.API_USERS}/ByFilter?userName=${encodeURIComponent(username || '')}&password=${encodeURIComponent(password || '')}&roles=${encodeURIComponent(searchRole || '')}&${paginationParams}`;
-                    }
-                    break;
-                }
-
-                case ENTITIES.DESTINATIONS: {
-                    const city = document.getElementById('city')?.value?.trim();
-                    const airport = document.getElementById('airport')?.value?.trim();
-
-                    if (city || airport) {
-                        url = `${apiUrl}/${ENTITIES.DESTINATIONS}/search?city=${encodeURIComponent(city || '')}&airport=${encodeURIComponent(airport || '')}&${paginationParams}`;
-                    }
-                    break;
-                }
-
-                case ENTITIES.FLIGHTS: {
-                    const startDate = document.getElementById('startDate')?.value?.trim();
-                    const endDate = document.getElementById('endDate')?.value?.trim();
-
-                    if (startDate || endDate) {
-                        url = `${apiUrl}/${ENTITIES.FLIGHTS}/byDate?startDate=${encodeURIComponent(startDate || '')}&endDate=${encodeURIComponent(endDate || '')}&${paginationParams}`;
-                    }
-                    break;
-                }
-
-                case ENTITIES.PASSENGERS: {
-                    const firstName = document.getElementById('firstName')?.value?.trim();
-                    const lastName = document.getElementById('lastName')?.value?.trim();
-                    const uprn = document.getElementById('uprn')?.value?.trim();
-                    const passport = document.getElementById('passport')?.value?.trim();
-                    const address = document.getElementById('address')?.value?.trim();
-                    const phone = document.getElementById('phone')?.value?.trim();
-
-                    if (firstName || lastName || uprn || passport || address || phone) {
-                        url = `${apiUrl}/${ENTITIES.PASSENGERS}/byFilter?firstName=${encodeURIComponent(firstName || '')}&lastName=${encodeURIComponent(lastName || '')}&uprn=${encodeURIComponent(uprn || '')}&passport=${encodeURIComponent(passport || '')}&address=${encodeURIComponent(address || '')}&phone=${encodeURIComponent(phone || '')}&${paginationParams}`;
-                    }
-                    break;
-                }
-
-                case ENTITIES.PILOTS: {
-                    const firstName = document.getElementById('firstName')?.value?.trim();
-                    const lastName = document.getElementById('lastName')?.value?.trim();
-                    const uprn = document.getElementById('uprn')?.value?.trim();
-                    const flyingHours = document.getElementById('flyingHours')?.value?.trim();
-
-                    if (firstName || lastName || uprn || flyingHours) {
-                        url = `${apiUrl}/${ENTITIES.PILOTS}/byFilter?firstName=${encodeURIComponent(firstName || '')}&lastName=${encodeURIComponent(lastName || '')}&uprn=${encodeURIComponent(uprn || '')}&flyingHours=${encodeURIComponent(flyingHours || '')}&${paginationParams}`;
-                    }
-                    break;
-                }
-
-                case ENTITIES.PLANE_TICKETS: {
-                    const price = document.getElementById('price')?.value?.trim();
-                    const purchaseDate = document.getElementById('purchaseDate')?.value?.trim();
-                    const seatNumber = document.getElementById('seatNumber')?.value?.trim();
-
-                    if (price || purchaseDate || seatNumber) {
-                        url = `${apiUrl}/${ENTITIES.PLANE_TICKETS}/byFilter?price=${encodeURIComponent(price || '')}&purchaseDate=${encodeURIComponent(purchaseDate || '')}&seatNumber=${encodeURIComponent(seatNumber || '')}&${paginationParams}`;
-                    }
-                    break;
-                }
-
-                case ENTITIES.HEALTH_CHECKS: {
-                    url = `${apiUrl}/${ENTITIES.HEALTH_CHECKS}`;
-                    break;
-                }
-
-                default:
-                    url = `${apiUrl}/${dataType}?${paginationParams}`;
-                    break;
-            }
-        }
-        return url;
-    }
-
-    function buildHeaders() {
-        const headers = { 'Content-Type': 'application/json' };
-        const authToken = getAuthToken();
-        if (authToken) {
-            headers['Authorization'] = `Bearer ${authToken}`;
-        }
-        return headers;
-    }
-
-    function handleFetchError(error) {
-        const networkError = handleNetworkError(error);
-        if (networkError) {
-            setError({
-                type: networkError.type || 'Network Error',
-                message: networkError.message || 'A network issue occurred.'
-            });
-        } else {
-            setError({
-                type: error.name || 'Fetch Error',
-                message: error.message || 'An unknown error occurred.'
-            });
-        }
-        setIsError(true);
-    }
+    }, [dataType, dataId, page, dataCtx.apiUrl, triggerFetch, rowsPerPage, handleFetchError]); 
 
     return { data, dataExist, error, isLoading, isError };
 }

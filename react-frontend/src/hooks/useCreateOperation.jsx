@@ -12,6 +12,7 @@ export const useCreateOperation = (dataType, dataPath, initialDataShape, require
         ...initialDataShape,
         success: null,
         formError: null,
+        validationError: null,
         isPending: false,
     });
 
@@ -23,7 +24,8 @@ export const useCreateOperation = (dataType, dataPath, initialDataShape, require
                 ...prev,
                 [name]: value,
                 success: null,
-                formError: newError
+                formError: null,
+                validationError: newError,
             };
         });
     }, [dataType, requiredFields]);
@@ -36,13 +38,14 @@ export const useCreateOperation = (dataType, dataPath, initialDataShape, require
             setFormData((prev) => ({
                 ...prev,
                 success: null,
-                formError: validationMessage,
+                formError: null,
+                validationError: validationMessage,
             }));
             return;
         }
 
         const apiPayload = transformDataForAPI(formData);
-        setFormData((prev) => ({ ...prev, isPending: true, formError: null, success: null }));
+        setFormData((prev) => ({ ...prev, isPending: true, formError: null, validationError: null, success: null }));
 
         try {
             const result = await createData(apiPayload, dataType, dataCtx.apiUrl);
@@ -55,13 +58,14 @@ export const useCreateOperation = (dataType, dataPath, initialDataShape, require
                     success: result.message,
                     isPending: false,
                     formError: null,
+                    validationError: null,
                 }));
                 setTimeout(() => {
                     navigate(`${dataPath}/${result.newId}`);
                 }, 2000);
             } else {
                 const errorMessage = result?.message || `Creation failed with an unknown response.`;
-                setFormData((prev) => ({ ...prev, success: null, formError: errorMessage, isPending: false }));
+                setFormData((prev) => ({ ...prev, success: null, formError: errorMessage, validationError: null, isPending: false }));
             }
         } catch (err) {
             console.error('Error during API call:', err);
@@ -70,6 +74,7 @@ export const useCreateOperation = (dataType, dataPath, initialDataShape, require
                 ...prev,
                 success: null,
                 formError: errorMessage,
+                validationError: null,
                 isPending: false
             }));
         }

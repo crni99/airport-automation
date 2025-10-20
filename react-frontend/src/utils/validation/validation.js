@@ -2,7 +2,7 @@ import { ENTITIES } from '../../utils/const.js';
 
 export const validateField = (type, field, value) => {
     switch (type) {
-        case ENTITIES.AIRLINES.label:
+        case ENTITIES.AIRLINES:
             if (field === 'name') {
                 if (!value.trim()) {
                     return "Airline name is required.";
@@ -12,7 +12,7 @@ export const validateField = (type, field, value) => {
                 }
             }
             break;
-        case ENTITIES.DESTINATIONS.label:
+        case ENTITIES.DESTINATIONS:
             if (field === 'city') {
                 if (!value.trim()) {
                     return "Destination city is required.";
@@ -30,7 +30,7 @@ export const validateField = (type, field, value) => {
                 }
             }
             break;
-        case ENTITIES.PASSENGERS.label:
+        case ENTITIES.PASSENGERS:
             if (field === 'firstName') {
                 if (!value.trim()) {
                     return "Passenger first name is required.";
@@ -80,7 +80,7 @@ export const validateField = (type, field, value) => {
                 }
             }
             break;
-        case ENTITIES.PILOTS.label:
+        case ENTITIES.PILOTS:
             if (field === 'firstName') {
                 if (!value.trim()) {
                     return "Pilot first name is required.";
@@ -118,7 +118,7 @@ export const validateField = (type, field, value) => {
                 }
             }
             break;
-        case ENTITIES.API_USERS.label:
+        case ENTITIES.API_USERS:
             if (field === 'userName') {
                 if (!value.trim()) {
                     return "ApiUser username is required.";
@@ -136,7 +136,7 @@ export const validateField = (type, field, value) => {
                 }
             }
             break;
-        case ENTITIES.FLIGHTS.label:
+        case ENTITIES.FLIGHTS:
             if (field === 'departureDate') {
                 if (!value.trim()) {
                     return "Flight departure date is required.";
@@ -182,7 +182,7 @@ export const validateField = (type, field, value) => {
                 }
             }
             break;
-        case ENTITIES.PLANE_TICKETS.label:
+        case ENTITIES.PLANE_TICKETS:
             if (field === 'price') {
                 const priceValue = String(value).trim();
                 if (!priceValue || isNaN(priceValue)) {

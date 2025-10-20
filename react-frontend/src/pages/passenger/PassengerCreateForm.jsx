@@ -40,6 +40,7 @@ export default function PassengerCreateForm() {
         phone,
         success,
         formError,
+        validationError,
         isPending,
         handleChange,
         handleSubmit,
@@ -53,7 +54,7 @@ export default function PassengerCreateForm() {
     );
 
     const handleCloseSnackbar = useCallback(() => {
-        setFormData(prev => ({ ...prev, success: null, formError: null }));
+        setFormData(prev => ({ ...prev, success: null, formError: null, validationError: null }));
     }, [setFormData]);
 
     return (
@@ -81,9 +82,8 @@ export default function PassengerCreateForm() {
                             value={firstName}
                             onChange={handleChange}
                             placeholder="Ognjen"
-                            required
-                            error={!!formError}
-                            helperText={formError}
+                            error={!!validationError?.firstName}
+                            helperText={validationError?.firstName || ' '}
                             sx={{ width: '80%' }}
                         />
                     </Grid>
@@ -96,9 +96,8 @@ export default function PassengerCreateForm() {
                             value={lastName}
                             onChange={handleChange}
                             placeholder="Andjelic"
-                            required
-                            error={!!formError}
-                            helperText={formError}
+                            error={!!validationError?.lastName}
+                            helperText={validationError?.lastName || ' '}
                             sx={{ width: '80%' }}
                         />
                     </Grid>
@@ -111,9 +110,8 @@ export default function PassengerCreateForm() {
                             value={uprn}
                             onChange={handleChange}
                             placeholder="0123456789112"
-                            required
-                            error={!!formError}
-                            helperText={formError}
+                            error={!!validationError?.uprn}
+                            helperText={validationError?.uprn || ' '}
                             sx={{ width: '80%' }}
                         />
                     </Grid>
@@ -126,9 +124,8 @@ export default function PassengerCreateForm() {
                             value={passport}
                             onChange={handleChange}
                             placeholder="012345678"
-                            required
-                            error={!!formError}
-                            helperText={formError}
+                            error={!!validationError?.passport}
+                            helperText={validationError?.passport || ' '}
                             sx={{ width: '80%' }}
                         />
                     </Grid>
@@ -141,9 +138,8 @@ export default function PassengerCreateForm() {
                             value={address}
                             onChange={handleChange}
                             placeholder="014 Main Street, Belgrade, Serbia"
-                            required
-                            error={!!formError}
-                            helperText={formError}
+                            error={!!validationError?.address}
+                            helperText={validationError?.address || ' '}
                             sx={{ width: '80%' }}
                         />
                     </Grid>
@@ -156,9 +152,8 @@ export default function PassengerCreateForm() {
                             value={phone}
                             onChange={handleChange}
                             placeholder="012-456-7890"
-                            required
-                            error={!!formError}
-                            helperText={formError}
+                            error={!!validationError?.phone}
+                            helperText={validationError?.phone || ' '}
                             sx={{ width: '80%' }}
                         />
                     </Grid>

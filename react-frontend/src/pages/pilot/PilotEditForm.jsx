@@ -45,6 +45,7 @@ export default function PilotEditForm() {
         flyingHours,
         success,
         formError,
+        validationError,
         isPending,
         isFetching,
         isFetchError,
@@ -63,7 +64,7 @@ export default function PilotEditForm() {
     );
 
     const handleCloseSnackbar = useCallback(() => {
-        setFormData(prev => ({ ...prev, success: null, formError: null }));
+        setFormData(prev => ({ ...prev, success: null, formError: null, validationError: null }));
     }, [setFormData]);
 
     return (
@@ -97,8 +98,8 @@ export default function PilotEditForm() {
                                 value={firstName}
                                 onChange={handleChange}
                                 required
-                                error={!!formError}
-                                helperText={formError}
+                                error={!!validationError?.firstName}
+                                helperText={validationError?.firstName || ' '}
                                 sx={{ width: '80%' }}
                             />
                         </Grid>
@@ -111,8 +112,8 @@ export default function PilotEditForm() {
                                 value={lastName}
                                 onChange={handleChange}
                                 required
-                                error={!!formError}
-                                helperText={formError}
+                                error={!!validationError?.lastName}
+                                helperText={validationError?.lastName || ' '}
                                 sx={{ width: '80%' }}
                             />
                         </Grid>
@@ -125,8 +126,8 @@ export default function PilotEditForm() {
                                 value={uprn}
                                 onChange={handleChange}
                                 required
-                                error={!!formError}
-                                helperText={formError}
+                                error={!!validationError?.uprn}
+                                helperText={validationError?.uprn || ' '}
                                 sx={{ width: '80%' }}
                             />
                         </Grid>
@@ -141,8 +142,8 @@ export default function PilotEditForm() {
                                 onChange={handleChange}
                                 required
                                 slotProps={{ input: { min: "0", max: "40000" } }}
-                                error={!!formError}
-                                helperText={formError}
+                                error={!!validationError?.flyingHours}
+                                helperText={validationError?.flyingHours || ' '}
                                 sx={{ width: '80%' }}
                             />
                         </Grid>

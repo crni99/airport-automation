@@ -34,6 +34,7 @@ export default function AirlineEditForm() {
         isFetching,
         isFetchError,
         fetchError,
+        validationError,
         handleChange,
         handleSubmit,
         setFormData,
@@ -48,7 +49,7 @@ export default function AirlineEditForm() {
     );
 
     const handleCloseSnackbar = useCallback(() => {
-        setFormData(prev => ({ ...prev, success: null, formError: null }));
+        setFormData(prev => ({ ...prev, success: null, formError: null, validationError: null }));
     }, [setFormData]);
 
     return (
@@ -82,8 +83,8 @@ export default function AirlineEditForm() {
                                 value={name}
                                 onChange={handleChange}
                                 required
-                                error={!!formError}
-                                helperText={formError}
+                                error={!!validationError?.firstName}
+                                helperText={validationError?.firstName || ' '}
                             />
                         </Grid>
                         <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>

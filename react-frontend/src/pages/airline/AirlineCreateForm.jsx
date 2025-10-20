@@ -22,6 +22,7 @@ export default function AirlineCreateForm() {
         name,
         success,
         formError,
+        validationError,
         isPending,
         handleChange,
         handleSubmit,
@@ -35,7 +36,7 @@ export default function AirlineCreateForm() {
     );
 
     const handleCloseSnackbar = useCallback(() => {
-        setFormData(prev => ({ ...prev, success: null, formError: null }));
+        setFormData(prev => ({ ...prev, success: null, formError: null, validationError: null }));
     }, [setFormData]);
 
     return (
@@ -63,9 +64,8 @@ export default function AirlineCreateForm() {
                             value={name}
                             onChange={handleChange}
                             placeholder="Air Serbia"
-                            required
-                            error={!!formError}
-                            helperText={!!formError}
+                            error={!!validationError?.name}
+                            helperText={validationError?.name || ' '}
                         />
                     </Grid>
                     <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>

@@ -54,6 +54,7 @@ export default function FlightEditForm() {
         pilotId,
         success,
         formError,
+        validationError,
         isPending,
         isFetching,
         isFetchError,
@@ -72,7 +73,7 @@ export default function FlightEditForm() {
     );
 
     const handleCloseSnackbar = useCallback(() => {
-        setFormData(prev => ({ ...prev, success: null, formError: null }));
+        setFormData(prev => ({ ...prev, success: null, formError: null, validationError: null }));
     }, [setFormData]);
 
     return (
@@ -105,7 +106,7 @@ export default function FlightEditForm() {
                                 type="number"
                                 variant="outlined"
                                 value={id}
-                                slotProps={{ inputLabel: { shrink: true } }}
+                                slotProps={{ inputLabel: { shrink: true }, input: { readOnly: true }, }}
                                 fullWidth
                             />
                         </Grid>
@@ -117,9 +118,11 @@ export default function FlightEditForm() {
                                 type="number"
                                 variant="outlined"
                                 value={airlineId}
-                                slotProps={{ inputLabel: { shrink: true } }}
+                                slotProps={{ inputLabel: { shrink: true }, input: { readOnly: true }, }}
                                 required
                                 fullWidth
+                                error={!!validationError?.airlineId}
+                                helperText={validationError?.airlineId || ' '}
                             />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6, lg: 3, xl: 3 }}>
@@ -130,9 +133,11 @@ export default function FlightEditForm() {
                                 type="number"
                                 variant="outlined"
                                 value={destinationId}
-                                slotProps={{ inputLabel: { shrink: true } }}
+                                slotProps={{ inputLabel: { shrink: true }, input: { readOnly: true }, }}
                                 required
                                 fullWidth
+                                error={!!validationError?.destinationId}
+                                helperText={validationError?.destinationId || ' '}
                             />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6, lg: 3, xl: 3 }}>
@@ -143,9 +148,11 @@ export default function FlightEditForm() {
                                 type="number"
                                 variant="outlined"
                                 value={pilotId}
-                                slotProps={{ inputLabel: { shrink: true } }}
+                                slotProps={{ inputLabel: { shrink: true }, input: { readOnly: true }, }}
                                 required
                                 fullWidth
+                                error={!!validationError?.pilotId}
+                                helperText={validationError?.pilotId || ' '}
                             />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6, lg: 3, xl: 3 }}>
@@ -160,8 +167,8 @@ export default function FlightEditForm() {
                                 required
                                 fullWidth
                                 slotProps={{ inputLabel: { shrink: true } }}
-                                error={!!formError && requiredFields.includes('departureDate')}
-                                helperText={formError && requiredFields.includes('departureDate') ? formError : ''}
+                                error={!!validationError?.departureDate}
+                                helperText={validationError?.departureDate || ' '}
                             />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}>
@@ -176,8 +183,8 @@ export default function FlightEditForm() {
                                 required
                                 fullWidth
                                 slotProps={{ inputLabel: { shrink: true } }}
-                                error={!!formError && requiredFields.includes('departureTime')}
-                                helperText={formError && requiredFields.includes('departureTime') ? formError : ''}
+                                error={!!validationError?.departureTime}
+                                helperText={validationError?.departureTime || ' '}
                             />
                         </Grid>
                         <Grid size={{ xs: 12 }} sx={{ mt: 1 }}>

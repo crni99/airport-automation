@@ -311,7 +311,7 @@ export default function SearchInputWithButton({ type, setTriggerFetch, createBut
                             <Stack direction="row" spacing={2} alignItems="center">
                                 <TextField
                                     id="price"
-                                    label="Price"
+                                    label="Price (€)"
                                     type="number"
                                     placeholder="600"
                                     value={searchTerms.price || ''}

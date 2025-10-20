@@ -13,6 +13,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Divider from '@mui/material/Divider';
 import DeleteOperationSnackbarManager from '../../components/common/feedback/DeleteOperationSnackbarManager.jsx';
 import { useDeleteOperation } from '../../hooks/useDeleteOperation.jsx';
+import { currencyFormatter } from '../../utils/formatting.js';
 
 export default function PlaneTicketDetails() {
     const { id } = useParams();
@@ -48,8 +49,8 @@ export default function PlaneTicketDetails() {
                             <Typography>{planeTicket.id}</Typography>
                         </Grid>
                         <Grid item xs={12} sm={6}>
-                            <Typography variant="subtitle1" fontWeight="bold">Price</Typography>
-                            <Typography>{planeTicket.price}</Typography>
+                            <Typography variant="subtitle1" fontWeight="bold">Price (€)</Typography>
+                            <Typography>{currencyFormatter.format(planeTicket.price)}</Typography>
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <Typography variant="subtitle1" fontWeight="bold">Purchase Date</Typography>

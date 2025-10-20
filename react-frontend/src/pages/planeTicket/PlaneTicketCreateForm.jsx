@@ -58,6 +58,7 @@ export default function PlaneTicketCreateForm() {
         flightId,
         success,
         formError,
+        validationError,
         isPending,
         handleChange,
         handleSubmit,
@@ -71,7 +72,7 @@ export default function PlaneTicketCreateForm() {
     );
 
     const handleCloseSnackbar = useCallback(() => {
-        setFormData(prev => ({ ...prev, success: null, formError: null }));
+        setFormData(prev => ({ ...prev, success: null, formError: null, validationError: null }));
     }, [setFormData]);
 
     useEffect(() => {
@@ -139,8 +140,8 @@ export default function PlaneTicketCreateForm() {
                                 value={passengerId}
                                 label="Passenger"
                                 onChange={handleChange}
-                                required
-                                error={!!formError}
+                                error={!!validationError?.passengerId}
+                                helperText={validationError?.passengerId || ' '}
                             >
                                 <MenuItem value="">
                                     <em>Select Passenger</em>
@@ -163,8 +164,8 @@ export default function PlaneTicketCreateForm() {
                                 value={flightId}
                                 label="Flight"
                                 onChange={handleChange}
-                                required
-                                error={!!formError}
+                                error={!!validationError?.flightId}
+                                helperText={validationError?.flightId || ' '}
                             >
                                 <MenuItem value="">
                                     <em>Select Flight</em>
@@ -187,8 +188,8 @@ export default function PlaneTicketCreateForm() {
                                 value={travelClassId}
                                 label="Travel Class"
                                 onChange={handleChange}
-                                required
-                                error={!!formError}
+                                error={!!validationError?.travelClassId}
+                                helperText={validationError?.travelClassId || ' '}
                             >
                                 <MenuItem value="">
                                     <em>Select Travel Class</em>
@@ -205,16 +206,15 @@ export default function PlaneTicketCreateForm() {
                         <TextField
                             id="price"
                             name="price"
-                            label="Price"
+                            label="Price (€)"
                             type="number"
                             variant="outlined"
                             value={price}
                             onChange={handleChange}
                             placeholder="600"
-                            required
                             fullWidth
-                            error={!!formError}
-                            helperText={formError}
+                            error={!!validationError?.price}
+                            helperText={validationError?.price || ' '}
                         />
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
@@ -225,11 +225,10 @@ export default function PlaneTicketCreateForm() {
                             variant="outlined"
                             value={seatNumber}
                             onChange={handleChange}
-                            placeholder="12A"
-                            required
+                            placeholder="16"
                             fullWidth
-                            error={!!formError}
-                            helperText={formError}
+                            error={!!validationError?.seatNumber}
+                            helperText={validationError?.seatNumber || ' '}
                         />
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
@@ -241,11 +240,10 @@ export default function PlaneTicketCreateForm() {
                             variant="outlined"
                             value={purchaseDate}
                             onChange={handleChange}
-                            required
                             fullWidth
-                            InputLabelProps={{ shrink: true }}
-                            error={!!formError}
-                            helperText={formError}
+                            slotProps={{ inputLabel: { shrink: true } }}
+                            error={!!validationError?.purchaseDate}
+                            helperText={validationError?.purchaseDate || ' '}
                         />
                     </Grid>
                     <Grid size={{ xs: 12 }} sx={{ mt: 3 }}>

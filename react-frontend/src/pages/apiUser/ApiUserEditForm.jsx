@@ -24,7 +24,7 @@ const transformApiUserForAPI = (formData, currentId) => ({
 
 const transformApiUserForForm = (fetchedData) => ({
     userName: fetchedData.userName || '',
-    password: '', 
+    password: '',
     roles: fetchedData.roles || '',
 });
 
@@ -36,6 +36,7 @@ export default function ApiUserEditForm() {
         roles,
         success,
         formError,
+        validationError,
         isPending,
         isFetching,
         isFetchError,
@@ -54,7 +55,7 @@ export default function ApiUserEditForm() {
     );
 
     const handleCloseSnackbar = useCallback(() => {
-        setFormData(prev => ({ ...prev, success: null, formError: null }));
+        setFormData(prev => ({ ...prev, success: null, formError: null, validationError: null }));
     }, [setFormData]);
 
     return (
@@ -88,8 +89,8 @@ export default function ApiUserEditForm() {
                                 value={userName}
                                 onChange={handleChange}
                                 required
-                                error={!!formError}
-                                helperText={formError}
+                                error={!!validationError?.userName}
+                                helperText={validationError?.userName || ' '}
                                 sx={{ width: '80%' }}
                             />
                         </Grid>
@@ -102,8 +103,8 @@ export default function ApiUserEditForm() {
                                 value=""
                                 onChange={handleChange}
                                 required
-                                error={!!formError}
-                                helperText={formError}
+                                error={!!validationError?.password}
+                                helperText={validationError?.password || ' '}
                                 sx={{ width: '80%' }}
                             />
                         </Grid>
@@ -117,8 +118,8 @@ export default function ApiUserEditForm() {
                                 value={roles}
                                 onChange={handleChange}
                                 required
-                                error={!!formError}
-                                helperText={formError}
+                                error={!!validationError?.roles}
+                                helperText={validationError?.roles || ' '}
                                 sx={{ width: '80%' }}
                             >
                                 <MenuItem value="SuperAdmin">SuperAdmin</MenuItem>

@@ -53,6 +53,7 @@ export default function PlaneTicketEditForm() {
         flightId,
         success,
         formError,
+        validationError,
         isPending,
         isFetching,
         isFetchError,
@@ -71,7 +72,7 @@ export default function PlaneTicketEditForm() {
     );
 
     const handleCloseSnackbar = useCallback(() => {
-        setFormData(prev => ({ ...prev, success: null, formError: null }));
+        setFormData(prev => ({ ...prev, success: null, formError: null, validationError: null }));
     }, [setFormData]);
 
     return (
@@ -104,7 +105,7 @@ export default function PlaneTicketEditForm() {
                                 type="number"
                                 variant="outlined"
                                 value={id}
-                                slotProps={{ inputLabel: { shrink: true } }}
+                                slotProps={{ inputLabel: { shrink: true }, input: { readOnly: true }, }}
                                 fullWidth
                             />
                         </Grid>
@@ -116,9 +117,11 @@ export default function PlaneTicketEditForm() {
                                 type="number"
                                 variant="outlined"
                                 value={passengerId}
-                                slotProps={{ inputLabel: { shrink: true } }}
+                                slotProps={{ inputLabel: { shrink: true }, input: { readOnly: true }, }}
                                 required
                                 fullWidth
+                                error={!!validationError?.passengerId}
+                                helperText={validationError?.passengerId || ' '}
                             />
 
                         </Grid>
@@ -130,9 +133,11 @@ export default function PlaneTicketEditForm() {
                                 type="number"
                                 variant="outlined"
                                 value={travelClassId}
-                                slotProps={{ inputLabel: { shrink: true } }}
+                                slotProps={{ inputLabel: { shrink: true }, input: { readOnly: true }, }}
                                 required
                                 fullWidth
+                                error={!!validationError?.travelClassId}
+                                helperText={validationError?.travelClassId || ' '}
                             />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}>
@@ -143,24 +148,26 @@ export default function PlaneTicketEditForm() {
                                 type="number"
                                 variant="outlined"
                                 value={flightId}
-                                slotProps={{ inputLabel: { shrink: true } }}
+                                slotProps={{ inputLabel: { shrink: true }, input: { readOnly: true }, }}
                                 required
                                 fullWidth
+                                error={!!validationError?.flightId}
+                                helperText={validationError?.flightId || ' '}
                             />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
                             <TextField
                                 id="price"
                                 name="price"
-                                label="Price"
+                                label="Price (€)"
                                 type="number"
                                 variant="outlined"
                                 value={price}
                                 onChange={handleChange}
                                 required
                                 fullWidth
-                                error={!!formError && requiredFields.includes('price')}
-                                helperText={formError && requiredFields.includes('price') ? formError : ''}
+                                error={!!validationError?.price}
+                                helperText={validationError?.price || ' '}
                             />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
@@ -174,8 +181,8 @@ export default function PlaneTicketEditForm() {
                                 onChange={handleChange}
                                 required
                                 fullWidth
-                                error={!!formError && requiredFields.includes('seatNumber')}
-                                helperText={formError && requiredFields.includes('seatNumber') ? formError : ''}
+                                error={!!validationError?.seatNumber}
+                                helperText={validationError?.seatNumber || ' '}
                             />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 4 }}>
@@ -190,8 +197,8 @@ export default function PlaneTicketEditForm() {
                                 required
                                 fullWidth
                                 slotProps={{ inputLabel: { shrink: true } }}
-                                error={!!formError && requiredFields.includes('purchaseDate')}
-                                helperText={formError && requiredFields.includes('purchaseDate') ? formError : ''}
+                                error={!!validationError?.purchaseDate}
+                                helperText={validationError?.purchaseDate || ' '}
                             />
                         </Grid>
                         <Grid size={{ xs: 12 }} sx={{ mt: 3 }}>
