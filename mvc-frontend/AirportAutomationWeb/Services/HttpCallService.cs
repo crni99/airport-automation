@@ -973,8 +973,6 @@ namespace AirportAutomation.Web.Services
 						{
 							if (!string.IsNullOrEmpty(userFilter.UserName))
 								queryParameters.Add($"UserName={Uri.EscapeDataString(userFilter.UserName)}");
-							if (!string.IsNullOrEmpty(userFilter.Password))
-								queryParameters.Add($"Password={Uri.EscapeDataString(userFilter.Password)}");
 							if (!string.IsNullOrEmpty(userFilter.Roles))
 								queryParameters.Add($"Roles={Uri.EscapeDataString(userFilter.Roles)}");
 						}
