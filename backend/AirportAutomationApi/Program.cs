@@ -125,6 +125,11 @@ BinderConfiguration.Binders(builder.Services);
 var databaseProvider = builder.Configuration.GetValue<string>("DatabaseProvider");
 var connectionString = builder.Configuration.GetConnectionString(databaseProvider + "Connection");
 
+if (databaseProvider?.ToLowerInvariant() is "postgres" or "postgresql" or "npgsql")
+{
+	AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+}
+
 builder.Services.AddDbContext<DatabaseContext>(options =>
 {
 	switch (databaseProvider?.ToLowerInvariant())

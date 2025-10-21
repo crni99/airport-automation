@@ -69,15 +69,18 @@ namespace AirportAutomation.Infrastructure.Repositories
 
 			if (!string.IsNullOrWhiteSpace(filter.FirstName))
 			{
-				query = query.Where(p => p.FirstName.Contains(filter.FirstName));
+				var lowerCaseFirstName = filter.FirstName.ToLower();
+				query = query.Where(p => p.FirstName.ToLower().Contains(filter.FirstName));
 			}
 			if (!string.IsNullOrWhiteSpace(filter.LastName))
 			{
-				query = query.Where(p => p.LastName.Contains(filter.LastName));
+				var lowerCaseLastName = filter.LastName.ToLower();
+				query = query.Where(p => p.LastName.ToLower().Contains(filter.LastName));
 			}
 			if (!string.IsNullOrWhiteSpace(filter.UPRN))
 			{
-				query = query.Where(p => p.UPRN.Contains(filter.UPRN));
+				var lowerCaseUPRN = filter.UPRN.ToLower();
+				query = query.Where(p => p.UPRN.ToLower().Contains(filter.UPRN));
 			}
 			if (filter.FlyingHours.HasValue)
 			{
@@ -151,15 +154,18 @@ namespace AirportAutomation.Infrastructure.Repositories
 
 			if (!string.IsNullOrWhiteSpace(filter.FirstName))
 			{
-				query = query.Where(p => p.FirstName.Contains(filter.FirstName));
+				var lowerCaseFirstName = filter.FirstName.ToLower();
+				query = query.Where(p => p.FirstName.ToLower().Contains(filter.FirstName));
 			}
 			if (!string.IsNullOrWhiteSpace(filter.LastName))
 			{
-				query = query.Where(p => p.LastName.Contains(filter.LastName));
+				var lowerCaseLastName = filter.LastName.ToLower();
+				query = query.Where(p => p.LastName.ToLower().Contains(filter.LastName));
 			}
 			if (!string.IsNullOrWhiteSpace(filter.UPRN))
 			{
-				query = query.Where(p => p.UPRN.Contains(filter.UPRN));
+				var lowerCaseUPRN = filter.UPRN.ToLower();
+				query = query.Where(p => p.UPRN.ToLower().Contains(filter.UPRN));
 			}
 			if (filter.FlyingHours.HasValue)
 			{

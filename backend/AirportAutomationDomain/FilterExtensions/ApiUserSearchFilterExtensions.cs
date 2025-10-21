@@ -9,7 +9,6 @@ namespace AirportAutomation.Core.FilterExtensions
 			if (filter == null) return true;
 
 			return string.IsNullOrWhiteSpace(filter.UserName)
-				&& string.IsNullOrWhiteSpace(filter.Password)
 				&& string.IsNullOrWhiteSpace(filter.Roles);
 		}
 	}

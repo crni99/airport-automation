@@ -83,15 +83,6 @@ export default function SearchInputWithButton({ type, setTriggerFetch, createBut
                                 onChange={handleInputChange}
                                 size='small'
                             />
-                            <TextField
-                                id="password"
-                                label="Password"
-                                placeholder="Enter password"
-                                type="password"
-                                value={searchTerms.password || ''}
-                                onChange={handleInputChange}
-                                size='small'
-                            />
                             <FormControl sx={{ minWidth: 120 }}>
                                 <InputLabel id="role-select-label" size='small'>Role</InputLabel>
                                 <Select

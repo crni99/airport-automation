@@ -69,27 +69,33 @@ namespace AirportAutomation.Infrastructure.Repositories
 
 			if (!string.IsNullOrWhiteSpace(filter.FirstName))
 			{
-				query = query.Where(p => p.FirstName.Contains(filter.FirstName));
+				var lowerCaseFirstName = filter.FirstName.ToLower();
+				query = query.Where(p => p.FirstName.ToLower().Contains(filter.FirstName));
 			}
 			if (!string.IsNullOrWhiteSpace(filter.LastName))
 			{
-				query = query.Where(p => p.LastName.Contains(filter.LastName));
+				var lowerCaseLastName = filter.LastName.ToLower();
+				query = query.Where(p => p.LastName.ToLower().Contains(filter.LastName));
 			}
 			if (!string.IsNullOrWhiteSpace(filter.UPRN))
 			{
-				query = query.Where(p => p.UPRN.Contains(filter.UPRN));
+				var lowerCaseUPRN = filter.UPRN.ToLower();
+				query = query.Where(p => p.UPRN.ToLower().Contains(filter.UPRN));
 			}
 			if (!string.IsNullOrWhiteSpace(filter.Passport))
 			{
-				query = query.Where(p => p.Passport.Contains(filter.Passport));
+				var lowerCasePassport = filter.Passport.ToLower();
+				query = query.Where(p => p.Passport.ToLower().Contains(filter.Passport));
 			}
 			if (!string.IsNullOrWhiteSpace(filter.Address))
 			{
-				query = query.Where(p => p.Address.Contains(filter.Address));
+				var lowerCaseAddress = filter.Address.ToLower();
+				query = query.Where(p => p.Address.ToLower().Contains(filter.Address));
 			}
 			if (!string.IsNullOrWhiteSpace(filter.Phone))
 			{
-				query = query.Where(p => p.Phone.Contains(filter.Phone));
+				var lowerCasePhone = filter.Phone.ToLower();
+				query = query.Where(p => p.Phone.ToLower().Contains(filter.Phone));
 			}
 			return await query.OrderBy(p => p.Id)
 				.Skip(pageSize * (page - 1))
@@ -171,27 +177,33 @@ namespace AirportAutomation.Infrastructure.Repositories
 
 			if (!string.IsNullOrWhiteSpace(filter.FirstName))
 			{
-				query = query.Where(p => p.FirstName.Contains(filter.FirstName));
+				var lowerCaseFirstName = filter.FirstName.ToLower();
+				query = query.Where(p => p.FirstName.ToLower().Contains(filter.FirstName));
 			}
 			if (!string.IsNullOrWhiteSpace(filter.LastName))
 			{
-				query = query.Where(p => p.LastName.Contains(filter.LastName));
+				var lowerCaseLastName = filter.LastName.ToLower();
+				query = query.Where(p => p.LastName.ToLower().Contains(filter.LastName));
 			}
 			if (!string.IsNullOrWhiteSpace(filter.UPRN))
 			{
-				query = query.Where(p => p.UPRN.Contains(filter.UPRN));
+				var lowerCaseUPRN = filter.UPRN.ToLower();
+				query = query.Where(p => p.UPRN.ToLower().Contains(filter.UPRN));
 			}
 			if (!string.IsNullOrWhiteSpace(filter.Passport))
 			{
-				query = query.Where(p => p.Passport.Contains(filter.Passport));
+				var lowerCasePassport = filter.Passport.ToLower();
+				query = query.Where(p => p.Passport.ToLower().Contains(filter.Passport));
 			}
 			if (!string.IsNullOrWhiteSpace(filter.Address))
 			{
-				query = query.Where(p => p.Address.Contains(filter.Address));
+				var lowerCaseAddress = filter.Address.ToLower();
+				query = query.Where(p => p.Address.ToLower().Contains(filter.Address));
 			}
 			if (!string.IsNullOrWhiteSpace(filter.Phone))
 			{
-				query = query.Where(p => p.Phone.Contains(filter.Phone));
+				var lowerCasePhone = filter.Phone.ToLower();
+				query = query.Where(p => p.Phone.ToLower().Contains(filter.Phone));
 			}
 			return await query.CountAsync(cancellationToken);
 		}

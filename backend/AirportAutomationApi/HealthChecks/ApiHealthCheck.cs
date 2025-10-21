@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace AirportAutomation.Api.HealthChecks
 {
@@ -8,14 +9,17 @@ namespace AirportAutomation.Api.HealthChecks
 	public class ApiHealthCheck : IHealthCheck
 	{
 		private readonly IHttpClientFactory _httpClientFactory;
+		private readonly string _apiCheckUrl;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ApiHealthCheck"/> class.
 		/// </summary>
 		/// <param name="httpClientFactory">The HTTP client factory for creating HTTP clients.</param>
-		public ApiHealthCheck(IHttpClientFactory httpClientFactory)
+		public ApiHealthCheck(IHttpClientFactory httpClientFactory, IConfiguration configuration)
 		{
 			_httpClientFactory = httpClientFactory;
+			_apiCheckUrl = configuration["HealthChecks:ApiCheckUrl"]
+						   ?? throw new InvalidOperationException("ApiCheckUrl not found in configuration.");
 		}
 
 		/// <summary>
@@ -29,7 +33,7 @@ namespace AirportAutomation.Api.HealthChecks
 			using (var httpClient = _httpClientFactory.CreateClient())
 			{
 				var response = await
-				httpClient.GetAsync("https://localhost:44362/swagger/index.html", cancellationToken);
+				httpClient.GetAsync(_apiCheckUrl, cancellationToken);
 				if (response.IsSuccessStatusCode)
 				{
 					return await Task.FromResult(new HealthCheckResult(

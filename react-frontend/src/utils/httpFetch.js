@@ -32,11 +32,10 @@ function buildURL(apiUrl, dataType, dataId, page, pageSize) {
 
             case ENTITIES.API_USERS: {
                 const username = document.getElementById('username')?.value?.trim();
-                const password = document.getElementById('password')?.value?.trim();
                 const searchRole = document.querySelector('input[name="role"]')?.value?.trim();
 
-                if (username || password || searchRole) {
-                    url = `${apiUrl}/${ENTITIES.API_USERS}/ByFilter?userName=${encodeURIComponent(username || '')}&password=${encodeURIComponent(password || '')}&roles=${encodeURIComponent(searchRole || '')}&${paginationParams}`;
+                if (username || searchRole) {
+                    url = `${apiUrl}/${ENTITIES.API_USERS}/ByFilter?userName=${encodeURIComponent(username || '')}&roles=${encodeURIComponent(searchRole || '')}&${paginationParams}`;
                 }
                 break;
             }
@@ -46,7 +45,7 @@ function buildURL(apiUrl, dataType, dataId, page, pageSize) {
                 const airport = document.getElementById('airport')?.value?.trim();
 
                 if (city || airport) {
-                    url = `${apiUrl}/${ENTITIES.DESTINATIONS}/search?city=${encodeURIComponent(city || '')}&airport=${encodeURIComponent(airport || '')}&${paginationParams}`;
+                    url = `${apiUrl}/${ENTITIES.DESTINATIONS}/ByFilter?city=${encodeURIComponent(city || '')}&airport=${encodeURIComponent(airport || '')}&${paginationParams}`;
                 }
                 break;
             }

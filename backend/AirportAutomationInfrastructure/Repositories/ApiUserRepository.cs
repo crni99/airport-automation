@@ -2,7 +2,9 @@
 using AirportAutomation.Core.Filters;
 using AirportAutomation.Core.Interfaces.IRepositories;
 using AirportAutomation.Infrastructure.Data;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.EntityFrameworkCore;
+using System.Xml.Linq;
 
 namespace AirportAutomation.Infrastructure.Repositories
 {
@@ -49,11 +51,8 @@ namespace AirportAutomation.Infrastructure.Repositories
 
 			if (!string.IsNullOrWhiteSpace(filter.UserName))
 			{
-				query = query.Where(a => a.UserName.Contains(filter.UserName));
-			}
-			if (!string.IsNullOrWhiteSpace(filter.Password))
-			{
-				query = query.Where(a => a.Password.Contains(filter.Password));
+				var lowerCaseUserName = filter.UserName.ToLower();
+				query = query.Where(a => a.UserName.ToLower().Contains(lowerCaseUserName));
 			}
 			if (!string.IsNullOrWhiteSpace(filter.Roles))
 			{
@@ -102,11 +101,8 @@ namespace AirportAutomation.Infrastructure.Repositories
 
 			if (!string.IsNullOrWhiteSpace(filter.UserName))
 			{
-				query = query.Where(a => a.UserName.Contains(filter.UserName));
-			}
-			if (!string.IsNullOrWhiteSpace(filter.Password))
-			{
-				query = query.Where(a => a.Password.Contains(filter.Password));
+				var lowerCaseUserName = filter.UserName.ToLower();
+				query = query.Where(a => a.UserName.ToLower().Contains(lowerCaseUserName));
 			}
 			if (!string.IsNullOrWhiteSpace(filter.Roles))
 			{

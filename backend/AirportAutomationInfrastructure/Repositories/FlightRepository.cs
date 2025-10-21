@@ -123,7 +123,6 @@ namespace AirportAutomation.Infrastructure.Repositories
 			{
 				query = query.Where(f => f.DepartureDate >= startDate);
 			}
-
 			if (endDate.HasValue)
 			{
 				query = query.Where(f => f.DepartureDate <= endDate);

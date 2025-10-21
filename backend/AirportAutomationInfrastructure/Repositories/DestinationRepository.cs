@@ -65,11 +65,13 @@ namespace AirportAutomation.Infrastructure.Repositories
 
 			if (!string.IsNullOrEmpty(filter.City))
 			{
-				query = query.Where(p => p.City.Contains(filter.City));
+				var lowerCaseCity = filter.City.ToLower();
+				query = query.Where(p => p.City.ToLower().Contains(lowerCaseCity));
 			}
 			if (!string.IsNullOrEmpty(filter.Airport))
 			{
-				query = query.Where(p => p.Airport.Contains(filter.Airport));
+				var lowerCaseAirport = filter.Airport.ToLower();
+				query = query.Where(p => p.Airport.ToLower().Contains(lowerCaseAirport));
 			}
 			return await query.OrderBy(c => c.Id)
 								.Skip(pageSize * (page - 1))
@@ -138,11 +140,13 @@ namespace AirportAutomation.Infrastructure.Repositories
 
 			if (!string.IsNullOrEmpty(filter.City))
 			{
-				query = query.Where(p => p.City.Contains(filter.City));
+				var lowerCaseCity = filter.City.ToLower();
+				query = query.Where(p => p.City.ToLower().Contains(lowerCaseCity));
 			}
 			if (!string.IsNullOrEmpty(filter.Airport))
 			{
-				query = query.Where(p => p.Airport.Contains(filter.Airport));
+				var lowerCaseAirport = filter.Airport.ToLower();
+				query = query.Where(p => p.Airport.ToLower().Contains(lowerCaseAirport));
 			}
 			return await query.CountAsync(cancellationToken).ConfigureAwait(false);
 		}

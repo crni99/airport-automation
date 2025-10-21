@@ -48,8 +48,9 @@ namespace AirportAutomation.Infrastructure.Repositories
 
 		public async Task<IList<AirlineEntity?>> GetAirlinesByName(CancellationToken cancellationToken, int page, int pageSize, string name)
 		{
+			var lowerCaseName = name.ToLower();
 			return await _context.Airline
-				.Where(a => a.Name.Contains(name))
+				.Where(a => a.Name.ToLower().Contains(lowerCaseName))
 				.OrderBy(c => c.Id)
 				.Skip(pageSize * (page - 1))
 				.Take(pageSize)
@@ -101,7 +102,8 @@ namespace AirportAutomation.Infrastructure.Repositories
 			IQueryable<AirlineEntity> query = _context.Airline.AsNoTracking();
 			if (!string.IsNullOrEmpty(name))
 			{
-				query = query.Where(a => a.Name.Contains(name));
+				var lowerCaseName = name.ToLower();
+				query = query.Where(a => a.Name.ToLower().Contains(lowerCaseName));
 			}
 			return await query.CountAsync(cancellationToken).ConfigureAwait(false);
 		}

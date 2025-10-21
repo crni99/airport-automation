@@ -80,12 +80,11 @@ function createURL(fetchURL, entityType, page) {
 
         case 'ApiUser':
             var username = $('#usernameInput').val();
-            var password = $('#passwordInput').val();
             var searchRole = $('#roleSelect').val();
-            if ((!username || username.trim() === '') && (!password || password.trim() === '') && (!searchRole || searchRole.trim() === '')) {
+            if ((!username || username.trim() === '') && (!searchRole || searchRole.trim() === '')) {
                 return `${fetchURL}?${paginationParams}`;
             }
-            return `/${entityType}/GetApiUsersByFilter?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&roles=${encodeURIComponent(searchRole)}&${paginationParams}`;
+            return `/${entityType}/GetApiUsersByFilter?username=${encodeURIComponent(username)}&roles=${encodeURIComponent(searchRole)}&${paginationParams}`;
 
         case 'Destination':
             var city = $('#city').val();
