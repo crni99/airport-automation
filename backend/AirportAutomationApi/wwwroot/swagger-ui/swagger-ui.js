@@ -1,62 +1,90 @@
-﻿(function () {
-    window.addEventListener("load", function () {
-        setTimeout(function () {
-            var existingLinks = document.querySelectorAll("link[rel*='icon']");
-            existingLinks.forEach(function (link) {
-                link.remove();
-            });
+﻿(function waitForFaviconLinks() {
+    const swaggerContainer = document.querySelector('#swagger-ui');
+    if (!swaggerContainer) {
+        setTimeout(waitForFaviconLinks, 100);
+        return;
+    }
 
-            var link32 = document.createElement('link');
-            link32.rel = 'icon';
-            link32.type = 'image/x-icon';
-            link32.href = '/swagger-ui/favicon.ico';
-            link32.sizes = '32x32';
-            document.head.appendChild(link32);
-
-            var link16 = document.createElement('link');
-            link16.rel = 'icon';
-            link16.type = 'image/x-icon';
-            link16.href = '/swagger-ui/favicon.ico';
-            link16.sizes = '16x16';
-            document.head.appendChild(link16);
-        }, 100);
+    const existingLinks = document.querySelectorAll("link[rel*='icon']");
+    existingLinks.forEach(function (link) {
+        link.remove();
     });
+
+    const link32 = document.createElement('link');
+    link32.rel = 'icon';
+    link32.type = 'image/x-icon';
+    link32.href = '/swagger-ui/favicon.ico';
+    link32.sizes = '32x32';
+    document.head.appendChild(link32);
+
+    const link16 = document.createElement('link');
+    link16.rel = 'icon';
+    link16.type = 'image/x-icon';
+    link16.href = '/swagger-ui/favicon.ico';
+    link16.sizes = '16x16';
+    document.head.appendChild(link16);
 })();
 
-(function () {
-    window.addEventListener("load", function () {
-        setTimeout(function () {
-            const contactDiv = document.querySelector('.info__contact');
+(function observeContactDiv() {
+    const targetSelector = '.info__contact';
+    const swaggerUiContainer = document.getElementById('swagger-ui');
 
-            if (contactDiv) {
-                const websiteWrapperDiv = contactDiv.querySelector('div');
-                websiteWrapperDiv.classList.add('contact-link')
-                const websiteLink = websiteWrapperDiv ? websiteWrapperDiv.querySelector('a') : null;
+    if (!swaggerUiContainer) {
+        setTimeout(observeContactDiv, 100);
+        return;
+    }
 
-                if (websiteLink) {
-                    websiteLink.href = "https://www.linkedin.com/in/ognj3n";
-                    websiteLink.innerHTML = `Ognjen Andjelic ─ LinkedIn`;
+    function modifyContactInfo(contactDiv, observer) {
+        const websiteWrapperDiv = contactDiv.querySelector('div');
 
-                    const githubWrapperDiv = document.createElement('div');
-                    githubWrapperDiv.classList.add('contact-link');
-                    const githubLink = document.createElement('a');
+        if (!websiteWrapperDiv) {
+            return;
+        }
 
-                    githubLink.href = "https://github.com/crni99";
-                    githubLink.target = "_blank";
-                    githubLink.rel = "noopener noreferrer";
-                    githubLink.classList.add("link");
+        websiteWrapperDiv.classList.add('contact-link');
+        const websiteLink = websiteWrapperDiv.querySelector('a');
 
-                    githubLink.innerHTML = `Ognjen Andjelic ─ GitHub`;
-                    githubWrapperDiv.appendChild(githubLink);
+        if (websiteLink) {
+            websiteLink.href = "https://www.linkedin.com/in/ognj3n";
+            websiteLink.innerHTML = `Ognjen Andjelic ─ LinkedIn`;
 
-                    if (websiteWrapperDiv.nextElementSibling) {
-                        contactDiv.insertBefore(githubWrapperDiv, websiteWrapperDiv.nextElementSibling);
-                    } else {
-                        contactDiv.appendChild(githubWrapperDiv);
-                    }
-                }
+            const githubWrapperDiv = document.createElement('div');
+            githubWrapperDiv.classList.add('contact-link');
+            const githubLink = document.createElement('a');
+
+            githubLink.href = "https://github.com/crni99";
+            githubLink.target = "_blank";
+            githubLink.rel = "noopener noreferrer";
+            githubLink.classList.add("link");
+            githubLink.innerHTML = `Ognjen Andjelic ─ GitHub`;
+
+            githubWrapperDiv.appendChild(githubLink);
+
+            if (websiteWrapperDiv.nextElementSibling) {
+                contactDiv.insertBefore(githubWrapperDiv, websiteWrapperDiv.nextElementSibling);
+            } else {
+                contactDiv.appendChild(githubWrapperDiv);
             }
-        }, 500);
+        }
+        if (observer) observer.disconnect();
+    }
+
+    const initialContactDiv = swaggerUiContainer.querySelector(targetSelector);
+    if (initialContactDiv) {
+        modifyContactInfo(initialContactDiv, null);
+        return;
+    }
+
+    const observer = new MutationObserver(function (mutations, obs) {
+        const contactDiv = swaggerUiContainer.querySelector(targetSelector);
+        if (contactDiv) {
+            modifyContactInfo(contactDiv, obs);
+        }
+    });
+
+    observer.observe(swaggerUiContainer, {
+        childList: true,
+        subtree: true
     });
 })();
 

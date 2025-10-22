@@ -9,11 +9,13 @@ import CustomAlert from "../../components/common/feedback/CustomAlert.jsx";
 
 export default function TravelClassesList() {
     const [travelClasses, settravelClasses] = useState([]);
-    const { data, dataExist, error, isLoading, isError } = useFetch(ENTITIES.TRAVEL_CLASSES, null, 1);
+    const [triggerFetch, setTriggerFetch] = useState(true);
+    const { data, dataExist, error, isLoading, isError } = useFetch(ENTITIES.TRAVEL_CLASSES, null, 1, triggerFetch, 10);
 
     useEffect(() => {
         if (data) {
             settravelClasses(data.data);
+            setTriggerFetch(false);
         }
     }, [data]);
 

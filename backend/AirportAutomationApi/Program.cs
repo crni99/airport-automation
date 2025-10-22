@@ -32,6 +32,7 @@ builder.Services.AddCors(options =>
 		builder.AllowAnyOrigin();
 		builder.AllowAnyHeader();
 		builder.AllowAnyMethod();
+		builder.SetPreflightMaxAge(TimeSpan.FromSeconds(3600));
 	});
 });
 

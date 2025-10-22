@@ -34,6 +34,7 @@ export default function SearchInputWithButton({ type, setTriggerFetch, createBut
 
     const handleClear = () => {
         setSearchTerms({});
+        setTriggerFetch(true);
     };
 
     var pathType = type;
@@ -41,7 +42,7 @@ export default function SearchInputWithButton({ type, setTriggerFetch, createBut
         pathType = 'plane-tickets';
     }
     const createButton = !disableCreateButton && (
-        <CreateButton destination={`/${pathType}/Create`} title={createButtonTitle} />
+        <CreateButton destination={`/${pathType}/create`} title={createButtonTitle} />
     );
 
     const exportButtonsOrSpace = isUser !== 'User' && (

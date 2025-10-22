@@ -17,6 +17,7 @@ export default function PassengersList() {
         const saved = localStorage.getItem("rowsPerPage");
         return saved ? Number(saved) : 10;
     });
+    
     const { data, dataExist, error, isLoading, isError } = useFetch(
         ENTITIES.PASSENGERS,
         null,

@@ -1,6 +1,6 @@
-import React from 'react';
-import useFetch from "../../hooks/useFetch";
-import { ENTITIES } from '../../utils/const.js';
+import React, { useState, useEffect } from 'react';
+import useFetch from "../hooks/useFetch.jsx";
+import { ENTITIES } from '../utils/const.js';
 import { Container } from '@mui/material';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -15,10 +15,17 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import CustomAlert from "../../components/common/feedback/CustomAlert.jsx";
+import CustomAlert from "../components/common/feedback/CustomAlert.jsx";
 
 export default function HealthCheck() {
-    const { data, dataExist, error, isLoading, isError } = useFetch(ENTITIES.HEALTH_CHECKS, null, null, null);
+    const [triggerFetch, setTriggerFetch] = useState(true);
+    const { data, dataExist, error, isLoading, isError } = useFetch(ENTITIES.HEALTH_CHECKS, null, null, triggerFetch, null);
+
+    useEffect(() => {
+            if (data) {
+                setTriggerFetch(false);
+            }
+        }, [data]);
 
     const extractErrorMessage = (error) => {
         if (error && error.message) {
@@ -31,13 +38,13 @@ export default function HealthCheck() {
         <Container sx={{ mt: 4 }}>
             <Box sx={{ p: 3 }}>
                 {isLoading && (
-                    <Stack sx={{ mb: 3}}>
+                    <Stack sx={{ mb: 3 }}>
                         <CircularProgress />
                     </Stack>
                 )}
 
                 {isError && error && (
-                    <CustomAlert alertType='error' type='Error' message={extractErrorMessage(error)} sx={{ mb:3 }} />
+                    <CustomAlert alertType='error' type='Error' message={extractErrorMessage(error)} sx={{ mb: 3 }} />
                 )}
 
                 {data && dataExist && !isError ? (

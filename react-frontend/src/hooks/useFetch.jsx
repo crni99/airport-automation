@@ -33,6 +33,12 @@ export default function useFetch(dataType, dataId, page = 1, triggerFetch, rowsP
     }, []);
 
     useEffect(() => {
+
+        if (!triggerFetch) {
+            setIsLoading(false); 
+            return;
+        }
+
         const controller = new AbortController();
         const signal = controller.signal;
 

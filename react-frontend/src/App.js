@@ -8,7 +8,7 @@ import PilotsRoutes from './routes/pilotsRoutes';
 import FlightsRoutes from './routes/flightRoutes';
 import PlaneTicketsRoutes from './routes/planeTicketRoutes';
 import Home from './pages/Home';
-import HealthCheck from './components/common/HealthCheck';
+import HealthCheck from './pages/HealthCheck';
 import NotFound from './pages/NotFound';
 import Unauthorized from './pages/Unauthorized';
 import ApiUsersRoutes from './routes/apiUserRoutes';
