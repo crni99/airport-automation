@@ -322,13 +322,13 @@ namespace AirportAutomation.Web.Services
 			string requestUri = $"{apiURL}/{modelName}";
 			if (modelName.Equals("TravelClass"))
 			{
-				requestUri += $"es/byName/{name}";
+				requestUri += $"es/search?name={name}";
 			}
 			else
 			{
-				requestUri += $"s/byName/{name}";
+				requestUri += $"s/search?name={name}";
 			}
-			requestUri += $"?page={page}&pageSize={pageSize}";
+			requestUri += $"&page={page}&pageSize={pageSize}";
 
 			var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 
@@ -372,11 +372,11 @@ namespace AirportAutomation.Web.Services
 			string requestUri = $"{apiURL}/{modelName}";
 			if (modelName.Equals("TravelClass"))
 			{
-				requestUri += $"es/byDate";
+				requestUri += $"es/search?";
 			}
 			else
 			{
-				requestUri += $"s/byDate/";
+				requestUri += $"s/search?";
 			}
 			UriBuilder uriBuilder = new(requestUri);
 			var query = HttpUtility.ParseQueryString(uriBuilder.Query);
@@ -690,12 +690,12 @@ namespace AirportAutomation.Web.Services
 				"Pilot",
 				"PlaneTicket"
 			};
-			requestUri = $"{apiURL}/{modelName}/byFilter";
+			requestUri = $"{apiURL}/{modelName}/search";
 
 			var filterQuery = BuildFilterQueryString(modelName, filter);
 
 			string pluralSuffix = modelName.Equals("TravelClass", StringComparison.OrdinalIgnoreCase) ? "es" : "s";
-			requestUri = $"{apiURL}/{modelName}{pluralSuffix}/byFilter";
+			requestUri = $"{apiURL}/{modelName}{pluralSuffix}/search";
 			requestUri += $"?{filterQuery}&page={page}&pageSize={pageSize}";
 
 			return requestUri;

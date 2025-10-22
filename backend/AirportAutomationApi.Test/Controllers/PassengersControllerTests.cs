@@ -586,6 +586,50 @@ namespace AirportAutomationApi.Test.Controllers
 			await Assert.ThrowsAsync<Exception>(async () => await _controller.PostPassenger(passengerCreateDto));
 		}
 
+		[Fact]
+		[Trait("Category", "PostPassenger")]
+		public async Task PostPassenger_ReturnsConflict_WhenPassengerExistsByUPRN()
+		{
+			// Arrange
+			var passengerCreateDto = new PassengerCreateDto { UPRN = "12345", Passport = "ABC" };
+
+			_passengerServiceMock.Setup(service => service.ExistsByUPRN(passengerCreateDto.UPRN))
+							   .ReturnsAsync(true);
+			_passengerServiceMock.Setup(service => service.ExistsByPassport(passengerCreateDto.Passport))
+							   .ReturnsAsync(false);
+			_passengerServiceMock.Setup(service => service.PostPassenger(It.IsAny<PassengerEntity>()))
+							   .Verifiable();
+
+			// Act
+			var result = await _controller.PostPassenger(passengerCreateDto);
+
+			// Assert
+			Assert.IsType<ConflictObjectResult>(result.Result);
+			_passengerServiceMock.Verify(service => service.PostPassenger(It.IsAny<PassengerEntity>()), Times.Never);
+		}
+
+		[Fact]
+		[Trait("Category", "PostPassenger")]
+		public async Task PostPassenger_ReturnsConflict_WhenPassengerExistsByPassport()
+		{
+			// Arrange
+			var passengerCreateDto = new PassengerCreateDto { UPRN = "12345", Passport = "ABC" };
+
+			_passengerServiceMock.Setup(service => service.ExistsByUPRN(passengerCreateDto.UPRN))
+							   .ReturnsAsync(false);
+			_passengerServiceMock.Setup(service => service.ExistsByPassport(passengerCreateDto.Passport))
+							   .ReturnsAsync(true);
+			_passengerServiceMock.Setup(service => service.PostPassenger(It.IsAny<PassengerEntity>()))
+							   .Verifiable();
+
+			// Act
+			var result = await _controller.PostPassenger(passengerCreateDto);
+
+			// Assert
+			Assert.IsType<ConflictObjectResult>(result.Result);
+			_passengerServiceMock.Verify(service => service.PostPassenger(It.IsAny<PassengerEntity>()), Times.Never);
+		}
+
 		#endregion
 
 		#region PutPassenger

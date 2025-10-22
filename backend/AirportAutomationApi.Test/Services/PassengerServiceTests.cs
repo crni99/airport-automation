@@ -53,6 +53,30 @@ namespace AirportAutomationApi.Test.Services
 		}
 
 		[Fact]
+		public async Task ExistsByUPRN_Should_Call_Repository_ExistsByUPRN()
+		{
+			const string uprn = "TESTUPRN123";
+			_repositoryMock.Setup(repo => repo.ExistsByUPRN(uprn)).ReturnsAsync(true);
+
+			var result = await _service.ExistsByUPRN(uprn);
+
+			_repositoryMock.Verify(repo => repo.ExistsByUPRN(uprn), Times.Once);
+			Assert.True(result);
+		}
+
+		[Fact]
+		public async Task ExistsByPassport_Should_Call_Repository_ExistsByPassport()
+		{
+			const string passport = "TESTPASSPORTABC";
+			_repositoryMock.Setup(repo => repo.ExistsByPassport(passport)).ReturnsAsync(false);
+
+			var result = await _service.ExistsByPassport(passport);
+
+			_repositoryMock.Verify(repo => repo.ExistsByPassport(passport), Times.Once);
+			Assert.False(result);
+		}
+
+		[Fact]
 		public async Task PostPassenger_Should_Call_Repository_PostPassenger()
 		{
 			var passenger = new PassengerEntity();
