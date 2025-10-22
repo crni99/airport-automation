@@ -400,163 +400,11 @@ namespace AirportAutomationApi.Test.Controllers
 
 		#endregion
 
-		#region GetPassengersByName
+		#region SearchPassengers
 
 		[Fact]
-		[Trait("Category", "GetPassengersByName")]
-		public async Task GetPassengersByName_InvalidName_ReturnsBadRequest()
-		{
-			// Arrange
-			var cancellationToken = new CancellationToken();
-			string invalidName = string.Empty;
-			var expectedBadRequestResult = new BadRequestObjectResult("Both first name and last name are missing in the request.");
-
-			_inputValidationServiceMock
-				.Setup(x => x.IsValidString(invalidName))
-				.Returns(false);
-
-			// Act
-			var result = await _controller.GetPassengersByName(cancellationToken, invalidName);
-
-			// Assert
-			Assert.IsType<BadRequestObjectResult>(result.Result);
-			var badRequestResult = result.Result as BadRequestObjectResult;
-			Assert.Equal(expectedBadRequestResult.Value, badRequestResult.Value);
-		}
-
-		[Fact]
-		[Trait("Category", "GetPassengersByName")]
-		public async Task GetPassengersByName_InvalidPaginationParameters_ReturnsBadRequest()
-		{
-			// Arrange
-			var cancellationToken = new CancellationToken();
-			string validName1 = "ValidName1";
-			string validName2 = "ValidName2";
-			int invalidPage = -1;
-			int invalidPageSize = 0;
-			var expectedBadRequestResult = new BadRequestObjectResult("Invalid pagination parameters.");
-
-			_inputValidationServiceMock
-				.Setup(x => x.IsValidString(validName1))
-				.Returns(true);
-			_inputValidationServiceMock
-				.Setup(x => x.IsValidString(validName2))
-				.Returns(true);
-			_paginationValidationServiceMock
-				.Setup(x => x.ValidatePaginationParameters(invalidPage, invalidPageSize, It.IsAny<int>()))
-				.Returns((false, 0, expectedBadRequestResult));
-
-			// Act
-			var result = await _controller.GetPassengersByName(cancellationToken, validName1, validName2, invalidPage, invalidPageSize);
-
-			// Assert
-			Assert.IsType<BadRequestObjectResult>(result.Result);
-		}
-
-		[Fact]
-		[Trait("Category", "GetPassengersByName")]
-		public async Task GetPassengersByName_PassengersNotFound_ReturnsNotFound()
-		{
-			// Arrange
-			var cancellationToken = new CancellationToken();
-			string validName = "NonExistentName";
-			int validPage = 1;
-			int validPageSize = 10;
-
-			_inputValidationServiceMock
-				.Setup(x => x.IsValidString(validName))
-				.Returns(true);
-			_paginationValidationServiceMock
-				.Setup(x => x.ValidatePaginationParameters(validPage, validPageSize, It.IsAny<int>()))
-				.Returns((true, validPageSize, null));
-			_passengerServiceMock
-				.Setup(service => service.GetPassengersByName(cancellationToken, validPage, validPageSize, validName, null))
-				.ReturnsAsync(new List<PassengerEntity>());
-
-			// Act
-			var result = await _controller.GetPassengersByName(cancellationToken, validName, null, validPage, validPageSize);
-
-			// Assert
-			Assert.IsType<NotFoundResult>(result.Result);
-		}
-
-		[Fact]
-		[Trait("Category", "GetPassengersByName")]
-		public async Task GetPassengersByName_ServiceReturnsNull_ReturnsNotFound()
-		{
-			// Arrange
-			var cancellationToken = new CancellationToken();
-			string validName = "ValidName";
-			int validPage = 1;
-			int validPageSize = 10;
-
-			_paginationValidationServiceMock
-				.Setup(x => x.ValidatePaginationParameters(validPage, validPageSize, It.IsAny<int>()))
-				.Returns((true, validPageSize, null));
-			_passengerServiceMock
-				.Setup(service => service.GetPassengersByName(cancellationToken, validPage, validPageSize, validName, null))
-				.ReturnsAsync((List<PassengerEntity>)null);
-
-			// Act
-			var result = await _controller.GetPassengersByName(cancellationToken, validName, null, validPage, validPageSize);
-
-			// Assert
-			Assert.IsType<NotFoundResult>(result.Result);
-		}
-
-		[Fact]
-		[Trait("Category", "GetPassengersByName")]
-		public async Task GetPassengersByName_ReturnsPagedListOfPassengers_WhenPassengersFound()
-		{
-			// Arrange
-			var cancellationToken = new CancellationToken();
-			string validName1 = "ValidName1";
-			string validName2 = "ValidName2";
-			int validPage = 1;
-			int validPageSize = 10;
-			var passengerEntities = new List<PassengerEntity> { passengerEntity };
-			var passengerDtos = new List<PassengerDto> { passengerDto };
-			var totalItems = 1;
-
-			_inputValidationServiceMock
-				.Setup(x => x.IsValidString(validName1))
-				.Returns(true);
-			_inputValidationServiceMock
-				.Setup(x => x.IsValidString(validName2))
-				.Returns(true);
-			_paginationValidationServiceMock
-				.Setup(x => x.ValidatePaginationParameters(validPage, validPageSize, It.IsAny<int>()))
-				.Returns((true, validPageSize, null));
-			_passengerServiceMock
-				.Setup(service => service.GetPassengersByName(cancellationToken, validPage, validPageSize, validName1, validName2))
-				.ReturnsAsync(passengerEntities);
-			_passengerServiceMock
-				.Setup(service => service.PassengersCount(cancellationToken, validName1, validName2))
-				.ReturnsAsync(totalItems);
-			_mapperMock
-				.Setup(m => m.Map<IEnumerable<PassengerDto>>(passengerEntities))
-				.Returns(passengerDtos);
-
-			// Act
-			var result = await _controller.GetPassengersByName(cancellationToken, validName1, validName2, validPage, validPageSize);
-
-			// Assert
-			var actionResult = Assert.IsType<ActionResult<PagedResponse<PassengerDto>>>(result);
-			var okResult = Assert.IsType<OkObjectResult>(actionResult.Result);
-			var response = Assert.IsType<PagedResponse<PassengerDto>>(okResult.Value);
-			Assert.Equal(validPage, response.PageNumber);
-			Assert.Equal(validPageSize, response.PageSize);
-			Assert.Equal(totalItems, response.TotalCount);
-			Assert.Equal(passengerDtos, response.Data);
-		}
-
-		#endregion
-
-		#region GetPassengersByFilter
-
-		[Fact]
-		[Trait("Category", "GetPassengersByFilter")]
-		public async Task GetPassengersByFilter_ValidFilterWithResults_ReturnsOkWithPagedResponse()
+		[Trait("Category", "SearchPassengers")]
+		public async Task SearchPassengers_ValidFilterWithResults_ReturnsOkWithPagedResponse()
 		{
 			// Arrange
 			var filter = new PassengerSearchFilter { FirstName = "John" };
@@ -568,7 +416,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(s => s.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, 10, null));
 			_passengerServiceMock
-				.Setup(s => s.GetPassengersByFilter(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<PassengerSearchFilter>()))
+				.Setup(s => s.SearchPassengers(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<PassengerSearchFilter>()))
 				.ReturnsAsync(passengers);
 			_passengerServiceMock
 				.Setup(s => s.PassengersCountFilter(It.IsAny<CancellationToken>(), It.IsAny<PassengerSearchFilter>()))
@@ -578,7 +426,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns(passengerDtos);
 
 			// Act
-			var result = await _controller.GetPassengersByFilter(new CancellationToken(), filter, 1, 10);
+			var result = await _controller.SearchPassengers(new CancellationToken(), filter, 1, 10);
 
 			// Assert
 			var okResult = Assert.IsType<OkObjectResult>(result.Result);
@@ -588,8 +436,8 @@ namespace AirportAutomationApi.Test.Controllers
 		}
 
 		[Fact]
-		[Trait("Category", "GetPassengersByFilter")]
-		public async Task GetPassengersByFilter_ValidFilterWithNoResults_ReturnsNotFound()
+		[Trait("Category", "SearchPassengers")]
+		public async Task SearchPassengers_ValidFilterWithNoResults_ReturnsNotFound()
 		{
 			// Arrange
 			var filter = new PassengerSearchFilter { Phone = "2025" };
@@ -597,25 +445,25 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(s => s.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, 10, null));
 			_passengerServiceMock
-				.Setup(s => s.GetPassengersByFilter(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<PassengerSearchFilter>()))
+				.Setup(s => s.SearchPassengers(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<PassengerSearchFilter>()))
 				.ReturnsAsync(new List<PassengerEntity>());
 
 			// Act
-			var result = await _controller.GetPassengersByFilter(new CancellationToken(), filter, 1, 10);
+			var result = await _controller.SearchPassengers(new CancellationToken(), filter, 1, 10);
 
 			// Assert
 			Assert.IsType<NotFoundResult>(result.Result);
 		}
 
 		[Fact]
-		[Trait("Category", "GetPassengersByFilter")]
-		public async Task GetPassengersByFilter_EmptyFilter_ReturnsBadRequest()
+		[Trait("Category", "SearchPassengers")]
+		public async Task SearchPassengers_EmptyFilter_ReturnsBadRequest()
 		{
 			// Arrange
 			var filter = new PassengerSearchFilter();
 
 			// Act
-			var result = await _controller.GetPassengersByFilter(new CancellationToken(), filter, 1, 10);
+			var result = await _controller.SearchPassengers(new CancellationToken(), filter, 1, 10);
 
 			// Assert
 			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
@@ -623,8 +471,8 @@ namespace AirportAutomationApi.Test.Controllers
 		}
 
 		[Fact]
-		[Trait("Category", "GetPassengersByFilter")]
-		public async Task GetPassengersByFilter_InvalidPagination_ReturnsBadRequestFromValidationService()
+		[Trait("Category", "SearchPassengers")]
+		public async Task SearchPassengers_InvalidPagination_ReturnsBadRequestFromValidationService()
 		{
 			// Arrange
 			var filter = new PassengerSearchFilter { FirstName = "John" };
@@ -634,15 +482,15 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns((false, 0, badRequestResult));
 
 			// Act
-			var result = await _controller.GetPassengersByFilter(new CancellationToken(), filter, -1, 0);
+			var result = await _controller.SearchPassengers(new CancellationToken(), filter, -1, 0);
 
 			// Assert
 			Assert.Same(badRequestResult, result.Result);
 		}
 
 		[Fact]
-		[Trait("Category", "GetPassengersByFilter")]
-		public async Task GetPassengersByFilter_PageSizeExceedsMax_CorrectsPageSize()
+		[Trait("Category", "SearchPassengers")]
+		public async Task SearchPassengers_PageSizeExceedsMax_CorrectsPageSize()
 		{
 			// Arrange
 			var filter = new PassengerSearchFilter { FirstName = "John" };
@@ -654,7 +502,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(s => s.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, 50, null));
 			_passengerServiceMock
-				.Setup(s => s.GetPassengersByFilter(It.IsAny<CancellationToken>(), It.IsAny<int>(), 50, It.IsAny<PassengerSearchFilter>()))
+				.Setup(s => s.SearchPassengers(It.IsAny<CancellationToken>(), It.IsAny<int>(), 50, It.IsAny<PassengerSearchFilter>()))
 				.ReturnsAsync(passengers);
 			_passengerServiceMock
 				.Setup(s => s.PassengersCountFilter(It.IsAny<CancellationToken>(), It.IsAny<PassengerSearchFilter>()))
@@ -664,7 +512,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns(passengerDtos);
 
 			// Act
-			var result = await _controller.GetPassengersByFilter(new CancellationToken(), filter, 1, 100);
+			var result = await _controller.SearchPassengers(new CancellationToken(), filter, 1, 100);
 
 			// Assert
 			var okResult = Assert.IsType<OkObjectResult>(result.Result);
@@ -673,8 +521,8 @@ namespace AirportAutomationApi.Test.Controllers
 		}
 
 		[Fact]
-		[Trait("Category", "GetPassengersByFilter")]
-		public async Task GetPassengersByFilter_PassengerServiceReturnsNull_ReturnsNotFound()
+		[Trait("Category", "SearchPassengers")]
+		public async Task SearchPassengers_PassengerServiceReturnsNull_ReturnsNotFound()
 		{
 			// Arrange
 			var filter = new PassengerSearchFilter { FirstName = "John" };
@@ -682,11 +530,11 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(s => s.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, 10, null));
 			_passengerServiceMock
-				.Setup(s => s.GetPassengersByFilter(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<PassengerSearchFilter>()))
+				.Setup(s => s.SearchPassengers(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<PassengerSearchFilter>()))
 				.ReturnsAsync((List<PassengerEntity>)null);
 
 			// Act
-			var result = await _controller.GetPassengersByFilter(new CancellationToken(), filter, 1, 10);
+			var result = await _controller.SearchPassengers(new CancellationToken(), filter, 1, 10);
 
 			// Assert
 			Assert.IsType<NotFoundResult>(result.Result);
@@ -993,7 +841,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, 10, null));
 			_passengerServiceMock
-				.Setup(x => x.GetPassengersByFilter(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), filter))
+				.Setup(x => x.SearchPassengers(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), filter))
 				.ReturnsAsync(passengers);
 			_exportServiceMock.Setup(x => x.ExportToPDF("Passengers", passengers)).Returns(pdfBytes);
 			_utilityServiceMock.Setup(x => x.GenerateUniqueFileName("Passengers", FileExtension.Pdf)).Returns(fileName);
@@ -1100,7 +948,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, 10, null));
 			_passengerServiceMock
-				.Setup(x => x.GetPassengersByFilter(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), filter))
+				.Setup(x => x.SearchPassengers(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), filter))
 				.ReturnsAsync(passengers);
 
 			// Act
@@ -1121,7 +969,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, 10, null));
 			_passengerServiceMock
-				.Setup(x => x.GetPassengersByFilter(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), filter))
+				.Setup(x => x.SearchPassengers(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), filter))
 				.ReturnsAsync((List<PassengerEntity>)null);
 
 			// Act
@@ -1231,7 +1079,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, 10, null));
 			_passengerServiceMock
-				.Setup(x => x.GetPassengersByFilter(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), filter))
+				.Setup(x => x.SearchPassengers(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), filter))
 				.ReturnsAsync(_samplePassengers);
 			_exportServiceMock.Setup(x => x.ExportToExcel("Passengers", _samplePassengers)).Returns(_sampleExcelBytes);
 			_utilityServiceMock.Setup(x => x.GenerateUniqueFileName("Passengers", FileExtension.Xlsx)).Returns(fileName);
@@ -1322,7 +1170,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, 10, null));
 			_passengerServiceMock
-				.Setup(x => x.GetPassengersByFilter(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), filter))
+				.Setup(x => x.SearchPassengers(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), filter))
 				.ReturnsAsync(passengers);
 
 			// Act

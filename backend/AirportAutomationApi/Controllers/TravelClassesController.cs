@@ -1,4 +1,5 @@
-﻿using AirportAutomation.Api.Interfaces;
+﻿using AirportAutomation.Api.Helpers;
+using AirportAutomation.Api.Interfaces;
 using AirportAutomation.Application.Dtos.Response;
 using AirportAutomation.Application.Dtos.TravelClass;
 using AirportAutomation.Core.Enums;
@@ -14,6 +15,7 @@ namespace AirportAutomation.Api.Controllers
 	/// </summary>
 	[Authorize]
 	[ApiVersion("1.0")]
+	[SwaggerControllerOrder(4)]
 	public class TravelClassesController : BaseController
 	{
 		private readonly ITravelClassService _travelClassService;

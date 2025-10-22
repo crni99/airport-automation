@@ -64,31 +64,8 @@ namespace AirportAutomation.Web.Controllers
 		}
 
 		[HttpGet]
-		[Route("GetDestinationsByCityOrAirport")]
-		public async Task<IActionResult> GetDestinationsByCityOrAirport([FromQuery] string city, [FromQuery] string airport, int page = 1, int pageSize = 10)
-		{
-			if (page < 1)
-			{
-				_alertService.SetAlertMessage(TempData, "invalid_page_number", false);
-				return Json(new { success = false, message = "Page number must be greater than or equal to 1." });
-			}
-			if (string.IsNullOrEmpty(city) && string.IsNullOrEmpty(airport))
-			{
-				_alertService.SetAlertMessage(TempData, "missing_field", false);
-				return RedirectToAction("Index");
-			}
-			var response = await _httpCallService.GetDataByCityOrAirport<DestinationEntity>(city, airport, page, pageSize);
-			if (response == null)
-			{
-				return Json(new { success = false, message = "No destinations found." });
-			}
-			var pagedResponse = _mapper.Map<PagedResponse<DestinationViewModel>>(response);
-			return Json(new { success = true, data = pagedResponse });
-		}
-
-		[HttpGet]
-		[Route("GetDestinationsByFilter")]
-		public async Task<IActionResult> GetDestinationsByFilter([FromQuery] DestinationSearchFilter filter, int page = 1, int pageSize = 10)
+		[Route("SearchDestinations")]
+		public async Task<IActionResult> SearchDestinations([FromQuery] DestinationSearchFilter filter, int page = 1, int pageSize = 10)
 		{
 			if (page < 1)
 			{

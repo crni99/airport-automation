@@ -1,4 +1,5 @@
-﻿using AirportAutomation.Api.Interfaces;
+﻿using AirportAutomation.Api.Helpers;
+using AirportAutomation.Api.Interfaces;
 using AirportAutomation.Application.Dtos.PlaneTicket;
 using AirportAutomation.Application.Dtos.Response;
 using AirportAutomation.Core.Entities;
@@ -19,6 +20,7 @@ namespace AirportAutomation.Api.Controllers
 	/// </summary>
 	[Authorize]
 	[ApiVersion("1.0")]
+	[SwaggerControllerOrder(8)]
 	public class PlaneTicketsController : BaseController
 	{
 		private readonly IPlaneTicketService _planeTicketService;
@@ -131,53 +133,6 @@ namespace AirportAutomation.Api.Controllers
 		}
 
 		/// <summary>
-		/// Endpoint for retrieving a paginated list of plane tickets containing the specified name.
-		/// </summary>
-		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
-		/// <param name="minPrice">The minimum price to search for.</param>
-		/// <param name = "maxPrice" > The maximum price to search for.</param>
-		/// <param name="page">The page number for pagination (optional).</param>
-		/// <param name="pageSize">The size of each page for pagination (optional).</param>
-		/// <returns>A list of plane tickets that match the specified name.</returns>
-		/// <response code="200">Returns a paged list of plane tickets if found.</response>
-		/// <response code="400">If the request is invalid or if there's a validation error.</response>
-		/// <response code="404">If no plane tickets are found.</response>
-		/// <response code="401">If the user is not authenticated.</response>
-		[HttpGet("byPrice")]
-		[ProducesResponseType(200, Type = typeof(PagedResponse<PlaneTicketDto>))]
-		[ProducesResponseType(400)]
-		[ProducesResponseType(404)]
-		[ProducesResponseType(401)]
-		public async Task<ActionResult<PagedResponse<PlaneTicketDto>>> GetPlaneTicketsForPrice(
-			CancellationToken cancellationToken,
-			[FromQuery] int? minPrice = null,
-			[FromQuery] int? maxPrice = null,
-			[FromQuery] int page = 1,
-			[FromQuery] int pageSize = 10)
-		{
-			if (minPrice == null && maxPrice == null)
-			{
-				_logger.LogInformation("Both min price and max price are missing in the request.");
-				return BadRequest("Both min price and max price are missing in the request.");
-			}
-			var (isValid, correctedPageSize, result) = _paginationValidationService.ValidatePaginationParameters(page, pageSize, maxPageSize);
-			if (!isValid)
-			{
-				return result;
-			}
-			var planeTickets = await _planeTicketService.GetPlaneTicketsForPrice(cancellationToken, page, correctedPageSize, minPrice, maxPrice);
-			if (planeTickets is null || !planeTickets.Any())
-			{
-				_logger.LogInformation("Plane Tickets not found.");
-				return NotFound();
-			}
-			var totalItems = await _planeTicketService.PlaneTicketsCount(cancellationToken, minPrice, maxPrice);
-			var data = _mapper.Map<IEnumerable<PlaneTicketDto>>(planeTickets);
-			var response = new PagedResponse<PlaneTicketDto>(data, page, correctedPageSize, totalItems);
-			return Ok(response);
-		}
-
-		/// <summary>
 		/// Endpoint for retrieving a paginated list of plane tickets matching the specified search filter criteria.
 		/// </summary>
 		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
@@ -189,12 +144,12 @@ namespace AirportAutomation.Api.Controllers
 		/// <response code="400">If the request is invalid or the filter criteria are missing or invalid.</response>
 		/// <response code="404">If no plane tickets matching the filter criteria are found.</response>
 		/// <response code="401">If the user is not authenticated.</response>
-		[HttpGet("byFilter")]
+		[HttpGet("search")]
 		[ProducesResponseType(200, Type = typeof(PagedResponse<PlaneTicketDto>))]
 		[ProducesResponseType(400)]
 		[ProducesResponseType(404)]
 		[ProducesResponseType(401)]
-		public async Task<ActionResult<PagedResponse<PlaneTicketDto>>> GetPlaneTicketsByFilter(
+		public async Task<ActionResult<PagedResponse<PlaneTicketDto>>> SearchPlaneTickets(
 			CancellationToken cancellationToken,
 			[FromQuery] PlaneTicketSearchFilter filter,
 			[FromQuery] int page = 1,
@@ -210,7 +165,7 @@ namespace AirportAutomation.Api.Controllers
 			{
 				return result;
 			}
-			var planeTickets = await _planeTicketService.GetPlaneTicketsByFilter(cancellationToken, page, correctedPageSize, filter);
+			var planeTickets = await _planeTicketService.SearchPlaneTickets(cancellationToken, page, correctedPageSize, filter);
 			if (planeTickets is null || !planeTickets.Any())
 			{
 				_logger.LogInformation("Plane Tickets not found.");
@@ -420,7 +375,7 @@ namespace AirportAutomation.Api.Controllers
 				}
 				else
 				{
-					planeTickets = await _planeTicketService.GetPlaneTicketsByFilter(cancellationToken, page, correctedPageSize, filter);
+					planeTickets = await _planeTicketService.SearchPlaneTickets(cancellationToken, page, correctedPageSize, filter);
 				}
 			}
 			if (planeTickets is null || !planeTickets.Any())
@@ -490,7 +445,7 @@ namespace AirportAutomation.Api.Controllers
 				}
 				else
 				{
-					planeTickets = await _planeTicketService.GetPlaneTicketsByFilter(cancellationToken, page, correctedPageSize, filter);
+					planeTickets = await _planeTicketService.SearchPlaneTickets(cancellationToken, page, correctedPageSize, filter);
 				}
 			}
 			if (planeTickets == null || !planeTickets.Any())

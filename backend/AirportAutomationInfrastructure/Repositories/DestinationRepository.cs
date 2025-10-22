@@ -39,27 +39,7 @@ namespace AirportAutomation.Infrastructure.Repositories
 			return await _context.Destination.FindAsync(id);
 		}
 
-		public async Task<IList<DestinationEntity?>> GetDestinationsByCityOrAirport(CancellationToken cancellationToken, int page, int pageSize, string city = null, string airport = null)
-		{
-			IQueryable<DestinationEntity> query = _context.Destination.AsNoTracking();
-
-			if (!string.IsNullOrEmpty(city))
-			{
-				query = query.Where(p => p.City.Contains(city));
-			}
-			if (!string.IsNullOrEmpty(airport))
-			{
-				query = query.Where(p => p.Airport.Contains(airport));
-			}
-
-			return await query.OrderBy(c => c.Id)
-								.Skip(pageSize * (page - 1))
-								.Take(pageSize)
-								.ToListAsync(cancellationToken)
-								.ConfigureAwait(false);
-		}
-
-		public async Task<IList<DestinationEntity?>> GetDestinationsByFilter(CancellationToken cancellationToken, int page, int pageSize, DestinationSearchFilter filter)
+		public async Task<IList<DestinationEntity?>> SearchDestinations(CancellationToken cancellationToken, int page, int pageSize, DestinationSearchFilter filter)
 		{
 			IQueryable<DestinationEntity> query = _context.Destination.AsNoTracking();
 

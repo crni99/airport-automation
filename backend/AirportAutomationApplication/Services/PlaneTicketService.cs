@@ -30,14 +30,9 @@ namespace AirportAutomation.Application.Services
 			return await _planeTicketRepository.GetPlaneTicket(id);
 		}
 
-		public async Task<IList<PlaneTicketEntity?>> GetPlaneTicketsForPrice(CancellationToken cancellationToken, int page, int pageSize, int? minPrice, int? maxPrice)
+		public async Task<IList<PlaneTicketEntity?>> SearchPlaneTickets(CancellationToken cancellationToken, int page, int pageSize, PlaneTicketSearchFilter filter)
 		{
-			return await _planeTicketRepository.GetPlaneTicketsForPrice(cancellationToken, page, pageSize, minPrice, maxPrice);
-		}
-
-		public async Task<IList<PlaneTicketEntity?>> GetPlaneTicketsByFilter(CancellationToken cancellationToken, int page, int pageSize, PlaneTicketSearchFilter filter)
-		{
-			return await _planeTicketRepository.GetPlaneTicketsByFilter(cancellationToken, page, pageSize, filter);
+			return await _planeTicketRepository.SearchPlaneTickets(cancellationToken, page, pageSize, filter);
 		}
 
 		public async Task<PlaneTicketEntity> PostPlaneTicket(PlaneTicketEntity planeTicket)

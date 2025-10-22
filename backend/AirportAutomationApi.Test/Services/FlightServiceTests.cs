@@ -50,9 +50,9 @@ namespace AirportAutomationApi.Test.Services
 			var startDate = new DateOnly(1999, 12, 01);
 			var endDate = new DateOnly(2023, 9, 20);
 
-			await _service.GetFlightsBetweenDates(cancellationToken, 1, 10, startDate, endDate);
+			await _service.SearchFlights(cancellationToken, 1, 10, startDate, endDate);
 
-			_repositoryMock.Verify(repo => repo.GetFlightsBetweenDates(cancellationToken, 1, 10, startDate, endDate), Times.Once);
+			_repositoryMock.Verify(repo => repo.SearchFlights(cancellationToken, 1, 10, startDate, endDate), Times.Once);
 		}
 
 		[Fact]

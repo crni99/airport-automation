@@ -44,21 +44,12 @@ namespace AirportAutomationApi.Test.Services
 		}
 
 		[Fact]
-		public async Task GetPassengersByName_Should_Call_Repository_GetPassengersByName()
+		public async Task SearchPassengers_Should_Call_Repository_SearchPassengers()
 		{
 			var cancellationToken = new CancellationToken();
-			await _service.GetPassengersByName(cancellationToken, 1, 10, "John", "Doe");
+			await _service.SearchPassengers(cancellationToken, 1, 10, null);
 
-			_repositoryMock.Verify(repo => repo.GetPassengersByName(cancellationToken, 1, 10, "John", "Doe"), Times.Once);
-		}
-
-		[Fact]
-		public async Task GetPassengersByFilter_Should_Call_Repository_GetPassengersByFilter()
-		{
-			var cancellationToken = new CancellationToken();
-			await _service.GetPassengersByFilter(cancellationToken, 1, 10, null);
-
-			_repositoryMock.Verify(repo => repo.GetPassengersByFilter(cancellationToken, 1, 10, null), Times.Once);
+			_repositoryMock.Verify(repo => repo.SearchPassengers(cancellationToken, 1, 10, null), Times.Once);
 		}
 
 		[Fact]

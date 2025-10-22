@@ -30,18 +30,7 @@ namespace AirportAutomation.Infrastructure.Repositories
 			return await _context.ApiUser.FindAsync(id);
 		}
 
-		public async Task<IList<ApiUserEntity?>> GetApiUsersByRole(CancellationToken cancellationToken, int page, int pageSize, string role)
-		{
-			return await _context.ApiUser
-				.Where(a => a.Roles == role)
-				.OrderBy(c => c.ApiUserId)
-				.Skip(pageSize * (page - 1))
-				.Take(pageSize)
-				.AsNoTracking()
-				.ToListAsync(cancellationToken);
-		}
-
-		public async Task<IList<ApiUserEntity?>> GetApiUsersByFilter(
+		public async Task<IList<ApiUserEntity?>> SearchApiUsers(
 			CancellationToken cancellationToken,
 			int page,
 			int pageSize,

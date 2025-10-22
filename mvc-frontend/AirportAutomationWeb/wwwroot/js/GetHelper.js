@@ -84,7 +84,7 @@ function createURL(fetchURL, entityType, page) {
             if ((!username || username.trim() === '') && (!searchRole || searchRole.trim() === '')) {
                 return `${fetchURL}?${paginationParams}`;
             }
-            return `/${entityType}/GetApiUsersByFilter?username=${encodeURIComponent(username)}&roles=${encodeURIComponent(searchRole)}&${paginationParams}`;
+            return `/${entityType}/SearchApiUsers?username=${encodeURIComponent(username)}&roles=${encodeURIComponent(searchRole)}&${paginationParams}`;
 
         case 'Destination':
             var city = $('#city').val();
@@ -92,7 +92,7 @@ function createURL(fetchURL, entityType, page) {
             if ((!city || city.trim() === '') && (!airport || airport.trim() === '')) {
                 return `${fetchURL}?${paginationParams}`;
             }
-            return `/${entityType}/GetDestinationsByFilter?city=${encodeURIComponent(city)}&airport=${encodeURIComponent(airport)}&${paginationParams}`;
+            return `/${entityType}/SearchDestinations?city=${encodeURIComponent(city)}&airport=${encodeURIComponent(airport)}&${paginationParams}`;
 
         case 'Flight':
             var startDate = $('#startDate').val();
@@ -100,7 +100,7 @@ function createURL(fetchURL, entityType, page) {
             if ((!startDate || startDate.trim() === '') && (!endDate || endDate.trim() === '')) {
                 return `${fetchURL}?${paginationParams}`;
             }
-            return `/${entityType}/GetFlightsBetweenDates?startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}&${paginationParams}`;
+            return `/${entityType}/SearchFlights?startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}&${paginationParams}`;
 
         case 'Passenger':
             var firstName = $('#firstName').val();
@@ -113,7 +113,7 @@ function createURL(fetchURL, entityType, page) {
                 && (!passport || passport.trim() === '') && (!address || address.trim() === '') && (!phone || phone.trim() === '')) {
                 return `${fetchURL}?${paginationParams}`;
             }
-            return `/${entityType}/GetPassengersByFilter?firstName=${encodeURIComponent(firstName)}&lastName=${encodeURIComponent(lastName)}&uprn=${encodeURIComponent(uprn)}&passport=${encodeURIComponent(passport)}&address=${encodeURIComponent(address)}&phone=${encodeURIComponent(phone)}&${paginationParams}`;
+            return `/${entityType}/SearchPassengers?firstName=${encodeURIComponent(firstName)}&lastName=${encodeURIComponent(lastName)}&uprn=${encodeURIComponent(uprn)}&passport=${encodeURIComponent(passport)}&address=${encodeURIComponent(address)}&phone=${encodeURIComponent(phone)}&${paginationParams}`;
 
         case 'Pilot':
             var firstName = $('#firstName').val();
@@ -124,7 +124,7 @@ function createURL(fetchURL, entityType, page) {
                 (!uprn || uprn.trim() === '') && (!flyingHours || flyingHours.trim() === '')) {
                 return `${fetchURL}?${paginationParams}`;
             }
-            return `/${entityType}/GetPilotsByFilter?firstName=${encodeURIComponent(firstName)}&lastName=${encodeURIComponent(lastName)}&uprn=${encodeURIComponent(uprn)}&flyingHours=${encodeURIComponent(flyingHours)}&${paginationParams}`;
+            return `/${entityType}/SearchPilots?firstName=${encodeURIComponent(firstName)}&lastName=${encodeURIComponent(lastName)}&uprn=${encodeURIComponent(uprn)}&flyingHours=${encodeURIComponent(flyingHours)}&${paginationParams}`;
 
         case 'PlaneTicket':
             var price = $('#price').val();
@@ -137,7 +137,7 @@ function createURL(fetchURL, entityType, page) {
             ) {
                 return `${fetchURL}?${paginationParams}`;
             }
-            return `/${entityType}/GetPlaneTicketsByFilter?price=${encodeURIComponent(price)}&purchaseDate=${encodeURIComponent(purchaseDate)}&seatNumber=${encodeURIComponent(seatNumber)}&${paginationParams}`;
+            return `/${entityType}/SearchPlaneTickets?price=${encodeURIComponent(price)}&purchaseDate=${encodeURIComponent(purchaseDate)}&seatNumber=${encodeURIComponent(seatNumber)}&${paginationParams}`;
 
         default:
             return `${fetchURL}?${paginationParams}`;

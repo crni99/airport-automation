@@ -62,8 +62,8 @@ namespace AirportAutomation.Web.Controllers
 		}
 
 		[HttpGet]
-		[Route("GetFlightsBetweenDates")]
-		public async Task<IActionResult> GetFlightsBetweenDates([FromQuery] string startDate, [FromQuery] string endDate, int page = 1, int pageSize = 10)
+		[Route("SearchFlights")]
+		public async Task<IActionResult> SearchFlights([FromQuery] string startDate, [FromQuery] string endDate, int page = 1, int pageSize = 10)
 		{
 			if (page < 1)
 			{

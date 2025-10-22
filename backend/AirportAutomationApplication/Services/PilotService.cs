@@ -30,14 +30,9 @@ namespace AirportAutomation.Application.Services
 			return await _pilotRepository.GetPilot(id);
 		}
 
-		public async Task<IList<PilotEntity?>> GetPilotsByName(CancellationToken cancellationToken, int page, int pageSize, string firstName, string lastName)
+		public async Task<IList<PilotEntity?>> SearchPilots(CancellationToken cancellationToken, int page, int pageSize, PilotSearchFilter filter)
 		{
-			return await _pilotRepository.GetPilotsByName(cancellationToken, page, pageSize, firstName, lastName);
-		}
-
-		public async Task<IList<PilotEntity?>> GetPilotsByFilter(CancellationToken cancellationToken, int page, int pageSize, PilotSearchFilter filter)
-		{
-			return await _pilotRepository.GetPilotsByFilter(cancellationToken, page, pageSize, filter);
+			return await _pilotRepository.SearchPilots(cancellationToken, page, pageSize, filter);
 		}
 
 		public async Task<PilotEntity> PostPilot(PilotEntity pilot)

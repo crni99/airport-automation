@@ -1,4 +1,5 @@
-﻿using AirportAutomation.Api.Interfaces;
+﻿using AirportAutomation.Api.Helpers;
+using AirportAutomation.Api.Interfaces;
 using AirportAutomation.Application.Dtos.Flight;
 using AirportAutomation.Application.Dtos.Response;
 using AirportAutomation.Core.Entities;
@@ -16,6 +17,7 @@ namespace AirportAutomation.Api.Controllers
 	/// </summary>
 	[Authorize]
 	[ApiVersion("1.0")]
+	[SwaggerControllerOrder(6)]
 	public class FlightsController : BaseController
 	{
 		private readonly IFlightService _flightService;
@@ -140,12 +142,12 @@ namespace AirportAutomation.Api.Controllers
 		/// <response code="400">If the request is invalid or if there's a validation error.</response>
 		/// <response code="404">If no flights are found.</response>
 		/// <response code="401">If the user is not authenticated.</response>
-		[HttpGet("byDate")]
+		[HttpGet("search")]
 		[ProducesResponseType(200, Type = typeof(PagedResponse<FlightDto>))]
 		[ProducesResponseType(400)]
 		[ProducesResponseType(404)]
 		[ProducesResponseType(401)]
-		public async Task<ActionResult<PagedResponse<FlightDto>>> GetFlightsBetweenDates(
+		public async Task<ActionResult<PagedResponse<FlightDto>>> SearchFlights(
 			CancellationToken cancellationToken,
 			[FromQuery] DateOnly? startDate = null,
 			[FromQuery] DateOnly? endDate = null,
@@ -167,7 +169,7 @@ namespace AirportAutomation.Api.Controllers
 				_logger.LogInformation("Invalid input. The start and end dates must be valid dates.");
 				return BadRequest("Invalid input. The start and end dates must be valid dates.");
 			}
-			var flights = await _flightService.GetFlightsBetweenDates(cancellationToken, page, correctedPageSize, startDate, endDate);
+			var flights = await _flightService.SearchFlights(cancellationToken, page, correctedPageSize, startDate, endDate);
 			if (flights == null || flights.Count == 0)
 			{
 				_logger.LogInformation("Flights not found.");
@@ -378,7 +380,7 @@ namespace AirportAutomation.Api.Controllers
 				{
 					if (_inputValidationService.IsValidDateOnly(startDate) && _inputValidationService.IsValidDateOnly(endDate))
 					{
-						flights = await _flightService.GetFlightsBetweenDates(cancellationToken, page, correctedPageSize, startDate, endDate);
+						flights = await _flightService.SearchFlights(cancellationToken, page, correctedPageSize, startDate, endDate);
 					}
 				}
 				else
@@ -453,7 +455,7 @@ namespace AirportAutomation.Api.Controllers
 				{
 					if (_inputValidationService.IsValidDateOnly(startDate) && _inputValidationService.IsValidDateOnly(endDate))
 					{
-						flights = await _flightService.GetFlightsBetweenDates(cancellationToken, page, correctedPageSize, startDate, endDate);
+						flights = await _flightService.SearchFlights(cancellationToken, page, correctedPageSize, startDate, endDate);
 					}
 					else
 					{

@@ -376,164 +376,17 @@ namespace AirportAutomationApi.Test.Controllers
 
 		#endregion
 
-		#region GetApiUsersByRole
+		#region SearchApiUsers
 
 		[Fact]
-		[Trait("Category", "GetApiUsersByRole")]
-		public async Task GetApiUsersByRole_InvalidRole_ReturnsBadRequest()
-		{
-			// Arrange
-			var cancellationToken = new CancellationToken();
-			string invalidRole = string.Empty;
-			var expectedBadRequestResult = new BadRequestObjectResult("Invalid input. The role must be a valid non-empty string.");
-
-			_inputValidationServiceMock
-				.Setup(x => x.IsValidString(invalidRole))
-				.Returns(false);
-
-			// Act
-			var result = await _controller.GetApiUsersByRole(cancellationToken, invalidRole);
-
-			// Assert
-			Assert.IsType<BadRequestObjectResult>(result.Result);
-			var badRequestResult = result.Result as BadRequestObjectResult;
-			Assert.Equal(expectedBadRequestResult.Value, badRequestResult.Value);
-		}
-
-		[Fact]
-		[Trait("Category", "GetApiUsersByRole")]
-		public async Task GetApiUsersByRole_InvalidPaginationParameters_ReturnsBadRequest()
-		{
-			// Arrange
-			var cancellationToken = new CancellationToken();
-			string validRole = "ValidRole";
-			int invalidPage = -1;
-			int invalidPageSize = 0;
-			var expectedBadRequestResult = new BadRequestObjectResult("Invalid pagination parameters.");
-
-			_inputValidationServiceMock
-				.Setup(x => x.IsValidString(validRole))
-				.Returns(true);
-			_paginationValidationServiceMock
-				.Setup(x => x.ValidatePaginationParameters(invalidPage, invalidPageSize, It.IsAny<int>()))
-				.Returns((false, 0, expectedBadRequestResult));
-
-			// Act
-			var result = await _controller.GetApiUsersByRole(cancellationToken, validRole, invalidPage, invalidPageSize);
-
-			// Assert
-			Assert.IsType<BadRequestObjectResult>(result.Result);
-		}
-
-		[Fact]
-		[Trait("Category", "GetApiUsersByRole")]
-		public async Task GetApiUsersByRole_ApiUsersNotFound_ReturnsNotFound()
-		{
-			// Arrange
-			var cancellationToken = new CancellationToken();
-			string validRole = "NonExistentRole";
-			int validPage = 1;
-			int validPageSize = 10;
-
-			_inputValidationServiceMock
-				.Setup(x => x.IsValidString(validRole))
-				.Returns(true);
-			_paginationValidationServiceMock
-				.Setup(x => x.ValidatePaginationParameters(validPage, validPageSize, It.IsAny<int>()))
-				.Returns((true, validPageSize, null));
-			_apiUserServiceMock
-				.Setup(service => service.GetApiUsersByRole(cancellationToken, validPage, validPageSize, validRole))
-				.ReturnsAsync(new List<ApiUserEntity>());
-
-			// Act
-			var result = await _controller.GetApiUsersByRole(cancellationToken, validRole, validPage, validPageSize);
-
-			// Assert
-			Assert.IsType<NotFoundResult>(result.Result);
-		}
-
-		[Fact]
-		[Trait("Category", "GetApiUsersByRole")]
-		public async Task GetApiUsersByRole_ApiUsersNull_ReturnsNotFound()
-		{
-			// Arrange
-			var cancellationToken = new CancellationToken();
-			string validRole = "NonExistentRole";
-			int validPage = 1;
-			int validPageSize = 10;
-
-			_inputValidationServiceMock
-				.Setup(x => x.IsValidString(validRole))
-				.Returns(true);
-			_paginationValidationServiceMock
-				.Setup(x => x.ValidatePaginationParameters(validPage, validPageSize, It.IsAny<int>()))
-				.Returns((true, validPageSize, null));
-			_apiUserServiceMock
-				.Setup(service => service.GetApiUsersByRole(cancellationToken, validPage, validPageSize, validRole))
-				.ReturnsAsync((List<ApiUserEntity>)null);
-
-			// Act
-			var result = await _controller.GetApiUsersByRole(cancellationToken, validRole, validPage, validPageSize);
-
-			// Assert
-			Assert.IsType<NotFoundResult>(result.Result);
-		}
-
-		[Fact]
-		[Trait("Category", "GetApiUsersByRole")]
-		public async Task GetApiUsersByRole_ReturnsPagedListOfApiUsers_WhenApiUsersFound()
-		{
-			// Arrange
-			var cancellationToken = new CancellationToken();
-			string validRole = "ValidRole";
-			int validPage = 1;
-			int validPageSize = 10;
-			var apiUserEntities = new List<ApiUserEntity> { apiUserEntity };
-			var apiUserRoleDtos = new List<ApiUserRoleDto> { apiUserRoleDto };
-			var totalItems = 1;
-
-			_inputValidationServiceMock
-				.Setup(x => x.IsValidString(validRole))
-				.Returns(true);
-			_paginationValidationServiceMock
-				.Setup(x => x.ValidatePaginationParameters(validPage, validPageSize, It.IsAny<int>()))
-				.Returns((true, validPageSize, null));
-			_apiUserServiceMock
-				.Setup(service => service.GetApiUsersByRole(cancellationToken, validPage, validPageSize, validRole))
-				.ReturnsAsync(apiUserEntities);
-			_apiUserServiceMock
-				.Setup(service => service.ApiUsersCount(cancellationToken, validRole))
-				.ReturnsAsync(totalItems);
-			_mapperMock
-				.Setup(m => m.Map<IEnumerable<ApiUserRoleDto>>(apiUserEntities))
-				.Returns(apiUserRoleDtos);
-
-			// Act
-			var result = await _controller.GetApiUsersByRole(cancellationToken, validRole, validPage, validPageSize);
-
-			// Assert
-			var actionResult = Assert.IsType<ActionResult<PagedResponse<ApiUserRoleDto>>>(result);
-			var okResult = Assert.IsType<OkObjectResult>(actionResult.Result);
-			var response = Assert.IsType<PagedResponse<ApiUserRoleDto>>(okResult.Value);
-			Assert.Equal(validPage, response.PageNumber);
-			Assert.Equal(validPageSize, response.PageSize);
-			Assert.Equal(totalItems, response.TotalCount);
-			Assert.Equal(apiUserRoleDtos, response.Data);
-		}
-
-		#endregion
-
-		#region GetApiUsersByFilter
-
-		[Fact]
-		[Trait("Category", "GetApiUsersByFilter")]
-		public async Task GetApiUsersByFilter_ReturnsBadRequest_WhenFilterIsEmpty()
+		[Trait("Category", "SearchApiUsers")]
+		public async Task SearchApiUsers_ReturnsBadRequest_WhenFilterIsEmpty()
 		{
 			// Arrange
 			var filter = new ApiUserSearchFilter();
 
 			// Act
-			var result = await _controller.GetApiUsersByFilter(CancellationToken.None, filter);
+			var result = await _controller.SearchApiUsers(CancellationToken.None, filter);
 
 			// Assert
 			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
@@ -541,8 +394,8 @@ namespace AirportAutomationApi.Test.Controllers
 		}
 
 		[Fact]
-		[Trait("Category", "GetApiUsersByFilter")]
-		public async Task GetApiUsersByFilter_ReturnsBadRequest_WhenPageIsInvalid()
+		[Trait("Category", "SearchApiUsers")]
+		public async Task SearchApiUsers_ReturnsBadRequest_WhenPageIsInvalid()
 		{
 			// Arrange
 			var filter = new ApiUserSearchFilter { UserName = "John" };
@@ -554,7 +407,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns((false, 0, expectedBadRequestResult));
 
 			// Act
-			var result = await _controller.GetApiUsersByFilter(CancellationToken.None, filter, invalidPage);
+			var result = await _controller.SearchApiUsers(CancellationToken.None, filter, invalidPage);
 
 			// Assert
 			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
@@ -562,8 +415,8 @@ namespace AirportAutomationApi.Test.Controllers
 		}
 
 		[Fact]
-		[Trait("Category", "GetApiUsersByFilter")]
-		public async Task GetApiUsersByFilter_ReturnsBadRequest_WhenPageSizeIsInvalid()
+		[Trait("Category", "SearchApiUsers")]
+		public async Task SearchApiUsers_ReturnsBadRequest_WhenPageSizeIsInvalid()
 		{
 			// Arrange
 			var filter = new ApiUserSearchFilter { UserName = "John" };
@@ -575,7 +428,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns((false, 0, expectedBadRequestResult));
 
 			// Act
-			var result = await _controller.GetApiUsersByFilter(CancellationToken.None, filter, pageSize: invalidPageSize);
+			var result = await _controller.SearchApiUsers(CancellationToken.None, filter, pageSize: invalidPageSize);
 
 			// Assert
 			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
@@ -583,8 +436,8 @@ namespace AirportAutomationApi.Test.Controllers
 		}
 
 		[Fact]
-		[Trait("Category", "GetApiUsersByFilter")]
-		public async Task GetApiUsersByFilter_ReturnsNotFound_WhenUsersAreEmpty()
+		[Trait("Category", "SearchApiUsers")]
+		public async Task SearchApiUsers_ReturnsNotFound_WhenUsersAreEmpty()
 		{
 			// Arrange
 			var filter = new ApiUserSearchFilter { UserName = "testuser" };
@@ -593,19 +446,19 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(s => s.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, 10, null));
 			_apiUserServiceMock
-				.Setup(s => s.GetApiUsersByFilter(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>(), filter))
+				.Setup(s => s.SearchApiUsers(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>(), filter))
 				.ReturnsAsync(new List<ApiUserEntity>());
 
 			// Act
-			var result = await _controller.GetApiUsersByFilter(CancellationToken.None, filter);
+			var result = await _controller.SearchApiUsers(CancellationToken.None, filter);
 
 			// Assert
 			Assert.IsType<NotFoundResult>(result.Result);
 		}
 
 		[Fact]
-		[Trait("Category", "GetApiUsersByFilter")]
-		public async Task GetApiUsersByFilter_ReturnsNotFound_WhenUsersIsNull()
+		[Trait("Category", "SearchApiUsers")]
+		public async Task SearchApiUsers_ReturnsNotFound_WhenUsersIsNull()
 		{
 			// Arrange
 			var filter = new ApiUserSearchFilter { UserName = "testuser" };
@@ -614,19 +467,19 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(s => s.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, 10, null));
 			_apiUserServiceMock
-				.Setup(s => s.GetApiUsersByFilter(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>(), filter))
+				.Setup(s => s.SearchApiUsers(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>(), filter))
 				.ReturnsAsync((List<ApiUserEntity>)null);
 
 			// Act
-			var result = await _controller.GetApiUsersByFilter(CancellationToken.None, filter);
+			var result = await _controller.SearchApiUsers(CancellationToken.None, filter);
 
 			// Assert
 			Assert.IsType<NotFoundResult>(result.Result);
 		}
 
 		[Fact]
-		[Trait("Category", "GetApiUsersByFilter")]
-		public async Task GetApiUsersByFilter_ReturnsOk_WithPagedResponse()
+		[Trait("Category", "SearchApiUsers")]
+		public async Task SearchApiUsers_ReturnsOk_WithPagedResponse()
 		{
 			// Arrange
 			var filter = new ApiUserSearchFilter { UserName = "Jane" };
@@ -646,7 +499,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(s => s.ValidatePaginationParameters(page, pageSize, It.IsAny<int>()))
 				.Returns((true, pageSize, null));
 			_apiUserServiceMock
-				.Setup(s => s.GetApiUsersByFilter(It.IsAny<CancellationToken>(), page, pageSize, filter))
+				.Setup(s => s.SearchApiUsers(It.IsAny<CancellationToken>(), page, pageSize, filter))
 				.ReturnsAsync(apiUsers);
 			_apiUserServiceMock
 				.Setup(s => s.ApiUsersCountFilter(It.IsAny<CancellationToken>(), filter))
@@ -656,7 +509,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns(apiUserDtos);
 
 			// Act
-			var result = await _controller.GetApiUsersByFilter(CancellationToken.None, filter, page, pageSize);
+			var result = await _controller.SearchApiUsers(CancellationToken.None, filter, page, pageSize);
 
 			// Assert
 			var okResult = Assert.IsType<OkObjectResult>(result.Result);
@@ -668,8 +521,8 @@ namespace AirportAutomationApi.Test.Controllers
 		}
 
 		[Fact]
-		[Trait("Category", "GetApiUsersByFilter")]
-		public async Task GetApiUsersByFilter_ThrowsException_WhenServiceFails()
+		[Trait("Category", "SearchApiUsers")]
+		public async Task SearchApiUsers_ThrowsException_WhenServiceFails()
 		{
 			// Arrange
 			var filter = new ApiUserSearchFilter { UserName = "Jane" };
@@ -678,11 +531,11 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(s => s.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, 10, null));
 			_apiUserServiceMock
-				.Setup(s => s.GetApiUsersByFilter(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>(), filter))
+				.Setup(s => s.SearchApiUsers(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>(), filter))
 				.ThrowsAsync(new Exception("Simulated exception"));
 
 			// Act & Assert
-			await Assert.ThrowsAsync<Exception>(async () => await _controller.GetApiUsersByFilter(CancellationToken.None, filter));
+			await Assert.ThrowsAsync<Exception>(async () => await _controller.SearchApiUsers(CancellationToken.None, filter));
 		}
 
 		#endregion

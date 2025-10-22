@@ -1,4 +1,5 @@
-﻿using AirportAutomation.Api.Interfaces;
+﻿using AirportAutomation.Api.Helpers;
+using AirportAutomation.Api.Interfaces;
 using AirportAutomation.Application.Dtos.Destination;
 using AirportAutomation.Application.Dtos.Response;
 using AirportAutomation.Core.Entities;
@@ -19,6 +20,7 @@ namespace AirportAutomation.Api.Controllers
 	/// </summary>
 	[Authorize]
 	[ApiVersion("1.0")]
+	[SwaggerControllerOrder(3)]
 	public class DestinationsController : BaseController
 	{
 		private readonly IDestinationService _destinationService;
@@ -131,53 +133,6 @@ namespace AirportAutomation.Api.Controllers
 		}
 
 		/// <summary>
-		/// Endpoint for retrieving a paginated list of destinations containing the specified name.
-		/// </summary>
-		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
-		/// <param name="city">The city name to search for.</param>
-		/// <param name="airport">The airport name to search for.</param>
-		/// <param name="page">The page number for pagination (optional, defaults to 1).</param>
-		/// <param name="pageSize">The size of each page for pagination (optional, defaults to 10).</param>
-		/// <returns>A paginated list of destinations that match the specified criteria.</returns>
-		/// <response code="200">Returns a paged list of destinations if found.</response>
-		/// <response code="400">If the request is invalid or if there's a validation error.</response>
-		/// <response code="404">If no destinations are found.</response>
-		/// <response code="401">If the user is not authenticated.</response>
-		[HttpGet("search/")]
-		[ProducesResponseType(200, Type = typeof(PagedResponse<DestinationDto>))]
-		[ProducesResponseType(400, Type = typeof(string))]
-		[ProducesResponseType(404)]
-		[ProducesResponseType(401)]
-		public async Task<ActionResult<PagedResponse<DestinationDto>>> GetDestinationsByCityOrAirport(
-			CancellationToken cancellationToken,
-			[FromQuery] string? city = null,
-			[FromQuery] string? airport = null,
-			[FromQuery] int page = 1,
-			[FromQuery] int pageSize = 10)
-		{
-			if (string.IsNullOrEmpty(city) && string.IsNullOrEmpty(airport))
-			{
-				_logger.LogInformation("Both city and airport are missing in the request.");
-				return BadRequest("Both city and airport are missing in the request.");
-			}
-			var (isValid, correctedPageSize, result) = _paginationValidationService.ValidatePaginationParameters(page, pageSize, maxPageSize);
-			if (!isValid)
-			{
-				return result;
-			}
-			var destinations = await _destinationService.GetDestinationsByCityOrAirport(cancellationToken, page, correctedPageSize, city, airport);
-			if (destinations == null || destinations.Count == 0)
-			{
-				_logger.LogInformation("Destinations not found.");
-				return NotFound();
-			}
-			var totalItems = await _destinationService.DestinationsCount(cancellationToken, city, airport);
-			var data = _mapper.Map<IEnumerable<DestinationDto>>(destinations);
-			var response = new PagedResponse<DestinationDto>(data, page, correctedPageSize, totalItems);
-			return Ok(response);
-		}
-
-		/// <summary>
 		/// Endpoint for retrieving a paginated list of destinations matching the specified search filter criteria.
 		/// </summary>
 		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
@@ -189,12 +144,12 @@ namespace AirportAutomation.Api.Controllers
 		/// <response code="400">If the request is invalid or the filter criteria are missing or invalid.</response>
 		/// <response code="404">If no destinations matching the filter criteria are found.</response>
 		/// <response code="401">If the user is not authenticated.</response>
-		[HttpGet("byFilter")]
+		[HttpGet("search")]
 		[ProducesResponseType(200, Type = typeof(PagedResponse<DestinationDto>))]
 		[ProducesResponseType(400, Type = typeof(string))]
 		[ProducesResponseType(404)]
 		[ProducesResponseType(401)]
-		public async Task<ActionResult<PagedResponse<DestinationDto>>> GetDestinationsByFilter(
+		public async Task<ActionResult<PagedResponse<DestinationDto>>> SearchDestinations(
 			CancellationToken cancellationToken,
 			[FromQuery] DestinationSearchFilter filter,
 			[FromQuery] int page = 1,
@@ -210,7 +165,7 @@ namespace AirportAutomation.Api.Controllers
 			{
 				return result;
 			}
-			var destinations = await _destinationService.GetDestinationsByFilter(cancellationToken, page, correctedPageSize, filter);
+			var destinations = await _destinationService.SearchDestinations(cancellationToken, page, correctedPageSize, filter);
 			if (destinations == null || destinations.Count == 0)
 			{
 				_logger.LogInformation("Destinations not found.");
@@ -421,7 +376,7 @@ namespace AirportAutomation.Api.Controllers
 				}
 				else
 				{
-					destinations = await _destinationService.GetDestinationsByFilter(cancellationToken, page, correctedPageSize, filter);
+					destinations = await _destinationService.SearchDestinations(cancellationToken, page, correctedPageSize, filter);
 				}
 			}
 			if (destinations is null || !destinations.Any())
@@ -489,7 +444,7 @@ namespace AirportAutomation.Api.Controllers
 				}
 				else
 				{
-					destinations = await _destinationService.GetDestinationsByFilter(cancellationToken, page, correctedPageSize, filter);
+					destinations = await _destinationService.SearchDestinations(cancellationToken, page, correctedPageSize, filter);
 				}
 			}
 			if (destinations is null || !destinations.Any())

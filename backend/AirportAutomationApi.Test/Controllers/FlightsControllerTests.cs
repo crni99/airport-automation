@@ -394,11 +394,11 @@ namespace AirportAutomationApi.Test.Controllers
 
 		#endregion
 
-		#region GetFlightsBetweenDates
+		#region SearchFlights
 
 		[Fact]
-		[Trait("Category", "GetFlightsBetweenDates")]
-		public async Task GetFlightsBetweenDates_NoDatesProvided_ReturnsBadRequest()
+		[Trait("Category", "SearchFlights")]
+		public async Task SearchFlights_NoDatesProvided_ReturnsBadRequest()
 		{
 			// Arrange
 			var cancellationToken = new CancellationToken();
@@ -411,7 +411,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns((true, 10, new OkResult()));
 
 			// Act
-			var result = await _controller.GetFlightsBetweenDates(cancellationToken, startDate, endDate);
+			var result = await _controller.SearchFlights(cancellationToken, startDate, endDate);
 
 			// Assert
 			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
@@ -419,8 +419,8 @@ namespace AirportAutomationApi.Test.Controllers
 		}
 
 		[Fact]
-		[Trait("Category", "GetFlightsBetweenDates")]
-		public async Task GetFlightsBetweenDates_InvalidStartDateProvided_ReturnsBadRequest()
+		[Trait("Category", "SearchFlights")]
+		public async Task SearchFlights_InvalidStartDateProvided_ReturnsBadRequest()
 		{
 			// Arrange
 			var cancellationToken = new CancellationToken();
@@ -440,7 +440,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns(true);
 
 			// Act
-			var result = await _controller.GetFlightsBetweenDates(cancellationToken, startDate, endDate);
+			var result = await _controller.SearchFlights(cancellationToken, startDate, endDate);
 
 			// Assert
 			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
@@ -448,8 +448,8 @@ namespace AirportAutomationApi.Test.Controllers
 		}
 
 		[Fact]
-		[Trait("Category", "GetFlightsBetweenDates")]
-		public async Task GetFlightsBetweenDates_InvalidEndDateProvided_ReturnsBadRequest()
+		[Trait("Category", "SearchFlights")]
+		public async Task SearchFlights_InvalidEndDateProvided_ReturnsBadRequest()
 		{
 			// Arrange
 			var cancellationToken = new CancellationToken();
@@ -469,7 +469,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns(false);
 
 			// Act
-			var result = await _controller.GetFlightsBetweenDates(cancellationToken, startDate, endDate);
+			var result = await _controller.SearchFlights(cancellationToken, startDate, endDate);
 
 			// Assert
 			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
@@ -477,8 +477,8 @@ namespace AirportAutomationApi.Test.Controllers
 		}
 
 		[Fact]
-		[Trait("Category", "GetFlightsBetweenDates")]
-		public async Task GetFlightsBetweenDates_InvalidPaginationParameters_ReturnsBadRequest()
+		[Trait("Category", "SearchFlights")]
+		public async Task SearchFlights_InvalidPaginationParameters_ReturnsBadRequest()
 		{
 			// Arrange
 			var cancellationToken = new CancellationToken();
@@ -495,15 +495,15 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns((false, 0, expectedBadRequestResult));
 
 			// Act
-			var result = await _controller.GetFlightsBetweenDates(cancellationToken, startDate, null, invalidPage, invalidPageSize);
+			var result = await _controller.SearchFlights(cancellationToken, startDate, null, invalidPage, invalidPageSize);
 
 			// Assert
 			Assert.IsType<BadRequestObjectResult>(result.Result);
 		}
 
 		[Fact]
-		[Trait("Category", "GetFlightsBetweenDates")]
-		public async Task GetFlightsBetweenDates_ValidDates_NoFlightsFound_ReturnsNotFound()
+		[Trait("Category", "SearchFlights")]
+		public async Task SearchFlights_ValidDates_NoFlightsFound_ReturnsNotFound()
 		{
 			// Arrange
 			var cancellationToken = new CancellationToken();
@@ -521,24 +521,24 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.IsValidDateOnly(endDate))
 				.Returns(true);
 			_flightServiceMock
-				.Setup(x => x.GetFlightsBetweenDates(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
+				.Setup(x => x.SearchFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
 				.ReturnsAsync(new List<FlightEntity>());
 			_flightServiceMock
 				.Setup(x => x.FlightsCount(cancellationToken, startDate, endDate))
 				.ReturnsAsync(0);
 
 			// Act
-			var result = await _controller.GetFlightsBetweenDates(cancellationToken, startDate, endDate);
+			var result = await _controller.SearchFlights(cancellationToken, startDate, endDate);
 
 			// Assert
 			var notFoundResult = Assert.IsType<NotFoundResult>(result.Result);
-			var flights = await _flightServiceMock.Object.GetFlightsBetweenDates(cancellationToken, 1, 10, startDate, endDate);
+			var flights = await _flightServiceMock.Object.SearchFlights(cancellationToken, 1, 10, startDate, endDate);
 			Assert.Empty(flights);
 		}
 
 		[Fact]
-		[Trait("Category", "GetFlightsBetweenDates")]
-		public async Task GetFlightsBetweenDates_ServiceReturnsNull_ReturnsNotFound()
+		[Trait("Category", "SearchFlights")]
+		public async Task SearchFlights_ServiceReturnsNull_ReturnsNotFound()
 		{
 			// Arrange
 			var cancellationToken = new CancellationToken();
@@ -556,19 +556,19 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.IsValidDateOnly(endDate))
 				.Returns(true);
 			_flightServiceMock
-				.Setup(x => x.GetFlightsBetweenDates(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
+				.Setup(x => x.SearchFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
 				.ReturnsAsync((List<FlightEntity>)null);
 
 			// Act
-			var result = await _controller.GetFlightsBetweenDates(cancellationToken, startDate, endDate);
+			var result = await _controller.SearchFlights(cancellationToken, startDate, endDate);
 
 			// Assert
 			Assert.IsType<NotFoundResult>(result.Result);
 		}
 
 		[Fact]
-		[Trait("Category", "GetFlightsBetweenDates")]
-		public async Task GetFlightsBetweenDates_ReturnsPagedListOfFlights_WhenFlightsFound()
+		[Trait("Category", "SearchFlights")]
+		public async Task SearchFlights_ReturnsPagedListOfFlights_WhenFlightsFound()
 		{
 			// Arrange
 			var cancellationToken = new CancellationToken();
@@ -590,7 +590,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.ValidatePaginationParameters(validPage, validPageSize, It.IsAny<int>()))
 				.Returns((true, validPageSize, null));
 			_flightServiceMock
-				.Setup(service => service.GetFlightsBetweenDates(cancellationToken, validPage, validPageSize, startDate, endDate))
+				.Setup(service => service.SearchFlights(cancellationToken, validPage, validPageSize, startDate, endDate))
 				.ReturnsAsync(flightEntities);
 			_flightServiceMock
 				.Setup(service => service.FlightsCount(cancellationToken, startDate, endDate))
@@ -600,7 +600,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns(flightDtos);
 
 			// Act
-			var result = await _controller.GetFlightsBetweenDates(cancellationToken, startDate, endDate, validPage, validPageSize);
+			var result = await _controller.SearchFlights(cancellationToken, startDate, endDate, validPage, validPageSize);
 
 			// Assert
 			var actionResult = Assert.IsType<ActionResult<PagedResponse<FlightDto>>>(result);
@@ -966,7 +966,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.IsValidDateOnly(endDate))
 				.Returns(true);
 			_flightServiceMock
-				.Setup(x => x.GetFlightsBetweenDates(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
+				.Setup(x => x.SearchFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
 				.ReturnsAsync(flights);
 			_exportServiceMock.Setup(x => x.ExportToPDF("Flights", flights)).Returns(pdfBytes);
 			_utilityServiceMock.Setup(x => x.GenerateUniqueFileName("Flights", FileExtension.Pdf)).Returns(fileName);
@@ -1061,7 +1061,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.IsValidDateOnly(endDate))
 				.Returns(true);
 			_flightServiceMock
-				.Setup(x => x.GetFlightsBetweenDates(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
+				.Setup(x => x.SearchFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
 				.ReturnsAsync(flights);
 
 			// Act
@@ -1090,7 +1090,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.IsValidDateOnly(endDate))
 				.Returns(true);
 			_flightServiceMock
-				.Setup(x => x.GetFlightsBetweenDates(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
+				.Setup(x => x.SearchFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
 				.ReturnsAsync((List<FlightEntity>)null);
 
 			// Act
@@ -1254,7 +1254,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.IsValidDateOnly(endDate))
 				.Returns(true);
 			_flightServiceMock
-				.Setup(x => x.GetFlightsBetweenDates(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
+				.Setup(x => x.SearchFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
 				.ReturnsAsync(flights);
 			_exportServiceMock.Setup(x => x.ExportToExcel("Flights", flights)).Returns(excelBytes);
 			_utilityServiceMock.Setup(x => x.GenerateUniqueFileName("Flights", FileExtension.Xlsx)).Returns(fileName);
@@ -1349,7 +1349,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.IsValidDateOnly(endDate))
 				.Returns(true);
 			_flightServiceMock
-				.Setup(x => x.GetFlightsBetweenDates(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
+				.Setup(x => x.SearchFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
 				.ReturnsAsync(flights);
 
 			// Act
@@ -1378,7 +1378,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.IsValidDateOnly(endDate))
 				.Returns(true);
 			_flightServiceMock
-				.Setup(x => x.GetFlightsBetweenDates(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
+				.Setup(x => x.SearchFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
 				.ReturnsAsync((List<FlightEntity>)null);
 
 			// Act

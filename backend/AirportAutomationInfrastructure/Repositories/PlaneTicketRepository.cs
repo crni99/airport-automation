@@ -54,31 +54,7 @@ namespace AirportAutomation.Infrastructure.Repositories
 				.FirstOrDefaultAsync(k => k.Id == id);
 		}
 
-		public async Task<IList<PlaneTicketEntity?>> GetPlaneTicketsForPrice(CancellationToken cancellationToken, int page, int pageSize, int? minPrice, int? maxPrice)
-		{
-			IQueryable<PlaneTicketEntity> query = _context.PlaneTicket
-				.Include(k => k.Passenger)
-				.Include(k => k.TravelClass)
-				.Include(k => k.Flight)
-				.AsNoTracking();
-
-			if (minPrice.HasValue)
-			{
-				query = query.Where(p => p.Price >= minPrice.Value);
-			}
-			if (maxPrice.HasValue)
-			{
-				query = query.Where(p => p.Price <= maxPrice.Value);
-			}
-
-			return await query.OrderBy(c => c.Id)
-								.Skip(pageSize * (page - 1))
-								.Take(pageSize)
-								.ToListAsync(cancellationToken)
-								.ConfigureAwait(false);
-		}
-
-		public async Task<IList<PlaneTicketEntity?>> GetPlaneTicketsByFilter(
+		public async Task<IList<PlaneTicketEntity?>> SearchPlaneTickets(
 			CancellationToken cancellationToken,
 			int page,
 			int pageSize,

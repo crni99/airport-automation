@@ -30,14 +30,9 @@ namespace AirportAutomation.Application.Services
 			return await _destinationRepository.GetDestination(id);
 		}
 
-		public async Task<IList<DestinationEntity?>> GetDestinationsByCityOrAirport(CancellationToken cancellationToken, int page, int pageSize, string city, string airport)
+		public async Task<IList<DestinationEntity?>> SearchDestinations(CancellationToken cancellationToken, int page, int pageSize, DestinationSearchFilter filter)
 		{
-			return await _destinationRepository.GetDestinationsByCityOrAirport(cancellationToken, page, pageSize, city, airport);
-		}
-
-		public async Task<IList<DestinationEntity?>> GetDestinationsByFilter(CancellationToken cancellationToken, int page, int pageSize, DestinationSearchFilter filter)
-		{
-			return await _destinationRepository.GetDestinationsByFilter(cancellationToken, page, pageSize, filter);
+			return await _destinationRepository.SearchDestinations(cancellationToken, page, pageSize, filter);
 		}
 
 		public async Task<DestinationEntity> PostDestination(DestinationEntity destination)

@@ -1,4 +1,5 @@
-﻿using AirportAutomation.Api.Interfaces;
+﻿using AirportAutomation.Api.Helpers;
+using AirportAutomation.Api.Interfaces;
 using AirportAutomation.Application.Dtos.Pilot;
 using AirportAutomation.Application.Dtos.Response;
 using AirportAutomation.Core.Entities;
@@ -19,6 +20,7 @@ namespace AirportAutomation.Api.Controllers
 	/// </summary>
 	[Authorize]
 	[ApiVersion("1.0")]
+	[SwaggerControllerOrder(5)]
 	public class PilotsController : BaseController
 	{
 		private readonly IPilotService _pilotService;
@@ -131,53 +133,6 @@ namespace AirportAutomation.Api.Controllers
 		}
 
 		/// <summary>
-		/// Endpoint for retrieving a paginated list of pilots containing the specified name.
-		/// </summary>
-		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
-		/// <param name="firstName">The first name to search for.</param>
-		/// <param name="lastName">The last name to search for.</param>
-		/// <param name="page">The page number for pagination (optional).</param>
-		/// <param name="pageSize">The size of each page for pagination (optional).</param>
-		/// <returns>A list of pilots that match the specified name.</returns>
-		/// <response code="200">Returns a paged list of pilots if found.</response>
-		/// <response code="400">If the request is invalid or if there's a validation error.</response>
-		/// <response code="404">If no pilots are found.</response>
-		/// <response code="401">If the user is not authenticated.</response>
-		[HttpGet("byName")]
-		[ProducesResponseType(200, Type = typeof(PagedResponse<PilotDto>))]
-		[ProducesResponseType(400)]
-		[ProducesResponseType(404)]
-		[ProducesResponseType(401)]
-		public async Task<ActionResult<PagedResponse<PilotDto>>> GetPilotsByName(
-			CancellationToken cancellationToken,
-			[FromQuery] string? firstName = null,
-			[FromQuery] string? lastName = null,
-			[FromQuery] int page = 1,
-			[FromQuery] int pageSize = 10)
-		{
-			if (string.IsNullOrEmpty(firstName) && string.IsNullOrEmpty(lastName))
-			{
-				_logger.LogInformation("Both first name and last name are missing in the request.");
-				return BadRequest("Both first name and last name are missing in the request.");
-			}
-			var (isValid, correctedPageSize, result) = _paginationValidationService.ValidatePaginationParameters(page, pageSize, maxPageSize);
-			if (!isValid)
-			{
-				return result;
-			}
-			var pilots = await _pilotService.GetPilotsByName(cancellationToken, page, correctedPageSize, firstName, lastName);
-			if (pilots == null || pilots.Count == 0)
-			{
-				_logger.LogInformation("Pilots not found.");
-				return NotFound();
-			}
-			var totalItems = await _pilotService.PilotsCount(cancellationToken, firstName, lastName);
-			var data = _mapper.Map<IEnumerable<PilotDto>>(pilots);
-			var response = new PagedResponse<PilotDto>(data, page, correctedPageSize, totalItems);
-			return Ok(response);
-		}
-
-		/// <summary>
 		/// Endpoint for retrieving a paginated list of pilots matching the specified search filter criteria.
 		/// </summary>
 		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
@@ -189,12 +144,12 @@ namespace AirportAutomation.Api.Controllers
 		/// <response code="400">If the request is invalid or the filter criteria are missing or invalid.</response>
 		/// <response code="404">If no pilots matching the filter criteria are found.</response>
 		/// <response code="401">If the user is not authenticated.</response>
-		[HttpGet("byFilter")]
+		[HttpGet("search")]
 		[ProducesResponseType(200, Type = typeof(PagedResponse<PilotDto>))]
 		[ProducesResponseType(400)]
 		[ProducesResponseType(404)]
 		[ProducesResponseType(401)]
-		public async Task<ActionResult<PagedResponse<PilotDto>>> GetPilotsByFilter(
+		public async Task<ActionResult<PagedResponse<PilotDto>>> SearchPilots(
 			CancellationToken cancellationToken,
 			[FromQuery] PilotSearchFilter filter,
 			[FromQuery] int page = 1,
@@ -210,7 +165,7 @@ namespace AirportAutomation.Api.Controllers
 			{
 				return result;
 			}
-			var pilots = await _pilotService.GetPilotsByFilter(cancellationToken, page, correctedPageSize, filter);
+			var pilots = await _pilotService.SearchPilots(cancellationToken, page, correctedPageSize, filter);
 			if (pilots == null || pilots.Count == 0)
 			{
 				_logger.LogInformation("Pilots not found.");
@@ -421,7 +376,7 @@ namespace AirportAutomation.Api.Controllers
 				}
 				else
 				{
-					pilots = await _pilotService.GetPilotsByFilter(cancellationToken, page, correctedPageSize, filter);
+					pilots = await _pilotService.SearchPilots(cancellationToken, page, correctedPageSize, filter);
 				}
 			}
 			if (pilots is null || !pilots.Any())
@@ -491,7 +446,7 @@ namespace AirportAutomation.Api.Controllers
 				}
 				else
 				{
-					pilots = await _pilotService.GetPilotsByFilter(cancellationToken, page, correctedPageSize, filter);
+					pilots = await _pilotService.SearchPilots(cancellationToken, page, correctedPageSize, filter);
 				}
 			}
 			if (pilots == null || !pilots.Any())

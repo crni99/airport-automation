@@ -64,31 +64,8 @@ namespace AirportAutomation.Web.Controllers
 		}
 
 		[HttpGet]
-		[Route("GetPilotsByName")]
-		public async Task<IActionResult> GetPilotsByName([FromQuery] string firstName, [FromQuery] string lastName, int page = 1, int pageSize = 10)
-		{
-			if (page < 1)
-			{
-				_alertService.SetAlertMessage(TempData, "invalid_page_number", false);
-				return Json(new { success = false, message = "Page number must be greater than or equal to 1." });
-			}
-			if (string.IsNullOrEmpty(firstName) && string.IsNullOrEmpty(lastName))
-			{
-				_alertService.SetAlertMessage(TempData, "missing_field", false);
-				return RedirectToAction("Index");
-			}
-			var response = await _httpCallService.GetDataByFNameOrLName<PilotEntity>(firstName, lastName, page, pageSize);
-			if (response == null)
-			{
-				return Json(new { success = false, message = "No pilots found." });
-			}
-			var pagedResponse = _mapper.Map<PagedResponse<PilotViewModel>>(response);
-			return Json(new { success = true, data = pagedResponse });
-		}
-
-		[HttpGet]
-		[Route("GetPilotsByFilter")]
-		public async Task<IActionResult> GetPilotsByFilter([FromQuery] PilotSearchFilter filter, int page = 1, int pageSize = 10)
+		[Route("SearchPilots")]
+		public async Task<IActionResult> SearchPilots([FromQuery] PilotSearchFilter filter, int page = 1, int pageSize = 10)
 		{
 			if (page < 1)
 			{

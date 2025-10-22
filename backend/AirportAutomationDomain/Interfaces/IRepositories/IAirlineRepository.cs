@@ -8,7 +8,7 @@ namespace AirportAutomation.Core.Interfaces.IRepositories
 		Task<IList<AirlineEntity>> GetAllAirlines(CancellationToken cancellationToken);
 		Task<IList<AirlineEntity>> GetAirlines(CancellationToken cancellationToken, int page, int pageSize);
 		Task<AirlineEntity?> GetAirline(int id);
-		Task<IList<AirlineEntity?>> GetAirlinesByName(CancellationToken cancellationToken, int page, int pageSize, string name);
+		Task<IList<AirlineEntity?>> SearchAirlines(CancellationToken cancellationToken, int page, int pageSize, string name);
 		Task<AirlineEntity> PostAirline(AirlineEntity airline);
 		Task PutAirline(AirlineEntity airline);
 		Task<AirlineEntity> PatchAirline(int id, JsonPatchDocument airlineDocument);

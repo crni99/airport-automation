@@ -10,12 +10,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using QuestPDF.Infrastructure;
 using Serilog;
-using System;
+using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 
@@ -63,6 +62,9 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 });
 
 builder.Services.AddEndpointsApiExplorer();
+
+SwaggerControllerOrder<ControllerBase> swaggerControllerOrder = new SwaggerControllerOrder<ControllerBase>(Assembly.GetEntryAssembly());
+
 builder.Services.AddSwaggerGen(setupAction =>
 {
 	setupAction.SwaggerDoc("v1", new OpenApiInfo
@@ -118,6 +120,7 @@ builder.Services.AddSwaggerGen(setupAction =>
 	setupAction.UseDateOnlyTimeOnlyStringConverters();
 	setupAction.DocumentFilter<JsonPatchDocumentFilter>();
 	setupAction.DocumentFilter<HealthChecksFilter>();
+	setupAction.OrderActionsBy((apiDesc) => $"{swaggerControllerOrder.SortKey(apiDesc.ActionDescriptor.RouteValues["controller"])}");
 });
 
 BinderConfiguration.Binders(builder.Services);

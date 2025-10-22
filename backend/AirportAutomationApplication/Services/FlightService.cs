@@ -29,9 +29,9 @@ namespace AirportAutomation.Application.Services
 			return await _flightRepository.GetFlight(id);
 		}
 
-		public async Task<IList<FlightEntity?>> GetFlightsBetweenDates(CancellationToken cancellationToken, int page, int pageSize, DateOnly? startDate, DateOnly? endDate)
+		public async Task<IList<FlightEntity?>> SearchFlights(CancellationToken cancellationToken, int page, int pageSize, DateOnly? startDate, DateOnly? endDate)
 		{
-			return await _flightRepository.GetFlightsBetweenDates(cancellationToken, page, pageSize, startDate, endDate);
+			return await _flightRepository.SearchFlights(cancellationToken, page, pageSize, startDate, endDate);
 		}
 
 		public async Task<FlightEntity> PostFlight(FlightEntity flight)

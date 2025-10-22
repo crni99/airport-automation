@@ -1,4 +1,5 @@
-﻿using AirportAutomation.Api.Interfaces;
+﻿using AirportAutomation.Api.Helpers;
+using AirportAutomation.Api.Interfaces;
 using AirportAutomation.Application.Dtos.ApiUser;
 using AirportAutomation.Application.Dtos.Response;
 using AirportAutomation.Core.Entities;
@@ -19,6 +20,7 @@ namespace AirportAutomation.Api.Controllers
 	/// </remarks>
 	[Authorize(Policy = "RequireSuperAdminRole")]
 	[ApiVersion("1.0")]
+	[SwaggerControllerOrder(9)]
 	public class ApiUsersController : BaseController
 	{
 		private readonly IApiUserService _apiUserService;
@@ -128,53 +130,6 @@ namespace AirportAutomation.Api.Controllers
 		}
 
 		/// <summary>
-		/// Endpoint for retrieving a paginated list of api users containing the specified role.
-		/// </summary>
-		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
-		/// <param name="role">The role of the users to retrieve. Valid values are "user", "admin" and "superadmin".</param>
-		/// <param name="page">The page number for pagination (optional).</param>
-		/// <param name="pageSize">The size of each page for pagination (optional).</param>
-		/// <returns>A list of api users that match the specified role.</returns>
-		/// <response code="200">Returns a paged list of api users if found.</response>
-		/// <response code="400">If the request is invalid or if there's a validation error.</response>
-		/// <response code="404">If no apiUsers are found.</response>
-		/// <response code="401">If the user is not authenticated.</response>
-		/// <response code="403">If the authenticated user does not have permission to access the requested resource.</response>
-		[HttpGet("byRole/{role}")]
-		[ProducesResponseType(200, Type = typeof(PagedResponse<ApiUserRoleDto>))]
-		[ProducesResponseType(400)]
-		[ProducesResponseType(404)]
-		[ProducesResponseType(401)]
-		[ProducesResponseType(403)]
-		public async Task<ActionResult<PagedResponse<ApiUserRoleDto>>> GetApiUsersByRole(
-			CancellationToken cancellationToken,
-			string role,
-			[FromQuery] int page = 1,
-			[FromQuery] int pageSize = 10)
-		{
-			if (!_inputValidationService.IsValidString(role))
-			{
-				_logger.LogInformation("Invalid input. The role must be a valid non-empty string.");
-				return BadRequest("Invalid input. The role must be a valid non-empty string.");
-			}
-			var (isValid, correctedPageSize, result) = _paginationValidationService.ValidatePaginationParameters(page, pageSize, maxPageSize);
-			if (!isValid)
-			{
-				return result;
-			}
-			var apiUsers = await _apiUserService.GetApiUsersByRole(cancellationToken, page, correctedPageSize, role);
-			if (apiUsers is null || apiUsers.Count == 0)
-			{
-				_logger.LogInformation("Api User with role {Role} not found.", role);
-				return NotFound();
-			}
-			var totalItems = await _apiUserService.ApiUsersCount(cancellationToken, role);
-			var data = _mapper.Map<IEnumerable<ApiUserRoleDto>>(apiUsers);
-			var response = new PagedResponse<ApiUserRoleDto>(data, page, correctedPageSize, totalItems);
-			return Ok(response);
-		}
-
-		/// <summary>
 		/// Endpoint for retrieving a paginated list of api users matching the specified search filter criteria.
 		/// </summary>
 		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
@@ -187,13 +142,13 @@ namespace AirportAutomation.Api.Controllers
 		/// <response code="404">If no api users matching the filter criteria are found.</response>
 		/// <response code="401">If the user is not authenticated.</response>
 		/// <response code="403">If the authenticated user does not have permission to access the requested resource.</response>
-		[HttpGet("byFilter")]
+		[HttpGet("search")]
 		[ProducesResponseType(200, Type = typeof(PagedResponse<ApiUserRoleDto>))]
 		[ProducesResponseType(400)]
 		[ProducesResponseType(404)]
 		[ProducesResponseType(401)]
 		[ProducesResponseType(403)]
-		public async Task<ActionResult<PagedResponse<ApiUserRoleDto>>> GetApiUsersByFilter(
+		public async Task<ActionResult<PagedResponse<ApiUserRoleDto>>> SearchApiUsers(
 			CancellationToken cancellationToken,
 			[FromQuery] ApiUserSearchFilter filter,
 			[FromQuery] int page = 1,
@@ -209,7 +164,7 @@ namespace AirportAutomation.Api.Controllers
 			{
 				return result;
 			}
-			var apiUsers = await _apiUserService.GetApiUsersByFilter(cancellationToken, page, correctedPageSize, filter);
+			var apiUsers = await _apiUserService.SearchApiUsers(cancellationToken, page, correctedPageSize, filter);
 			if (apiUsers is null || apiUsers.Count == 0)
 			{
 				_logger.LogInformation("Api Users not found.");

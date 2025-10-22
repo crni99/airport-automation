@@ -423,15 +423,15 @@ namespace AirportAutomationApi.Test.Controllers
 
 		#endregion
 
-		#region GetAirlinesByName
+		#region SearchAirlines
 
 		/// <summary>
-		/// This test verifies that the `GetAirlinesByName` method returns a `400 BadRequest`
+		/// This test verifies that the `SearchAirlines` method returns a `400 BadRequest`
 		/// response when provided with an invalid or empty name string.
 		/// </summary>
 		[Fact]
-		[Trait("Category", "GetAirlinesByName")]
-		public async Task GetAirlinesByName_InvalidName_ReturnsBadRequest()
+		[Trait("Category", "SearchAirlines")]
+		public async Task SearchAirlines_InvalidName_ReturnsBadRequest()
 		{
 			// Arrange
 			var cancellationToken = new CancellationToken();
@@ -443,7 +443,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns(false);
 
 			// Act
-			var result = await _controller.GetAirlinesByName(cancellationToken, invalidName);
+			var result = await _controller.SearchAirlines(cancellationToken, invalidName);
 
 			// Assert
 			Assert.IsType<BadRequestObjectResult>(result.Result);
@@ -452,12 +452,12 @@ namespace AirportAutomationApi.Test.Controllers
 		}
 
 		/// <summary>
-		/// This test ensures that the `GetAirlinesByName` method returns a `400 BadRequest`
+		/// This test ensures that the `SearchAirlines` method returns a `400 BadRequest`
 		/// when the provided pagination parameters are invalid (e.g., negative page number or zero page size).
 		/// </summary>
 		[Fact]
-		[Trait("Category", "GetAirlinesByName")]
-		public async Task GetAirlinesByName_InvalidPaginationParameters_ReturnsBadRequest()
+		[Trait("Category", "SearchAirlines")]
+		public async Task SearchAirlines_InvalidPaginationParameters_ReturnsBadRequest()
 		{
 			// Arrange
 			var cancellationToken = new CancellationToken();
@@ -474,65 +474,65 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns((false, 0, expectedBadRequestResult));
 
 			// Act
-			var result = await _controller.GetAirlinesByName(cancellationToken, validName, invalidPage, invalidPageSize);
+			var result = await _controller.SearchAirlines(cancellationToken, validName, invalidPage, invalidPageSize);
 
 			// Assert
 			Assert.IsType<BadRequestObjectResult>(result.Result);
 		}
 
 		/// <summary>
-		/// This test checks that the `GetAirlinesByName` method returns a `404 Not Found`
+		/// This test checks that the `SearchAirlines` method returns a `404 Not Found`
 		/// response when the airline service returns a `null` list of airlines for the given name.
 		/// </summary>
 		[Fact]
-		[Trait("Category", "GetAirlinesByName")]
-		public async Task GetAirlinesByName_ReturnsNotFound_WhenAirlinesIsNull()
+		[Trait("Category", "SearchAirlines")]
+		public async Task SearchAirlines_ReturnsNotFound_WhenAirlinesIsNull()
 		{
 			// Arrange
 			var name = "Nonexistent Airline";
 			_inputValidationServiceMock.Setup(s => s.IsValidString(name)).Returns(true);
 			_paginationValidationServiceMock.Setup(s => s.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, 10, null));
-			_airlineServiceMock.Setup(s => s.GetAirlinesByName(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>(), name))
+			_airlineServiceMock.Setup(s => s.SearchAirlines(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>(), name))
 				.ReturnsAsync((List<AirlineEntity>)null);
 
 			// Act
-			var result = await _controller.GetAirlinesByName(CancellationToken.None, name);
+			var result = await _controller.SearchAirlines(CancellationToken.None, name);
 
 			// Assert
 			Assert.IsType<NotFoundResult>(result.Result);
 		}
 
 		/// <summary>
-		/// This test verifies that the `GetAirlinesByName` method returns a `404 Not Found`
+		/// This test verifies that the `SearchAirlines` method returns a `404 Not Found`
 		/// when the airline service returns an empty list for the provided name.
 		/// </summary>
 		[Fact]
-		[Trait("Category", "GetAirlinesByName")]
-		public async Task GetAirlinesByName_ReturnsNotFound_WhenAirlinesAreEmpty()
+		[Trait("Category", "SearchAirlines")]
+		public async Task SearchAirlines_ReturnsNotFound_WhenAirlinesAreEmpty()
 		{
 			// Arrange
 			var name = "Nonexistent Airline";
 			_inputValidationServiceMock.Setup(s => s.IsValidString(name)).Returns(true);
 			_paginationValidationServiceMock.Setup(s => s.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, 10, null));
-			_airlineServiceMock.Setup(s => s.GetAirlinesByName(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>(), name))
+			_airlineServiceMock.Setup(s => s.SearchAirlines(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>(), name))
 				.ReturnsAsync(new List<AirlineEntity>());
 
 			// Act
-			var result = await _controller.GetAirlinesByName(CancellationToken.None, name);
+			var result = await _controller.SearchAirlines(CancellationToken.None, name);
 
 			// Assert
 			Assert.IsType<NotFoundResult>(result.Result);
 		}
 
 		/// <summary>
-		/// This is a happy-path test that confirms the `GetAirlinesByName` method returns a `200 OK`
+		/// This is a happy-path test that confirms the `SearchAirlines` method returns a `200 OK`
 		/// response with the correct paginated data, page number, page size, and total count when airlines are found.
 		/// </summary>
 		[Fact]
-		[Trait("Category", "GetAirlinesByName")]
-		public async Task GetAirlinesByName_ReturnsPagedListOfAirlines_WhenAirlinesFound()
+		[Trait("Category", "SearchAirlines")]
+		public async Task SearchAirlines_ReturnsPagedListOfAirlines_WhenAirlinesFound()
 		{
 			// Arrange
 			var cancellationToken = new CancellationToken();
@@ -550,7 +550,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.ValidatePaginationParameters(validPage, validPageSize, It.IsAny<int>()))
 				.Returns((true, validPageSize, null));
 			_airlineServiceMock
-				.Setup(service => service.GetAirlinesByName(cancellationToken, validPage, validPageSize, validName))
+				.Setup(service => service.SearchAirlines(cancellationToken, validPage, validPageSize, validName))
 				.ReturnsAsync(airlineEntities);
 			_airlineServiceMock
 				.Setup(service => service.AirlinesCount(cancellationToken, validName))
@@ -560,7 +560,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns(airlineDtos);
 
 			// Act
-			var result = await _controller.GetAirlinesByName(cancellationToken, validName, validPage, validPageSize);
+			var result = await _controller.SearchAirlines(cancellationToken, validName, validPage, validPageSize);
 
 			// Assert
 			var actionResult = Assert.IsType<ActionResult<PagedResponse<AirlineDto>>>(result);
@@ -932,7 +932,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns((true, 10, null));
 			_inputValidationServiceMock.Setup(s => s.IsValidString(It.IsAny<string>()))
 				.Returns(true);
-			_airlineServiceMock.Setup(s => s.GetAirlinesByName(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()))
+			_airlineServiceMock.Setup(s => s.SearchAirlines(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()))
 				.ReturnsAsync(mockAirlines);
 			_exportServiceMock.Setup(s => s.ExportToPDF("Airlines", mockAirlines))
 				.Returns(mockPdfBytes);
@@ -1139,7 +1139,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns((true, 10, null));
 			_inputValidationServiceMock.Setup(s => s.IsValidString(It.IsAny<string>()))
 				.Returns(true);
-			_airlineServiceMock.Setup(s => s.GetAirlinesByName(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()))
+			_airlineServiceMock.Setup(s => s.SearchAirlines(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()))
 				.ReturnsAsync(mockAirlines);
 			_exportServiceMock.Setup(s => s.ExportToExcel("Airlines", mockAirlines))
 				.Returns(mockPdfBytes);

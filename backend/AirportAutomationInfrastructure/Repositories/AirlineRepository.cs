@@ -46,7 +46,7 @@ namespace AirportAutomation.Infrastructure.Repositories
 			return await _context.Airline.FindAsync(id);
 		}
 
-		public async Task<IList<AirlineEntity?>> GetAirlinesByName(CancellationToken cancellationToken, int page, int pageSize, string name)
+		public async Task<IList<AirlineEntity?>> SearchAirlines(CancellationToken cancellationToken, int page, int pageSize, string name)
 		{
 			var lowerCaseName = name.ToLower();
 			return await _context.Airline

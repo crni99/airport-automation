@@ -25,14 +25,9 @@ namespace AirportAutomation.Application.Services
 			return await _apiUserManagementRepository.GetApiUser(id);
 		}
 
-		public async Task<IList<ApiUserEntity?>> GetApiUsersByRole(CancellationToken cancellationToken, int page, int pageSize, string role)
+		public async Task<IList<ApiUserEntity?>> SearchApiUsers(CancellationToken cancellationToken, int page, int pageSize, ApiUserSearchFilter filter)
 		{
-			return await _apiUserManagementRepository.GetApiUsersByRole(cancellationToken, page, pageSize, role);
-		}
-
-		public async Task<IList<ApiUserEntity?>> GetApiUsersByFilter(CancellationToken cancellationToken, int page, int pageSize, ApiUserSearchFilter filter)
-		{
-			return await _apiUserManagementRepository.GetApiUsersByFilter(cancellationToken, page, pageSize, filter);
+			return await _apiUserManagementRepository.SearchApiUsers(cancellationToken, page, pageSize, filter);
 		}
 
 		public async Task PutApiUser(ApiUserEntity apiUser)

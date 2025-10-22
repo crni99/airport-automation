@@ -23,9 +23,10 @@ function buildURL(apiUrl, dataType, dataId, page, pageSize) {
 
         switch (dataType) {
             case ENTITIES.AIRLINES: {
-                const searchName = document.getElementById('searchInput')?.value?.trim();
+                const searchName = document.getElementById('name')?.value?.trim();
+
                 if (searchName) {
-                    url = `${apiUrl}/${ENTITIES.AIRLINES}/ByName/${encodeURIComponent(searchName)}?${paginationParams}`;
+                    url = `${apiUrl}/${ENTITIES.AIRLINES}/search?name=${encodeURIComponent(searchName)}&${paginationParams}`;
                 }
                 break;
             }
@@ -35,7 +36,7 @@ function buildURL(apiUrl, dataType, dataId, page, pageSize) {
                 const searchRole = document.querySelector('input[name="role"]')?.value?.trim();
 
                 if (username || searchRole) {
-                    url = `${apiUrl}/${ENTITIES.API_USERS}/ByFilter?userName=${encodeURIComponent(username || '')}&roles=${encodeURIComponent(searchRole || '')}&${paginationParams}`;
+                    url = `${apiUrl}/${ENTITIES.API_USERS}/search?userName=${encodeURIComponent(username || '')}&roles=${encodeURIComponent(searchRole || '')}&${paginationParams}`;
                 }
                 break;
             }
@@ -45,7 +46,7 @@ function buildURL(apiUrl, dataType, dataId, page, pageSize) {
                 const airport = document.getElementById('airport')?.value?.trim();
 
                 if (city || airport) {
-                    url = `${apiUrl}/${ENTITIES.DESTINATIONS}/ByFilter?city=${encodeURIComponent(city || '')}&airport=${encodeURIComponent(airport || '')}&${paginationParams}`;
+                    url = `${apiUrl}/${ENTITIES.DESTINATIONS}/search?city=${encodeURIComponent(city || '')}&airport=${encodeURIComponent(airport || '')}&${paginationParams}`;
                 }
                 break;
             }
@@ -55,7 +56,7 @@ function buildURL(apiUrl, dataType, dataId, page, pageSize) {
                 const endDate = document.getElementById('endDate')?.value?.trim();
 
                 if (startDate || endDate) {
-                    url = `${apiUrl}/${ENTITIES.FLIGHTS}/byDate?startDate=${encodeURIComponent(startDate || '')}&endDate=${encodeURIComponent(endDate || '')}&${paginationParams}`;
+                    url = `${apiUrl}/${ENTITIES.FLIGHTS}/search?startDate=${encodeURIComponent(startDate || '')}&endDate=${encodeURIComponent(endDate || '')}&${paginationParams}`;
                 }
                 break;
             }
@@ -69,7 +70,7 @@ function buildURL(apiUrl, dataType, dataId, page, pageSize) {
                 const phone = document.getElementById('phone')?.value?.trim();
 
                 if (firstName || lastName || uprn || passport || address || phone) {
-                    url = `${apiUrl}/${ENTITIES.PASSENGERS}/byFilter?firstName=${encodeURIComponent(firstName || '')}&lastName=${encodeURIComponent(lastName || '')}&uprn=${encodeURIComponent(uprn || '')}&passport=${encodeURIComponent(passport || '')}&address=${encodeURIComponent(address || '')}&phone=${encodeURIComponent(phone || '')}&${paginationParams}`;
+                    url = `${apiUrl}/${ENTITIES.PASSENGERS}/search?firstName=${encodeURIComponent(firstName || '')}&lastName=${encodeURIComponent(lastName || '')}&uprn=${encodeURIComponent(uprn || '')}&passport=${encodeURIComponent(passport || '')}&address=${encodeURIComponent(address || '')}&phone=${encodeURIComponent(phone || '')}&${paginationParams}`;
                 }
                 break;
             }
@@ -81,7 +82,7 @@ function buildURL(apiUrl, dataType, dataId, page, pageSize) {
                 const flyingHours = document.getElementById('flyingHours')?.value?.trim();
 
                 if (firstName || lastName || uprn || flyingHours) {
-                    url = `${apiUrl}/${ENTITIES.PILOTS}/byFilter?firstName=${encodeURIComponent(firstName || '')}&lastName=${encodeURIComponent(lastName || '')}&uprn=${encodeURIComponent(uprn || '')}&flyingHours=${encodeURIComponent(flyingHours || '')}&${paginationParams}`;
+                    url = `${apiUrl}/${ENTITIES.PILOTS}/search?firstName=${encodeURIComponent(firstName || '')}&lastName=${encodeURIComponent(lastName || '')}&uprn=${encodeURIComponent(uprn || '')}&flyingHours=${encodeURIComponent(flyingHours || '')}&${paginationParams}`;
                 }
                 break;
             }
@@ -92,7 +93,7 @@ function buildURL(apiUrl, dataType, dataId, page, pageSize) {
                 const seatNumber = document.getElementById('seatNumber')?.value?.trim();
 
                 if (price || purchaseDate || seatNumber) {
-                    url = `${apiUrl}/${ENTITIES.PLANE_TICKETS}/byFilter?price=${encodeURIComponent(price || '')}&purchaseDate=${encodeURIComponent(purchaseDate || '')}&seatNumber=${encodeURIComponent(seatNumber || '')}&${paginationParams}`;
+                    url = `${apiUrl}/${ENTITIES.PLANE_TICKETS}/search?price=${encodeURIComponent(price || '')}&purchaseDate=${encodeURIComponent(purchaseDate || '')}&seatNumber=${encodeURIComponent(seatNumber || '')}&${paginationParams}`;
                 }
                 break;
             }

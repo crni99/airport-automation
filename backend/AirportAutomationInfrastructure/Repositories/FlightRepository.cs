@@ -53,7 +53,7 @@ namespace AirportAutomation.Infrastructure.Repositories
 				.FirstOrDefaultAsync(l => l.Id == id);
 		}
 
-		public async Task<IList<FlightEntity?>> GetFlightsBetweenDates(CancellationToken cancellationToken, int page, int pageSize, DateOnly? startDate, DateOnly? endDate)
+		public async Task<IList<FlightEntity?>> SearchFlights(CancellationToken cancellationToken, int page, int pageSize, DateOnly? startDate, DateOnly? endDate)
 		{
 			IQueryable<FlightEntity> query = _context.Flight
 				.Include(f => f.Airline)

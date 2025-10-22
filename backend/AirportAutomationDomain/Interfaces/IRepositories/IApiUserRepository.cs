@@ -7,8 +7,7 @@ namespace AirportAutomation.Core.Interfaces.IRepositories
 	{
 		Task<IList<ApiUserEntity>> GetApiUsers(CancellationToken cancellationToken, int page, int pageSize);
 		Task<ApiUserEntity?> GetApiUser(int id);
-		Task<IList<ApiUserEntity?>> GetApiUsersByRole(CancellationToken cancellationToken, int page, int pageSize, string role);
-		Task<IList<ApiUserEntity?>> GetApiUsersByFilter(CancellationToken cancellationToken, int page, int pageSize, ApiUserSearchFilter filter);
+		Task<IList<ApiUserEntity?>> SearchApiUsers(CancellationToken cancellationToken, int page, int pageSize, ApiUserSearchFilter filter);
 		Task PutApiUser(ApiUserEntity apiUser);
 		Task<bool> DeleteApiUser(int id);
 		Task<bool> ApiUserExists(int id);

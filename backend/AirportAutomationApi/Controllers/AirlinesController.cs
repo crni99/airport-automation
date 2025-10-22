@@ -1,4 +1,5 @@
-﻿using AirportAutomation.Api.Interfaces;
+﻿using AirportAutomation.Api.Helpers;
+using AirportAutomation.Api.Interfaces;
 using AirportAutomation.Application.Dtos.Airline;
 using AirportAutomation.Application.Dtos.Response;
 using AirportAutomation.Core.Entities;
@@ -16,6 +17,7 @@ namespace AirportAutomation.Api.Controllers
 	/// </summary>
 	[Authorize]
 	[ApiVersion("1.0")]
+	[SwaggerControllerOrder(2)]
 	public class AirlinesController : BaseController
 	{
 		private readonly IAirlineService _airlineService;
@@ -141,12 +143,12 @@ namespace AirportAutomation.Api.Controllers
 		/// <response code="400">If the request is invalid or if there's a validation error.</response>
 		/// <response code="404">If no airlines are found.</response>
 		/// <response code="401">If the user is not authenticated.</response>
-		[HttpGet("byName/{name}")]
+		[HttpGet("search")]
 		[ProducesResponseType(200, Type = typeof(PagedResponse<AirlineDto>))]
 		[ProducesResponseType(400)]
 		[ProducesResponseType(404)]
 		[ProducesResponseType(401)]
-		public async Task<ActionResult<PagedResponse<AirlineDto>>> GetAirlinesByName(
+		public async Task<ActionResult<PagedResponse<AirlineDto>>> SearchAirlines(
 			CancellationToken cancellationToken,
 			string name,
 			[FromQuery] int page = 1,
@@ -162,7 +164,7 @@ namespace AirportAutomation.Api.Controllers
 			{
 				return result;
 			}
-			var airlines = await _airlineService.GetAirlinesByName(cancellationToken, page, correctedPageSize, name);
+			var airlines = await _airlineService.SearchAirlines(cancellationToken, page, correctedPageSize, name);
 			if (airlines is null || airlines.Count == 0)
 			{
 				_logger.LogInformation("Airline with name {Name} not found.", name);
@@ -370,7 +372,7 @@ namespace AirportAutomation.Api.Controllers
 				}
 				if (_inputValidationService.IsValidString(name))
 				{
-					airlines = await _airlineService.GetAirlinesByName(cancellationToken, page, correctedPageSize, name);
+					airlines = await _airlineService.SearchAirlines(cancellationToken, page, correctedPageSize, name);
 				}
 				else
 				{
@@ -438,7 +440,7 @@ namespace AirportAutomation.Api.Controllers
 				}
 				if (_inputValidationService.IsValidString(name))
 				{
-					airlines = await _airlineService.GetAirlinesByName(cancellationToken, page, correctedPageSize, name);
+					airlines = await _airlineService.SearchAirlines(cancellationToken, page, correctedPageSize, name);
 				}
 				else
 				{

@@ -64,32 +64,8 @@ namespace AirportAutomation.Web.Controllers
 		}
 
 		[HttpGet]
-		[Route("GetPlaneTicketsForPrice")]
-		public async Task<IActionResult> GetPlaneTicketsForPrice(
-			[FromQuery] int? minPrice = null, [FromQuery] int? maxPrice = null, int page = 1, int pageSize = 10)
-		{
-			if (page < 1)
-			{
-				_alertService.SetAlertMessage(TempData, "invalid_page_number", false);
-				return Json(new { success = false, message = "Page number must be greater than or equal to 1." });
-			}
-			if (minPrice == null && maxPrice == null)
-			{
-				_alertService.SetAlertMessage(TempData, "missing_field", false);
-				return RedirectToAction("Index");
-			}
-			var response = await _httpCallService.GetDataForPrice<PlaneTicketEntity>(minPrice, maxPrice, page, pageSize);
-			if (response == null)
-			{
-				return Json(new { success = false, message = "No plane tickets found." });
-			}
-			var pagedResponse = _mapper.Map<PagedResponse<PlaneTicketViewModel>>(response);
-			return Json(new { success = true, data = pagedResponse });
-		}
-
-		[HttpGet]
-		[Route("GetPlaneTicketsByFilter")]
-		public async Task<IActionResult> GetPlaneTicketsByFilter(
+		[Route("SearchPlaneTickets")]
+		public async Task<IActionResult> SearchPlaneTickets(
 			[FromQuery] PlaneTicketSearchFilter filter, int page = 1, int pageSize = 10)
 		{
 			if (page < 1)

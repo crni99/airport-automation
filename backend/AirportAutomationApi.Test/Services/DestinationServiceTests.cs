@@ -44,24 +44,12 @@ namespace AirportAutomationApi.Test.Services
 		}
 
 		[Fact]
-		public async Task GetDestinationsByCityOrAirport_Should_Call_Repository_GetDestinationsByCityOrAirport()
+		public async Task SearchDestinations_Should_Call_Repository_SearchDestinations()
 		{
 			var cancellationToken = new CancellationToken();
-			var city = "Belgrade";
-			var airport = "Nikola Tesla";
+			await _service.SearchDestinations(cancellationToken, 1, 10, null);
 
-			await _service.GetDestinationsByCityOrAirport(cancellationToken, 1, 10, city, airport);
-
-			_repositoryMock.Verify(repo => repo.GetDestinationsByCityOrAirport(cancellationToken, 1, 10, city, airport), Times.Once);
-		}
-
-		[Fact]
-		public async Task GetDestinationsByFilter_Should_Call_Repository_GetDestinationsByFilter()
-		{
-			var cancellationToken = new CancellationToken();
-			await _service.GetDestinationsByFilter(cancellationToken, 1, 10, null);
-
-			_repositoryMock.Verify(repo => repo.GetDestinationsByFilter(cancellationToken, 1, 10, null), Times.Once);
+			_repositoryMock.Verify(repo => repo.SearchDestinations(cancellationToken, 1, 10, null), Times.Once);
 		}
 
 		[Fact]

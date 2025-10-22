@@ -30,14 +30,9 @@ namespace AirportAutomation.Application.Services
 			return await _passengerRepository.GetPassenger(id);
 		}
 
-		public async Task<IList<PassengerEntity?>> GetPassengersByName(CancellationToken cancellationToken, int page, int pageSize, string firstName, string lastName)
+		public async Task<IList<PassengerEntity?>> SearchPassengers(CancellationToken cancellationToken, int page, int pageSize, PassengerSearchFilter filter)
 		{
-			return await _passengerRepository.GetPassengersByName(cancellationToken, page, pageSize, firstName, lastName);
-		}
-
-		public async Task<IList<PassengerEntity?>> GetPassengersByFilter(CancellationToken cancellationToken, int page, int pageSize, PassengerSearchFilter filter)
-		{
-			return await _passengerRepository.GetPassengersByFilter(cancellationToken, page, pageSize, filter);
+			return await _passengerRepository.SearchPassengers(cancellationToken, page, pageSize, filter);
 		}
 
 		public async Task<bool> ExistsByUPRN(string uprn)

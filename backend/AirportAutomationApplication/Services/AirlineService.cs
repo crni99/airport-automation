@@ -29,9 +29,9 @@ namespace AirportAutomation.Application.Services
 			return await _airlineRepository.GetAirline(id);
 		}
 
-		public async Task<IList<AirlineEntity?>> GetAirlinesByName(CancellationToken cancellationToken, int page, int pageSize, string name)
+		public async Task<IList<AirlineEntity?>> SearchAirlines(CancellationToken cancellationToken, int page, int pageSize, string name)
 		{
-			return await _airlineRepository.GetAirlinesByName(cancellationToken, page, pageSize, name);
+			return await _airlineRepository.SearchAirlines(cancellationToken, page, pageSize, name);
 		}
 
 		public async Task<AirlineEntity> PostAirline(AirlineEntity airline)

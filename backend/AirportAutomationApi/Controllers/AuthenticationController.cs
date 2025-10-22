@@ -1,4 +1,5 @@
-﻿using AirportAutomation.Api.Interfaces;
+﻿using AirportAutomation.Api.Helpers;
+using AirportAutomation.Api.Interfaces;
 using AirportAutomation.Application.Dtos.ApiUser;
 using AirportAutomation.Core.Entities;
 using AutoMapper;
@@ -15,6 +16,7 @@ namespace AirportAutomation.Api.Controllers
 	/// Represents the controller for user authentication.
 	/// </summary>
 	[ApiVersion("1.0")]
+	[SwaggerControllerOrder(1)]
 	public class AuthenticationController : BaseController
 	{
 		private readonly IAuthenticationRepository _authenticationRepository;

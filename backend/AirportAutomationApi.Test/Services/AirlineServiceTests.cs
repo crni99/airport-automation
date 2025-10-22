@@ -44,12 +44,12 @@ namespace AirportAutomationApi.Test.Services
 		}
 
 		[Fact]
-		public async Task GetAirlinesByName_Should_Call_Repository_GetAirlinesByName()
+		public async Task SearchAirlines_Should_Call_Repository_SearchAirlines()
 		{
 			var cancellationToken = new CancellationToken();
-			await _service.GetAirlinesByName(cancellationToken, 1, 10, "Sample Airline");
+			await _service.SearchAirlines(cancellationToken, 1, 10, "Sample Airline");
 
-			_repositoryMock.Verify(repo => repo.GetAirlinesByName(cancellationToken, 1, 10, "Sample Airline"), Times.Once);
+			_repositoryMock.Verify(repo => repo.SearchAirlines(cancellationToken, 1, 10, "Sample Airline"), Times.Once);
 		}
 
 		[Fact]

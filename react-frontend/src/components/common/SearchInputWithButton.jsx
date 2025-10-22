@@ -58,9 +58,9 @@ export default function SearchInputWithButton({ type, setTriggerFetch, createBut
                             <Stack direction="row" spacing={2} alignItems="center">
                                 <TextField
                                     label="Name"
-                                    id="searchInput"
+                                    id="name"
                                     placeholder="Air Serbia"
-                                    value={searchTerms.searchInput || ''}
+                                    value={searchTerms.name || ''}
                                     onChange={handleInputChange}
                                     size='small'
                                 />

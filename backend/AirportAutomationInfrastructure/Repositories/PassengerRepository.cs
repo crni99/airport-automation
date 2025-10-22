@@ -39,27 +39,7 @@ namespace AirportAutomation.Infrastructure.Repositories
 			return await _context.Passenger.FindAsync(id);
 		}
 
-		public async Task<IList<PassengerEntity?>> GetPassengersByName(CancellationToken cancellationToken, int page, int pageSize, string firstName = null, string lastName = null)
-		{
-			IQueryable<PassengerEntity> query = _context.Passenger.AsNoTracking();
-
-			if (!string.IsNullOrEmpty(firstName))
-			{
-				query = query.Where(p => p.FirstName.Contains(firstName));
-			}
-			if (!string.IsNullOrEmpty(lastName))
-			{
-				query = query.Where(p => p.LastName.Contains(lastName));
-			}
-
-			return await query.OrderBy(c => c.Id)
-								.Skip(pageSize * (page - 1))
-								.Take(pageSize)
-								.ToListAsync(cancellationToken)
-								.ConfigureAwait(false);
-		}
-
-		public async Task<IList<PassengerEntity?>> GetPassengersByFilter(
+		public async Task<IList<PassengerEntity?>> SearchPassengers(
 			CancellationToken cancellationToken,
 			int page,
 			int pageSize,

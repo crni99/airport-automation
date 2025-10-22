@@ -14,16 +14,16 @@
 
 function exportData(entityType, fileType = 'excel') {
     const currentPage = parseInt($('#currentPage').text()) || 1;
-    let exportURL = createURL('', entityType, currentPage); // e.g. "/Passenger/GetPassengersByFilter?..."
+    let exportURL = createURL('', entityType, currentPage); // e.g. "/Passenger/SearchPassengers?..."
 
     let urlParts = exportURL.split('?');
-    let path = urlParts[0];          // "/Passenger" or "/Passenger/GetPassengersByFilter"
+    let path = urlParts[0];          // "/Passenger" or "/Passenger/SearchPassengers"
     let query = urlParts[1] || '';   // "firstName=A&..."
 
     const originalPath = path;
 
     // Replace known data-fetching endpoints with 'Export'
-    path = path.replace(/Get\w+ByFilter|Get\w+ByName|GetFlightsBetweenDates/, 'Export');
+    path = path.replace(/Get\w+ByFilter|Get\w+ByName|SearchFlights/, 'Export');
 
     // If no endpoint was replaced, and path doesn't already end with /Export, then append it
     if (path === originalPath && !path.endsWith('/Export')) {

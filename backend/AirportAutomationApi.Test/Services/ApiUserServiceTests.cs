@@ -34,21 +34,12 @@ namespace AirportAutomationApi.Test.Services
 		}
 
 		[Fact]
-		public async Task GetApiUsersByRole_Should_Call_Repository_GetApiUsersByRole()
+		public async Task SearchApiUsers_Should_Call_Repository_SearchApiUsers()
 		{
 			var cancellationToken = new CancellationToken();
-			await _service.GetApiUsersByRole(cancellationToken, 1, 10, "user");
+			await _service.SearchApiUsers(cancellationToken, 1, 10, null);
 
-			_repositoryMock.Verify(repo => repo.GetApiUsersByRole(cancellationToken, 1, 10, "user"), Times.Once);
-		}
-
-		[Fact]
-		public async Task GetApiUsersByFilter_Should_Call_Repository_GetApiUsersByFilter()
-		{
-			var cancellationToken = new CancellationToken();
-			await _service.GetApiUsersByFilter(cancellationToken, 1, 10, null);
-
-			_repositoryMock.Verify(repo => repo.GetApiUsersByFilter(cancellationToken, 1, 10, null), Times.Once);
+			_repositoryMock.Verify(repo => repo.SearchApiUsers(cancellationToken, 1, 10, null), Times.Once);
 		}
 
 		[Fact]
