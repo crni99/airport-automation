@@ -176,6 +176,10 @@ ___
 - Manage API versions to maintain backward compatibility.
 - Document API endpoints for easy use by developers.
 - Customize Swagger UI with a toggleable dark/light mode to enhance usability and align with user preferences.
+- 1. Toggleable dark/light mode to enhance usability and align with user preferences.
+  2. A custom favicon and custom logo to match the project’s branding.
+  3. Injected custom JavaScript and CSS to modify Swagger UI behavior and appearance.
+- Implement custom controller ordering in Swagger UI using the [SwaggerControllerOrder] attribute and a helper class (SwaggerControllerOrder<T>), ensuring a logical and predictable display order.
 
 ### Logging and Exception Handling for Error Management
 - Integrate Serilog for structured, centralized logging, with configuration sourced from app settings.
