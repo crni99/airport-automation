@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import useFetch from '../../hooks/useFetch.jsx';
 import PageTitle from '../../components/common/PageTitle.jsx';
@@ -17,7 +17,8 @@ import { currencyFormatter } from '../../utils/formatting.js';
 
 export default function PlaneTicketDetails() {
     const { id } = useParams();
-    const { data: planeTicket, dataExist, error, isLoading } = useFetch(ENTITIES.PLANE_TICKETS, id);
+    const [triggerFetch, setTriggerFetch] = useState(true);
+    const { data: planeTicket, dataExist, error, isLoading } = useFetch(ENTITIES.PLANE_TICKETS, id, undefined, undefined, triggerFetch)
 
     const navigate = useNavigate();
 
@@ -26,6 +27,12 @@ export default function PlaneTicketDetails() {
         id,
         ENTITY_PATHS.PLANE_TICKETS
     );
+
+    useEffect(() => {
+        if (planeTicket) {
+            setTriggerFetch(false);
+        }
+    }, [planeTicket]);
 
     return (
         <Box sx={{ mt: 5 }}>
@@ -91,7 +98,7 @@ export default function PlaneTicketDetails() {
                             <Link
                                 component="button"
                                 variant="body1"
-                                onClick={() => openDetails('TravelClasses', planeTicket.travelClass.id)}
+                                onClick={() => openDetails('travel-classes')}
                             >
                                 {planeTicket.travelClass.id} 🡥
                             </Link>

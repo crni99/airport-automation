@@ -1,5 +1,4 @@
 import React from 'react';
-import { ENTITIES } from '../../utils/const';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -34,7 +33,7 @@ export default function PlaneTicketsListTable({ planeTickets }) {
                             <TableCell>{planeTicket.purchaseDate}</TableCell>
                             <TableCell>{planeTicket.seatNumber}</TableCell>
                             <TableCell>
-                                <TableActions entity={ENTITIES.PLANE_TICKETS} id={planeTicket.id} />
+                                <TableActions entity='plane-tickets' id={planeTicket.id} />
                             </TableCell>
                         </TableRow>
                     ))}

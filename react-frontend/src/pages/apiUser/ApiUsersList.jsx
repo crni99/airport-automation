@@ -11,27 +11,26 @@ import CustomAlert from "../../components/common/feedback/CustomAlert.jsx";
 export default function ApiUsersList() {
     const [triggerFetch, setTriggerFetch] = useState(false);
     const [pageNumber, setPageNumber] = useState(1);
+    const [apiUsers, setApiUsers] = useState([]);
+    const [totalPages, setTotalPages] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(() => {
         const saved = localStorage.getItem("rowsPerPage");
         return saved ? Number(saved) : 10;
     });
 
-    const { data, dataExist, error, isLoading, isError } = useFetch(
-        ENTITIES.API_USERS,
-        null,
-        pageNumber,
-        triggerFetch,
-        rowsPerPage
-    );
-
-    const [apiUsers, setApiUsers] = useState([]);
-    const [totalPages, setTotalPages] = useState(1);
+    const { data, dataExist, error, isLoading, isError } = useFetch(ENTITIES.API_USERS, null, pageNumber, rowsPerPage, triggerFetch)
 
     useEffect(() => {
         if (data) {
-            setApiUsers(data.data);
-            setPageNumber(data.pageNumber);
-            setTotalPages(data.totalPages);
+            if (Array.isArray(data)) {
+                setApiUsers(data);
+            } else if (data.data) {
+                setApiUsers(data.data);
+                setPageNumber(data.pageNumber);
+                setTotalPages(data.totalPages);
+            } else {
+                setApiUsers([]);
+            }
             setTriggerFetch(false);
         }
     }, [data]);

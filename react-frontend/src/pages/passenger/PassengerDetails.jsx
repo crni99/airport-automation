@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import useFetch from '../../hooks/useFetch.jsx';
 import PageTitle from '../../components/common/PageTitle.jsx';
@@ -15,7 +15,8 @@ import { useDeleteOperation } from '../../hooks/useDeleteOperation.jsx';
 
 export default function PassengerDetails() {
     const { id } = useParams();
-    const { data: passenger, dataExist, error, isLoading } = useFetch(ENTITIES.PASSENGERS, id);
+    const [triggerFetch, setTriggerFetch] = useState(true);
+    const { data: passenger, dataExist, error, isLoading } = useFetch(ENTITIES.PASSENGERS, id, undefined, undefined, triggerFetch)
 
     const navigate = useNavigate();
 
@@ -24,6 +25,12 @@ export default function PassengerDetails() {
         id,
         ENTITY_PATHS.PASSENGERS
     );
+
+    useEffect(() => {
+        if (passenger) {
+            setTriggerFetch(false);
+        }
+    }, [passenger]);
 
     return (
         <Box sx={{ mt: 5 }}>

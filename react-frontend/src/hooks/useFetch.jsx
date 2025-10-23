@@ -1,20 +1,21 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useContext } from 'react';
 import { DataContext } from '../store/DataContext.jsx';
-import { fetchData } from '../utils/httpFetch.js'; 
+import { fetchData } from '../utils/httpFetch.js';
 import { handleNetworkError } from '../utils/errorUtils.js';
 
-export default function useFetch(dataType, dataId, page = 1, triggerFetch, rowsPerPage) {
+export default function useFetch(dataType, dataId, page = 1, rowsPerPage, triggerFetch) {
     const dataCtx = useContext(DataContext);
     const [data, setData] = useState(null);
     const [dataExist, setDataExist] = useState(false);
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isError, setIsError] = useState(false);
+    const [isSearchNoResult, setIsSearchNoResult] = useState(false);
 
     const handleFetchError = useCallback((error) => {
         const networkError = handleNetworkError(error);
-        
+
         let errorData = {};
         if (networkError) {
             errorData = {
@@ -27,7 +28,7 @@ export default function useFetch(dataType, dataId, page = 1, triggerFetch, rowsP
                 message: error.message || 'An unknown error occurred.'
             };
         }
-        
+
         setError(errorData);
         setIsError(true);
     }, []);
@@ -35,7 +36,7 @@ export default function useFetch(dataType, dataId, page = 1, triggerFetch, rowsP
     useEffect(() => {
 
         if (!triggerFetch) {
-            setIsLoading(false); 
+            setIsLoading(false);
             return;
         }
 
@@ -46,20 +47,32 @@ export default function useFetch(dataType, dataId, page = 1, triggerFetch, rowsP
             setIsLoading(true);
             setError(null);
             setIsError(false);
-            
+            setIsSearchNoResult(false);
+
             try {
                 const result = await fetchData(
-                    dataType, 
-                    dataId, 
-                    dataCtx.apiUrl, 
-                    page, 
-                    rowsPerPage, 
+                    dataType,
+                    dataId,
+                    dataCtx.apiUrl,
+                    page,
+                    rowsPerPage,
                     signal
                 );
 
                 if (!signal.aborted) {
-                    setData(result.data);
-                    setDataExist(result.dataExist);
+                    if (result.isSearchNoResult) {
+                        setData([]);
+                        setDataExist(false);
+                        setIsSearchNoResult(true);
+                    } else if (result.dataExist) {
+                        setData(result.data);
+                        setDataExist(result.dataExist);
+                        setIsSearchNoResult(false);
+                    } else {
+                        setData([]);
+                        setDataExist(false);
+                        setIsSearchNoResult(false);
+                    }
                 }
             } catch (error) {
                 if (error.name !== 'AbortError') {
@@ -71,13 +84,13 @@ export default function useFetch(dataType, dataId, page = 1, triggerFetch, rowsP
                 }
             }
         }
-        
+
         doFetch();
 
         return () => {
             controller.abort();
         };
-    }, [dataType, dataId, page, dataCtx.apiUrl, triggerFetch, rowsPerPage, handleFetchError]); 
+    }, [dataType, dataId, page, dataCtx.apiUrl, triggerFetch, rowsPerPage, handleFetchError]);
 
-    return { data, dataExist, error, isLoading, isError };
+    return { data, dataExist, error, isLoading, isError, isSearchNoResult };
 }

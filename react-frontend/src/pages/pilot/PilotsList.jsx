@@ -17,19 +17,19 @@ export default function PilotsList() {
         const saved = localStorage.getItem("rowsPerPage");
         return saved ? Number(saved) : 10;
     });
-    const { data, dataExist, error, isLoading, isError } = useFetch(
-        ENTITIES.PILOTS,
-        null,
-        pageNumber,
-        triggerFetch,
-        rowsPerPage
-    );
+    const { data, dataExist, error, isLoading, isError } = useFetch(ENTITIES.PILOTS, null, pageNumber, rowsPerPage, triggerFetch)
 
     useEffect(() => {
         if (data) {
-            setPilots(data.data);
-            setPageNumber(data.pageNumber);
-            setTotalPages(data.totalPages);
+            if (Array.isArray(data)) {
+                setPilots(data);
+            } else if (data.data) {
+                setPilots(data.data);
+                setPageNumber(data.pageNumber);
+                setTotalPages(data.totalPages);
+            } else {
+                setPilots([]);
+            }
             setTriggerFetch(false);
         }
     }, [data]);

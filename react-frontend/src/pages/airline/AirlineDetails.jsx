@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import useFetch from '../../hooks/useFetch';
 import { useNavigate } from 'react-router-dom';
@@ -14,7 +14,8 @@ import { useDeleteOperation } from '../../hooks/useDeleteOperation.jsx';
 
 export default function AirlineDetails() {
     const { id } = useParams();
-    const { data: airline, dataExist, error, isLoading } = useFetch(ENTITIES.AIRLINES, id);
+    const [triggerFetch, setTriggerFetch] = useState(true);
+    const { data: airline, dataExist, error, isLoading } = useFetch(ENTITIES.AIRLINES, id, undefined, undefined, triggerFetch)
 
     const navigate = useNavigate();
 
@@ -23,6 +24,12 @@ export default function AirlineDetails() {
         id,
         ENTITY_PATHS.AIRLINES
     );
+
+    useEffect(() => {
+        if (airline) {
+            setTriggerFetch(false);
+        }
+    }, [airline]);
 
     if (isLoading) {
         return (

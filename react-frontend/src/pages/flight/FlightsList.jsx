@@ -17,19 +17,19 @@ export default function FlightsList() {
         const saved = localStorage.getItem("rowsPerPage");
         return saved ? Number(saved) : 10;
     });
-    const { data, dataExist, error, isLoading, isError } = useFetch(
-        ENTITIES.FLIGHTS,
-        null,
-        pageNumber,
-        triggerFetch,
-        rowsPerPage
-    );
+    const { data, dataExist, error, isLoading, isError } = useFetch(ENTITIES.FLIGHTS, null, pageNumber, rowsPerPage, triggerFetch)
 
     useEffect(() => {
         if (data) {
-            setFlights(data.data);
-            setPageNumber(data.pageNumber);
-            setTotalPages(data.totalPages);
+            if (Array.isArray(data)) {
+                setFlights(data);
+            } else if (data.data) {
+                setFlights(data.data);
+                setPageNumber(data.pageNumber);
+                setTotalPages(data.totalPages);
+            } else {
+                setFlights([]);
+            }
             setTriggerFetch(false);
         }
     }, [data]);

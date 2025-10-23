@@ -17,19 +17,19 @@ export default function PlaneTicketsList() {
         const saved = localStorage.getItem("rowsPerPage");
         return saved ? Number(saved) : 10;
     });
-    const { data, dataExist, error, isLoading, isError } = useFetch(
-        ENTITIES.PLANE_TICKETS,
-        null,
-        pageNumber,
-        triggerFetch,
-        rowsPerPage
-    );
+    const { data, dataExist, error, isLoading, isError } = useFetch(ENTITIES.PLANE_TICKETS, null, pageNumber, rowsPerPage, triggerFetch)
 
     useEffect(() => {
         if (data) {
-            setPlaneTickets(data.data);
-            setPageNumber(data.pageNumber);
-            setTotalPages(data.totalPages);
+            if (Array.isArray(data)) {
+                setPlaneTickets(data);
+            } else if (data.data) {
+                setPlaneTickets(data.data);
+                setPageNumber(data.pageNumber);
+                setTotalPages(data.totalPages);
+            } else {
+                setPlaneTickets([]);
+            }
             setTriggerFetch(false);
         }
     }, [data]);

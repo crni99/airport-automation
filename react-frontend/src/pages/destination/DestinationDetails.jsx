@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import useFetch from '../../hooks/useFetch.jsx';
 import { ENTITIES, ENTITY_PATHS } from '../../utils/const.js';
@@ -16,7 +16,8 @@ import { useDeleteOperation } from '../../hooks/useDeleteOperation.jsx';
 
 export default function DestinationDetails() {
     const { id } = useParams();
-    const { data: destination, dataExist, error, isLoading } = useFetch(ENTITIES.DESTINATIONS, id);
+    const [triggerFetch, setTriggerFetch] = useState(true);
+    const { data: destination, dataExist, error, isLoading } = useFetch(ENTITIES.DESTINATIONS, id, undefined, undefined, triggerFetch)
 
     const navigate = useNavigate();
 
@@ -25,6 +26,12 @@ export default function DestinationDetails() {
         id,
         ENTITY_PATHS.DESTINATIONS
     );
+
+    useEffect(() => {
+        if (destination) {
+            setTriggerFetch(false);
+        }
+    }, [destination]);
 
     return (
         <Box sx={{ mt: 5 }}>

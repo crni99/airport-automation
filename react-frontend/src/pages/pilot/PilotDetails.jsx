@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import useFetch from '../../hooks/useFetch.jsx';
 import PageTitle from '../../components/common/PageTitle.jsx';
@@ -13,7 +13,8 @@ import { useDeleteOperation } from '../../hooks/useDeleteOperation.jsx';
 
 export default function PilotDetails() {
     const { id } = useParams();
-    const { data: pilot, dataExist, error, isLoading } = useFetch(ENTITIES.PILOTS, id);
+    const [triggerFetch, setTriggerFetch] = useState(true);
+    const { data: pilot, dataExist, error, isLoading } = useFetch(ENTITIES.PILOTS, id, undefined, undefined, triggerFetch)
 
     const navigate = useNavigate();
 
@@ -22,6 +23,12 @@ export default function PilotDetails() {
         id,
         ENTITY_PATHS.PILOTS
     );
+
+    useEffect(() => {
+        if (pilot) {
+            setTriggerFetch(false);
+        }
+    }, [pilot]);
 
     return (
         <Box sx={{ mt: 5 }}>
@@ -36,7 +43,7 @@ export default function PilotDetails() {
                 error={error}
                 handleCloseSnackbar={handleCloseSnackbar}
             />
-            
+
             {dataExist && (
                 <Box sx={{ mt: 3 }}>
                     <Grid container spacing={6}>

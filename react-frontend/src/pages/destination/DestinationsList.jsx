@@ -17,19 +17,19 @@ export default function DestinationsList() {
         const saved = localStorage.getItem("rowsPerPage");
         return saved ? Number(saved) : 10;
     });
-    const { data, dataExist, error, isLoading, isError } = useFetch(
-        ENTITIES.DESTINATIONS,
-        null,
-        pageNumber,
-        triggerFetch,
-        rowsPerPage
-    );
+    const { data, dataExist, error, isLoading, isError } = useFetch(ENTITIES.DESTINATIONS, null, pageNumber, rowsPerPage, triggerFetch)
 
     useEffect(() => {
         if (data) {
-            setDestinations(data.data);
-            setPageNumber(data.pageNumber);
-            setTotalPages(data.totalPages);
+            if (Array.isArray(data)) {
+                setDestinations(data);
+            } else if (data.data) {
+                setDestinations(data.data);
+                setPageNumber(data.pageNumber);
+                setTotalPages(data.totalPages);
+            } else {
+                setDestinations([]);
+            }
             setTriggerFetch(false);
         }
     }, [data]);

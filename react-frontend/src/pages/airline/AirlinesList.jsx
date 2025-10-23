@@ -18,19 +18,19 @@ export default function AirlineList() {
         return saved ? Number(saved) : 10;
     });
 
-    const { data, dataExist, error, isLoading, isError } = useFetch(
-        ENTITIES.AIRLINES,
-        null,
-        pageNumber,
-        triggerFetch,
-        rowsPerPage
-    );
+    const { data, dataExist, error, isLoading, isError } = useFetch(ENTITIES.AIRLINES, null, pageNumber, rowsPerPage, triggerFetch)
 
     useEffect(() => {
         if (data) {
-            setAirlines(data.data);
-            setPageNumber(data.pageNumber);
-            setTotalPages(data.totalPages);
+            if (Array.isArray(data)) {
+                setAirlines(data);
+            } else if (data.data) {
+                setAirlines(data.data);
+                setPageNumber(data.pageNumber);
+                setTotalPages(data.totalPages);
+            } else {
+                setAirlines([]);
+            }
             setTriggerFetch(false);
         }
     }, [data]);

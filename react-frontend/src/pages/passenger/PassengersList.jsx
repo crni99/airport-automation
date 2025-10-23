@@ -18,19 +18,19 @@ export default function PassengersList() {
         return saved ? Number(saved) : 10;
     });
     
-    const { data, dataExist, error, isLoading, isError } = useFetch(
-        ENTITIES.PASSENGERS,
-        null,
-        pageNumber,
-        triggerFetch,
-        rowsPerPage
-    );
+    const { data, dataExist, error, isLoading, isError } = useFetch(ENTITIES.PASSENGERS, null, pageNumber, rowsPerPage, triggerFetch)
 
     useEffect(() => {
         if (data) {
-            setPassengers(data.data);
-            setPageNumber(data.pageNumber);
-            setTotalPages(data.totalPages);
+            if (Array.isArray(data)) {
+                setPassengers(data);
+            } else if (data.data) {
+                setPassengers(data.data);
+                setPageNumber(data.pageNumber);
+                setTotalPages(data.totalPages);
+            } else {
+                setPassengers([]);
+            }
             setTriggerFetch(false);
         }
     }, [data]);

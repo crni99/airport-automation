@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import useFetch from '../../hooks/useFetch.jsx';
 import PageTitle from '../../components/common/PageTitle.jsx';
@@ -13,7 +13,8 @@ import { useDeleteOperation } from '../../hooks/useDeleteOperation.jsx';
 
 export default function ApiUserDetails() {
     const { id } = useParams();
-    const { data: apiUser, dataExist, error, isLoading } = useFetch(ENTITIES.API_USERS, id);
+    const [triggerFetch, setTriggerFetch] = useState(true);
+    const { data: apiUser, dataExist, error, isLoading } = useFetch(ENTITIES.API_USERS, id, undefined, undefined, triggerFetch)
 
     const navigate = useNavigate();
 
@@ -22,6 +23,12 @@ export default function ApiUserDetails() {
         id,
         ENTITY_PATHS.API_USERS
     );
+
+    useEffect(() => {
+        if (apiUser) {
+            setTriggerFetch(false);
+        }
+    }, [apiUser]);
 
     return (
         <Box sx={{ mt: 5 }}>

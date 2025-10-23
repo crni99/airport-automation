@@ -7,6 +7,7 @@ import { validateFields } from '../utils/validation/validateFields.js';
 
 export const useUpdateOperation = (dataType, dataPath, dataId, initialDataShape, requiredFields, transformDataForAPI, transformDataForForm) => {
     const dataCtx = useContext(DataContext);
+    const [triggerFetch, setTriggerFetch] = useState(true);
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
@@ -17,9 +18,15 @@ export const useUpdateOperation = (dataType, dataPath, dataId, initialDataShape,
         isPending: false,
     });
 
-    const { data: fetchedData, isLoading: isFetching, isError: isFetchError, error: fetchError } = useFetch(dataType, dataId);
+    const { data: fetchedData, isLoading: isFetching, isError: isFetchError, error: fetchError } = useFetch(dataType, dataId, null, null, triggerFetch);
 
     const transformDataForFormCallback = useCallback(transformDataForForm, [transformDataForForm]);
+
+    useEffect(() => {
+        if (fetchedData) {
+            setTriggerFetch(false);
+        }
+    }, [fetchedData]);
 
     useEffect(() => {
         if (fetchedData) {
@@ -103,6 +110,7 @@ export const useUpdateOperation = (dataType, dataPath, dataId, initialDataShape,
         fetchError,
         handleChange,
         handleSubmit,
-        fetchedData
+        fetchedData,
+        setFormData
     };
 };
