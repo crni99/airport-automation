@@ -5,7 +5,7 @@ import { updateData } from '../utils/httpUpdate.js';
 import useFetch from './useFetch.jsx';
 import { validateFields } from '../utils/validation/validateFields.js';
 
-export const useUpdateOperation = (dataType, dataPath, dataId, initialDataShape, requiredFields, transformDataForAPI, transformDataForForm) => {
+export const useUpdate = (dataType, dataPath, dataId, initialDataShape, requiredFields, transformDataForAPI, transformDataForForm) => {
     const dataCtx = useContext(DataContext);
     const [triggerFetch, setTriggerFetch] = useState(true);
     const navigate = useNavigate();

@@ -141,13 +141,13 @@ namespace AirportAutomation.Api.Controllers
 		/// <param name="pageSize">The number of items per page for pagination (optional, default is 10).</param>
 		/// <returns>A paged response containing the list of pilots that match the filter criteria.</returns>
 		/// <response code="200">Returns a paged list of pilots if found.</response>
+		/// <response code="204">If no pilots matching the filter criteria are found.</response>
 		/// <response code="400">If the request is invalid or the filter criteria are missing or invalid.</response>
-		/// <response code="404">If no pilots matching the filter criteria are found.</response>
 		/// <response code="401">If the user is not authenticated.</response>
 		[HttpGet("search")]
 		[ProducesResponseType(200, Type = typeof(PagedResponse<PilotDto>))]
+		[ProducesResponseType(204)]
 		[ProducesResponseType(400)]
-		[ProducesResponseType(404)]
 		[ProducesResponseType(401)]
 		public async Task<ActionResult<PagedResponse<PilotDto>>> SearchPilots(
 			CancellationToken cancellationToken,
@@ -169,7 +169,7 @@ namespace AirportAutomation.Api.Controllers
 			if (pilots == null || pilots.Count == 0)
 			{
 				_logger.LogInformation("Pilots not found.");
-				return NotFound();
+				return NoContent();
 			}
 			var totalItems = await _pilotService.PilotsCountFilter(cancellationToken, filter);
 			var data = _mapper.Map<IEnumerable<PilotDto>>(pilots);

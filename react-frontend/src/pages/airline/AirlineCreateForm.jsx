@@ -8,7 +8,7 @@ import Grid from '@mui/material/Grid';
 import PageTitle from '../../components/common/PageTitle.jsx';
 import BackToListAction from '../../components/common/pagination/BackToListAction.jsx';
 import CreateOperationSnackbarManager from '../../components/common/feedback/CreateOperationSnackbarManager.jsx';
-import { useCreateOperation } from '../../hooks/useCreateOperation.jsx';
+import { useCreate } from '../../hooks/useCreate.jsx';
 
 const initialFormData = { name: '' };
 const requiredFields = ['name'];
@@ -27,7 +27,7 @@ export default function AirlineCreateForm() {
         handleChange,
         handleSubmit,
         setFormData,
-    } = useCreateOperation(
+    } = useCreate(
         ENTITIES.AIRLINES,
         ENTITY_PATHS.AIRLINES,
         initialFormData,

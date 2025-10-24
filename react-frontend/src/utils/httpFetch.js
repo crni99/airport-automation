@@ -132,9 +132,6 @@ export async function fetchData(dataType, dataId, apiUrl, page = 1, rowsPerPage,
             const responseData = await response.json();
             return { data: responseData, dataExist: true };
         } else {
-            if (response.status === 404 && dataId === null) {
-                return { data: [], dataExist: false, isSearchNoResult: true };
-            }
             const errorMessage = await generateErrorMessage(response, dataType, dataId);
             throw new CustomAPIError('API_ERROR', errorMessage);
         }

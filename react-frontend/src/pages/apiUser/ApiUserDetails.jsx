@@ -9,7 +9,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import DeleteOperationSnackbarManager from '../../components/common/feedback/DeleteOperationSnackbarManager.jsx';
-import { useDeleteOperation } from '../../hooks/useDeleteOperation.jsx';
+import { useDelete } from '../../hooks/useDelete.jsx';
 
 export default function ApiUserDetails() {
     const { id } = useParams();
@@ -18,7 +18,7 @@ export default function ApiUserDetails() {
 
     const navigate = useNavigate();
 
-    const { operationState, handleCloseSnackbar, handleOperation } = useDeleteOperation(
+    const { operationState, handleCloseSnackbar, handleOperation } = useDelete(
         ENTITIES.API_USERS,
         id,
         ENTITY_PATHS.API_USERS

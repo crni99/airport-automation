@@ -4,7 +4,7 @@ import { createData } from '../utils/httpCreate.js';
 import { DataContext } from '../store/DataContext.jsx';
 import { validateFields } from '../utils/validation/validateFields.js';
 
-export const useCreateOperation = (dataType, dataPath, initialDataShape, requiredFields, transformDataForAPI) => {
+export const useCreate = (dataType, dataPath, initialDataShape, requiredFields, transformDataForAPI) => {
     const dataCtx = useContext(DataContext);
     const navigate = useNavigate();
 

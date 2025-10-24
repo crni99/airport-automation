@@ -12,7 +12,7 @@ import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import DeleteOperationSnackbarManager from '../../components/common/feedback/DeleteOperationSnackbarManager.jsx';
-import { useDeleteOperation } from '../../hooks/useDeleteOperation.jsx';
+import { useDelete } from '../../hooks/useDelete.jsx';
 
 export default function FlightDetails() {
     const { id } = useParams();
@@ -21,7 +21,7 @@ export default function FlightDetails() {
 
     const navigate = useNavigate();
 
-    const { operationState, handleCloseSnackbar, handleOperation } = useDeleteOperation(
+    const { operationState, handleCloseSnackbar, handleOperation } = useDelete(
         ENTITIES.FLIGHTS,
         id,
         ENTITY_PATHS.FLIGHTS

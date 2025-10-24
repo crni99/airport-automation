@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { deleteData } from '../utils/httpDelete.js';
 import { DataContext } from '../store/DataContext.jsx';
 
-export const useDeleteOperation = (entityType, entityId, redirectPath) => {
+export const useDelete = (entityType, entityId, redirectPath) => {
     const dataCtx = useContext(DataContext);
     const navigate = useNavigate();
 

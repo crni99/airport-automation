@@ -60,11 +60,11 @@ export default function AirlineList() {
             <Box sx={{ mt: 5 }}>
                 {isLoading && <CircularProgress sx={{ mb: 2 }} />}
 
-                {isError && error && (
+                {!isLoading && isError && error && (
                     <CustomAlert alertType='error' type={error.type} message={error.message} />
                 )}
 
-                {!isError && !isLoading && (
+                {!isLoading && !isError && (
                     <>
                         {airlines && airlines.length > 0 ? (
                             <>

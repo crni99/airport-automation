@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { useUpdateOperation } from '../../hooks/useUpdateOperation.jsx';
+import { useUpdate } from '../../hooks/useUpdate.jsx';
 import { ENTITIES, ENTITY_PATHS } from '../../utils/const.js';
 import PageTitle from '../../components/common/PageTitle.jsx';
 import BackToListAction from '../../components/common/pagination/BackToListAction.jsx';
@@ -38,7 +38,7 @@ export default function AirlineEditForm() {
         handleChange,
         handleSubmit,
         setFormData,
-    } = useUpdateOperation(
+    } = useUpdate(
         ENTITIES.AIRLINES,
         ENTITY_PATHS.AIRLINES,
         id,

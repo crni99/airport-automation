@@ -8,7 +8,7 @@ import Grid from '@mui/material/Grid';
 import PageTitle from '../../components/common/PageTitle.jsx';
 import BackToListAction from '../../components/common/pagination/BackToListAction.jsx';
 import CreateOperationSnackbarManager from '../../components/common/feedback/CreateOperationSnackbarManager.jsx';
-import { useCreateOperation } from '../../hooks/useCreateOperation.jsx';
+import { useCreate } from '../../hooks/useCreate.jsx';
 
 const initialFormData = {
     firstName: '',
@@ -45,7 +45,7 @@ export default function PassengerCreateForm() {
         handleChange,
         handleSubmit,
         setFormData,
-    } = useCreateOperation(
+    } = useCreate(
         ENTITIES.PASSENGERS,
         ENTITY_PATHS.PASSENGERS,
         initialFormData,

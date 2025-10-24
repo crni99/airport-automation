@@ -3,7 +3,7 @@ import { ENTITIES, ENTITY_PATHS } from '../../utils/const.js';
 import PageTitle from '../../components/common/PageTitle.jsx';
 import BackToListAction from '../../components/common/pagination/BackToListAction.jsx';
 import CreateOperationSnackbarManager from '../../components/common/feedback/CreateOperationSnackbarManager.jsx';
-import { useCreateOperation } from '../../hooks/useCreateOperation.jsx';
+import { useCreate } from '../../hooks/useCreate.jsx';
 import {
     Box,
     CircularProgress,
@@ -41,7 +41,7 @@ export default function PilotCreateForm() {
         handleChange,
         handleSubmit,
         setFormData,
-    } = useCreateOperation(
+    } = useCreate(
         ENTITIES.PILOTS,
         ENTITY_PATHS.PILOTS,
         initialFormData,

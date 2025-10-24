@@ -132,7 +132,7 @@ namespace AirportAutomation.Api.Controllers
 		}
 
 		/// <summary>
-		/// Endpoint for retrieving a paginated list of airlines containing the specified name.
+		/// Endpoint for retrieving a paginated list of airlines matching the specified search filter criteria.
 		/// </summary>
 		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <param name="name">The name to search for.</param>
@@ -140,13 +140,13 @@ namespace AirportAutomation.Api.Controllers
 		/// <param name="pageSize">The size of each page for pagination (optional).</param>
 		/// <returns>A list of airlines that match the specified name.</returns>
 		/// <response code="200">Returns a paged list of airlines if found.</response>
+		/// <response code="204">If no airlines matching the filter criteria are found.</response>
 		/// <response code="400">If the request is invalid or if there's a validation error.</response>
-		/// <response code="404">If no airlines are found.</response>
 		/// <response code="401">If the user is not authenticated.</response>
 		[HttpGet("search")]
 		[ProducesResponseType(200, Type = typeof(PagedResponse<AirlineDto>))]
+		[ProducesResponseType(204)]
 		[ProducesResponseType(400)]
-		[ProducesResponseType(404)]
 		[ProducesResponseType(401)]
 		public async Task<ActionResult<PagedResponse<AirlineDto>>> SearchAirlines(
 			CancellationToken cancellationToken,
@@ -168,7 +168,7 @@ namespace AirportAutomation.Api.Controllers
 			if (airlines is null || airlines.Count == 0)
 			{
 				_logger.LogInformation("Airline with name {Name} not found.", name);
-				return NotFound();
+				return NoContent();
 			}
 			var totalItems = await _airlineService.AirlinesCount(cancellationToken, name);
 			var data = _mapper.Map<IEnumerable<AirlineDto>>(airlines);

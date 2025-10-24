@@ -8,7 +8,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import PageTitle from '../../components/common/PageTitle.jsx';
 import BackToListAction from '../../components/common/pagination/BackToListAction.jsx';
 import CreateOperationSnackbarManager from '../../components/common/feedback/CreateOperationSnackbarManager.jsx';
-import { useCreateOperation } from '../../hooks/useCreateOperation.jsx';
+import { useCreate } from '../../hooks/useCreate.jsx';
 
 const initialFormData = { city: '', airport: '' };
 const requiredFields = ['city', 'airport'];
@@ -29,7 +29,7 @@ export default function DestinationCreateForm() {
         handleChange,
         handleSubmit,
         setFormData,
-    } = useCreateOperation(
+    } = useCreate(
         ENTITIES.DESTINATIONS,
         ENTITY_PATHS.DESTINATIONS,
         initialFormData,

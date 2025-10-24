@@ -5,7 +5,7 @@ import PageTitle from '../../components/common/PageTitle.jsx';
 import BackToListAction from '../../components/common/pagination/BackToListAction.jsx';
 import CustomAlert from '../../components/common/feedback/CustomAlert.jsx';
 import CreateOperationSnackbarManager from '../../components/common/feedback/CreateOperationSnackbarManager.jsx';
-import { useCreateOperation } from '../../hooks/useCreateOperation.jsx';
+import { useCreate } from '../../hooks/useCreate.jsx';
 import {
     Box,
     CircularProgress,
@@ -63,7 +63,7 @@ export default function PlaneTicketCreateForm() {
         handleChange,
         handleSubmit,
         setFormData,
-    } = useCreateOperation(
+    } = useCreate(
         ENTITIES.PLANE_TICKETS,
         ENTITY_PATHS.PLANE_TICKETS,
         initialFormData,

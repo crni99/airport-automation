@@ -47,18 +47,19 @@ const Navbar = () => {
             }}
         >
             <List>
-                <ListItem>
-                    <ListItemIcon>
-                        <ConnectingAirportsIcon />
-                    </ListItemIcon>
-                    <ListItemText>
-                        Airport Automation
-                    </ListItemText>
+                <ListItem disablePadding>
+                    <ListItemButton onClick={() => navigate('/')}>
+                        <ListItemIcon>
+                            <ConnectingAirportsIcon />
+                        </ListItemIcon>
+                        <ListItemText>
+                            Airport Automation
+                        </ListItemText>
+                    </ListItemButton>
                 </ListItem>
             </List>
             <Divider />
 
-            {/* Main content box that grows and centers its children */}
             <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 <Divider />
                 <List>
@@ -79,7 +80,6 @@ const Navbar = () => {
                 <Divider />
             </Box>
 
-            {/* Logout section at the bottom */}
             {isLoggedIn && (
                 <>
                     <Divider sx={{ mt: 12 }} />

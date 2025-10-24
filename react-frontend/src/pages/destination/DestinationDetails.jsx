@@ -12,7 +12,7 @@ import PageTitle from '../../components/common/PageTitle.jsx';
 import PageNavigationActions from '../../components/common/pagination/PageNavigationActions.jsx';
 import MapEmbed from '../../components/common/MapEmbed.jsx';
 import DeleteOperationSnackbarManager from '../../components/common/feedback/DeleteOperationSnackbarManager.jsx';
-import { useDeleteOperation } from '../../hooks/useDeleteOperation.jsx';
+import { useDelete } from '../../hooks/useDelete.jsx';
 
 export default function DestinationDetails() {
     const { id } = useParams();
@@ -21,7 +21,7 @@ export default function DestinationDetails() {
 
     const navigate = useNavigate();
 
-    const { operationState, handleCloseSnackbar, handleOperation } = useDeleteOperation(
+    const { operationState, handleCloseSnackbar, handleOperation } = useDelete(
         ENTITIES.DESTINATIONS,
         id,
         ENTITY_PATHS.DESTINATIONS

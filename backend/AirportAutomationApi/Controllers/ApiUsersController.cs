@@ -138,14 +138,14 @@ namespace AirportAutomation.Api.Controllers
 		/// <param name="pageSize">The number of items per page for pagination (optional, default is 10).</param>
 		/// <returns>A paged response containing the list of api users that match the filter criteria.</returns>
 		/// <response code="200">Returns a paged list of api users if found.</response>
+		/// <response code="204">If no api users matching the filter criteria are found.</response>
 		/// <response code="400">If the request is invalid or the filter criteria are missing or invalid.</response>
-		/// <response code="404">If no api users matching the filter criteria are found.</response>
 		/// <response code="401">If the user is not authenticated.</response>
 		/// <response code="403">If the authenticated user does not have permission to access the requested resource.</response>
 		[HttpGet("search")]
 		[ProducesResponseType(200, Type = typeof(PagedResponse<ApiUserRoleDto>))]
+		[ProducesResponseType(204)]
 		[ProducesResponseType(400)]
-		[ProducesResponseType(404)]
 		[ProducesResponseType(401)]
 		[ProducesResponseType(403)]
 		public async Task<ActionResult<PagedResponse<ApiUserRoleDto>>> SearchApiUsers(
@@ -168,7 +168,7 @@ namespace AirportAutomation.Api.Controllers
 			if (apiUsers is null || apiUsers.Count == 0)
 			{
 				_logger.LogInformation("Api Users not found.");
-				return NotFound();
+				return NoContent();
 			}
 			var totalItems = await _apiUserService.ApiUsersCountFilter(cancellationToken, filter);
 			var data = _mapper.Map<IEnumerable<ApiUserRoleDto>>(apiUsers);

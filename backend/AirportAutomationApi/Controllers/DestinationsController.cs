@@ -141,13 +141,13 @@ namespace AirportAutomation.Api.Controllers
 		/// <param name="pageSize">The number of items per page for pagination (optional, default is 10).</param>
 		/// <returns>A paged response containing the list of destinations that match the filter criteria.</returns>
 		/// <response code="200">Returns a paged list of destinations if found.</response>
+		/// <response code="204">If no destinations matching the filter criteria are found.</response>
 		/// <response code="400">If the request is invalid or the filter criteria are missing or invalid.</response>
-		/// <response code="404">If no destinations matching the filter criteria are found.</response>
 		/// <response code="401">If the user is not authenticated.</response>
 		[HttpGet("search")]
 		[ProducesResponseType(200, Type = typeof(PagedResponse<DestinationDto>))]
-		[ProducesResponseType(400, Type = typeof(string))]
-		[ProducesResponseType(404)]
+		[ProducesResponseType(204)]
+		[ProducesResponseType(400)]
 		[ProducesResponseType(401)]
 		public async Task<ActionResult<PagedResponse<DestinationDto>>> SearchDestinations(
 			CancellationToken cancellationToken,
@@ -169,7 +169,7 @@ namespace AirportAutomation.Api.Controllers
 			if (destinations == null || destinations.Count == 0)
 			{
 				_logger.LogInformation("Destinations not found.");
-				return NotFound();
+				return NoContent();
 			}
 			var totalItems = await _destinationService.DestinationsCountFilter(cancellationToken, filter);
 			var data = _mapper.Map<IEnumerable<DestinationDto>>(destinations);

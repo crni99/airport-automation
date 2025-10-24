@@ -12,7 +12,7 @@ import Grid from '@mui/material/Grid';
 import CircularProgress from '@mui/material/CircularProgress';
 import Divider from '@mui/material/Divider';
 import DeleteOperationSnackbarManager from '../../components/common/feedback/DeleteOperationSnackbarManager.jsx';
-import { useDeleteOperation } from '../../hooks/useDeleteOperation.jsx';
+import { useDelete } from '../../hooks/useDelete.jsx';
 import { currencyFormatter } from '../../utils/formatting.js';
 
 export default function PlaneTicketDetails() {
@@ -22,7 +22,7 @@ export default function PlaneTicketDetails() {
 
     const navigate = useNavigate();
 
-    const { operationState, handleCloseSnackbar, handleOperation } = useDeleteOperation(
+    const { operationState, handleCloseSnackbar, handleOperation } = useDelete(
         ENTITIES.PLANE_TICKETS,
         id,
         ENTITY_PATHS.PLANE_TICKETS
