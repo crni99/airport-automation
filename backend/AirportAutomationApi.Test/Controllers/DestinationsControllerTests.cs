@@ -428,7 +428,7 @@ namespace AirportAutomationApi.Test.Controllers
 
 		[Fact]
 		[Trait("Category", "SearchDestinations")]
-		public async Task SearchDestinations_ReturnsNotFound_WhenDestinationsAreEmpty()
+		public async Task SearchDestinations_ReturnsNoContent_WhenDestinationsAreEmpty()
 		{
 			// Arrange
 			var filter = new DestinationSearchFilter { City = "Paris" };
@@ -444,12 +444,12 @@ namespace AirportAutomationApi.Test.Controllers
 			var result = await _controller.SearchDestinations(CancellationToken.None, filter);
 
 			// Assert
-			Assert.IsType<NotFoundResult>(result.Result);
+			Assert.IsType<NoContentResult>(result.Result);
 		}
 
 		[Fact]
 		[Trait("Category", "SearchDestinations")]
-		public async Task SearchDestinations_ReturnsNotFound_WhenDestinationsAreNull()
+		public async Task SearchDestinations_ReturnsNoContent_WhenDestinationsAreNull()
 		{
 			// Arrange
 			var filter = new DestinationSearchFilter { City = "Paris" };
@@ -465,7 +465,7 @@ namespace AirportAutomationApi.Test.Controllers
 			var result = await _controller.SearchDestinations(CancellationToken.None, filter);
 
 			// Assert
-			Assert.IsType<NotFoundResult>(result.Result);
+			Assert.IsType<NoContentResult>(result.Result);
 		}
 
 		[Fact]

@@ -481,12 +481,12 @@ namespace AirportAutomationApi.Test.Controllers
 		}
 
 		/// <summary>
-		/// This test checks that the `SearchAirlines` method returns a `404 Not Found`
+		/// This test checks that the `SearchAirlines` method returns a `204 No Content`
 		/// response when the airline service returns a `null` list of airlines for the given name.
 		/// </summary>
 		[Fact]
 		[Trait("Category", "SearchAirlines")]
-		public async Task SearchAirlines_ReturnsNotFound_WhenAirlinesIsNull()
+		public async Task SearchAirlines_ReturnsNoContent_WhenAirlinesIsNull()
 		{
 			// Arrange
 			var name = "Nonexistent Airline";
@@ -500,16 +500,16 @@ namespace AirportAutomationApi.Test.Controllers
 			var result = await _controller.SearchAirlines(CancellationToken.None, name);
 
 			// Assert
-			Assert.IsType<NotFoundResult>(result.Result);
+			Assert.IsType<NoContentResult>(result.Result);
 		}
 
 		/// <summary>
-		/// This test verifies that the `SearchAirlines` method returns a `404 Not Found`
+		/// This test verifies that the `SearchAirlines` method returns a `204 No Content`
 		/// when the airline service returns an empty list for the provided name.
 		/// </summary>
 		[Fact]
 		[Trait("Category", "SearchAirlines")]
-		public async Task SearchAirlines_ReturnsNotFound_WhenAirlinesAreEmpty()
+		public async Task SearchAirlines_ReturnsNoContent_WhenAirlinesAreEmpty()
 		{
 			// Arrange
 			var name = "Nonexistent Airline";
@@ -523,7 +523,7 @@ namespace AirportAutomationApi.Test.Controllers
 			var result = await _controller.SearchAirlines(CancellationToken.None, name);
 
 			// Assert
-			Assert.IsType<NotFoundResult>(result.Result);
+			Assert.IsType<NoContentResult>(result.Result);
 		}
 
 		/// <summary>

@@ -441,7 +441,7 @@ namespace AirportAutomationApi.Test.Controllers
 
 		[Fact]
 		[Trait("Category", "SearchPlaneTickets")]
-		public async Task SearchPlaneTickets_PlaneTicketsNotFound_ReturnsNotFound()
+		public async Task SearchPlaneTickets_PlaneTicketsNoContent_ReturnsNotFound()
 		{
 			// Arrange
 			var cancellationToken = new CancellationToken();
@@ -461,12 +461,12 @@ namespace AirportAutomationApi.Test.Controllers
 			var result = await _controller.SearchPlaneTickets(cancellationToken, filter, page, pageSize);
 
 			// Assert
-			Assert.IsType<NotFoundResult>(result.Result);
+			Assert.IsType<NoContentResult>(result.Result);
 		}
 
 		[Fact]
 		[Trait("Category", "SearchPlaneTickets")]
-		public async Task SearchPlaneTickets_ReturnsNotFound_WhenPlaneTicketsListIsNull()
+		public async Task SearchPlaneTickets_ReturnsNoContent_WhenPlaneTicketsListIsNull()
 		{
 			// Arrange
 			var cancellationToken = new CancellationToken();
@@ -485,7 +485,7 @@ namespace AirportAutomationApi.Test.Controllers
 			var result = await _controller.SearchPlaneTickets(cancellationToken, filter, page, pageSize);
 
 			// Assert
-			Assert.IsType<NotFoundResult>(result.Result);
+			Assert.IsType<NoContentResult>(result.Result);
 		}
 
 		[Fact]

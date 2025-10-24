@@ -437,7 +437,7 @@ namespace AirportAutomationApi.Test.Controllers
 
 		[Fact]
 		[Trait("Category", "SearchApiUsers")]
-		public async Task SearchApiUsers_ReturnsNotFound_WhenUsersAreEmpty()
+		public async Task SearchApiUsers_ReturnsNoContent_WhenUsersAreEmpty()
 		{
 			// Arrange
 			var filter = new ApiUserSearchFilter { UserName = "testuser" };
@@ -453,12 +453,12 @@ namespace AirportAutomationApi.Test.Controllers
 			var result = await _controller.SearchApiUsers(CancellationToken.None, filter);
 
 			// Assert
-			Assert.IsType<NotFoundResult>(result.Result);
+			Assert.IsType<NoContentResult>(result.Result);
 		}
 
 		[Fact]
 		[Trait("Category", "SearchApiUsers")]
-		public async Task SearchApiUsers_ReturnsNotFound_WhenUsersIsNull()
+		public async Task SearchApiUsers_ReturnsNoCOntent_WhenUsersIsNull()
 		{
 			// Arrange
 			var filter = new ApiUserSearchFilter { UserName = "testuser" };
@@ -474,7 +474,7 @@ namespace AirportAutomationApi.Test.Controllers
 			var result = await _controller.SearchApiUsers(CancellationToken.None, filter);
 
 			// Assert
-			Assert.IsType<NotFoundResult>(result.Result);
+			Assert.IsType<NoContentResult>(result.Result);
 		}
 
 		[Fact]

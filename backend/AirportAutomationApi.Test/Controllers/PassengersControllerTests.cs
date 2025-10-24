@@ -437,7 +437,7 @@ namespace AirportAutomationApi.Test.Controllers
 
 		[Fact]
 		[Trait("Category", "SearchPassengers")]
-		public async Task SearchPassengers_ValidFilterWithNoResults_ReturnsNotFound()
+		public async Task SearchPassengers_ValidFilterWithNoResults_ReturnsNoContent()
 		{
 			// Arrange
 			var filter = new PassengerSearchFilter { Phone = "2025" };
@@ -452,7 +452,7 @@ namespace AirportAutomationApi.Test.Controllers
 			var result = await _controller.SearchPassengers(new CancellationToken(), filter, 1, 10);
 
 			// Assert
-			Assert.IsType<NotFoundResult>(result.Result);
+			Assert.IsType<NoContentResult>(result.Result);
 		}
 
 		[Fact]
@@ -522,7 +522,7 @@ namespace AirportAutomationApi.Test.Controllers
 
 		[Fact]
 		[Trait("Category", "SearchPassengers")]
-		public async Task SearchPassengers_PassengerServiceReturnsNull_ReturnsNotFound()
+		public async Task SearchPassengers_PassengerServiceReturnsNull_ReturnsNoContent()
 		{
 			// Arrange
 			var filter = new PassengerSearchFilter { FirstName = "John" };
@@ -537,7 +537,7 @@ namespace AirportAutomationApi.Test.Controllers
 			var result = await _controller.SearchPassengers(new CancellationToken(), filter, 1, 10);
 
 			// Assert
-			Assert.IsType<NotFoundResult>(result.Result);
+			Assert.IsType<NoContentResult>(result.Result);
 		}
 
 		#endregion

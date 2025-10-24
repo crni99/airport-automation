@@ -503,7 +503,7 @@ namespace AirportAutomationApi.Test.Controllers
 
 		[Fact]
 		[Trait("Category", "SearchFlights")]
-		public async Task SearchFlights_ValidDates_NoFlightsFound_ReturnsNotFound()
+		public async Task SearchFlights_ValidDates_NoFlightsFound_ReturnsNoContent()
 		{
 			// Arrange
 			var cancellationToken = new CancellationToken();
@@ -531,14 +531,14 @@ namespace AirportAutomationApi.Test.Controllers
 			var result = await _controller.SearchFlights(cancellationToken, startDate, endDate);
 
 			// Assert
-			var notFoundResult = Assert.IsType<NotFoundResult>(result.Result);
+			var notFoundResult = Assert.IsType<NoContentResult>(result.Result);
 			var flights = await _flightServiceMock.Object.SearchFlights(cancellationToken, 1, 10, startDate, endDate);
 			Assert.Empty(flights);
 		}
 
 		[Fact]
 		[Trait("Category", "SearchFlights")]
-		public async Task SearchFlights_ServiceReturnsNull_ReturnsNotFound()
+		public async Task SearchFlights_ServiceReturnsNull_ReturnsNoContent()
 		{
 			// Arrange
 			var cancellationToken = new CancellationToken();
@@ -563,7 +563,7 @@ namespace AirportAutomationApi.Test.Controllers
 			var result = await _controller.SearchFlights(cancellationToken, startDate, endDate);
 
 			// Assert
-			Assert.IsType<NotFoundResult>(result.Result);
+			Assert.IsType<NoContentResult>(result.Result);
 		}
 
 		[Fact]
