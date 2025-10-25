@@ -53,30 +53,6 @@ namespace AirportAutomationApi.Test.Services
 		}
 
 		[Fact]
-		public async Task ExistsByUPRN_Should_Call_Repository_ExistsByUPRN()
-		{
-			const string uprn = "TESTUPRN123";
-			_repositoryMock.Setup(repo => repo.ExistsByUPRN(uprn)).ReturnsAsync(true);
-
-			var result = await _service.ExistsByUPRN(uprn);
-
-			_repositoryMock.Verify(repo => repo.ExistsByUPRN(uprn), Times.Once);
-			Assert.True(result);
-		}
-
-		[Fact]
-		public async Task ExistsByPassport_Should_Call_Repository_ExistsByPassport()
-		{
-			const string passport = "TESTPASSPORTABC";
-			_repositoryMock.Setup(repo => repo.ExistsByPassport(passport)).ReturnsAsync(false);
-
-			var result = await _service.ExistsByPassport(passport);
-
-			_repositoryMock.Verify(repo => repo.ExistsByPassport(passport), Times.Once);
-			Assert.False(result);
-		}
-
-		[Fact]
 		public async Task PostPassenger_Should_Call_Repository_PostPassenger()
 		{
 			var passenger = new PassengerEntity();
@@ -114,6 +90,30 @@ namespace AirportAutomationApi.Test.Services
 		}
 
 		[Fact]
+		public async Task PassengerExistsByUPRN_Should_Call_Repository_PassengerExistsByUPRN()
+		{
+			const string uprn = "TESTUPRN123";
+			_repositoryMock.Setup(repo => repo.PassengerExistsByUPRN(uprn)).ReturnsAsync(true);
+
+			var result = await _service.PassengerExistsByUPRN(uprn);
+
+			_repositoryMock.Verify(repo => repo.PassengerExistsByUPRN(uprn), Times.Once);
+			Assert.True(result);
+		}
+
+		[Fact]
+		public async Task PassengerExistsByPassport_Should_Call_Repository_PassengerExistsByPassport()
+		{
+			const string passport = "TESTPASSPORTABC";
+			_repositoryMock.Setup(repo => repo.PassengerExistsByPassport(passport)).ReturnsAsync(false);
+
+			var result = await _service.PassengerExistsByPassport(passport);
+
+			_repositoryMock.Verify(repo => repo.PassengerExistsByPassport(passport), Times.Once);
+			Assert.False(result);
+		}
+
+		[Fact]
 		public async Task PatchPassenger_Should_Call_Repository_PatchPassenger()
 		{
 			var passengerDocument = new JsonPatchDocument();
@@ -128,7 +128,7 @@ namespace AirportAutomationApi.Test.Services
 		{
 			var cancellationToken = new CancellationToken();
 			var expectedCount = 5;
-			_repositoryMock.Setup(repo => repo.PassengersCount(cancellationToken, null, null)).ReturnsAsync(expectedCount);
+			_repositoryMock.Setup(repo => repo.PassengersCount(cancellationToken)).ReturnsAsync(expectedCount);
 
 			int count = await _service.PassengersCount(cancellationToken);
 

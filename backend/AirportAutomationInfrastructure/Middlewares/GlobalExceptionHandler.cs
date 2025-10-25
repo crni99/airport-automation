@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using MySqlConnector;
+using Npgsql;
 using System.ComponentModel.DataAnnotations;
-using System.Data.SqlClient;
 using System.Net;
 using System.Text.Json;
 
@@ -11,10 +14,12 @@ namespace AirportAutomation.Infrastructure.Middlewares
 	public class GlobalExceptionHandler
 	{
 		private readonly RequestDelegate _next;
+		private readonly ILogger<GlobalExceptionHandler> _logger;
 
-		public GlobalExceptionHandler(RequestDelegate next)
+		public GlobalExceptionHandler(RequestDelegate next, ILogger<GlobalExceptionHandler> logger)
 		{
 			_next = next;
+			_logger = logger;
 		}
 
 		public async Task InvokeAsync(HttpContext httpContext)
@@ -25,16 +30,16 @@ namespace AirportAutomation.Infrastructure.Middlewares
 			}
 			catch (Exception ex)
 			{
-				await HandleExceptionAsync(httpContext, ex);
+				await HandleExceptionAsync(httpContext, ex, _logger);
 			}
 		}
 
-		private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
+		private static async Task HandleExceptionAsync(HttpContext context, Exception exception, ILogger<GlobalExceptionHandler> logger)
 		{
 			context.Response.ContentType = "application/json";
 			var response = context.Response;
 			var model = new ProblemDetails();
-			int statusCode;
+			int statusCode = (int)HttpStatusCode.InternalServerError;
 
 			switch (exception)
 			{
@@ -48,16 +53,43 @@ namespace AirportAutomation.Infrastructure.Middlewares
 					model.Detail = exception.Message;
 					break;
 
-				case DbUpdateException dbUpdateException when dbUpdateException.InnerException is SqlException sqlException:
+				case DbUpdateException dbUpdateException:
 					statusCode = (int)HttpStatusCode.Conflict;
 					model.Type = "Conflict";
 					model.Title = "Conflict";
-					model.Detail = sqlException.Number switch
+
+					var innerException = dbUpdateException.InnerException;
+					if (innerException is MySqlException mySqlException)
 					{
-						2601 or 2627 => "Duplicate key violation.",
-						547 => "This entity is referenced in other records and cannot be deleted.",
-						_ => "Database error: " + sqlException.Message
-					};
+						model.Detail = mySqlException.Number switch
+						{
+							1062 => "Duplicate key violation.",
+							1451 or 1452 => "This entity is referenced in other records and cannot be deleted.",
+							_ => "Database error: " + mySqlException.Message
+						};
+					}
+					else if (innerException is PostgresException postgresException)
+					{
+						model.Detail = postgresException.SqlState switch
+						{
+							"23505" => "Duplicate key violation.",
+							"23503" => "This entity is referenced in other records and cannot be deleted.",
+							_ => "Database error: " + postgresException.Message
+						};
+					}
+					else if (innerException is SqlException sqlException)
+					{
+						model.Detail = sqlException.Number switch
+						{
+							2601 or 2627 => "Duplicate key violation.",
+							547 => "This entity is referenced in other records and cannot be deleted.",
+							_ => "Database error: " + sqlException.Message
+						};
+					}
+					else
+					{
+						model.Detail = "A database update conflict occurred.";
+					}
 					break;
 
 				case UnauthorizedAccessException:
@@ -80,7 +112,18 @@ namespace AirportAutomation.Infrastructure.Middlewares
 					model.Detail = "An internal server error occurred.";
 					break;
 			}
+
+			if (statusCode >= 500)
+			{
+				logger.LogError(exception, "An unhandled server exception occurred. Status: {StatusCode} | Path: {Path}", statusCode, context.Request.Path);
+			}
+			else
+			{
+				logger.LogWarning(exception, "A handled client-side exception occurred. Status: {StatusCode} | Path: {Path}", statusCode, context.Request.Path);
+			}
+
 			model.Status = statusCode;
+			model.Instance = context.Request.Path;
 			response.StatusCode = statusCode;
 
 			var result = JsonSerializer.Serialize(model);

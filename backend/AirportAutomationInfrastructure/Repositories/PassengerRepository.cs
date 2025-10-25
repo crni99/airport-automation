@@ -50,51 +50,37 @@ namespace AirportAutomation.Infrastructure.Repositories
 			if (!string.IsNullOrWhiteSpace(filter.FirstName))
 			{
 				var lowerCaseFirstName = filter.FirstName.ToLower();
-				query = query.Where(p => p.FirstName.ToLower().Contains(filter.FirstName));
+				query = query.Where(p => p.FirstName.ToLower().Contains(lowerCaseFirstName));
 			}
 			if (!string.IsNullOrWhiteSpace(filter.LastName))
 			{
 				var lowerCaseLastName = filter.LastName.ToLower();
-				query = query.Where(p => p.LastName.ToLower().Contains(filter.LastName));
+				query = query.Where(p => p.LastName.ToLower().Contains(lowerCaseLastName));
 			}
 			if (!string.IsNullOrWhiteSpace(filter.UPRN))
 			{
 				var lowerCaseUPRN = filter.UPRN.ToLower();
-				query = query.Where(p => p.UPRN.ToLower().Contains(filter.UPRN));
+				query = query.Where(p => p.UPRN.ToLower().Contains(lowerCaseUPRN));
 			}
 			if (!string.IsNullOrWhiteSpace(filter.Passport))
 			{
 				var lowerCasePassport = filter.Passport.ToLower();
-				query = query.Where(p => p.Passport.ToLower().Contains(filter.Passport));
+				query = query.Where(p => p.Passport.ToLower().Contains(lowerCasePassport));
 			}
 			if (!string.IsNullOrWhiteSpace(filter.Address))
 			{
 				var lowerCaseAddress = filter.Address.ToLower();
-				query = query.Where(p => p.Address.ToLower().Contains(filter.Address));
+				query = query.Where(p => p.Address.ToLower().Contains(lowerCaseAddress));
 			}
 			if (!string.IsNullOrWhiteSpace(filter.Phone))
 			{
 				var lowerCasePhone = filter.Phone.ToLower();
-				query = query.Where(p => p.Phone.ToLower().Contains(filter.Phone));
+				query = query.Where(p => p.Phone.ToLower().Contains(lowerCasePhone));
 			}
 			return await query.OrderBy(p => p.Id)
 				.Skip(pageSize * (page - 1))
 				.Take(pageSize)
 				.ToListAsync(cancellationToken);
-		}
-
-		public async Task<bool> ExistsByUPRN(string uprn)
-		{
-			return await _context.Passenger
-								 .AsNoTracking()
-								 .AnyAsync(p => p.UPRN == uprn);
-		}
-
-		public async Task<bool> ExistsByPassport(string passport)
-		{
-			return await _context.Passenger
-								 .AsNoTracking()
-								 .AnyAsync(p => p.Passport == passport);
 		}
 
 		public async Task<PassengerEntity> PostPassenger(PassengerEntity passenger)
@@ -136,18 +122,23 @@ namespace AirportAutomation.Infrastructure.Repositories
 			return (_context.Passenger?.Any(e => e.Id == id)).GetValueOrDefault();
 		}
 
-		public async Task<int> PassengersCount(CancellationToken cancellationToken, string firstName = null, string lastName = null)
+		public async Task<bool> PassengerExistsByUPRN(string uprn)
+		{
+			return await _context.Passenger
+								 .AsNoTracking()
+								 .AnyAsync(p => p.UPRN == uprn);
+		}
+
+		public async Task<bool> PassengerExistsByPassport(string passport)
+		{
+			return await _context.Passenger
+								 .AsNoTracking()
+								 .AnyAsync(p => p.Passport == passport);
+		}
+
+		public async Task<int> PassengersCount(CancellationToken cancellationToken)
 		{
 			IQueryable<PassengerEntity> query = _context.Passenger;
-
-			if (!string.IsNullOrEmpty(firstName))
-			{
-				query = query.Where(p => p.FirstName.Contains(firstName));
-			}
-			if (!string.IsNullOrEmpty(lastName))
-			{
-				query = query.Where(p => p.LastName.Contains(lastName));
-			}
 			return await query.CountAsync(cancellationToken).ConfigureAwait(false);
 		}
 
@@ -158,32 +149,32 @@ namespace AirportAutomation.Infrastructure.Repositories
 			if (!string.IsNullOrWhiteSpace(filter.FirstName))
 			{
 				var lowerCaseFirstName = filter.FirstName.ToLower();
-				query = query.Where(p => p.FirstName.ToLower().Contains(filter.FirstName));
+				query = query.Where(p => p.FirstName.ToLower().Contains(lowerCaseFirstName));
 			}
 			if (!string.IsNullOrWhiteSpace(filter.LastName))
 			{
 				var lowerCaseLastName = filter.LastName.ToLower();
-				query = query.Where(p => p.LastName.ToLower().Contains(filter.LastName));
+				query = query.Where(p => p.LastName.ToLower().Contains(lowerCaseLastName));
 			}
 			if (!string.IsNullOrWhiteSpace(filter.UPRN))
 			{
 				var lowerCaseUPRN = filter.UPRN.ToLower();
-				query = query.Where(p => p.UPRN.ToLower().Contains(filter.UPRN));
+				query = query.Where(p => p.UPRN.ToLower().Contains(lowerCaseUPRN));
 			}
 			if (!string.IsNullOrWhiteSpace(filter.Passport))
 			{
 				var lowerCasePassport = filter.Passport.ToLower();
-				query = query.Where(p => p.Passport.ToLower().Contains(filter.Passport));
+				query = query.Where(p => p.Passport.ToLower().Contains(lowerCasePassport));
 			}
 			if (!string.IsNullOrWhiteSpace(filter.Address))
 			{
 				var lowerCaseAddress = filter.Address.ToLower();
-				query = query.Where(p => p.Address.ToLower().Contains(filter.Address));
+				query = query.Where(p => p.Address.ToLower().Contains(lowerCaseAddress));
 			}
 			if (!string.IsNullOrWhiteSpace(filter.Phone))
 			{
 				var lowerCasePhone = filter.Phone.ToLower();
-				query = query.Where(p => p.Phone.ToLower().Contains(filter.Phone));
+				query = query.Where(p => p.Phone.ToLower().Contains(lowerCasePhone));
 			}
 			return await query.CountAsync(cancellationToken);
 		}

@@ -1,5 +1,6 @@
 ﻿using AirportAutomation.Api.Controllers;
 using AirportAutomation.Api.Interfaces;
+using AirportAutomation.Application.Dtos.Passenger;
 using AirportAutomation.Application.Dtos.Pilot;
 using AirportAutomation.Application.Dtos.Response;
 using AirportAutomation.Core.Entities;
@@ -566,6 +567,26 @@ namespace AirportAutomationApi.Test.Controllers
 			await Assert.ThrowsAsync<Exception>(async () => await _controller.PostPilot(pilotCreateDto));
 		}
 
+		[Fact]
+		[Trait("Category", "PostPilot")]
+		public async Task PostPilot_ReturnsConflict_WhenPassengerExistsByUPRN()
+		{
+			// Arrange
+			var pilotCreateDto = new PilotCreateDto { UPRN = "12345" };
+
+			_pilotServiceMock.Setup(service => service.PilotExistsByUPRN(pilotCreateDto.UPRN))
+							   .ReturnsAsync(true);
+			_pilotServiceMock.Setup(service => service.PostPilot(It.IsAny<PilotEntity>()))
+							   .Verifiable();
+
+			// Act
+			var result = await _controller.PostPilot(pilotCreateDto);
+
+			// Assert
+			Assert.IsType<ConflictObjectResult>(result.Result);
+			_pilotServiceMock.Verify(service => service.PostPilot(It.IsAny<PilotEntity>()), Times.Never);
+		}
+
 		#endregion
 
 		#region PutPilot
@@ -642,6 +663,26 @@ namespace AirportAutomationApi.Test.Controllers
 
 			// Assert
 			Assert.IsType<NotFoundResult>(result);
+		}
+
+		[Fact]
+		[Trait("Category", "PutPilot")]
+		public async Task PutPilot_ReturnsConflict_WhenUPRNAlreadyExists()
+		{
+			// Arrange
+			int id = 1;
+			var pilotDto = new PilotDto { Id = id, UPRN = "ExistingUPRN" };
+
+			_inputValidationServiceMock.Setup(service => service.IsNonNegativeInt(id)).Returns(true);
+			_pilotServiceMock.Setup(service => service.PilotExists(id)).ReturnsAsync(true);
+			_pilotServiceMock.Setup(service => service.PilotExistsByUPRN(pilotDto.UPRN)).ReturnsAsync(true);
+
+			// Act
+			var result = await _controller.PutPilot(id, pilotDto);
+
+			// Assert
+			var conflictResult = Assert.IsType<ConflictObjectResult>(result);
+			Assert.Equal("Pilot with UPRN already exists.", conflictResult.Value);
 		}
 
 		#endregion

@@ -100,6 +100,18 @@ namespace AirportAutomationApi.Test.Services
 		}
 
 		[Fact]
+		public async Task PilotExistsByUPRN_Should_Call_Repository_PilotExistsByUPRN()
+		{
+			const string uprn = "TESTUPRN123";
+			_repositoryMock.Setup(repo => repo.PilotExistsByUPRN(uprn)).ReturnsAsync(true);
+
+			var result = await _service.PilotExistsByUPRN(uprn);
+
+			_repositoryMock.Verify(repo => repo.PilotExistsByUPRN(uprn), Times.Once);
+			Assert.True(result);
+		}
+
+		[Fact]
 		public async Task PilotsCount_ShouldReturnCorrectCount()
 		{
 			var cancellationToken = new CancellationToken();

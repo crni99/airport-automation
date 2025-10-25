@@ -239,7 +239,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(service => service.GetPassengers(cancellationToken, page, pageSize))
 				.ReturnsAsync(passengers);
 			_passengerServiceMock
-				.Setup(service => service.PassengersCount(cancellationToken, null, null))
+				.Setup(service => service.PassengersCount(cancellationToken))
 				.ReturnsAsync(totalItems);
 
 			var expectedData = new List<PassengerDto>
@@ -294,7 +294,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(service => service.GetPassengers(cancellationToken, page, pageSize))
 				.ReturnsAsync(pagedPassengers);
 			_passengerServiceMock
-				.Setup(service => service.PassengersCount(cancellationToken, null, null))
+				.Setup(service => service.PassengersCount(cancellationToken))
 				.ReturnsAsync(allPassengers.Count);
 
 			var expectedData = new List<PassengerDto>
@@ -593,9 +593,9 @@ namespace AirportAutomationApi.Test.Controllers
 			// Arrange
 			var passengerCreateDto = new PassengerCreateDto { UPRN = "12345", Passport = "ABC" };
 
-			_passengerServiceMock.Setup(service => service.ExistsByUPRN(passengerCreateDto.UPRN))
+			_passengerServiceMock.Setup(service => service.PassengerExistsByUPRN(passengerCreateDto.UPRN))
 							   .ReturnsAsync(true);
-			_passengerServiceMock.Setup(service => service.ExistsByPassport(passengerCreateDto.Passport))
+			_passengerServiceMock.Setup(service => service.PassengerExistsByPassport(passengerCreateDto.Passport))
 							   .ReturnsAsync(false);
 			_passengerServiceMock.Setup(service => service.PostPassenger(It.IsAny<PassengerEntity>()))
 							   .Verifiable();
@@ -615,9 +615,9 @@ namespace AirportAutomationApi.Test.Controllers
 			// Arrange
 			var passengerCreateDto = new PassengerCreateDto { UPRN = "12345", Passport = "ABC" };
 
-			_passengerServiceMock.Setup(service => service.ExistsByUPRN(passengerCreateDto.UPRN))
+			_passengerServiceMock.Setup(service => service.PassengerExistsByUPRN(passengerCreateDto.UPRN))
 							   .ReturnsAsync(false);
-			_passengerServiceMock.Setup(service => service.ExistsByPassport(passengerCreateDto.Passport))
+			_passengerServiceMock.Setup(service => service.PassengerExistsByPassport(passengerCreateDto.Passport))
 							   .ReturnsAsync(true);
 			_passengerServiceMock.Setup(service => service.PostPassenger(It.IsAny<PassengerEntity>()))
 							   .Verifiable();
@@ -706,6 +706,27 @@ namespace AirportAutomationApi.Test.Controllers
 
 			// Assert
 			Assert.IsType<NotFoundResult>(result);
+		}
+
+		[Fact]
+		[Trait("Category", "PutPassenger")]
+		public async Task PutPassenger_ReturnsConflict_WhenUPRNOrPassportAlreadyExists()
+		{
+			// Arrange
+			int id = 1;
+			var passengerDto = new PassengerDto { Id = id, UPRN = "ExistingUPRN", Passport = "ExistingPassport" };
+
+			_inputValidationServiceMock.Setup(service => service.IsNonNegativeInt(id)).Returns(true);
+			_passengerServiceMock.Setup(service => service.PassengerExists(id)).ReturnsAsync(true);
+			_passengerServiceMock.Setup(service => service.PassengerExistsByUPRN(passengerDto.UPRN)).ReturnsAsync(true);
+			_passengerServiceMock.Setup(service => service.PassengerExistsByPassport(passengerDto.Passport)).ReturnsAsync(false);
+
+			// Act
+			var result = await _controller.PutPassenger(id, passengerDto);
+
+			// Assert
+			var conflictResult = Assert.IsType<ConflictObjectResult>(result);
+			Assert.Equal("Passenger with UPRN or Passport already exists.", conflictResult.Value);
 		}
 
 		#endregion

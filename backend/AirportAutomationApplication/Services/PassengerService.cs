@@ -35,14 +35,14 @@ namespace AirportAutomation.Application.Services
 			return await _passengerRepository.SearchPassengers(cancellationToken, page, pageSize, filter);
 		}
 
-		public async Task<bool> ExistsByUPRN(string uprn)
+		public async Task<bool> PassengerExistsByUPRN(string uprn)
 		{
-			return await _passengerRepository.ExistsByUPRN(uprn);
+			return await _passengerRepository.PassengerExistsByUPRN(uprn);
 		}
 
-		public async Task<bool> ExistsByPassport(string passport)
+		public async Task<bool> PassengerExistsByPassport(string passport)
 		{
-			return await _passengerRepository.ExistsByPassport(passport);
+			return await _passengerRepository.PassengerExistsByPassport(passport);
 		}
 
 		public async Task<PassengerEntity> PostPassenger(PassengerEntity passenger)
@@ -70,9 +70,9 @@ namespace AirportAutomation.Application.Services
 			return await _passengerRepository.PassengerExists(id);
 		}
 
-		public async Task<int> PassengersCount(CancellationToken cancellationToken, string firstName = null, string lastName = null)
+		public async Task<int> PassengersCount(CancellationToken cancellationToken)
 		{
-			return await _passengerRepository.PassengersCount(cancellationToken, firstName, lastName);
+			return await _passengerRepository.PassengersCount(cancellationToken);
 		}
 
 		public async Task<int> PassengersCountFilter(CancellationToken cancellationToken, PassengerSearchFilter filter)

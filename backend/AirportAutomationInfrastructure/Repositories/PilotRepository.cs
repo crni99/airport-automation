@@ -50,17 +50,17 @@ namespace AirportAutomation.Infrastructure.Repositories
 			if (!string.IsNullOrWhiteSpace(filter.FirstName))
 			{
 				var lowerCaseFirstName = filter.FirstName.ToLower();
-				query = query.Where(p => p.FirstName.ToLower().Contains(filter.FirstName));
+				query = query.Where(p => p.FirstName.ToLower().Contains(lowerCaseFirstName));
 			}
 			if (!string.IsNullOrWhiteSpace(filter.LastName))
 			{
 				var lowerCaseLastName = filter.LastName.ToLower();
-				query = query.Where(p => p.LastName.ToLower().Contains(filter.LastName));
+				query = query.Where(p => p.LastName.ToLower().Contains(lowerCaseLastName));
 			}
 			if (!string.IsNullOrWhiteSpace(filter.UPRN))
 			{
 				var lowerCaseUPRN = filter.UPRN.ToLower();
-				query = query.Where(p => p.UPRN.ToLower().Contains(filter.UPRN));
+				query = query.Where(p => p.UPRN.ToLower().Contains(lowerCaseUPRN));
 			}
 			if (filter.FlyingHours.HasValue)
 			{
@@ -111,6 +111,13 @@ namespace AirportAutomation.Infrastructure.Repositories
 			return (_context.Pilot?.Any(e => e.Id == id)).GetValueOrDefault();
 		}
 
+		public async Task<bool> PilotExistsByUPRN(string uprn)
+		{
+			return await _context.Pilot
+								 .AsNoTracking()
+								 .AnyAsync(p => p.UPRN == uprn);
+		}
+
 		public async Task<int> PilotsCount(CancellationToken cancellationToken, string firstName = null, string lastName = null)
 		{
 			IQueryable<PilotEntity> query = _context.Pilot;
@@ -135,21 +142,21 @@ namespace AirportAutomation.Infrastructure.Repositories
 			if (!string.IsNullOrWhiteSpace(filter.FirstName))
 			{
 				var lowerCaseFirstName = filter.FirstName.ToLower();
-				query = query.Where(p => p.FirstName.ToLower().Contains(filter.FirstName));
+				query = query.Where(p => p.FirstName.ToLower().Contains(lowerCaseFirstName));
 			}
 			if (!string.IsNullOrWhiteSpace(filter.LastName))
 			{
 				var lowerCaseLastName = filter.LastName.ToLower();
-				query = query.Where(p => p.LastName.ToLower().Contains(filter.LastName));
+				query = query.Where(p => p.LastName.ToLower().Contains(lowerCaseLastName));
 			}
 			if (!string.IsNullOrWhiteSpace(filter.UPRN))
 			{
 				var lowerCaseUPRN = filter.UPRN.ToLower();
-				query = query.Where(p => p.UPRN.ToLower().Contains(filter.UPRN));
+				query = query.Where(p => p.UPRN.ToLower().Contains(lowerCaseUPRN));
 			}
 			if (filter.FlyingHours.HasValue)
 			{
-				query = query.Where(p => p.FlyingHours >= filter.FlyingHours.Value);
+				query = query.Where(p => p.FlyingHours >= filter.FlyingHours);
 			}
 			return await query.CountAsync(cancellationToken);
 		}

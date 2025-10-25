@@ -1,7 +1,9 @@
 ﻿using AirportAutomation.Api.Helpers;
 using AirportAutomation.Api.Interfaces;
+using AirportAutomation.Application.Dtos.Passenger;
 using AirportAutomation.Application.Dtos.Pilot;
 using AirportAutomation.Application.Dtos.Response;
+using AirportAutomation.Application.Services;
 using AirportAutomation.Core.Entities;
 using AirportAutomation.Core.Enums;
 using AirportAutomation.Core.FilterExtensions;
@@ -186,14 +188,21 @@ namespace AirportAutomation.Api.Controllers
 		/// <response code="400">If the request is invalid or if there's a validation error.</response>
 		/// <response code="401">If the user is not authenticated.</response>
 		/// <response code="403">If the authenticated user does not have permission to access the requested resource.</response>
+		/// <response code="409">Conflict. Pilot with UPRN already exists.</response>
 		[HttpPost]
 		[Authorize(Policy = "RequireAdminRole")]
 		[ProducesResponseType(201, Type = typeof(PilotDto))]
 		[ProducesResponseType(400)]
 		[ProducesResponseType(401)]
 		[ProducesResponseType(403)]
+		[ProducesResponseType(409)]
 		public async Task<ActionResult<PilotDto>> PostPilot(PilotCreateDto pilotCreateDto)
 		{
+			if (await _pilotService.PilotExistsByUPRN(pilotCreateDto.UPRN))
+			{
+				_logger.LogInformation("Pilot with UPRN {UPRN} already exists.", pilotCreateDto.UPRN);
+				return Conflict("Pilot with UPRN already exists.");
+			}
 			var pilot = _mapper.Map<PilotEntity>(pilotCreateDto);
 			await _pilotService.PostPilot(pilot);
 			var pilotDto = _mapper.Map<PilotDto>(pilot);
@@ -211,6 +220,7 @@ namespace AirportAutomation.Api.Controllers
 		/// <response code="404">If no pilot is found.</response>
 		/// <response code="401">If the user is not authenticated.</response>
 		/// <response code="403">If the authenticated user does not have permission to access the requested resource.</response>
+		/// <response code="409">Conflict. Pilot with UPRN already exists.</response>
 		[HttpPut("{id}")]
 		[Authorize(Policy = "RequireAdminRole")]
 		[ProducesResponseType(204)]
@@ -218,6 +228,7 @@ namespace AirportAutomation.Api.Controllers
 		[ProducesResponseType(404)]
 		[ProducesResponseType(401)]
 		[ProducesResponseType(403)]
+		[ProducesResponseType(409)]
 		public async Task<IActionResult> PutPilot(int id, PilotDto pilotDto)
 		{
 			if (!_inputValidationService.IsNonNegativeInt(id))
@@ -234,6 +245,11 @@ namespace AirportAutomation.Api.Controllers
 			{
 				_logger.LogInformation("Pilot with id {Id} not found.", id);
 				return NotFound();
+			}
+			if (await _pilotService.PilotExistsByUPRN(pilotDto.UPRN))
+			{
+				_logger.LogInformation("Pilot with UPRN {UPRN} already exists.", pilotDto.UPRN);
+				return Conflict("Pilot with UPRN already exists.");
 			}
 			var pilot = _mapper.Map<PilotEntity>(pilotDto);
 			await _pilotService.PutPilot(pilot);

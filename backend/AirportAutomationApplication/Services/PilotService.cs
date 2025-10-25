@@ -2,6 +2,7 @@
 using AirportAutomation.Core.Filters;
 using AirportAutomation.Core.Interfaces.IRepositories;
 using AirportAutomation.Core.Interfaces.IServices;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using Microsoft.AspNetCore.JsonPatch;
 
 namespace AirportAutomation.Application.Services
@@ -57,6 +58,11 @@ namespace AirportAutomation.Application.Services
 		public async Task<bool> PilotExists(int id)
 		{
 			return await _pilotRepository.PilotExists(id);
+		}
+
+		public async Task<bool> PilotExistsByUPRN(string uprn)
+		{
+			return await _pilotRepository.PilotExistsByUPRN(uprn);
 		}
 
 		public async Task<int> PilotsCount(CancellationToken cancellationToken, string firstName = null, string lastName = null)

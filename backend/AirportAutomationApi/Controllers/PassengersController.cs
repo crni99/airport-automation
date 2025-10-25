@@ -197,7 +197,7 @@ namespace AirportAutomation.Api.Controllers
 		[ProducesResponseType(409)]
 		public async Task<ActionResult<PassengerDto>> PostPassenger(PassengerCreateDto passengerCreateDto)
 		{
-			if (await _passengerService.ExistsByUPRN(passengerCreateDto.UPRN) || await _passengerService.ExistsByPassport(passengerCreateDto.Passport))
+			if (await _passengerService.PassengerExistsByUPRN(passengerCreateDto.UPRN) || await _passengerService.PassengerExistsByPassport(passengerCreateDto.Passport))
 			{
 				_logger.LogInformation("Passenger with UPRN {UPRN} or Passport {Passport} already exists.", passengerCreateDto.UPRN, passengerCreateDto.Passport);
 				return Conflict("Passenger with UPRN or Passport already exists.");
@@ -219,6 +219,7 @@ namespace AirportAutomation.Api.Controllers
 		/// <response code="404">If no passenger is found.</response>
 		/// <response code="401">If the user is not authenticated.</response>
 		/// <response code="403">If the authenticated user does not have permission to access the requested resource.</response>
+		/// <response code="409">Conflict. Passenger with UPRN or Passport already exists.</response>
 		[HttpPut("{id}")]
 		[Authorize(Policy = "RequireAdminRole")]
 		[ProducesResponseType(204)]
@@ -226,6 +227,7 @@ namespace AirportAutomation.Api.Controllers
 		[ProducesResponseType(404)]
 		[ProducesResponseType(401)]
 		[ProducesResponseType(403)]
+		[ProducesResponseType(409)]
 		public async Task<IActionResult> PutPassenger(int id, PassengerDto passengerDto)
 		{
 			if (!_inputValidationService.IsNonNegativeInt(id))
@@ -242,6 +244,11 @@ namespace AirportAutomation.Api.Controllers
 			{
 				_logger.LogInformation("Passenger with id {Id} not found.", id);
 				return NotFound();
+			}
+			if (await _passengerService.PassengerExistsByUPRN(passengerDto.UPRN) || await _passengerService.PassengerExistsByPassport(passengerDto.Passport))
+			{
+				_logger.LogInformation("Passenger with UPRN {UPRN} or Passport {Passport} already exists.", passengerDto.UPRN, passengerDto.Passport);
+				return Conflict("Passenger with UPRN or Passport already exists.");
 			}
 			var passenger = _mapper.Map<PassengerEntity>(passengerDto);
 			await _passengerService.PutPassenger(passenger);
