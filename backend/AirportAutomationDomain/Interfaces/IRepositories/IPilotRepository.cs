@@ -15,7 +15,7 @@ namespace AirportAutomation.Core.Interfaces.IRepositories
 		Task<PilotEntity> PatchPilot(int id, JsonPatchDocument passengerDocument);
 		Task<bool> DeletePilot(int id);
 		Task<bool> PilotExists(int id);
-		Task<bool> PilotExistsByUPRN(string uprn);
+		Task<bool> PilotExistsByUPRN(string uprn, int? excludeId);
 		Task<int> PilotsCount(CancellationToken cancellationToken, string firstName = null, string lastName = null);
 		Task<int> PilotsCountFilter(CancellationToken cancellationToken, PilotSearchFilter filter);
 	}

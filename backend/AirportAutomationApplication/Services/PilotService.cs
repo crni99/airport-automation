@@ -60,9 +60,9 @@ namespace AirportAutomation.Application.Services
 			return await _pilotRepository.PilotExists(id);
 		}
 
-		public async Task<bool> PilotExistsByUPRN(string uprn)
+		public async Task<bool> PilotExistsByUPRN(string uprn, int? excludeId)
 		{
-			return await _pilotRepository.PilotExistsByUPRN(uprn);
+			return await _pilotRepository.PilotExistsByUPRN(uprn, excludeId);
 		}
 
 		public async Task<int> PilotsCount(CancellationToken cancellationToken, string firstName = null, string lastName = null)

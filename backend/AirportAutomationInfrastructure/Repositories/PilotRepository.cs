@@ -111,11 +111,14 @@ namespace AirportAutomation.Infrastructure.Repositories
 			return (_context.Pilot?.Any(e => e.Id == id)).GetValueOrDefault();
 		}
 
-		public async Task<bool> PilotExistsByUPRN(string uprn)
+		public async Task<bool> PilotExistsByUPRN(string uprn, int? excludeId)
 		{
-			return await _context.Pilot
-								 .AsNoTracking()
-								 .AnyAsync(p => p.UPRN == uprn);
+			var query = _context.Pilot.Where(p => p.UPRN == uprn);
+			if (excludeId.HasValue)
+			{
+				query = query.Where(p => p.Id != excludeId.Value);
+			}
+			return await query.AsNoTracking().AnyAsync();
 		}
 
 		public async Task<int> PilotsCount(CancellationToken cancellationToken, string firstName = null, string lastName = null)

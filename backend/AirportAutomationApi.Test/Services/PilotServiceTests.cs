@@ -103,11 +103,12 @@ namespace AirportAutomationApi.Test.Services
 		public async Task PilotExistsByUPRN_Should_Call_Repository_PilotExistsByUPRN()
 		{
 			const string uprn = "TESTUPRN123";
-			_repositoryMock.Setup(repo => repo.PilotExistsByUPRN(uprn)).ReturnsAsync(true);
+			const int excludedId = 1;
+			_repositoryMock.Setup(repo => repo.PilotExistsByUPRN(uprn, excludedId)).ReturnsAsync(true);
 
-			var result = await _service.PilotExistsByUPRN(uprn);
+			var result = await _service.PilotExistsByUPRN(uprn, excludedId);
 
-			_repositoryMock.Verify(repo => repo.PilotExistsByUPRN(uprn), Times.Once);
+			_repositoryMock.Verify(repo => repo.PilotExistsByUPRN(uprn, excludedId), Times.Once);
 			Assert.True(result);
 		}
 

@@ -574,7 +574,7 @@ namespace AirportAutomationApi.Test.Controllers
 			// Arrange
 			var pilotCreateDto = new PilotCreateDto { UPRN = "12345" };
 
-			_pilotServiceMock.Setup(service => service.PilotExistsByUPRN(pilotCreateDto.UPRN))
+			_pilotServiceMock.Setup(service => service.PilotExistsByUPRN(pilotCreateDto.UPRN, null))
 							   .ReturnsAsync(true);
 			_pilotServiceMock.Setup(service => service.PostPilot(It.IsAny<PilotEntity>()))
 							   .Verifiable();
@@ -675,7 +675,7 @@ namespace AirportAutomationApi.Test.Controllers
 
 			_inputValidationServiceMock.Setup(service => service.IsNonNegativeInt(id)).Returns(true);
 			_pilotServiceMock.Setup(service => service.PilotExists(id)).ReturnsAsync(true);
-			_pilotServiceMock.Setup(service => service.PilotExistsByUPRN(pilotDto.UPRN)).ReturnsAsync(true);
+			_pilotServiceMock.Setup(service => service.PilotExistsByUPRN(pilotDto.UPRN, id)).ReturnsAsync(true);
 
 			// Act
 			var result = await _controller.PutPilot(id, pilotDto);

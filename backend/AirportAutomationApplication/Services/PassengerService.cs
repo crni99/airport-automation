@@ -35,14 +35,14 @@ namespace AirportAutomation.Application.Services
 			return await _passengerRepository.SearchPassengers(cancellationToken, page, pageSize, filter);
 		}
 
-		public async Task<bool> PassengerExistsByUPRN(string uprn)
+		public async Task<bool> PassengerExistsByUPRN(string uprn, int? excludeId)
 		{
-			return await _passengerRepository.PassengerExistsByUPRN(uprn);
+			return await _passengerRepository.PassengerExistsByUPRN(uprn, excludeId);
 		}
 
-		public async Task<bool> PassengerExistsByPassport(string passport)
+		public async Task<bool> PassengerExistsByPassport(string passport, int? excludeId)
 		{
-			return await _passengerRepository.PassengerExistsByPassport(passport);
+			return await _passengerRepository.PassengerExistsByPassport(passport, excludeId);
 		}
 
 		public async Task<PassengerEntity> PostPassenger(PassengerEntity passenger)

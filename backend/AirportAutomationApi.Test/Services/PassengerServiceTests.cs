@@ -93,11 +93,12 @@ namespace AirportAutomationApi.Test.Services
 		public async Task PassengerExistsByUPRN_Should_Call_Repository_PassengerExistsByUPRN()
 		{
 			const string uprn = "TESTUPRN123";
-			_repositoryMock.Setup(repo => repo.PassengerExistsByUPRN(uprn)).ReturnsAsync(true);
+			const int excludedId = 1;
+			_repositoryMock.Setup(repo => repo.PassengerExistsByUPRN(uprn, excludedId)).ReturnsAsync(true);
 
-			var result = await _service.PassengerExistsByUPRN(uprn);
+			var result = await _service.PassengerExistsByUPRN(uprn, excludedId);
 
-			_repositoryMock.Verify(repo => repo.PassengerExistsByUPRN(uprn), Times.Once);
+			_repositoryMock.Verify(repo => repo.PassengerExistsByUPRN(uprn, excludedId), Times.Once);
 			Assert.True(result);
 		}
 
@@ -105,11 +106,12 @@ namespace AirportAutomationApi.Test.Services
 		public async Task PassengerExistsByPassport_Should_Call_Repository_PassengerExistsByPassport()
 		{
 			const string passport = "TESTPASSPORTABC";
-			_repositoryMock.Setup(repo => repo.PassengerExistsByPassport(passport)).ReturnsAsync(false);
+			const int excludedId = 1;
+			_repositoryMock.Setup(repo => repo.PassengerExistsByPassport(passport, excludedId)).ReturnsAsync(false);
 
-			var result = await _service.PassengerExistsByPassport(passport);
+			var result = await _service.PassengerExistsByPassport(passport, excludedId);
 
-			_repositoryMock.Verify(repo => repo.PassengerExistsByPassport(passport), Times.Once);
+			_repositoryMock.Verify(repo => repo.PassengerExistsByPassport(passport, excludedId), Times.Once);
 			Assert.False(result);
 		}
 

@@ -15,8 +15,8 @@ namespace AirportAutomation.Core.Interfaces.IRepositories
 		Task<PassengerEntity> PatchPassenger(int id, JsonPatchDocument passengerDocument);
 		Task<bool> DeletePassenger(int id);
 		Task<bool> PassengerExists(int id);
-		Task<bool> PassengerExistsByUPRN(string uprn);
-		Task<bool> PassengerExistsByPassport(string passport);
+		Task<bool> PassengerExistsByUPRN(string uprn, int? excludeId);
+		Task<bool> PassengerExistsByPassport(string passport, int? excludeId);
 		Task<int> PassengersCount(CancellationToken cancellationToken);
 		Task<int> PassengersCountFilter(CancellationToken cancellationToken, PassengerSearchFilter filter);
 	}

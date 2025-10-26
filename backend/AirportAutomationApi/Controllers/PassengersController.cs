@@ -197,7 +197,7 @@ namespace AirportAutomation.Api.Controllers
 		[ProducesResponseType(409)]
 		public async Task<ActionResult<PassengerDto>> PostPassenger(PassengerCreateDto passengerCreateDto)
 		{
-			if (await _passengerService.PassengerExistsByUPRN(passengerCreateDto.UPRN) || await _passengerService.PassengerExistsByPassport(passengerCreateDto.Passport))
+			if (await _passengerService.PassengerExistsByUPRN(passengerCreateDto.UPRN, null) || await _passengerService.PassengerExistsByPassport(passengerCreateDto.Passport, null))
 			{
 				_logger.LogInformation("Passenger with UPRN {UPRN} or Passport {Passport} already exists.", passengerCreateDto.UPRN, passengerCreateDto.Passport);
 				return Conflict("Passenger with UPRN or Passport already exists.");
@@ -245,7 +245,7 @@ namespace AirportAutomation.Api.Controllers
 				_logger.LogInformation("Passenger with id {Id} not found.", id);
 				return NotFound();
 			}
-			if (await _passengerService.PassengerExistsByUPRN(passengerDto.UPRN) || await _passengerService.PassengerExistsByPassport(passengerDto.Passport))
+			if (await _passengerService.PassengerExistsByUPRN(passengerDto.UPRN, id) || await _passengerService.PassengerExistsByPassport(passengerDto.Passport, id))
 			{
 				_logger.LogInformation("Passenger with UPRN {UPRN} or Passport {Passport} already exists.", passengerDto.UPRN, passengerDto.Passport);
 				return Conflict("Passenger with UPRN or Passport already exists.");

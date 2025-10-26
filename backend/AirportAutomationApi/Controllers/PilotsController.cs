@@ -198,7 +198,7 @@ namespace AirportAutomation.Api.Controllers
 		[ProducesResponseType(409)]
 		public async Task<ActionResult<PilotDto>> PostPilot(PilotCreateDto pilotCreateDto)
 		{
-			if (await _pilotService.PilotExistsByUPRN(pilotCreateDto.UPRN))
+			if (await _pilotService.PilotExistsByUPRN(pilotCreateDto.UPRN, null))
 			{
 				_logger.LogInformation("Pilot with UPRN {UPRN} already exists.", pilotCreateDto.UPRN);
 				return Conflict("Pilot with UPRN already exists.");
@@ -246,7 +246,7 @@ namespace AirportAutomation.Api.Controllers
 				_logger.LogInformation("Pilot with id {Id} not found.", id);
 				return NotFound();
 			}
-			if (await _pilotService.PilotExistsByUPRN(pilotDto.UPRN))
+			if (await _pilotService.PilotExistsByUPRN(pilotDto.UPRN, id))
 			{
 				_logger.LogInformation("Pilot with UPRN {UPRN} already exists.", pilotDto.UPRN);
 				return Conflict("Pilot with UPRN already exists.");

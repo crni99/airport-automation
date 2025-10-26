@@ -122,18 +122,24 @@ namespace AirportAutomation.Infrastructure.Repositories
 			return (_context.Passenger?.Any(e => e.Id == id)).GetValueOrDefault();
 		}
 
-		public async Task<bool> PassengerExistsByUPRN(string uprn)
+		public async Task<bool> PassengerExistsByUPRN(string uprn, int? excludeId)
 		{
-			return await _context.Passenger
-								 .AsNoTracking()
-								 .AnyAsync(p => p.UPRN == uprn);
+			var query = _context.Passenger.Where(p => p.UPRN == uprn);
+			if (excludeId.HasValue)
+			{
+				query = query.Where(p => p.Id != excludeId.Value);
+			}
+			return await query.AsNoTracking().AnyAsync();
 		}
 
-		public async Task<bool> PassengerExistsByPassport(string passport)
+		public async Task<bool> PassengerExistsByPassport(string passport, int? excludeId)
 		{
-			return await _context.Passenger
-								 .AsNoTracking()
-								 .AnyAsync(p => p.Passport == passport);
+			var query = _context.Passenger.Where(p => p.Passport == passport);
+			if (excludeId.HasValue)
+			{
+				query = query.Where(p => p.Id != excludeId.Value);
+			}
+			return await query.AsNoTracking().AnyAsync();
 		}
 
 		public async Task<int> PassengersCount(CancellationToken cancellationToken)

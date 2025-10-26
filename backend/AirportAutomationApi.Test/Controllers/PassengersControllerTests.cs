@@ -593,9 +593,9 @@ namespace AirportAutomationApi.Test.Controllers
 			// Arrange
 			var passengerCreateDto = new PassengerCreateDto { UPRN = "12345", Passport = "ABC" };
 
-			_passengerServiceMock.Setup(service => service.PassengerExistsByUPRN(passengerCreateDto.UPRN))
+			_passengerServiceMock.Setup(service => service.PassengerExistsByUPRN(passengerCreateDto.UPRN, null))
 							   .ReturnsAsync(true);
-			_passengerServiceMock.Setup(service => service.PassengerExistsByPassport(passengerCreateDto.Passport))
+			_passengerServiceMock.Setup(service => service.PassengerExistsByPassport(passengerCreateDto.Passport, null))
 							   .ReturnsAsync(false);
 			_passengerServiceMock.Setup(service => service.PostPassenger(It.IsAny<PassengerEntity>()))
 							   .Verifiable();
@@ -615,9 +615,9 @@ namespace AirportAutomationApi.Test.Controllers
 			// Arrange
 			var passengerCreateDto = new PassengerCreateDto { UPRN = "12345", Passport = "ABC" };
 
-			_passengerServiceMock.Setup(service => service.PassengerExistsByUPRN(passengerCreateDto.UPRN))
+			_passengerServiceMock.Setup(service => service.PassengerExistsByUPRN(passengerCreateDto.UPRN, null))
 							   .ReturnsAsync(false);
-			_passengerServiceMock.Setup(service => service.PassengerExistsByPassport(passengerCreateDto.Passport))
+			_passengerServiceMock.Setup(service => service.PassengerExistsByPassport(passengerCreateDto.Passport, null))
 							   .ReturnsAsync(true);
 			_passengerServiceMock.Setup(service => service.PostPassenger(It.IsAny<PassengerEntity>()))
 							   .Verifiable();
@@ -718,8 +718,8 @@ namespace AirportAutomationApi.Test.Controllers
 
 			_inputValidationServiceMock.Setup(service => service.IsNonNegativeInt(id)).Returns(true);
 			_passengerServiceMock.Setup(service => service.PassengerExists(id)).ReturnsAsync(true);
-			_passengerServiceMock.Setup(service => service.PassengerExistsByUPRN(passengerDto.UPRN)).ReturnsAsync(true);
-			_passengerServiceMock.Setup(service => service.PassengerExistsByPassport(passengerDto.Passport)).ReturnsAsync(false);
+			_passengerServiceMock.Setup(service => service.PassengerExistsByUPRN(passengerDto.UPRN, id)).ReturnsAsync(true);
+			_passengerServiceMock.Setup(service => service.PassengerExistsByPassport(passengerDto.Passport, id)).ReturnsAsync(false);
 
 			// Act
 			var result = await _controller.PutPassenger(id, passengerDto);
