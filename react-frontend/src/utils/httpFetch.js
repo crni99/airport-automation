@@ -118,7 +118,6 @@ export async function fetchData(dataType, dataId, apiUrl, page = 1, rowsPerPage,
         }
 
         const url = buildURL(apiUrl, dataType, dataId, page, rowsPerPage);
-        console.log(url);
 
         const response = await fetch(url, {
             headers: buildHeaders(),

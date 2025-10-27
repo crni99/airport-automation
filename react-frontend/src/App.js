@@ -18,26 +18,34 @@ import Navbar from './components/common/header/Navbar';
 import Footer from './components/common/Footer';
 import { getAuthToken } from "./utils/auth";
 import { ENTITY_PATHS } from './utils/const';
+import { useSidebar } from './store/SidebarContext';
 
 function App() {
+
   const isLoggedIn = getAuthToken() !== null;
+  const { sidebarWidth } = useSidebar();
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Box sx={{ display: 'flex', flexGrow: 1 }}>
         {isLoggedIn && (
           <Box
             sx={{
-              width: 240,
+              width: sidebarWidth,
               flexShrink: 0,
-              overflowY: 'auto'
+              overflowY: 'auto',
+              transition: (theme) =>
+                theme.transitions.create('width', {
+                  easing: theme.transitions.easing.sharp,
+                  duration: theme.transitions.duration.enteringScreen,
+                }),
             }}
           >
             <Navbar />
           </Box>
         )}
-        <Box component="main" sx={{ flexGrow: 1, overflowY: 'auto' }}>
-          <Container>
+        <Box component="main" sx={{ flexGrow: 1, overflowY: 'auto', pl: 3, pr: 3 }}>
+          <Container maxWidth={false}>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path={ENTITY_PATHS.HEALTH_CHECKS} element={<HealthCheck />} />
