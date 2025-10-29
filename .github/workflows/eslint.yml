@@ -14,7 +14,7 @@ on:
 
 jobs:
   eslint:
-    name: Run eslint scanning
+    name: Run ESLint scanning
     runs-on: ubuntu-latest
 
     permissions:
@@ -26,11 +26,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install dependencies and ESLint
+      - name: Install dependencies
         run: |
           cd react-frontend
-          npm install
-          npm install eslint@8.10.0
+          npm install 
           npm install @microsoft/eslint-formatter-sarif@3.1.0
 
       - name: Run ESLint
@@ -39,7 +38,6 @@ jobs:
         run: |
           npx eslint . \
             --config eslint.config.js \
-            --ext .js,.jsx,.ts,.tsx \
             --format @microsoft/eslint-formatter-sarif \
             --output-file eslint-results.sarif
         working-directory: ./react-frontend

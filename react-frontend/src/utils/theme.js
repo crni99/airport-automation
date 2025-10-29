@@ -381,7 +381,7 @@ let darkTheme = createTheme(baseTheme, {
         },
         MuiTextField: {
             styleOverrides: {
-                root: ({ ownerState }) => ({
+                root: () => ({
                     '& input[type="time"]': {
                         colorScheme: 'light',
                         '&::-webkit-calendar-picker-indicator': {
@@ -399,7 +399,7 @@ let darkTheme = createTheme(baseTheme, {
         },
         MuiTablePagination: {
             styleOverrides: {
-                root: ({ ownerState, theme }) => ({
+                root: () => ({
                     '& .MuiIconButton-root': {
                         color: whiteColor,
                     },

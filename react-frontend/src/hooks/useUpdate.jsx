@@ -20,8 +20,6 @@ export const useUpdate = (dataType, dataPath, dataId, initialDataShape, required
 
     const { data: fetchedData, isLoading: isFetching, isError: isFetchError, error: fetchError } = useFetch(dataType, dataId, null, null, triggerFetch);
 
-    const transformDataForFormCallback = useCallback(transformDataForForm, [transformDataForForm]);
-
     useEffect(() => {
         if (fetchedData) {
             setTriggerFetch(false);
@@ -30,7 +28,7 @@ export const useUpdate = (dataType, dataPath, dataId, initialDataShape, required
 
     useEffect(() => {
         if (fetchedData) {
-            const transformed = transformDataForFormCallback(fetchedData);
+            const transformed = transformDataForForm(fetchedData);
             setFormData((prevState) => ({
                 ...prevState,
                 ...transformed,
@@ -39,7 +37,7 @@ export const useUpdate = (dataType, dataPath, dataId, initialDataShape, required
                 validationError: null
             }));
         }
-    }, [fetchedData, transformDataForFormCallback]);
+    }, [fetchedData, transformDataForForm]);
 
     const handleChange = useCallback((event) => {
         const { name, value } = event.target;

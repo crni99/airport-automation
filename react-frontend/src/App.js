@@ -1,24 +1,24 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
-import AirlineRoutes from './routes/airlineRoutes';
-import DestinationsRoutes from './routes/destinationRoutes';
-import TravelClassesRoutes from './routes/travelClassesRoutes';
-import PassengersRoutes from './routes/passengersRoutes';
-import PilotsRoutes from './routes/pilotsRoutes';
-import FlightsRoutes from './routes/flightRoutes';
-import PlaneTicketsRoutes from './routes/planeTicketRoutes';
-import Home from './pages/Home';
-import HealthCheck from './pages/HealthCheck';
-import NotFound from './pages/NotFound';
-import Unauthorized from './pages/Unauthorized';
-import ApiUsersRoutes from './routes/apiUserRoutes';
-import ProtectedRouteV3 from './routes/ProtectedRouteV3';
+import AirlineRoutes from './routes/airlineRoutes.jsx';
+import DestinationsRoutes from './routes/destinationRoutes.jsx';
+import TravelClassesRoutes from './routes/travelClassesRoutes.jsx';
+import PassengersRoutes from './routes/passengersRoutes.jsx';
+import PilotsRoutes from './routes/pilotsRoutes.jsx';
+import FlightsRoutes from './routes/flightRoutes.jsx';
+import PlaneTicketsRoutes from './routes/planeTicketRoutes.jsx';
+import Home from './pages/Home.jsx';
+import HealthCheck from './pages/HealthCheck.jsx';
+import NotFound from './pages/NotFound.jsx';
+import Unauthorized from './pages/Unauthorized.jsx';
+import ApiUsersRoutes from './routes/apiUserRoutes.jsx';
+import ProtectedRouteV3 from './routes/ProtectedRouteV3.jsx';
 import { Container, Box } from '@mui/material';
-import Navbar from './components/common/header/Navbar';
-import Footer from './components/common/Footer';
-import { getAuthToken } from "./utils/auth";
-import { ENTITY_PATHS } from './utils/const';
-import { useSidebar } from './store/SidebarContext';
+import Navbar from './components/common/header/Navbar.jsx';
+import Footer from './components/common/Footer.jsx';
+import { getAuthToken } from "./utils/auth.js";
+import { ENTITY_PATHS } from './utils/const.js';
+import { useSidebar } from './store/SidebarContext.jsx';
 
 function App() {
 

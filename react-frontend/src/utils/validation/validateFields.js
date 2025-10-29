@@ -1,4 +1,4 @@
-import { validateField } from "./validation";
+import { validateField } from "./validation.js";
 
 export const validateFields = (type, formData, fields) => {
     const errors = {}; 
