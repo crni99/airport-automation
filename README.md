@@ -176,7 +176,7 @@ ___
 - Manage API versions to maintain backward compatibility.
 - Document API endpoints for easy use by developers.
 - Customize Swagger UI with a toggleable dark/light mode to enhance usability and align with user preferences.
-- 1. Toggleable dark/light mode to enhance usability and align with user preferences.
+  1. Toggleable dark/light mode to enhance usability and align with user preferences.
   2. A custom favicon and custom logo to match the project’s branding.
   3. Injected custom JavaScript and CSS to modify Swagger UI behavior and appearance.
 - Implement custom controller ordering in Swagger UI using the [SwaggerControllerOrder] attribute and a helper class (SwaggerControllerOrder<T>), ensuring a logical and predictable display order.
@@ -210,6 +210,10 @@ ___
 
 ### Consuming APIs with HttpClientFactory
 - Implement efficient and reusable API calls using **`HttpClientFactory`** to improve performance, manage resources effectively, and avoid socket exhaustion.
+- Implement a robust resilience strategy using the **`Polly`** library, configuring policies for:
+  1. **`Transient Fault Handling`**: Automatic retries with exponential backoff to recover from temporary network or server errors.
+  2. **`Circuit Breaking`**: Automatically halting requests to services experiencing prolonged failures to prevent cascading errors and allow the service time to recover.
+  3. **`Request Timeout`**: Enforcing a maximum duration for API calls to prevent application hanging on unresponsive services.
 - Centralize **`HttpClient`** configuration to ensure consistent request headers, including JSON content type, user agent, and authorization tokens.
 
 ### Generic and Typed API Interaction
