@@ -2,6 +2,7 @@
 using AirportAutomation.Infrastructure.Middlewares;
 using AirportAutomation.Web.Binders;
 using Microsoft.IdentityModel.Logging;
+using Polly;
 using Serilog;
 
 IdentityModelEventSource.ShowPII = true;
@@ -22,7 +23,21 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddControllersWithViews();
-builder.Services.AddHttpClient();
+
+builder.Services.AddHttpClient("AirportAutomationApi")
+	.AddPolicyHandler(Policy.TimeoutAsync<HttpResponseMessage>(TimeSpan.FromSeconds(10)))
+	.AddTransientHttpErrorPolicy(policyBuilder =>
+		policyBuilder.WaitAndRetryAsync(
+			3,
+			retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))
+		)
+	)
+	.AddTransientHttpErrorPolicy(policyBuilder =>
+		policyBuilder.CircuitBreakerAsync(
+			5,
+			TimeSpan.FromSeconds(30)
+		)
+	);
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {

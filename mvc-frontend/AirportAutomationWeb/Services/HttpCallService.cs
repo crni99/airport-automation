@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using System.Data;
 using System.Net;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Web;
 
 namespace AirportAutomation.Web.Services
@@ -62,11 +63,21 @@ namespace AirportAutomation.Web.Services
 			using var httpClient = _httpClientFactory.CreateClient("AirportAutomationApi");
 			ConfigureHttpClient(httpClient);
 
-			var response = await httpClient.PostAsJsonAsync(requestUri, user).ConfigureAwait(false);
+			var request = new HttpRequestMessage(HttpMethod.Post, requestUri)
+			{
+				Content = JsonContent.Create(user)
+			};
+
+			var response = await httpClient.SendAsync(request).ConfigureAwait(false);
 
 			if (response.IsSuccessStatusCode)
 			{
+				// Note: The original code used bearerToken += ... which suggests reading a string token.
+				// If the API returns a raw string token (not wrapped in JSON), ReadFromJsonAsync<string> is fine.
+				// If it returns a string wrapped in quotes, it still often works, but should be confirmed.
+				// Assuming the API returns a raw string token:
 				bearerToken += await response.Content.ReadFromJsonAsync<string>().ConfigureAwait(false);
+
 				if (!SetApiUserRole(bearerToken))
 				{
 					return false;
