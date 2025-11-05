@@ -21,6 +21,7 @@ import { ENTITY_PATHS } from './utils/const.js';
 import { useSidebar } from './store/SidebarContext.jsx';
 
 function App() {
+  
   const isLoggedIn = getAuthToken() !== null;
   const { sidebarWidth } = useSidebar();
 
