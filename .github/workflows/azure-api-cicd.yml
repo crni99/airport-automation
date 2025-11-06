@@ -69,6 +69,7 @@ jobs:
           app-name: 'airport-automation'
           slot-name: 'Production'
           package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F464F7CADF8B4F09B917F1AB8E78ACE0 }}
+          publish-profile: ${{ secrets.AZURE_API_PUBLISH_PROFILE }}
+
 
 
