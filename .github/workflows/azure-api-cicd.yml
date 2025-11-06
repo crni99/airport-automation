@@ -1,0 +1,71 @@
+name: Build, Test, and Deploy .NET API to Azure Web App
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'backend/**'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'backend/**'
+  workflow_dispatch:
+
+jobs:
+  build_and_test:
+    runs-on: windows-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '6.0.x' 
+
+      - name: Restore dependencies
+        working-directory: ./backend
+        run: dotnet restore AirportAutomation.sln 
+
+      - name: Build
+        working-directory: ./backend
+        run: dotnet build AirportAutomation.sln --configuration Release --no-restore
+
+      - name: Test
+        working-directory: ./backend
+        run: dotnet test AirportAutomation.sln --no-build --verbosity normal
+
+      - name: dotnet publish (Targeting Web API)
+        run: dotnet publish ./backend/AirportAutomationApi/AirportAutomationApi.csproj -c Release -o "${{env.DOTNET_ROOT}}/myapp" 
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: .net-app
+          path: ${{env.DOTNET_ROOT}}/myapp
+
+  deploy:
+    runs-on: windows-latest
+    needs: build_and_test
+    permissions:
+      id-token: write
+      contents: read 
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: .net-app
+          
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'airport-automation'
+          slot-name: 'Production'
+          package: .
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F464F7CADF8B4F09B917F1AB8E78ACE0 }}
