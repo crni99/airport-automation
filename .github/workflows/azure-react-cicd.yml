@@ -35,7 +35,7 @@ jobs:
           action: "upload"
           app_location: "./react-frontend"
           api_location: ""
-          output_location: "dist" 
+          output_location: "react-frontend/build"
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
@@ -48,5 +48,6 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_REACT_TOKEN }}
           action: "close"
+
 
 
