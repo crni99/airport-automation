@@ -54,7 +54,7 @@ jobs:
       id-token: write
       contents: read
       
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch'
     
     steps:
       - name: Download artifact from build job
@@ -70,4 +70,5 @@ jobs:
           slot-name: 'Production'
           package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F464F7CADF8B4F09B917F1AB8E78ACE0 }}
+
 
