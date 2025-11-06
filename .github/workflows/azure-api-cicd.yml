@@ -1,8 +1,5 @@
 name: Build, Test, and Deploy .NET API to Azure Web App
 
-permissions:
-  contents: read
-
 on:
   push:
     branches: [ "main" ]
@@ -14,14 +11,17 @@ on:
       - 'backend/**'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
-  build_and_test:
+  build-and-test:
     runs-on: ubuntu-latest
     
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup .NET
+      - name: Setup .NET 6
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '6.0.x' 
@@ -36,10 +36,10 @@ jobs:
 
       - name: Test
         working-directory: ./backend
-        run: dotnet test AirportAutomation.sln --no-build --verbosity normal
+        run: dotnet test AirportAutomation.sln --configuration Release --no-build --verbosity normal
 
       - name: dotnet publish (Targeting Web API)
-        run: dotnet publish ./backend/AirportAutomationApi/AirportAutomationApi.csproj -c Release -o "${{env.DOTNET_ROOT}}/myapp"
+        run: dotnet publish ./backend/AirportAutomationApi/AirportAutomationApi.csproj -c Release -o "${{env.DOTNET_ROOT}}/myapp" 
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -48,11 +48,12 @@ jobs:
           path: ${{env.DOTNET_ROOT}}/myapp
 
   deploy:
-    runs-on: windows-latest
-    needs: build_and_test
+    runs-on: ubuntu-latest
+    needs: build-and-test
     permissions:
       id-token: write
-      contents: read 
+      contents: read
+      
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     
     steps:
@@ -69,4 +70,3 @@ jobs:
           slot-name: 'Production'
           package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F464F7CADF8B4F09B917F1AB8E78ACE0 }}
-
