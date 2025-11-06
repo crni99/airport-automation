@@ -16,7 +16,7 @@ on:
 
 jobs:
   build_and_test:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     
     steps:
       - uses: actions/checkout@v4
@@ -39,7 +39,7 @@ jobs:
         run: dotnet test AirportAutomation.sln --no-build --verbosity normal
 
       - name: dotnet publish (Targeting Web API)
-        run: dotnet publish ./backend/AirportAutomationApi/AirportAutomationApi.csproj -c Release -o "${{env.DOTNET_ROOT}}/myapp" 
+        run: dotnet publish ./backend/AirportAutomationApi/AirportAutomationApi.csproj -c Release -o "${{env.DOTNET_ROOT}}/myapp"
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -69,3 +69,4 @@ jobs:
           slot-name: 'Production'
           package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F464F7CADF8B4F09B917F1AB8E78ACE0 }}
+
