@@ -4,10 +4,14 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'react-frontend/**'
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
       - main
+    paths:
+      - 'react-frontend/**'
   workflow_dispatch: 
 
 jobs:
@@ -24,7 +28,6 @@ jobs:
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_REACT_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
           app_location: "./react-frontend"
@@ -42,3 +45,4 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_REACT_TOKEN }}
           action: "close"
+
