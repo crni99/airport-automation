@@ -292,7 +292,8 @@ ___
 
 <a name="-deployment"></a>
 ## 🚀 [Deployment](https://airport-automation.vercel.app/) 🡥
-- Deploy the application to both **[Vercel](https://airport-automation.vercel.app/)** and **[Netlify](https://airport-automation.netlify.app/)** to ensure high availability and redundancy.
+- The API is deployed to **[Azure Web App](https://airport-automation-bucbb0eff0dzcuaz.switzerlandnorth-01.azurewebsites.net/swagger/index.html)** (service name `airport-automation`) via the automated GitHub Actions CI/CD pipeline.
+- The React Frontend is deployed to both **[Vercel](https://airport-automation.vercel.app/)** and **[Netlify](https://airport-automation.netlify.app/)** to ensure high availability and redundancy.
 - Integrate basic logging and monitoring solutions to track application health and capture errors in production environments.
 ___
 <br />
