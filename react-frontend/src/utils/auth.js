@@ -58,7 +58,7 @@ export async function authenticateUser(userName, password, apiUrl) {
         expiration.setHours(expiration.getHours() + 1);
         localStorage.setItem('expiration', expiration.toISOString());
 
-        window.location.href = '/health-check';
+        window.location.href = '/';
     } catch (error) {
         const networkErrorMessage = handleNetworkError(error);
         if (networkErrorMessage) {
