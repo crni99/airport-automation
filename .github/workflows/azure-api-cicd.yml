@@ -61,6 +61,14 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: .net-app
+
+      - name: Configure Azure Connection String
+        uses: azure/app-service-settings@v1
+        with:
+          app-name: 'airport-automation'
+          slot-name: 'Production'
+          connection-strings: '[{"name": "SqlServerConnection", "value": "${{ secrets.AZURE_DB_URL }}", "type": "SQLAzure"}]'
+          publish-profile: ${{ secrets.AZURE_API_PUBLISH_PROFILE }}
           
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -70,6 +78,4 @@ jobs:
           slot-name: 'Production'
           package: .
           publish-profile: ${{ secrets.AZURE_API_PUBLISH_PROFILE }}
-
-
-
+          
