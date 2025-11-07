@@ -69,12 +69,14 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+      - name: Set Default Resource Group Context
+        run: az configure --defaults group='myFreeDBResourceGroup'
+
       - name: Configure Azure Connection String
         uses: azure/appservice-settings@v1
         with:
           app-name: 'airport-automation'
           slot-name: 'Production'
-          resource-group-name: 'myFreeDBResourceGroup'
           connection-strings-json: '[{"name": "SqlServerConnection", "value": "${{ secrets.AZURE_DB_URL }}", "type": "SQLAzure"}]'
           
       - name: Deploy to Azure Web App
@@ -84,8 +86,10 @@ jobs:
           app-name: 'airport-automation'
           slot-name: 'Production'
           package: .
+          resource-group-name: 'myFreeDBResourceGroup'
           publish-profile: ${{ secrets.AZURE_API_PUBLISH_PROFILE }}
           
+
 
 
 
