@@ -63,7 +63,7 @@ jobs:
           name: .net-app
 
       - name: Configure Azure Connection String
-        uses: azure/app-service-settings@v1
+        uses: azure/appservice-settings@v1
         with:
           app-name: 'airport-automation'
           slot-name: 'Production'
@@ -79,3 +79,4 @@ jobs:
           package: .
           publish-profile: ${{ secrets.AZURE_API_PUBLISH_PROFILE }}
           
+
