@@ -67,8 +67,7 @@ jobs:
         with:
           app-name: 'airport-automation'
           slot-name: 'Production'
-          connection-strings: '[{"name": "SqlServerConnection", "value": "${{ secrets.AZURE_DB_URL }}", "type": "SQLAzure"}]'
-          publish-profile: ${{ secrets.AZURE_API_PUBLISH_PROFILE }}
+          connection-strings-json: '[{"name": "SqlServerConnection", "value": "${{ secrets.AZURE_DB_URL }}", "type": "SQLAzure"}]'
           
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -79,4 +78,5 @@ jobs:
           package: .
           publish-profile: ${{ secrets.AZURE_API_PUBLISH_PROFILE }}
           
+
 
