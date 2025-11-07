@@ -1,4 +1,9 @@
-# <img src="https://github.com/crni99/airport-automation/blob/main/docs/AirportAutomationLogoFull.png" alt="Airport_Automation_Logo" width="50%" height="50%"> <br /> 
+# <img src="https://github.com/crni99/airport-automation/blob/main/docs/AirportAutomationLogoFull.png" alt="Airport_Automation_Logo" width="50%" height="50%"> <br />
+
+This project showcases a comprehensive full-stack solution, combining a robust **ASP.NET Core Web API backend**, an **MVC web frontend**, and a modern **React single-page application** — all seamlessly integrated to provide a highly secure, scalable, and user-friendly system.
+<br />
+<br />
+
 ### Compatibility / Continuous Integration (CI) Checks
 [![Build and Test .NET](https://github.com/crni99/airport-automation/actions/workflows/dotnet.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/dotnet.yml)
 [![React Frontend CI](https://github.com/crni99/airport-automation/actions/workflows/node.js.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/node.js.yml)
@@ -11,11 +16,8 @@
 [![Build and Deploy React Frontend to Azure Static Web Apps](https://github.com/crni99/airport-automation/actions/workflows/azure-react-cicd.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/azure-react-cicd.yml) <br />
 [![Build and Deploy React Frontend to Vercel](https://github.com/crni99/airport-automation/actions/workflows/vercel-react-deployment.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/vercel-react-deployment.yml)
 [![Mirror to GitLab and Bitbucket](https://github.com/crni99/airport-automation/actions/workflows/mirror-to-gitlab-and-bitbucket.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/mirror-to-gitlab-and-bitbucket.yml)
-
-This project showcases a comprehensive full-stack solution, combining a robust ASP.NET Core Web API backend, an MVC web frontend, and a modern React single-page application — all seamlessly integrated to provide a highly secure, scalable, and user-friendly system.
-<br />
-<br />
 ___
+<br />
 
 ## 🛫 Getting Started
 ### To run the project locally:
