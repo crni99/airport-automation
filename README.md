@@ -5,16 +5,16 @@ This project showcases a comprehensive full-stack solution, combining a robust *
 <br />
 
 ### Compatibility / Continuous Integration (CI) Checks
-[![Build and Test .NET](https://github.com/crni99/airport-automation/actions/workflows/dotnet.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/dotnet.yml)
-[![React Frontend CI](https://github.com/crni99/airport-automation/actions/workflows/node.js.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/node.js.yml)
+[![Build & Test .NET Backend](https://github.com/crni99/airport-automation/actions/workflows/dotnet.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/dotnet.yml)
+[![Build & Test React Frontend](https://github.com/crni99/airport-automation/actions/workflows/node.js.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/node.js.yml)
 ### CodeQL, ESLint, and Security Analysis
-[![C# CodeQL Analysis](https://github.com/crni99/airport-automation/actions/workflows/csharp-codeql.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/csharp-codeql.yml)
-[![React CodeQL Analysis](https://github.com/crni99/airport-automation/actions/workflows/react-codeql.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/react-codeql.yml)
+[![CodeQL Analysis (.NET/C#)](https://github.com/crni99/airport-automation/actions/workflows/csharp-codeql.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/csharp-codeql.yml)
+[![CodeQL Analysis (React/JS)](https://github.com/crni99/airport-automation/actions/workflows/react-codeql.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/react-codeql.yml)
 [![ESLint](https://github.com/crni99/airport-automation/actions/workflows/eslint.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/eslint.yml)
 ### Deployment (CD) and Mirroring
-[![Build, Test, and Deploy .NET API to Azure Web App](https://github.com/crni99/airport-automation/actions/workflows/azure-api-cicd.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/azure-api-cicd.yml)
-[![Build and Deploy React Frontend to Azure Static Web Apps](https://github.com/crni99/airport-automation/actions/workflows/azure-react-cicd.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/azure-react-cicd.yml) <br />
-[![Build and Deploy React Frontend to Vercel](https://github.com/crni99/airport-automation/actions/workflows/vercel-react-deployment.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/vercel-react-deployment.yml)
+[![Deploy .NET API to Azure Web App (CD)](https://github.com/crni99/airport-automation/actions/workflows/azure-api-cicd.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/azure-api-cicd.yml)
+[![Deploy React Frontend to Azure Static Web Apps (CD)](https://github.com/crni99/airport-automation/actions/workflows/azure-react-cicd.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/azure-react-cicd.yml) <br />
+[![Deploy React Frontend to Vercel (CD)](https://github.com/crni99/airport-automation/actions/workflows/vercel-react-deployment.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/vercel-react-deployment.yml)
 [![Mirror to GitLab and Bitbucket](https://github.com/crni99/airport-automation/actions/workflows/mirror-to-gitlab-and-bitbucket.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/mirror-to-gitlab-and-bitbucket.yml)
 ___
 <br />
