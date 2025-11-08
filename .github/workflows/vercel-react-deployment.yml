@@ -1,4 +1,4 @@
-name: Vercel Frontend Deployment
+name: Deploy React Frontend to Vercel (CD)
 
 on:
   push:
