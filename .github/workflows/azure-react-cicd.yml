@@ -1,4 +1,4 @@
-name: Build, Test, and Deploy React Frontend to Azure Static Web Apps
+name: Deploy React Frontend to Azure Static Web Apps (CD)
 
 on:
   push:
@@ -46,3 +46,4 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_SALMON_SEA_0FB92C303 }}
           action: "close"
+
