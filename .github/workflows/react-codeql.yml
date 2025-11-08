@@ -1,4 +1,4 @@
-name: React CodeQL Analysis
+name: CodeQL Analysis (React/JS)
 
 on:
   push:
