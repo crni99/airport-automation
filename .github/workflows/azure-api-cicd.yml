@@ -1,4 +1,4 @@
-name: Build, Test, and Deploy .NET API to Azure Web App
+name: Deploy .NET API to Azure Web App (CD)
 
 on:
   push:
@@ -70,3 +70,4 @@ jobs:
           slot-name: 'Production'
           package: .
           publish-profile: ${{ secrets.AZURE_API_PUBLISH_PROFILE }}
+
