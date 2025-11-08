@@ -1,4 +1,4 @@
-name: Build and Test .NET
+name: Build & Test .NET Backend
 
 permissions:
   contents: read
