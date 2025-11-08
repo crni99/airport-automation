@@ -1,4 +1,4 @@
-name: C# CodeQL Analysis
+name: CodeQL Analysis (.NET/C#)
 
 permissions:
   security-events: write
