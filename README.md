@@ -4,14 +4,16 @@ This project showcases a comprehensive full-stack solution, combining a robust *
 <br />
 <br />
 
-### Compatibility / Continuous Integration (CI) Checks
+### ⚙️ Compatibility / Continuous Integration (CI) Checks
 [![Build & Test .NET Backend](https://github.com/crni99/airport-automation/actions/workflows/dotnet.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/dotnet.yml)
 [![Build & Test React Frontend](https://github.com/crni99/airport-automation/actions/workflows/node.js.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/node.js.yml)
-### CodeQL, ESLint, and Security Analysis
+---
+### 🔍 CodeQL, ESLint, and Security Analysis 🛡️
 [![CodeQL Analysis (.NET/C#)](https://github.com/crni99/airport-automation/actions/workflows/csharp-codeql.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/csharp-codeql.yml)
 [![CodeQL Analysis (React/JS)](https://github.com/crni99/airport-automation/actions/workflows/react-codeql.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/react-codeql.yml)
 [![ESLint](https://github.com/crni99/airport-automation/actions/workflows/eslint.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/eslint.yml)
-### Deployment (CD) and Mirroring
+---
+### ☁️ Deployment (CD) and Mirroring
 [![Deploy .NET API to Azure Web App (CD)](https://github.com/crni99/airport-automation/actions/workflows/azure-api-cicd.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/azure-api-cicd.yml)
 [![Deploy React Frontend to Azure Static Web Apps (CD)](https://github.com/crni99/airport-automation/actions/workflows/azure-react-cicd.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/azure-react-cicd.yml) <br />
 [![Deploy React Frontend to Vercel (CD)](https://github.com/crni99/airport-automation/actions/workflows/vercel-react-deployment.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/vercel-react-deployment.yml)
@@ -19,6 +21,26 @@ This project showcases a comprehensive full-stack solution, combining a robust *
 ___
 <br />
 
+## 📖 Table of Contents
+- [🛫 Getting Started](#-getting-started)
+
+- [🏗️ Architecture](#-architecture)
+
+- [📡 Backend - ASP.NET Core Web API](#-backend-aspnet-core-web-api)
+  
+- [🌐 MVC Web Frontend](#-mvc-web-frontend)
+  
+- [⚛️ React Frontend](#-react-frontend)
+  
+- [🚀 Deployment](#-deployment)
+
+- [🔄 Mirroring](#-mirroring)
+  
+- [🔐 Demo Credentials](#-demo-credentials)
+___
+<br />
+
+<a name="-getting-started"></a>
 ## 🛫 Getting Started
 ### To run the project locally:
 1. **Clone the repository**
@@ -94,23 +116,6 @@ npm install
 ```bash
 npm run start
 ```
-___
-<br />
-
-## 📖 Table of Contents
-- [🏗️ Architecture](#-architecture)
-
-- [📡 Backend - ASP.NET Core Web API](#-backend-aspnet-core-web-api)
-  
-- [🌐 MVC Web Frontend](#-mvc-web-frontend)
-  
-- [⚛️ React Frontend](#-react-frontend)
-  
-- [🚀 Deployment](#-deployment)
-
-- [🔄 Mirroring](#-mirroring)
-  
-- [🔐 Demo Credentials](#-demo-credentials)
 ___
 <br />
 
@@ -306,7 +311,7 @@ ___
 <br />
 
 <a name="-deployment"></a>
-## 🚀 [Deployment](https://airport-automation.vercel.app/) 🡥
+## 🚀 [Deployment](https://github.com/crni99/airport-automation/tree/main/.github/workflows) 🡥
 - The .NET API is deployed to **[Azure Web App](https://airport-automation-bucbb0eff0dzcuaz.switzerlandnorth-01.azurewebsites.net/swagger/index.html)** (service name `airport-automation`) via the automated GitHub Actions CI/CD pipeline.
 - The React Frontend is deployed to two platforms to ensure high availability and redundancy:
   - **[Azure Static Web Apps](https://salmon-sea-0fb92c303.3.azurestaticapps.net/)**
