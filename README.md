@@ -1,7 +1,38 @@
 # <img src="https://github.com/crni99/airport-automation/blob/main/docs/AirportAutomationLogoFull.png" alt="Airport_Automation_Logo" width="50%" height="50%"> <br />
 
 This project showcases a comprehensive full-stack solution, combining a robust **ASP.NET Core Web API backend**, an **MVC web frontend**, and a modern **React single-page application** — all seamlessly integrated to provide a highly secure, scalable, and user-friendly system.
+
 <br />
+
+## ⭐ Live Demo
+<table>
+  <thead>
+    <tr>
+      <th>Application</th>
+      <th>Platform</th>
+      <th>Link</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>ASP.NET Core API</td>
+      <td>Azure (Swagger/Docs)</td>
+      <td><a href="https://airport-automation-bucbb0eff0dzcuaz.switzerlandnorth-01.azurewebsites.net/swagger/index.html"><b>View API Documentation 🡥</b></a></td>
+    </tr>
+    <tr>
+      <td>React SPA</td>
+      <td>Azure</td>
+      <td><a href="https://salmon-sea-0fb92c303.3.azurestaticapps.net/"><b>Launch React Frontend 🡥</b></a></td>
+    </tr>
+    <tr>
+      <td>React SPA</td>
+      <td>Vercel</td>
+      <td><a href="https://airport-automation.vercel.app/"><b>Launch React Frontend 🡥</b></a></td>
+    </tr>
+  </tbody>
+</table>
+
+___
 <br />
 
 ### ⚙️ Compatibility / Continuous Integration (CI) Checks
