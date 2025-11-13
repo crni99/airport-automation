@@ -24,19 +24,16 @@ jobs:
       - name: Setup .NET 6
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '6.0.x' 
+          dotnet-version: '6.0.x'
 
       - name: Restore dependencies
-        working-directory: ./mvc-frontend
-        run: dotnet restore AirportAutomation.sln 
-
+        run: dotnet restore ./backend/AirportAutomation.sln 
+        
       - name: Build
-        working-directory: ./mvc-frontend
-        run: dotnet build AirportAutomation.sln --configuration Release --no-restore
+        run: dotnet build ./backend/AirportAutomation.sln --configuration Release --no-restore
 
       - name: Test
-        working-directory: ./mvc-frontend
-        run: dotnet test AirportAutomation.sln --configuration Release --no-build --verbosity normal
+        run: dotnet test ./backend/AirportAutomation.sln --configuration Release --no-build --verbosity normal
 
       - name: dotnet publish (Targeting Web Mvc)
         run: dotnet publish ./mvc-frontend/AirportAutomationWeb/AirportAutomation.Web.csproj -c Release -o "${{env.DOTNET_ROOT}}/myapp"
