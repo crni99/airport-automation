@@ -190,7 +190,7 @@ ___
 
 ### Extended Architecture (CI/CD + Deployments)
 <a href="https://github.com/crni99/airport-automation/blob/main/docs/AA_Extended_Architecture.svg" target="_blank">
-<img src="https://raw.githubusercontent.com/crni99/airport-automation/a2f52a17f201a9c39e605a05935bea25bc0b2c26/docs/AA_Extended_Architecture.svg" alt="Extended_Architecture" width="100%" height="100%">
+<img src="https://raw.githubusercontent.com/crni99/airport-automation/b109f0eccdc424cfda36aee0501211854a474670/docs/AA_Extended_Architecture.svg" alt="Extended_Architecture" width="100%" height="100%">
 </a>
 
 ___
