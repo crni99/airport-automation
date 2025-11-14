@@ -19,6 +19,11 @@ This project showcases a comprehensive full-stack solution, combining a robust *
       <td>Azure (Swagger/Docs)</td>
       <td><a href="https://airport-automation-bucbb0eff0dzcuaz.switzerlandnorth-01.azurewebsites.net/swagger/index.html"><b>View API Documentation 🡥</b></a></td>
     </tr>
+    <tr>
+      <td>ASP.NET Web MVC</td>
+      <td>Azure</td>
+      <td><a href="https://airport-automation-mvc-d8ekhabyg5dgeedk.switzerlandnorth-01.azurewebsites.net/"><b>Launch MVC Frontend 🡥</b></a></td>
+    </tr>
     <tr>
       <td>React SPA</td>
       <td>Azure</td>
@@ -45,10 +50,35 @@ ___
 [![ESLint](https://github.com/crni99/airport-automation/actions/workflows/eslint.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/eslint.yml)
 ---
 ### ☁️ Deployment (CD) and Mirroring
-[![Deploy .NET API to Azure Web App (CD)](https://github.com/crni99/airport-automation/actions/workflows/azure-api-cicd.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/azure-api-cicd.yml)
-[![Deploy React Frontend to Azure Static Web Apps (CD)](https://github.com/crni99/airport-automation/actions/workflows/azure-react-cicd.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/azure-react-cicd.yml) <br />
-[![Deploy React Frontend to Vercel (CD)](https://github.com/crni99/airport-automation/actions/workflows/vercel-react-deployment.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/vercel-react-deployment.yml)
-[![Mirror to GitLab and Bitbucket](https://github.com/crni99/airport-automation/actions/workflows/mirror-to-gitlab-and-bitbucket.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/mirror-to-gitlab-and-bitbucket.yml)
+<br />
+<div>
+  <p>
+    <a href="https://github.com/crni99/airport-automation/actions/workflows/azure-api-cicd.yml">
+      <img src="https://github.com/crni99/airport-automation/actions/workflows/azure-api-cicd.yml/badge.svg">
+    </a>
+  </p>
+  <p>
+    <a href="https://github.com/crni99/airport-automation/actions/workflows/azure-mvc-cicd.yml">
+      <img src="https://github.com/crni99/airport-automation/actions/workflows/azure-mvc-cicd.yml/badge.svg">
+    </a>
+  </p>
+  <p>
+    <a href="https://github.com/crni99/airport-automation/actions/workflows/azure-react-cicd.yml">
+      <img src="https://github.com/crni99/airport-automation/actions/workflows/azure-react-cicd.yml/badge.svg">
+    </a>
+  </p>
+  <p>
+    <a href="https://github.com/crni99/airport-automation/actions/workflows/vercel-react-deployment.yml">
+      <img src="https://github.com/crni99/airport-automation/actions/workflows/vercel-react-deployment.yml/badge.svg">
+    </a>
+  </p>
+  <p>
+    <a href="https://github.com/crni99/airport-automation/actions/workflows/mirror-to-gitlab-and-bitbucket.yml">
+      <img src="https://github.com/crni99/airport-automation/actions/workflows/mirror-to-gitlab-and-bitbucket.yml/badge.svg">
+    </a>
+  </p>
+</div>
+
 ___
 <br />
 
@@ -344,6 +374,7 @@ ___
 <a name="-deployment"></a>
 ## 🚀 [Deployment](https://github.com/crni99/airport-automation/tree/main/.github/workflows) 🡥
 - The .NET API is deployed to **[Azure Web App](https://airport-automation-bucbb0eff0dzcuaz.switzerlandnorth-01.azurewebsites.net/swagger/index.html)** (service name `airport-automation`) via the automated GitHub Actions CI/CD pipeline.
+- The .NET Web MCC is deployed to **[Azure Web App](https://airport-automation-mvc-d8ekhabyg5dgeedk.switzerlandnorth-01.azurewebsites.net/)**.
 - The React Frontend is deployed to two platforms to ensure high availability and redundancy:
   - **[Azure Static Web Apps](https://salmon-sea-0fb92c303.3.azurestaticapps.net/)**
   - **[Vercel](https://airport-automation.vercel.app/)**
@@ -378,7 +409,7 @@ ___
       <td>og</td>
       <td>og</td>
       <td>SuperAdmin</td>
-      <td>CRUD operations + exporting data + managing other roles</td>
+      <td>Full CRUD access, data export, and role management</td>
     </tr>
     <tr>
       <td>aa</td>
