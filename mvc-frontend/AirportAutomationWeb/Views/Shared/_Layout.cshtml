@@ -25,7 +25,7 @@
 			<div class="container-fluid">
 				<a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">AirportAutomationWeb</a>
 				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-				aria-expanded="false" aria-label="Toggle navigation">
+						aria-expanded="false" aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>
 				</button>
 				<div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
@@ -195,11 +195,18 @@
 			const htmlElement = document.documentElement;
 			const DARK_MODE = 'dark';
 			const LIGHT_MODE = 'light';
-			const darkModeEnabled = localStorage.getItem('dark-mode') === 'true';
+			const localStorageTheme = localStorage.getItem('dark-mode');
 
-			htmlElement.setAttribute('data-bs-theme', darkModeEnabled ? DARK_MODE : LIGHT_MODE);
-			toggleButton.textContent = darkModeEnabled === null ? '' : (darkModeEnabled ? 'Light Mode' : 'Dark Mode');
+			let initialTheme = LIGHT_MODE;
 
+			if (localStorageTheme !== null) {
+				initialTheme = localStorageTheme === 'true' ? DARK_MODE : LIGHT_MODE;
+			} else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+				initialTheme = DARK_MODE;
+			}
+			htmlElement.setAttribute('data-bs-theme', initialTheme);
+
+			toggleButton.textContent = initialTheme === DARK_MODE ? 'Light Mode' : 'Dark Mode';
 			toggleButton.addEventListener('click', function () {
 				const newTheme = htmlElement.getAttribute('data-bs-theme') === DARK_MODE ? LIGHT_MODE : DARK_MODE;
 				htmlElement.setAttribute('data-bs-theme', newTheme);
