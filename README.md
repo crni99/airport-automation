@@ -230,6 +230,12 @@ ___
 ### Searching, Filtering, and Paging Resources
 - Implement advanced features such as searching, filtering, and paging to improve the API’s usability and performance.
 
+### Advanced Filtering with Filter Pattern
+- Implement **dedicated filter classes** for each entity type (PassengerSearchFilter, PilotSearchFilter, etc.) to enable multi-field search capabilities.
+- Create **filter extension methods** to encapsulate query building logic and promote reusability.
+- Support case-insensitive search across multiple fields simultaneously (e.g., search passengers by first name, last name, UPRN, passport, address, and phone).
+- Apply filter pattern to maintain clean separation between controller logic and query construction.
+
 ### Exporting Data to PDF and Excel
 - Implement endpoints to export data in PDF and Excel formats for reporting and offline analysis.
 - Ensure exported documents preserve formatting and reflect applied filters or search criteria.
@@ -281,8 +287,11 @@ ___
 - Ensure tests improve code reliability, support refactoring, and simplify debugging.
 
 ### Monitoring Application Health with HealthChecks
-- Monitor the health of critical components such as databases and external services.
+- Monitor the health of critical components with **custom health check implementations**:
+  - **`DatabaseHealthCheck`** - Verifies database connectivity and accessibility
+  - **`ApiHealthCheck`** - Monitors API availability and responsiveness
 - Configure health check endpoints to provide visibility into system status and integrate them into Swagger documentation for easy access.
+- Return detailed health status with Healthy/Degraded/Unhealthy states and custom messages.
 ___
 <br />
 
@@ -315,6 +324,12 @@ ___
 ### Client-Side Scripting and AJAX Requests
 - Leverage JavaScript, jQuery, and AJAX to build responsive and interactive user interfaces, enabling asynchronous data fetching and partial page updates without full reloads.
 
+### Centralized Message Management
+- Implement **Resource Files (.resx)** for centralized alert and error message management.
+- Create **`AlertService`** to retrieve localized messages from resource files.
+- Use ResourceManager to access messages dynamically based on message keys.
+- Prepare foundation for future internationalization (i18n) support.
+
 ### Exporting Data to PDF and Excel
 - Integrate the export functionality from the API into the MVC frontend, allowing users to generate and download PDF and Excel reports directly from the web interface.
 - Provide options to reflect applied filters or search terms in the exported documents, ensuring consistency between the UI and downloaded data.
@@ -333,19 +348,47 @@ ___
 ### User Interface Design
 - Build the frontend using functional components and **`React Hooks`**.
 - Design a responsive, mobile-friendly layout with modern styling techniques.
-- Utilize the rich set of components from `Material UI (MUI)` to implement a sleek, professional, and accessible user interface based on Material Design principles.
+- Utilize the rich set of components from **`Material UI (MUI)`** to implement a sleek, professional, and accessible user interface based on Material Design principles.
+- Implement **toggleable dark/light theme** with user preference persistence in localStorage.
+- Customize Material-UI theme configuration for consistent styling across the application.
 
 ### State Management
-- Manage application state via **`Context API`** or **`Redux`**.
+- Manage application state via **`Context API`** or **`Redux`** with multiple dedicated contexts:
+  - **`DataContext`** - Centralized API URL configuration
+  - **`ThemeContext`** - User theme preference (dark/light mode)
+  - **`SidebarContext`** - Sidebar collapse/expand state
 - Handle asynchronous operations efficiently using the native **`fetch`** API and middleware where necessary.
+
+### Custom Hooks for Reusability
+- Implement custom hooks to abstract common data operations and promote code reuse:
+  - **`useFetch`** - Generic data fetching with pagination, filtering, and error handling
+  - **`useCreate`** - Unified logic for creating new entities with validation
+  - **`useUpdate`** - Consistent update operations across all entities
+  - **`useDelete`** - Reusable delete functionality with confirmation
+  - **`useExport`** - Centralized export logic for PDF and Excel generation
 
 ### Data Fetching and Integration
 - Fully integrate with the backend API to retrieve and manage data such as flights, passengers, and airport operations.
 - Dynamically render components based on API responses and user interactions.
 
 ### Form Handling and Validation
-- Manage form inputs (e.g., bookings, user data) with **`React Hook Form`**.
+- Manage form inputs (e.g., bookings, user data) with custom **`React Hook Form`**.
 - Provide real-time validation with user-friendly error handling and feedback.
+
+### Comprehensive Client-Side Validation
+- Implement **entity-specific validation rules** for all data types with over 245 lines of validation logic:
+  - **Required field validation** - Ensure all mandatory fields are filled
+  - **String length validation** - Enforce min/max character limits (e.g., UPRN exactly 13 chars, Passport exactly 9 chars)
+  - **Numeric range validation** - Validate numeric inputs (e.g., FlyingHours 0-40000, Price >= 0)
+  - **Format validation** - Enforce date (YYYY-MM-DD) and time (HH:mm) formats
+  - **Foreign key validation** - Verify required relationships (AirlineId, DestinationId, PilotId, etc.)
+- Provide real-time, user-friendly error messages for each validation rule.
+- Centralize validation logic in dedicated utility files for consistency and maintainability.
+
+### Error Handling
+   - Implement centralized error handling with **`CustomError`** class for consistent error messages.
+   - Use **`errorUtils`** to differentiate between network errors, server errors, and validation errors.
+   - Provide user-friendly error messages and graceful degradation for edge cases.
 
 ### Routing and Navigation
 - Handle navigation using **`React Router`**, including dynamic and nested routes for scalability.
@@ -360,6 +403,12 @@ ___
 ### Security and Authentication
 - Implement secure user login using **`JWT-based authentication`**.
 - Apply role-based access control to restrict features based on user permissions.
+
+### Google Maps Integration
+- Integrate **Google Maps embedding** to display destination locations visually.
+- Implement `MapEmbed` component for dynamic map rendering based on address input.
+- Use iframe embedding with lazy loading for optimized performance.
+- Provide visual context for airport destinations with interactive maps.
 
 ### Performance Optimization
 - Improve performance through **`lazy loading`**, **`code splitting`**, and **`memoization`**.
