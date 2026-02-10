@@ -40,6 +40,43 @@ This project showcases a comprehensive full-stack solution, combining a robust *
 ___
 <br />
 
+### 🔐 Demo Credentials
+> **Note:** These demo credentials are provided for testing and demonstration purposes only.
+
+<table>
+  <thead>
+    <tr>
+      <th>Username</th>
+      <th>Password</th>
+      <th>Role</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>og</td>
+      <td>og</td>
+      <td>SuperAdmin</td>
+      <td>Full CRUD access, data export, and role management</td>
+    </tr>
+    <tr>
+      <td>aa</td>
+      <td>aa</td>
+      <td>Admin</td>
+      <td>CRUD operations + exporting data</td>
+    </tr>
+    <tr>
+      <td>uu</td>
+      <td>uu</td>
+      <td>User</td>
+      <td>Read and filter data only</td>
+    </tr>
+  </tbody>
+</table>
+
+___
+<br />
+
 ### ⚙️ Compatibility / Continuous Integration (CI) Checks
 [![Build & Test .NET Backend](https://github.com/crni99/airport-automation/actions/workflows/dotnet.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/dotnet.yml)
 [![Build & Test React Frontend](https://github.com/crni99/airport-automation/actions/workflows/node.js.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/node.js.yml)
@@ -96,8 +133,6 @@ ___
 - [🚀 Deployment](#-deployment)
 
 - [🔄 Mirroring](#-mirroring)
-  
-- [🔐 Demo Credentials](#-demo-credentials)
 ___
 <br />
 
@@ -199,33 +234,36 @@ ___
 <a name="-backend-aspnet-core-web-api"></a>
 ## 📡 [Backend - ASP.NET Core Web API](https://github.com/crni99/airport-automation/tree/main/backend/AirportAutomationApi) 🡥
 
-### Database Setup and Management
-- **`SQL Server`** (or a relevant relational database) is used as the primary data store.
-- Manage the database schema and migrations via **`Entity Framework Core`** to ensure version control and smooth schema evolution.
-- Map EF Core entities directly to database tables to facilitate efficient data access and manipulation.
+### Database and Entity Framework Core
+- Support multiple database providers: **SQL Server**, **PostgreSQL**, and **MySQL**.
+- Manage database schema and migrations via **Entity Framework Core** for version control.
+- Abstract database operations through repository pattern in dedicated layers.
+- Configure entities, relationships, and migrations for schema management.
 
-### Defining RESTful API Endpoints and Implementing Logic to Serve Requested Resources via HTTP
-- Establish the foundation of the Web API and define endpoints.
-- Implement the logic to retrieve and return resources in response to client requests.
+### RESTful API Design
+- Design and implement RESTful endpoints following HTTP best practices.
+- Support standard HTTP methods (GET, POST, PUT, PATCH, DELETE) with appropriate status codes.
+- Structure endpoints with consistent naming conventions and resource hierarchies.
 
-### Manipulating Resources and Validating Input
-- Demonstrate how to manipulate data resources and ensure data integrity.
-- Implement input validation techniques to enhance the reliability of the API.
+### Input Validation and Data Integrity
+- Implement comprehensive input validation using data annotations and custom validators.
+- Validate requests at multiple layers (DTOs, model binding, business logic).
+- Return detailed validation error messages following RFC 9457 problem details standard.
 
-### API Behavior Customization
-- Customize model validation error responses to conform to **`RFC 9457`**, with detailed problem details and trace identifiers for easier debugging.
+### RFC 9457 Problem Details for Validation Errors
+- Implement RFC 9457 standard for structured error responses.
+- Return detailed problem details including:
+  - Error type and title
+  - HTTP status code
+  - Trace identifier for debugging
+  - Specific validation errors per field
+- Provide consistent error format across all API endpoints.
 
-### Working with Services and Dependency Injection
-- Employ services and dependency injection to promote modularity and maintainability in the codebase.
-
-### Getting Acquainted with Entity Framework Core
-- Utilize Entity Framework Core for database interactions and ORM capabilities within repository and service layers.
-- Abstract EF Core queries and commands away from controllers to maintain separation of concerns and improve testability.
-- Ensure controllers receive processed data from services, maintaining clean and manageable API endpoints.
-
-### Separation of Concerns with EF Core
-- Use EF Core exclusively in repositories and services, keeping controllers free from direct database operations.
-- Promote modularity, easier testing, and cleaner controller logic focused on handling HTTP requests and responses.
+### Dependency Injection and Service Layer
+- Leverage ASP.NET Core's built-in dependency injection container.
+- Register services with appropriate lifetimes (Scoped, Transient, Singleton).
+- Implement service interfaces for loose coupling and testability.
+- Organize business logic in dedicated service layer separate from controllers.
 
 ### Searching, Filtering, and Paging Resources
 - Implement advanced features such as searching, filtering, and paging to improve the API’s usability and performance.
@@ -243,10 +281,12 @@ ___
 - Use **`ClosedXML`** to create Excel files with structured data, formatting, and support for advanced **`Excel`** features.
 
 ### Securing API and CORS Implementation
-- Secure the API using robust authentication and authorization mechanisms.
-- Passwords are securely stored using the **`BCrypt`** hashing algorithm, which incorporates a robust salt and adaptive iteration count to defend against brute-force and rainbow table attacks.
-- Handle authentication with **`JWT tokens`** to enable secure, stateless client-server communication.
-- Configure **`CORS`** to allow authorized cross-origin requests while maintaining protection against unauthorized access.
+- Enable a global CORS policy (`_AllowAll`) for development to facilitate frontend-backend communication.
+- **Important:** Configure more restrictive CORS policies for production environments:
+  - Specify allowed origins (e.g., your frontend domain)
+  - Define allowed HTTP methods and headers
+  - Enable credentials if needed
+- Plan migration from permissive to strict CORS policies before production deployment.
 
 ### Role-Based Authorization
 - Implement role-based access control with policies:
@@ -255,26 +295,21 @@ ___
   - **`RequireUserRole`**
 - Enable fine-grained endpoint access control based on user roles to ensure secure handling of sensitive data.
 
-### CORS Policy
-- Enable a global CORS policy (**`_AllowAll`**) to facilitate frontend-backend communication during development.
-- Plan for more restrictive CORS policies in production environments for enhanced security.
-
 ### Versioning and Documenting API with Swagger
 - Manage API versions to maintain backward compatibility.
-- Document API endpoints for easy use by developers.
-- Customize Swagger UI with a toggleable dark/light mode to enhance usability and align with user preferences.
-  - Toggleable dark/light mode to enhance usability and align with user preferences.
-  - A custom favicon and custom logo to match the project’s branding.
-  - Injected custom JavaScript and CSS to modify Swagger UI behavior and appearance.
-- Implement custom controller ordering in Swagger UI using the [SwaggerControllerOrder] attribute and a helper class (SwaggerControllerOrder<T>), ensuring a logical and predictable display order.
+- Document API endpoints comprehensively for developer-friendly integration.
+- Customize Swagger UI with advanced features:
+  - **Toggleable dark/light theme** for enhanced usability
+  - **Custom branding** with favicon and logo
+  - **Custom styling and behavior** via injected CSS and JavaScript
+  - **Custom controller ordering** using SwaggerControllerOrder attribute
 
-### Logging and Exception Handling for Error Management
-- Integrate Serilog for structured, centralized logging, with configuration sourced from app settings.
-- Add custom middleware (**`RequestLogContextMiddleware`**) to enrich logs with request context, such as trace identifiers.
-- Implement global exception handler middleware (**`GlobalExceptionHandler`**) to standardize error responses and capture unhandled exceptions.
-
-### Middleware Customization
-- Implement custom middleware to enhance logging context and provide consistent exception handling, improving diagnostics and debugging.
+### Logging and Middleware
+- Integrate **Serilog** for structured, centralized logging with configuration from appsettings.json.
+- Implement custom middleware for enhanced diagnostics:
+  - **RequestLogContextMiddleware** - Enriches logs with request context (trace IDs, user info)
+  - **GlobalExceptionHandler** - Standardizes error responses and captures unhandled exceptions
+- Configure logging levels and outputs (console, file, external services) for different environments.
 
 ### Configuration Management
 - Centralize all configurations (e.g., Serilog, rate limiting, authentication secrets, pagination settings) in **`appsettings.json`** for better maintainability and environment flexibility.
@@ -298,28 +333,22 @@ ___
 <a name="-mvc-web-frontend"></a>
 ## 🌐 [MVC Web Frontend](https://github.com/crni99/airport-automation/tree/main/mvc-frontend/AirportAutomationWeb) 🡥
 
-### Consuming APIs with HttpClientFactory
-- Implement efficient and reusable API calls using **`HttpClientFactory`** to improve performance, manage resources effectively, and avoid socket exhaustion.
-- Implement a robust resilience strategy using the **`Polly`** library, configuring policies for:
-  - **`Transient Fault Handling`**: Automatic retries with exponential backoff to recover from temporary network or server errors.
-  - **`Circuit Breaking`**: Automatically halting requests to services experiencing prolonged failures to prevent cascading errors and allow the service time to recover.
-  - **`Request Timeout`**: Enforcing a maximum duration for API calls to prevent application hanging on unresponsive services.
-- Centralize **`HttpClient`** configuration to ensure consistent request headers, including JSON content type, user agent, and authorization tokens.
+### HTTP Communication Layer
+- Implement HttpClientFactory with Polly resilience policies:
+  - Transient fault handling with exponential backoff
+  - Circuit breaker for prolonged failures
+  - Request timeout enforcement
+- Centralize HttpClient configuration for consistent headers.
 
-### Generic and Typed API Interaction
-- Utilize generic methods for CRUD operations (**`CreateData<T>`**, **`ReadData<T>`**, etc.) to enable type-safe, reusable API communication across different data models.
-- Dynamically construct API endpoints based on model types with custom pluralization rules for flexible routing.
-- Support advanced filtering through dynamically built query strings tailored to each data model's specific filter requirements.
-- Implement pagination and optional retrieval of all data items for optimized data loading and exporting.
+### Generic API Service Layer
+- Create generic CRUD methods (CreateData<T>, ReadData<T>, etc.) for type-safe communication.
+- Dynamically construct endpoints with custom pluralization rules.
+- Support advanced filtering, pagination, and data export.
 
-### Integrating Web Services and APIs
-- Consume external and backend web services to fetch real-time data and integrate third-party functionalities seamlessly.
-- Manage robust error handling and detailed logging for HTTP responses, including success, conflicts, unauthorized, forbidden, and other error states to improve debugging and user feedback.
-
-### Managing Data Presentation and User Input
-- Handle dynamic data presentation using MVC templates and model binding to ensure consistent and user-friendly data display.
-- Develop user input forms with validation to maintain data accuracy and integrity.
-- Utilize the modern, responsive design and components of **`Bootstrap 5`** for consistent and high-quality UI styling.
+### View Layer
+- Handle data presentation with MVC templates and model binding.
+- Develop validated input forms with Bootstrap 5 styling.
+- Implement AJAX requests for asynchronous updates.
 
 ### Client-Side Scripting and AJAX Requests
 - Leverage JavaScript, jQuery, and AJAX to build responsive and interactive user interfaces, enabling asynchronous data fetching and partial page updates without full reloads.
@@ -353,7 +382,7 @@ ___
 - Customize Material-UI theme configuration for consistent styling across the application.
 
 ### State Management
-- Manage application state via **`Context API`** or **`Redux`** with multiple dedicated contexts:
+- Manage application state via **`Context API`** with multiple dedicated contexts:
   - **`DataContext`** - Centralized API URL configuration
   - **`ThemeContext`** - User theme preference (dark/light mode)
   - **`SidebarContext`** - Sidebar collapse/expand state
@@ -372,18 +401,15 @@ ___
 - Dynamically render components based on API responses and user interactions.
 
 ### Form Handling and Validation
-- Manage form inputs (e.g., bookings, user data) with custom **`React Hook Form`**.
-- Provide real-time validation with user-friendly error handling and feedback.
+- Manage form inputs using custom hooks (useCreate, useUpdate) with built-in validation.
+- Provide real-time validation with user-friendly error handling and feedback via Snackbar notifications.
 
 ### Comprehensive Client-Side Validation
-- Implement **entity-specific validation rules** for all data types with over 245 lines of validation logic:
-  - **Required field validation** - Ensure all mandatory fields are filled
-  - **String length validation** - Enforce min/max character limits (e.g., UPRN exactly 13 chars, Passport exactly 9 chars)
-  - **Numeric range validation** - Validate numeric inputs (e.g., FlyingHours 0-40000, Price >= 0)
-  - **Format validation** - Enforce date (YYYY-MM-DD) and time (HH:mm) formats
-  - **Foreign key validation** - Verify required relationships (AirlineId, DestinationId, PilotId, etc.)
-- Provide real-time, user-friendly error messages for each validation rule.
-- Centralize validation logic in dedicated utility files for consistency and maintainability.
+- Implement **entity-specific validation rules** with 245+ lines of validation logic.
+- Support multiple validation types:
+  - Required fields, string lengths, numeric ranges, date/time formats, foreign keys
+- Validate specific business rules (e.g., UPRN 13 chars, Passport 9 chars, FlyingHours 0-40000).
+- Provide real-time error messages with centralized validation utilities.
 
 ### Error Handling
    - Implement centralized error handling with **`CustomError`** class for consistent error messages.
@@ -402,7 +428,9 @@ ___
 
 ### Security and Authentication
 - Implement secure user login using **`JWT-based authentication`**.
-- Apply role-based access control to restrict features based on user permissions.
+- Apply role-based access control with **`ProtectedRoute`** component to restrict features based on user permissions.
+- Automatically redirect unauthenticated users to login page.
+- Store authentication tokens securely and manage token expiration.
 
 ### Google Maps Integration
 - Integrate **Google Maps embedding** to display destination locations visually.
@@ -416,6 +444,7 @@ ___
 
 ### Progressive Web App (PWA) Support
 - Implement a complete web app manifest (manifest.json) including appropriate names, unique ID, theme colors (#009be5), and icons (including a maskable icon).
+- Configure **`service-worker.js`** for offline functionality and caching strategies.
 - Ensure the application meets all core PWA installability criteria (served over HTTPS, valid manifest, and service worker) to allow users to install it as a native application on their devices.
 ___
 <br />
@@ -439,38 +468,3 @@ ___
 ___
 <br />
 
-<a name="-demo-credentials"></a>
-## 🔐 [Demo Credentials](https://github.com/crni99/airport-automation/blob/main/backend/AirportAutomationInfrastructure/Data/create_airport_automation_db_mssql.sql#L213-L218) 🡥
-
-> **Note:** These demo credentials are provided for testing and demonstration purposes only.
-
-<table>
-  <thead>
-    <tr>
-      <th>Username</th>
-      <th>Password</th>
-      <th>Role</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>og</td>
-      <td>og</td>
-      <td>SuperAdmin</td>
-      <td>Full CRUD access, data export, and role management</td>
-    </tr>
-    <tr>
-      <td>aa</td>
-      <td>aa</td>
-      <td>Admin</td>
-      <td>CRUD operations + exporting data</td>
-    </tr>
-    <tr>
-      <td>uu</td>
-      <td>uu</td>
-      <td>User</td>
-      <td>Read and filter data only</td>
-    </tr>
-  </tbody>
-</table>
