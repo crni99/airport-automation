@@ -42,8 +42,6 @@ jobs:
           dotnet publish ./backend/AirportAutomationApi/AirportAutomation.Api.csproj \
           -c Release \
           -o "${{env.DOTNET_ROOT}}/myapp" \
-          -r linux-x64 \
-          --self-contained false \
           /p:PlatformTarget=x64
 
       - name: Upload artifact for deployment job
@@ -75,6 +73,7 @@ jobs:
           slot-name: 'Production'
           package: .
           publish-profile: ${{ secrets.AZURE_API_PUBLISH_PROFILE }}
+
 
 
 
