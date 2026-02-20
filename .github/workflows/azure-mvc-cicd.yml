@@ -5,7 +5,7 @@ on:
     branches: [ "main" ]
     paths:
       - 'mvc-frontend/**'
-      - 'backend/**' # Važno: MVC zavisi od Core/Infrastructure u backendu
+      - 'backend/**'
       - 'Directory.Packages.props'
   pull_request:
     branches: [ "main" ]
@@ -34,10 +34,10 @@ jobs:
         run: dotnet restore AirportAutomation.sln
         
       - name: Build
-        run: dotnet build ./backend/AirportAutomation.sln --configuration Release --no-restore
+        run: dotnet build AirportAutomation.sln --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test ./backend/AirportAutomation.sln --configuration Release --no-build --verbosity normal
+        run: dotnet test AirportAutomation.sln --configuration Release --no-build --verbosity normal
 
       - name: dotnet publish (Targeting Web Mvc)
         run: dotnet publish ./mvc-frontend/AirportAutomationWeb/AirportAutomation.Web.csproj -c Release -o "${{env.DOTNET_ROOT}}/myapp"
