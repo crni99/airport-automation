@@ -9,12 +9,14 @@ on:
     paths:
       - 'backend/**'
       - 'mvc-frontend/**'
+      - 'Directory.Packages.props'
   pull_request:
     branches: [ "main" ]
     paths:
       - 'backend/**'
       - 'mvc-frontend/**'
-  workflow_dispatch: 
+      - 'Directory.Packages.props'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -31,16 +33,12 @@ jobs:
       with:
         dotnet-version: |
           8.0.x
-          6.0.x
 
     - name: Restore dependencies
-      working-directory: ./backend
       run: dotnet restore AirportAutomation.sln
 
     - name: Build
-      working-directory: ./backend
       run: dotnet build AirportAutomation.sln --no-restore
 
     - name: Test
-      working-directory: ./backend
       run: dotnet test AirportAutomation.sln --no-build --verbosity normal

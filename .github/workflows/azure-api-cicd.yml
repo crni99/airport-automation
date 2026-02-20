@@ -5,10 +5,12 @@ on:
     branches: [ "main" ]
     paths:
       - 'backend/**'
+      - 'Directory.Packages.props'
   pull_request:
     branches: [ "main" ]
     paths:
       - 'backend/**'
+      - 'Directory.Packages.props'
   workflow_dispatch:
 
 permissions:
@@ -21,17 +23,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup .NET 6
+      - name: Setup .NET 8
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '6.0.x' 
+          dotnet-version: '8.0.x' 
 
       - name: Restore dependencies
         working-directory: ./backend
         run: dotnet restore AirportAutomation.sln 
 
       - name: Build
-        working-directory: ./backend
         run: dotnet build AirportAutomation.sln --configuration Release --no-restore
 
       - name: Test

@@ -7,6 +7,7 @@ using AirportAutomation.Core.Interfaces.IRepositories;
 using AirportAutomation.Core.Interfaces.IServices;
 using AirportAutomation.Infrastructure.Repositories;
 using AspNetCoreRateLimit;
+using AutoMapper;
 
 namespace AirportAutomation.Api.Binders
 {
@@ -19,13 +20,7 @@ namespace AirportAutomation.Api.Binders
 			services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
 			services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
 
-			services.AddAutoMapper(typeof(PassengerMappings));
-			services.AddAutoMapper(typeof(TravelClassMappings));
-			services.AddAutoMapper(typeof(DestinationMappings));
-			services.AddAutoMapper(typeof(PilotMappings));
-			services.AddAutoMapper(typeof(AirlineMappings));
-			services.AddAutoMapper(typeof(FlightMappings));
-			services.AddAutoMapper(typeof(PlaneTicketMappings));
+			services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 			services.AddScoped<IPassengerRepository, PassengerRepository>();
 			services.AddScoped<IPassengerService, PassengerService>();

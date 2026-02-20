@@ -5,10 +5,14 @@ on:
     branches: [ "main" ]
     paths:
       - 'mvc-frontend/**'
+      - 'backend/**' # Važno: MVC zavisi od Core/Infrastructure u backendu
+      - 'Directory.Packages.props'
   pull_request:
     branches: [ "main" ]
     paths:
       - 'mvc-frontend/**'
+      - 'backend/**'
+      - 'Directory.Packages.props'
   workflow_dispatch:
 
 permissions:
@@ -21,13 +25,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup .NET 6
+      - name: Setup .NET 8
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '6.0.x'
+          dotnet-version: '8.0.x'
 
       - name: Restore dependencies
-        run: dotnet restore ./backend/AirportAutomation.sln 
+        run: dotnet restore AirportAutomation.sln
         
       - name: Build
         run: dotnet build ./backend/AirportAutomation.sln --configuration Release --no-restore
