@@ -44,10 +44,12 @@ export default function ExportButton({ dataType }) {
                 open={open}
                 onClose={handleClose}
             >
+                {/* 
                 <MenuItem onClick={() => handleExport('pdf')} disabled={isLoading}>
                     <PictureAsPdfIcon sx={{ mr: 1, mb: 1 }} color="error" />
                     PDF
                 </MenuItem>
+                */}
                 <MenuItem onClick={() => handleExport('excel')} disabled={isLoading}>
                     <DescriptionIcon sx={{ mr: 1 }} color="success" />
                     Excel
