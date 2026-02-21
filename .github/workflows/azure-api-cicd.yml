@@ -37,15 +37,12 @@ jobs:
       - name: Test
         run: dotnet test AirportAutomation.sln --configuration Release --no-build --verbosity normal
 
-      - name: dotnet publish (Self-Contained x64)
+      - name: dotnet publish
         run: |
           dotnet publish ./backend/AirportAutomationApi/AirportAutomation.Api.csproj \
           -c Release \
-          -o "${{env.DOTNET_ROOT}}/myapp" \
-          --runtime win-x64 \
-          --self-contained true \
-          -p:PublishReadyToRun=false \
-          -p:PublishSingleFile=false
+          -o ./publish \
+          --no-build
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -76,6 +73,7 @@ jobs:
           slot-name: 'Production'
           package: .
           publish-profile: ${{ secrets.AZURE_API_PUBLISH_PROFILE }}
+
 
 
 
