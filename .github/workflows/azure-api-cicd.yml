@@ -42,7 +42,10 @@ jobs:
           dotnet publish ./backend/AirportAutomationApi/AirportAutomation.Api.csproj \
           -c Release \
           -o "${{env.DOTNET_ROOT}}/myapp" \
-          /p:PlatformTarget=x64
+          --self-contained true \
+          --runtime win-x64 \
+          /p:PublishSingleFile=false \
+          /p:IncludeNativeLibrariesForSelfExtract=true
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -73,6 +76,7 @@ jobs:
           slot-name: 'Production'
           package: .
           publish-profile: ${{ secrets.AZURE_API_PUBLISH_PROFILE }}
+
 
 
 
