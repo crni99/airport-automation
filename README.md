@@ -5,6 +5,8 @@ This project showcases a comprehensive full-stack solution, combining a robust *
 <br />
 
 ## ⭐ Live Demo
+> **Note:** All services are hosted on **Free Tier** plans. The database automatically enters **paused mode** after a period of inactivity. When making the initial request, please allow **1-2 minutes** for the database to wake up and for the application to become fully operational.
+
 <table>
   <thead>
     <tr>
@@ -234,6 +236,11 @@ ___
 <a name="-backend-aspnet-core-web-api"></a>
 ## 📡 [Backend - ASP.NET Core Web API](https://github.com/crni99/airport-automation/tree/main/backend/AirportAutomationApi) 🡥
 
+### Modern .NET 8 Architecture
+- Built on **`.NET 8 (LTS)`** - Long-term support until November 2026
+- **`C# 12`** features - Primary constructors, collection expressions
+- **Clean Architecture Principles** - Separation of concerns through dedicated layers and shared package versioning.
+
 ### Database and Entity Framework Core
 - Support multiple database providers: **SQL Server**, **PostgreSQL**, and **MySQL**.
 - Manage database schema and migrations via **Entity Framework Core** for version control.
@@ -316,6 +323,15 @@ ___
 
 ### API Rate Limiting
 - Implement a rate limiter to protect API resources from abuse, mitigate DDoS attacks, and enhance overall API performance.
+
+### Central Package Management
+- Maintain all NuGet package versions in **`Directory.Packages.props`** at solution root.
+- Enable `ManagePackageVersionsCentrally` for unified version control across all projects.
+- Benefits:
+  - **Version consistency** - All projects use identical package versions
+  - **Easy updates** - Change version once, updates everywhere
+  - **Cleaner .csproj files** - Package references without version attributes
+  - **No conflicts** - Eliminates version mismatch issues
 
 ### Unit Testing with xUnit
 - Write comprehensive unit tests using the xUnit framework to validate individual components in isolation.
