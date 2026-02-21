@@ -1,0 +1,4 @@
+2026-02-21 10:54:27 [Error] 80000010-0002-fd00-b63f-84710c7967bb PDF generation failed.
+2026-02-21 10:55:12 [Error] 80000003-0001-fe00-b63f-84710c7967bb PDF generation failed.
+2026-02-21 10:58:53 [Error] 80000007-0000-f700-b63f-84710c7967bb PDF generation failed.
+2026-02-21 10:58:53 [Error] 80000007-0000-f700-b63f-84710c7967bb HTTP "GET" "/api/v1/Airlines/export/pdf" responded 500 in 2493.9869 ms

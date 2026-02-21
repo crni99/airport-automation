@@ -344,7 +344,7 @@ namespace AirportAutomation.Api.Controllers
 		/// <response code="500">If an unexpected server error occurs, such as a failure during PDF generation.</response>
 		[HttpGet("export/pdf")]
 		[Authorize(Policy = "RequireAdminRole")]
-		[Produces("application/pdf")]
+		[Produces("application/pdf", "application/json")]
 		[ProducesResponseType(200)]
 		[ProducesResponseType(204)]
 		[ProducesResponseType(400)]
@@ -412,7 +412,7 @@ namespace AirportAutomation.Api.Controllers
 		/// <response code="500">If an unexpected server error occurs, such as a failure during Excel generation.</response>
 		[HttpGet("export/excel")]
 		[Authorize(Policy = "RequireAdminRole")]
-		[Produces("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")]
+		[Produces("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/json")]
 		[ProducesResponseType(200)]
 		[ProducesResponseType(204)]
 		[ProducesResponseType(400)]
