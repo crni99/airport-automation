@@ -42,10 +42,8 @@ jobs:
           dotnet publish ./backend/AirportAutomationApi/AirportAutomation.Api.csproj \
           -c Release \
           -o "${{env.DOTNET_ROOT}}/myapp" \
-          --self-contained true \
-          --runtime win-x64 \
-          /p:PublishSingleFile=false \
-          /p:IncludeNativeLibrariesForSelfExtract=true
+          --self-contained false \
+          --no-restore
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
