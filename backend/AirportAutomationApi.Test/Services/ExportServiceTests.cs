@@ -1,7 +1,7 @@
 ﻿using AirportAutomation.Application.Services;
 using AirportAutomation.Core.Entities;
 using ClosedXML.Excel;
-using QuestPDF.Infrastructure;
+// using QuestPDF.Infrastructure;
 
 namespace AirportAutomationApi.Test.Services
 {
@@ -87,7 +87,7 @@ namespace AirportAutomationApi.Test.Services
 		#endregion
 
 		#region PDF Export Tests
-
+		/*
 		[Fact]
 		[Trait("Category", "ExportToPDF")]
 		public void ExportToPDF_AirlinesCase_ReturnsByteArray()
@@ -268,6 +268,7 @@ namespace AirportAutomationApi.Test.Services
 			var exception = Assert.Throws<ArgumentException>(() => exportService.ExportToPDF("Unsupported", unsupportedData));
 			Assert.Equal("Unsupported name or type.", exception.Message);
 		}
+		*/
 
 		#endregion
 

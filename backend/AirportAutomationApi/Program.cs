@@ -12,13 +12,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using QuestPDF.Infrastructure;
+//using QuestPDF.Infrastructure;
 using Serilog;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 
-QuestPDF.Settings.License = LicenseType.Community;
+//QuestPDF.Settings.License = LicenseType.Community;
 
 var builder = WebApplication.CreateBuilder(args);
 

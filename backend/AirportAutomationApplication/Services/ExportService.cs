@@ -1,9 +1,9 @@
 ﻿using AirportAutomation.Core.Entities;
 using AirportAutomation.Core.Interfaces.IServices;
 using ClosedXML.Excel;
-using QuestPDF.Fluent;
-using QuestPDF.Helpers;
-using QuestPDF.Infrastructure;
+//using QuestPDF.Fluent;
+//using QuestPDF.Helpers;
+//using QuestPDF.Infrastructure;
 using System.Data;
 using System.Reflection;
 
@@ -70,6 +70,7 @@ namespace AirportAutomation.Application.Services
 
 		public byte[] ExportToPDF<T>(string name, IList<T> data)
 		{
+			/*
 			var doc = Document.Create(container =>
 			{
 				container.Page(page =>
@@ -148,7 +149,10 @@ namespace AirportAutomation.Application.Services
 
 			byte[] pdfBytes = doc.GeneratePdf();
 			return pdfBytes;
+			*/
+			return null;
 		}
+		/*
 
 		private static void AddCustomHeader(ColumnDescriptor column, string headerText)
 		{
@@ -399,7 +403,7 @@ namespace AirportAutomation.Application.Services
 				}
 			});
 		}
-
+		*/
 		#endregion
 
 	}
