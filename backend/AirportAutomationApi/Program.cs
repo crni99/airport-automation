@@ -1,6 +1,7 @@
 ﻿using AirportAutomation.Api.Binders;
 using AirportAutomation.Api.HealthChecks;
 using AirportAutomation.Api.Helpers;
+using AirportAutomation.Core.Configuration;
 using AirportAutomation.Infrastructure.Data;
 using AirportAutomation.Infrastructure.Middlewares;
 using AspNetCoreRateLimit;
@@ -40,6 +41,31 @@ builder.Services.AddControllers(
 		options => options.UseDateOnlyTimeOnlyStringConverters())
 	.AddJsonOptions(options => options.UseDateOnlyTimeOnlyStringConverters())
 	.AddNewtonsoftJson();
+
+var redisSettings = builder.Configuration.GetSection("Redis").Get<RedisSettings>();
+bool isRedisEnabled = redisSettings?.Enabled == true;
+
+if (isRedisEnabled)
+{
+	var redisConnectionString = builder.Configuration.GetConnectionString("Redis");
+
+	if (!string.IsNullOrEmpty(redisConnectionString))
+	{
+		builder.Services.AddStackExchangeRedisCache(options =>
+		{
+			options.Configuration = redisConnectionString;
+			options.InstanceName = redisSettings.InstanceName;
+		});
+
+		builder.Services.AddSingleton(redisSettings);
+	}
+}
+else
+{
+	builder.Services.AddDistributedMemoryCache();
+	builder.Services.AddSingleton(redisSettings ?? new RedisSettings());
+}
+
 
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
@@ -229,10 +255,14 @@ builder.Services.AddApiVersioning(setupAction =>
 
 builder.Services.AddHttpClient();
 
-builder.Services
-	.AddHealthChecks()
+var healthChecksBuilder = builder.Services.AddHealthChecks()
 	.AddCheck<ApiHealthCheck>("API")
 	.AddCheck<DatabaseHealthCheck>("Database");
+
+if (isRedisEnabled)
+{
+	healthChecksBuilder.AddCheck<RedisHealthCheck>("Redis");
+}
 
 var app = builder.Build();
 

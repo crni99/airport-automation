@@ -2,10 +2,12 @@
 using AirportAutomation.Api.Interfaces;
 using AirportAutomation.Application.Dtos.PlaneTicket;
 using AirportAutomation.Application.Dtos.Response;
+using AirportAutomation.Core.Configuration;
 using AirportAutomation.Core.Entities;
 using AirportAutomation.Core.Enums;
 using AirportAutomation.Core.FilterExtensions;
 using AirportAutomation.Core.Filters;
+using AirportAutomation.Core.Interfaces;
 using AirportAutomation.Core.Interfaces.IServices;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -24,6 +26,7 @@ namespace AirportAutomation.Api.Controllers
 	public class PlaneTicketsController : BaseController
 	{
 		private readonly IPlaneTicketService _planeTicketService;
+		private readonly ICacheService _cacheService;
 		private readonly IPaginationValidationService _paginationValidationService;
 		private readonly IInputValidationService _inputValidationService;
 		private readonly IUtilityService _utilityService;
@@ -36,6 +39,7 @@ namespace AirportAutomation.Api.Controllers
 		/// Initializes a new instance of the <see cref="PlaneTicketsController"/> class.
 		/// </summary>
 		/// <param name="planeTicketService">The service for managing plane tickets.</param>
+		/// <param name="cacheService">The service for managing data caching.</param>
 		/// <param name="paginationValidationService">The service for validating pagination parameters.</param>
 		/// <param name="inputValidationService">The service for validating input data.</param>
 		/// <param name="utilityService">The utility service for various helper functions.</param>
@@ -45,6 +49,7 @@ namespace AirportAutomation.Api.Controllers
 		/// <param name="configuration">The application configuration.</param>
 		public PlaneTicketsController(
 			IPlaneTicketService planeTicketService,
+			ICacheService cacheService,
 			IPaginationValidationService paginationValidationService,
 			IInputValidationService inputValidationService,
 			IUtilityService utilityService,
@@ -54,6 +59,7 @@ namespace AirportAutomation.Api.Controllers
 			IConfiguration configuration)
 		{
 			_planeTicketService = planeTicketService ?? throw new ArgumentNullException(nameof(planeTicketService));
+			_cacheService = cacheService ?? throw new ArgumentNullException(nameof(cacheService));
 			_paginationValidationService = paginationValidationService ?? throw new ArgumentNullException(nameof(paginationValidationService));
 			_inputValidationService = inputValidationService ?? throw new ArgumentNullException(nameof(inputValidationService));
 			_utilityService = utilityService ?? throw new ArgumentNullException(nameof(utilityService));
@@ -122,6 +128,14 @@ namespace AirportAutomation.Api.Controllers
 				_logger.LogInformation("Invalid input. The ID {Id} must be a non-negative integer.", id);
 				return BadRequest("Invalid input. The ID must be a non-negative integer.");
 			}
+
+			string cacheKey = CacheKeys.PlaneTicket(id);
+			var cachedPlaneTicket = await _cacheService.GetAsync<PlaneTicketDto>(cacheKey);
+			if (cachedPlaneTicket != null)
+			{
+				return Ok(cachedPlaneTicket);
+			}
+
 			if (!await _planeTicketService.PlaneTicketExists(id))
 			{
 				_logger.LogInformation("Plane Ticket with id {Id} not found.", id);
@@ -129,6 +143,9 @@ namespace AirportAutomation.Api.Controllers
 			}
 			var planeTicket = await _planeTicketService.GetPlaneTicket(id);
 			var planeTicketDto = _mapper.Map<PlaneTicketDto>(planeTicket);
+
+			await _cacheService.SetAsync(cacheKey, planeTicketDto);
+
 			return Ok(planeTicketDto);
 		}
 
@@ -237,6 +254,10 @@ namespace AirportAutomation.Api.Controllers
 			}
 			var planeTicket = _mapper.Map<PlaneTicketEntity>(planeTicketUpdateDto);
 			await _planeTicketService.PutPlaneTicket(planeTicket);
+
+			string cacheKey = CacheKeys.PlaneTicket(id);
+			await _cacheService.RemoveAsync(cacheKey);
+
 			return NoContent();
 		}
 
@@ -280,6 +301,10 @@ namespace AirportAutomation.Api.Controllers
 				return NotFound();
 			}
 			var updatedPlaneTicket = await _planeTicketService.PatchPlaneTicket(id, planeTicketDocument);
+
+			string cacheKey = CacheKeys.PlaneTicket(id);
+			await _cacheService.RemoveAsync(cacheKey);
+
 			var planeTicketDto = _mapper.Map<PlaneTicketDto>(updatedPlaneTicket);
 			return Ok(planeTicketDto);
 		}
@@ -318,6 +343,9 @@ namespace AirportAutomation.Api.Controllers
 			bool deleted = await _planeTicketService.DeletePlaneTicket(id);
 			if (deleted)
 			{
+				string cacheKey = CacheKeys.PlaneTicket(id);
+				await _cacheService.RemoveAsync(cacheKey);
+
 				return NoContent();
 			}
 			else

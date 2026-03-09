@@ -2,10 +2,12 @@
 using AirportAutomation.Api.Interfaces;
 using AirportAutomation.Application.Dtos.Passenger;
 using AirportAutomation.Application.Dtos.Response;
+using AirportAutomation.Core.Configuration;
 using AirportAutomation.Core.Entities;
 using AirportAutomation.Core.Enums;
 using AirportAutomation.Core.FilterExtensions;
 using AirportAutomation.Core.Filters;
+using AirportAutomation.Core.Interfaces;
 using AirportAutomation.Core.Interfaces.IServices;
 using AutoMapper;
 using DocumentFormat.OpenXml.Office2010.Excel;
@@ -25,6 +27,7 @@ namespace AirportAutomation.Api.Controllers
 	public class PassengersController : BaseController
 	{
 		private readonly IPassengerService _passengerService;
+		private readonly ICacheService _cacheService;
 		private readonly IPaginationValidationService _paginationValidationService;
 		private readonly IInputValidationService _inputValidationService;
 		private readonly IUtilityService _utilityService;
@@ -37,6 +40,7 @@ namespace AirportAutomation.Api.Controllers
 		/// Initializes a new instance of the <see cref="PassengersController"/> class.
 		/// </summary>
 		/// <param name="passengerService">The service for managing passengers.</param>
+		/// <param name="cacheService">The service for managing data caching.</param>
 		/// <param name="paginationValidationService">The service for validating pagination parameters.</param>
 		/// <param name="inputValidationService">The service for validating input data.</param>
 		/// <param name="utilityService">The utility service for various helper functions.</param>
@@ -46,6 +50,7 @@ namespace AirportAutomation.Api.Controllers
 		/// <param name="configuration">The application configuration.</param>
 		public PassengersController(
 			IPassengerService passengerService,
+			ICacheService cacheService,
 			IPaginationValidationService paginationValidationService,
 			IInputValidationService inputValidationService,
 			IUtilityService utilityService,
@@ -55,6 +60,7 @@ namespace AirportAutomation.Api.Controllers
 			IConfiguration configuration)
 		{
 			_passengerService = passengerService ?? throw new ArgumentNullException(nameof(passengerService));
+			_cacheService = cacheService ?? throw new ArgumentNullException(nameof(cacheService));
 			_paginationValidationService = paginationValidationService ?? throw new ArgumentNullException(nameof(paginationValidationService));
 			_inputValidationService = inputValidationService ?? throw new ArgumentNullException(nameof(inputValidationService));
 			_utilityService = utilityService ?? throw new ArgumentNullException(nameof(utilityService));
@@ -123,6 +129,14 @@ namespace AirportAutomation.Api.Controllers
 				_logger.LogInformation("Invalid input. The ID {Id} must be a non-negative integer.", id);
 				return BadRequest("Invalid input. The ID must be a non-negative integer.");
 			}
+
+			string cacheKey = CacheKeys.Passenger(id);
+			var cachedPassenger = await _cacheService.GetAsync<PassengerDto>(cacheKey);
+			if (cachedPassenger != null)
+			{
+				return Ok(cachedPassenger);
+			}
+
 			if (!await _passengerService.PassengerExists(id))
 			{
 				_logger.LogInformation("Passenger with id {Id} not found.", id);
@@ -130,6 +144,9 @@ namespace AirportAutomation.Api.Controllers
 			}
 			var passenger = await _passengerService.GetPassenger(id);
 			var passengerDto = _mapper.Map<PassengerDto>(passenger);
+
+			await _cacheService.SetAsync(cacheKey, passengerDto);
+
 			return Ok(passengerDto);
 		}
 
@@ -252,6 +269,10 @@ namespace AirportAutomation.Api.Controllers
 			}
 			var passenger = _mapper.Map<PassengerEntity>(passengerDto);
 			await _passengerService.PutPassenger(passenger);
+
+			string cacheKey = CacheKeys.Passenger(id);
+			await _cacheService.RemoveAsync(cacheKey);
+
 			return NoContent();
 		}
 
@@ -295,6 +316,10 @@ namespace AirportAutomation.Api.Controllers
 				return NotFound();
 			}
 			var updatedPassenger = await _passengerService.PatchPassenger(id, passengerDocument);
+
+			string cacheKey = CacheKeys.Passenger(id);
+			await _cacheService.RemoveAsync(cacheKey);
+
 			var passengerDto = _mapper.Map<PassengerDto>(updatedPassenger);
 			return Ok(passengerDto);
 		}
@@ -333,6 +358,9 @@ namespace AirportAutomation.Api.Controllers
 			bool deleted = await _passengerService.DeletePassenger(id);
 			if (deleted)
 			{
+				string cacheKey = CacheKeys.Passenger(id);
+				await _cacheService.RemoveAsync(cacheKey);
+
 				return NoContent();
 			}
 			else

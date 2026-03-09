@@ -3,6 +3,7 @@ using AirportAutomation.Api.MappingProfiles;
 using AirportAutomation.Api.Repositories;
 using AirportAutomation.Api.Services;
 using AirportAutomation.Application.Services;
+using AirportAutomation.Core.Interfaces;
 using AirportAutomation.Core.Interfaces.IRepositories;
 using AirportAutomation.Core.Interfaces.IServices;
 using AirportAutomation.Infrastructure.Repositories;
@@ -52,6 +53,8 @@ namespace AirportAutomation.Api.Binders
 			services.AddScoped<IInputValidationService, InputValidationService>();
 			services.AddScoped<IUtilityService, UtilityService>();
 			services.AddScoped<IExportService, ExportService>();
+
+			services.AddScoped<ICacheService, CacheService>();
 		}
 	}
 }

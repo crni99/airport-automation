@@ -1,8 +1,11 @@
 ﻿using AirportAutomation.Api.Helpers;
 using AirportAutomation.Api.Interfaces;
+using AirportAutomation.Application.Dtos.Airline;
 using AirportAutomation.Application.Dtos.Response;
 using AirportAutomation.Application.Dtos.TravelClass;
+using AirportAutomation.Core.Configuration;
 using AirportAutomation.Core.Enums;
+using AirportAutomation.Core.Interfaces;
 using AirportAutomation.Core.Interfaces.IServices;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -19,6 +22,7 @@ namespace AirportAutomation.Api.Controllers
 	public class TravelClassesController : BaseController
 	{
 		private readonly ITravelClassService _travelClassService;
+		private readonly ICacheService _cacheService;
 		private readonly IPaginationValidationService _paginationValidationService;
 		private readonly IInputValidationService _inputValidationService;
 		private readonly IUtilityService _utilityService;
@@ -31,6 +35,7 @@ namespace AirportAutomation.Api.Controllers
 		/// Initializes a new instance of the <see cref="TravelClassesController"/> class.
 		/// </summary>
 		/// <param name="travelClassService">The service for managing travel classes.</param>
+		/// <param name="cacheService">The service for managing data caching.</param>
 		/// <param name="paginationValidationService">The service for validating pagination parameters.</param>
 		/// <param name="inputValidationService">The service for validating input data.</param>
 		/// <param name="utilityService">The utility service for various helper functions.</param>
@@ -40,6 +45,7 @@ namespace AirportAutomation.Api.Controllers
 		/// <param name="configuration">The application configuration.</param>
 		public TravelClassesController(
 			ITravelClassService travelClassService,
+			ICacheService cacheService,
 			IPaginationValidationService paginationValidationService,
 			IInputValidationService inputValidationService,
 			IUtilityService utilityService,
@@ -50,6 +56,7 @@ namespace AirportAutomation.Api.Controllers
 		)
 		{
 			_travelClassService = travelClassService ?? throw new ArgumentNullException(nameof(travelClassService));
+			_cacheService = cacheService ?? throw new ArgumentNullException(nameof(cacheService));
 			_paginationValidationService = paginationValidationService ?? throw new ArgumentNullException(nameof(paginationValidationService));
 			_inputValidationService = inputValidationService ?? throw new ArgumentNullException(nameof(inputValidationService));
 			_utilityService = utilityService ?? throw new ArgumentNullException(nameof(utilityService));
@@ -118,6 +125,14 @@ namespace AirportAutomation.Api.Controllers
 				_logger.LogInformation("Invalid input. The ID {Id} must be a non-negative integer.", id);
 				return BadRequest("Invalid input. The ID must be a non-negative integer.");
 			}
+
+			string cacheKey = CacheKeys.TravelClass(id);
+			var cachedTravelClass = await _cacheService.GetAsync<TravelClassDto>(cacheKey);
+			if (cachedTravelClass != null)
+			{
+				return Ok(cachedTravelClass);
+			}
+
 			if (!await _travelClassService.TravelClassExists(id))
 			{
 				_logger.LogInformation("Travel class with id {Id} not found.", id);
@@ -125,6 +140,9 @@ namespace AirportAutomation.Api.Controllers
 			}
 			var travelClass = await _travelClassService.GetTravelClass(id);
 			var travelClassDto = _mapper.Map<TravelClassDto>(travelClass);
+
+			await _cacheService.SetAsync(cacheKey, travelClassDto);
+
 			return Ok(travelClassDto);
 		}
 

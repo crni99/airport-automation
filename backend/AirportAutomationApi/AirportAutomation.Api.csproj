@@ -51,6 +51,8 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Filters" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
     <PackageReference Include="System.Threading.RateLimiting" />
+	<PackageReference Include="StackExchange.Redis" />
+	<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" />
   </ItemGroup>
 
   <ItemGroup>
