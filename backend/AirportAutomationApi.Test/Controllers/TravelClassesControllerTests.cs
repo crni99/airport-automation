@@ -4,6 +4,7 @@ using AirportAutomation.Application.Dtos.Response;
 using AirportAutomation.Application.Dtos.TravelClass;
 using AirportAutomation.Core.Entities;
 using AirportAutomation.Core.Enums;
+using AirportAutomation.Core.Interfaces;
 using AirportAutomation.Core.Interfaces.IServices;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,7 @@ namespace AirportAutomationApi.Test.Controllers
 	{
 		private readonly TravelClassesController _controller;
 		private readonly Mock<ITravelClassService> _travelClassServiceMock;
+		private readonly Mock<ICacheService> _cacheServiceMock;
 		private readonly Mock<IPaginationValidationService> _paginationValidationServiceMock;
 		private readonly Mock<IInputValidationService> _inputValidationServiceMock;
 		private readonly Mock<IUtilityService> _utilityServiceMock;
@@ -40,6 +42,7 @@ namespace AirportAutomationApi.Test.Controllers
 		public TravelClassesControllerTests()
 		{
 			_travelClassServiceMock = new Mock<ITravelClassService>();
+			_cacheServiceMock = new Mock<ICacheService>();
 			_paginationValidationServiceMock = new Mock<IPaginationValidationService>();
 			_inputValidationServiceMock = new Mock<IInputValidationService>();
 			_utilityServiceMock = new Mock<IUtilityService>();
@@ -57,6 +60,7 @@ namespace AirportAutomationApi.Test.Controllers
 
 			_controller = new TravelClassesController(
 				_travelClassServiceMock.Object,
+				_cacheServiceMock.Object,
 				_paginationValidationServiceMock.Object,
 				_inputValidationServiceMock.Object,
 				_utilityServiceMock.Object,
@@ -80,6 +84,7 @@ namespace AirportAutomationApi.Test.Controllers
 		{
 			// Arrange
 			var travelClassServiceMock = new Mock<ITravelClassService>();
+			var cacheServiceMock = new Mock<ICacheService>();
 			var paginationValidationServiceMock = new Mock<IPaginationValidationService>();
 			var inputValidationServiceMock = new Mock<IInputValidationService>();
 			var utilityServiceMock = new Mock<IUtilityService>();
@@ -90,6 +95,7 @@ namespace AirportAutomationApi.Test.Controllers
 
 			// Set up mocks to return null based on the test case
 			ITravelClassService travelClassService = serviceName == "travelClassService" ? null : travelClassServiceMock.Object;
+			ICacheService cacheService = serviceName == "cacheService" ? null : cacheServiceMock.Object;
 			IPaginationValidationService paginationValidationService = serviceName == "paginationValidationService" ? null : paginationValidationServiceMock.Object;
 			IInputValidationService inputValidationService = serviceName == "inputValidationService" ? null : inputValidationServiceMock.Object;
 			IUtilityService utilityService = serviceName == "utilityService" ? null : utilityServiceMock.Object;
@@ -100,6 +106,7 @@ namespace AirportAutomationApi.Test.Controllers
 			// Act & Assert
 			var exception = Record.Exception(() => new TravelClassesController(
 				travelClassService,
+				cacheService,
 				paginationValidationService,
 				inputValidationService,
 				utilityService,

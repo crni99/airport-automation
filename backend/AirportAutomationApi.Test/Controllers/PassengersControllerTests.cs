@@ -5,6 +5,7 @@ using AirportAutomation.Application.Dtos.Response;
 using AirportAutomation.Core.Entities;
 using AirportAutomation.Core.Enums;
 using AirportAutomation.Core.Filters;
+using AirportAutomation.Core.Interfaces;
 using AirportAutomation.Core.Interfaces.IServices;
 using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
@@ -19,6 +20,7 @@ namespace AirportAutomationApi.Test.Controllers
 	{
 		private readonly PassengersController _controller;
 		private readonly Mock<IPassengerService> _passengerServiceMock;
+		private readonly Mock<ICacheService> _cacheServiceMock;
 		private readonly Mock<IPaginationValidationService> _paginationValidationServiceMock;
 		private readonly Mock<IInputValidationService> _inputValidationServiceMock;
 		private readonly Mock<IUtilityService> _utilityServiceMock;
@@ -53,6 +55,7 @@ namespace AirportAutomationApi.Test.Controllers
 		public PassengersControllerTests()
 		{
 			_passengerServiceMock = new Mock<IPassengerService>();
+			_cacheServiceMock = new Mock<ICacheService>();
 			_paginationValidationServiceMock = new Mock<IPaginationValidationService>();
 			_inputValidationServiceMock = new Mock<IInputValidationService>();
 			_utilityServiceMock = new Mock<IUtilityService>();
@@ -70,6 +73,7 @@ namespace AirportAutomationApi.Test.Controllers
 
 			_controller = new PassengersController(
 				_passengerServiceMock.Object,
+				_cacheServiceMock.Object,
 				_paginationValidationServiceMock.Object,
 				_inputValidationServiceMock.Object,
 				_utilityServiceMock.Object,
@@ -95,6 +99,7 @@ namespace AirportAutomationApi.Test.Controllers
 		{
 			// Arrange
 			var passengerServiceMock = new Mock<IPassengerService>();
+			var cacheServiceMock = new Mock<ICacheService>();
 			var paginationValidationServiceMock = new Mock<IPaginationValidationService>();
 			var inputValidationServiceMock = new Mock<IInputValidationService>();
 			var utilityServiceMock = new Mock<IUtilityService>();
@@ -105,6 +110,7 @@ namespace AirportAutomationApi.Test.Controllers
 
 			// Set up mocks to return null based on the test case
 			IPassengerService passengerService = serviceName == "passengerService" ? null : passengerServiceMock.Object;
+			ICacheService cacheService = serviceName == "cacheService" ? null : cacheServiceMock.Object;
 			IPaginationValidationService paginationValidationService = serviceName == "paginationValidationService" ? null : paginationValidationServiceMock.Object;
 			IInputValidationService inputValidationService = serviceName == "inputValidationService" ? null : inputValidationServiceMock.Object;
 			IUtilityService utilityService = serviceName == "utilityService" ? null : utilityServiceMock.Object;
@@ -115,6 +121,7 @@ namespace AirportAutomationApi.Test.Controllers
 			// Act & Assert
 			var exception = Record.Exception(() => new PassengersController(
 				passengerService,
+				cacheService,
 				paginationValidationService,
 				inputValidationService,
 				utilityService,
