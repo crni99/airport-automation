@@ -191,13 +191,26 @@ cd airport-automation/backend/AirportAutomationApi
   </tbody>
 </table>
 
-5. **In your IDE (e.g., Visual Studio / JetBrains Rider):**
+5. **Optional: Enable Redis Caching**
+- By default, the application uses In-Memory Cache for seamless local development.
+- However, for better performance and distributed environments, you can easily switch that.
+```json
+"ConnectionStrings": {
+  "Redis": "[host]:[port],password=[password],ssl=True,abortConnect=False
+},
+"Redis": {
+  "Enabled": true,
+}
+```
+
+6. **In your IDE (e.g., Visual Studio / JetBrains Rider):**
 - Set `AirportAutomationApi` (Web API) and `AirportAutomationWeb` (MVC Web) as the startup projects.
 - This ensures the API and MVC frontend run together.
 - Alternatively (using CLI/VS Code): Open two separate terminal windows in the `airport-automation/backend` directory and run the following commands concurrently:
     - For the **Web API**: `dotnet run --project AirportAutomationApi/AirportAutomationApi.csproj`
     - For the **MVC Frontend**: `dotnet run --project AirportAutomationWeb/AirportAutomationWeb.csproj`
-6. Start the application
+
+7. Start the application
 ```bash
 dotnet run
 ```
@@ -274,6 +287,11 @@ ___
 
 ### Searching, Filtering, and Paging Resources
 - Implement advanced features such as searching, filtering, and paging to improve the API’s usability and performance.
+
+### Distributed Caching with Redis
+- Implement a hybrid caching strategy using **`Redis`** for distributed environments and **`In-Memory Cache`** as a secondary fallback.
+- **Smart Switch Mechanism**: The system automatically detects if Redis is enabled and reachable; if not, it seamlessly falls back to local memory to ensure 100% uptime.
+- Use caching to optimize performance-heavy operations, such as frequently accessed lookups and search results.
 
 ### Advanced Filtering with Filter Pattern
 - Implement **dedicated filter classes** for each entity type (PassengerSearchFilter, PilotSearchFilter, etc.) to enable multi-field search capabilities.
