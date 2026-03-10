@@ -291,7 +291,9 @@ ___
 ### Distributed Caching with Redis
 - Implement a hybrid caching strategy using **`Redis`** for distributed environments and **`In-Memory Cache`** as a secondary fallback.
 - **Smart Switch Mechanism**: The system automatically detects if Redis is enabled and reachable; if not, it seamlessly falls back to local memory to ensure 100% uptime.
+- **Resilient Cache Layer**: If Redis becomes unavailable or runs out of memory during runtime, the system gracefully handles the failure and falls back to the database, ensuring uninterrupted API availability.
 - Use caching to optimize performance-heavy operations, such as frequently accessed lookups and search results.
+
 
 ### Advanced Filtering with Filter Pattern
 - Implement **dedicated filter classes** for each entity type (PassengerSearchFilter, PilotSearchFilter, etc.) to enable multi-field search capabilities.
