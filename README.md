@@ -5,7 +5,10 @@ This project showcases a comprehensive full-stack solution, combining a robust *
 <br />
 
 ## ⭐ Live Demo
-> **Note:** All services are hosted on **Free Tier** plans. The database automatically enters **paused mode** after a period of inactivity. When making the initial request, please allow **1-2 minutes** for the database to wake up and for the application to become fully operational.
+> **Note:** All services are hosted on **Free Tier** plans. The database automatically enters **paused mode** after a period of inactivity. When making the initial request, 
+please allow **1-2 minutes** for the database to wake up and for the application to become fully operational. <br />
+**Redis Cloud (Free Tier)** is used for distributed caching — cache may be **evicted or unavailable** during periods of inactivity,
+in which case the application automatically falls back to **In-Memory Cache** to ensure uninterrupted availability.
 
 <table>
   <thead>
@@ -293,7 +296,6 @@ ___
 - **Smart Switch Mechanism**: The system automatically detects if Redis is enabled and reachable; if not, it seamlessly falls back to local memory to ensure 100% uptime.
 - **Resilient Cache Layer**: If Redis becomes unavailable or runs out of memory during runtime, the system gracefully handles the failure and falls back to the database, ensuring uninterrupted API availability.
 - Use caching to optimize performance-heavy operations, such as frequently accessed lookups and search results.
-
 
 ### Advanced Filtering with Filter Pattern
 - Implement **dedicated filter classes** for each entity type (PassengerSearchFilter, PilotSearchFilter, etc.) to enable multi-field search capabilities.
