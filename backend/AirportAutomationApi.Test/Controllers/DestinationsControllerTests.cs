@@ -78,6 +78,7 @@ namespace AirportAutomationApi.Test.Controllers
 		[Theory]
 		[Trait("Category", "Constructor")]
 		[InlineData("destinationService")]
+		[InlineData("cacheService")]
 		[InlineData("paginationValidationService")]
 		[InlineData("inputValidationService")]
 		[InlineData("utilityService")]
@@ -317,6 +318,71 @@ namespace AirportAutomationApi.Test.Controllers
 			Assert.Equal(expectedData, pagedResponse.Data);
 		}
 
+		[Fact]
+		[Trait("Category", "GetDestinations")]
+		public async Task GetDestinations_ReturnsCachedData_WhenCacheHit()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			int page = 1;
+			int pageSize = 10;
+			var cachedResponse = new PagedResponse<DestinationDto>(
+				new List<DestinationDto> { new DestinationDto { Id = 1, City = "Belgrade", Airport = "Belgrade Nikola Tesla Airport" } },
+				page, pageSize, 1);
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, pageSize, null));
+			_cacheServiceMock
+				.Setup(x => x.GetAsync<PagedResponse<DestinationDto>>(It.IsAny<string>()))
+				.ReturnsAsync(cachedResponse);
+
+			// Act
+			var result = await _controller.GetDestinations(cancellationToken, page, pageSize);
+
+			// Assert
+			var okResult = Assert.IsType<OkObjectResult>(result.Result);
+			Assert.Equal(cachedResponse, okResult.Value);
+			_destinationServiceMock.Verify(x => x.GetDestinations(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+		}
+
+		[Fact]
+		[Trait("Category", "GetDestinations")]
+		public async Task GetDestinations_SetsCache_WhenCacheMiss()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			int page = 1;
+			int pageSize = 10;
+			var destinations = new List<DestinationEntity> { new DestinationEntity { Id = 1, City = "Belgrade", Airport = "Belgrade Nikola Tesla Airport" } };
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, pageSize, null));
+			_cacheServiceMock
+				.Setup(x => x.GetAsync<PagedResponse<DestinationDto>>(It.IsAny<string>()))
+				.ReturnsAsync((PagedResponse<DestinationDto>)null);
+			_destinationServiceMock
+				.Setup(x => x.GetDestinations(cancellationToken, page, pageSize))
+				.ReturnsAsync(destinations);
+			_destinationServiceMock
+				.Setup(x => x.DestinationsCount(cancellationToken, null, null))
+				.ReturnsAsync(1);
+			_mapperMock
+				.Setup(m => m.Map<IEnumerable<DestinationDto>>(It.IsAny<IEnumerable<DestinationEntity>>()))
+				.Returns(new List<DestinationDto> { new DestinationDto { Id = 1, City = "Belgrade", Airport = "Belgrade Nikola Tesla Airport" } });
+
+			// Act
+			var result = await _controller.GetDestinations(cancellationToken, page, pageSize);
+
+			// Assert
+			Assert.IsType<OkObjectResult>(result.Result);
+			_cacheServiceMock.Verify(x => x.SetAsync(
+				It.IsAny<string>(),
+				It.IsAny<PagedResponse<DestinationDto>>(),
+				null, null), Times.Once);
+		}
+
 		#endregion
 
 		#region GetDestination
@@ -391,6 +457,65 @@ namespace AirportAutomationApi.Test.Controllers
 			var okResult = Assert.IsType<OkObjectResult>(actionResult.Result);
 			var returnedDestinationDto = Assert.IsType<DestinationDto>(okResult.Value);
 			Assert.Equal(destinationDto, returnedDestinationDto);
+		}
+
+		[Fact]
+		[Trait("Category", "GetDestination")]
+		public async Task GetDestination_ReturnsCachedData_WhenCacheHit()
+		{
+			// Arrange
+			int id = 1;
+			var cachedDestination = new DestinationDto { Id = 1, City = "Belgrade", Airport = "Belgrade Nikola Tesla Airport" };
+
+			_inputValidationServiceMock
+				.Setup(x => x.IsNonNegativeInt(id))
+				.Returns(true);
+			_cacheServiceMock
+				.Setup(x => x.GetAsync<DestinationDto>(It.IsAny<string>()))
+				.ReturnsAsync(cachedDestination);
+
+			// Act
+			var result = await _controller.GetDestination(id);
+
+			// Assert
+			var okResult = Assert.IsType<OkObjectResult>(result.Result);
+			Assert.Equal(cachedDestination, okResult.Value);
+			_destinationServiceMock.Verify(x => x.DestinationExists(It.IsAny<int>()), Times.Never);
+			_destinationServiceMock.Verify(x => x.GetDestination(It.IsAny<int>()), Times.Never);
+		}
+
+		[Fact]
+		[Trait("Category", "GetDestination")]
+		public async Task GetDestination_SetsCache_WhenCacheMiss()
+		{
+			// Arrange
+			int id = 1;
+
+			_inputValidationServiceMock
+				.Setup(x => x.IsNonNegativeInt(id))
+				.Returns(true);
+			_cacheServiceMock
+				.Setup(x => x.GetAsync<DestinationDto>(It.IsAny<string>()))
+				.ReturnsAsync((DestinationDto)null);
+			_destinationServiceMock
+				.Setup(x => x.DestinationExists(id))
+				.ReturnsAsync(true);
+			_destinationServiceMock
+				.Setup(x => x.GetDestination(id))
+				.ReturnsAsync(destinationEntity);
+			_mapperMock
+				.Setup(m => m.Map<DestinationDto>(destinationEntity))
+				.Returns(destinationDto);
+
+			// Act
+			var result = await _controller.GetDestination(id);
+
+			// Assert
+			Assert.IsType<OkObjectResult>(result.Result);
+			_cacheServiceMock.Verify(x => x.SetAsync(
+				It.IsAny<string>(),
+				It.IsAny<DestinationDto>(),
+				null, null), Times.Once);
 		}
 
 		#endregion

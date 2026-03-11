@@ -95,6 +95,14 @@ namespace AirportAutomation.Api.Controllers
 			{
 				return result;
 			}
+
+			string cacheKey = CacheKeys.PlaneTickets(page, correctedPageSize);
+			var cachedPlaneTickets = await _cacheService.GetAsync<PagedResponse<PlaneTicketDto>>(cacheKey);
+			if (cachedPlaneTickets != null)
+			{
+				return Ok(cachedPlaneTickets);
+			}
+
 			var planeTickets = await _planeTicketService.GetPlaneTickets(cancellationToken, page, correctedPageSize);
 			if (planeTickets is null || !planeTickets.Any())
 			{
@@ -104,6 +112,9 @@ namespace AirportAutomation.Api.Controllers
 			var totalItems = await _planeTicketService.PlaneTicketsCount(cancellationToken);
 			var data = _mapper.Map<IEnumerable<PlaneTicketDto>>(planeTickets);
 			var response = new PagedResponse<PlaneTicketDto>(data, page, correctedPageSize, totalItems);
+
+			await _cacheService.SetAsync(cacheKey, response);
+
 			return Ok(response);
 		}
 

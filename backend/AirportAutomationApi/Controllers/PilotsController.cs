@@ -1,10 +1,7 @@
 ﻿using AirportAutomation.Api.Helpers;
 using AirportAutomation.Api.Interfaces;
-using AirportAutomation.Application.Dtos.Airline;
-using AirportAutomation.Application.Dtos.Passenger;
 using AirportAutomation.Application.Dtos.Pilot;
 using AirportAutomation.Application.Dtos.Response;
-using AirportAutomation.Application.Services;
 using AirportAutomation.Core.Configuration;
 using AirportAutomation.Core.Entities;
 using AirportAutomation.Core.Enums;
@@ -98,6 +95,14 @@ namespace AirportAutomation.Api.Controllers
 			{
 				return result;
 			}
+
+			string cacheKey = CacheKeys.Pilots(page, correctedPageSize);
+			var cachedPilots = await _cacheService.GetAsync<PagedResponse<PilotDto>>(cacheKey);
+			if (cachedPilots != null)
+			{
+				return Ok(cachedPilots);
+			}
+
 			var pilots = await _pilotService.GetPilots(cancellationToken, page, correctedPageSize);
 			if (pilots is null || !pilots.Any())
 			{
@@ -107,6 +112,9 @@ namespace AirportAutomation.Api.Controllers
 			var totalItems = await _pilotService.PilotsCount(cancellationToken);
 			var data = _mapper.Map<IEnumerable<PilotDto>>(pilots);
 			var response = new PagedResponse<PilotDto>(data, page, correctedPageSize, totalItems);
+
+			await _cacheService.SetAsync(cacheKey, response);
+
 			return Ok(response);
 		}
 

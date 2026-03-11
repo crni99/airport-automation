@@ -88,12 +88,19 @@ namespace AirportAutomation.Api.Controllers
 			[FromQuery] int page = 1,
 			[FromQuery] int pageSize = 10)
 		{
-
 			var (isValid, correctedPageSize, result) = _paginationValidationService.ValidatePaginationParameters(page, pageSize, maxPageSize);
 			if (!isValid)
 			{
 				return result;
 			}
+
+			string cacheKey = CacheKeys.Airlines(page, correctedPageSize);
+			var cachedAirlines = await _cacheService.GetAsync<PagedResponse<AirlineDto>>(cacheKey);
+			if (cachedAirlines != null)
+			{
+				return Ok(cachedAirlines);
+			}
+
 			var airlines = await _airlineService.GetAirlines(cancellationToken, page, correctedPageSize);
 			if (airlines is null || !airlines.Any())
 			{
@@ -103,6 +110,9 @@ namespace AirportAutomation.Api.Controllers
 			var totalItems = await _airlineService.AirlinesCount(cancellationToken);
 			var data = _mapper.Map<IEnumerable<AirlineDto>>(airlines);
 			var response = new PagedResponse<AirlineDto>(data, page, correctedPageSize, totalItems);
+
+			await _cacheService.SetAsync(cacheKey, response);
+
 			return Ok(response);
 		}
 

@@ -95,6 +95,14 @@ namespace AirportAutomation.Api.Controllers
 			{
 				return result;
 			}
+
+			string cacheKey = CacheKeys.Destinations(page, correctedPageSize);
+			var cachedDestinations = await _cacheService.GetAsync<PagedResponse<DestinationDto>>(cacheKey);
+			if (cachedDestinations != null)
+			{
+				return Ok(cachedDestinations);
+			}
+
 			var destinations = await _destinationService.GetDestinations(cancellationToken, page, correctedPageSize);
 			if (destinations is null || !destinations.Any())
 			{
@@ -104,6 +112,9 @@ namespace AirportAutomation.Api.Controllers
 			var totalItems = await _destinationService.DestinationsCount(cancellationToken);
 			var data = _mapper.Map<IEnumerable<DestinationDto>>(destinations);
 			var response = new PagedResponse<DestinationDto>(data, page, correctedPageSize, totalItems);
+
+			await _cacheService.SetAsync(cacheKey, response);
+
 			return Ok(response);
 		}
 

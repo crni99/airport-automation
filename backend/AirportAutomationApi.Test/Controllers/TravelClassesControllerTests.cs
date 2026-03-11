@@ -74,6 +74,7 @@ namespace AirportAutomationApi.Test.Controllers
 		[Theory]
 		[Trait("Category", "Constructor")]
 		[InlineData("travelClassService")]
+		[InlineData("cacheService")]
 		[InlineData("paginationValidationService")]
 		[InlineData("inputValidationService")]
 		[InlineData("utilityService")]
@@ -314,6 +315,71 @@ namespace AirportAutomationApi.Test.Controllers
 			Assert.Equal(expectedData, pagedResponse.Data);
 		}
 
+		[Fact]
+		[Trait("Category", "GetTravelClasses")]
+		public async Task GetTravelClasses_ReturnsCachedData_WhenCacheHit()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			int page = 1;
+			int pageSize = 10;
+			var cachedResponse = new PagedResponse<TravelClassDto>(
+				new List<TravelClassDto> { new TravelClassDto { Id = 1, Type = "Business" } },
+				page, pageSize, 1);
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, pageSize, null));
+			_cacheServiceMock
+				.Setup(x => x.GetAsync<PagedResponse<TravelClassDto>>(It.IsAny<string>()))
+				.ReturnsAsync(cachedResponse);
+
+			// Act
+			var result = await _controller.GetTravelClasses(cancellationToken, page, pageSize);
+
+			// Assert
+			var okResult = Assert.IsType<OkObjectResult>(result.Result);
+			Assert.Equal(cachedResponse, okResult.Value);
+			_travelClassServiceMock.Verify(x => x.GetTravelClasses(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+		}
+
+		[Fact]
+		[Trait("Category", "GetTravelClasses")]
+		public async Task GetTravelClasses_SetsCache_WhenCacheMiss()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			int page = 1;
+			int pageSize = 10;
+			var travelClasses = new List<TravelClassEntity> { new TravelClassEntity { Id = 1, Type = "Business" } };
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, pageSize, null));
+			_cacheServiceMock
+				.Setup(x => x.GetAsync<PagedResponse<TravelClassDto>>(It.IsAny<string>()))
+				.ReturnsAsync((PagedResponse<TravelClassDto>)null);
+			_travelClassServiceMock
+				.Setup(x => x.GetTravelClasses(cancellationToken, page, pageSize))
+				.ReturnsAsync(travelClasses);
+			_travelClassServiceMock
+				.Setup(x => x.TravelClassesCount(cancellationToken))
+				.ReturnsAsync(1);
+			_mapperMock
+				.Setup(m => m.Map<IEnumerable<TravelClassDto>>(It.IsAny<IEnumerable<TravelClassEntity>>()))
+				.Returns(new List<TravelClassDto> { new TravelClassDto { Id = 1, Type = "Business" } });
+
+			// Act
+			var result = await _controller.GetTravelClasses(cancellationToken, page, pageSize);
+
+			// Assert
+			Assert.IsType<OkObjectResult>(result.Result);
+			_cacheServiceMock.Verify(x => x.SetAsync(
+				It.IsAny<string>(),
+				It.IsAny<PagedResponse<TravelClassDto>>(),
+				null, null), Times.Once);
+		}
+
 		#endregion
 
 		#region GetTravelClass
@@ -388,6 +454,65 @@ namespace AirportAutomationApi.Test.Controllers
 			var okResult = Assert.IsType<OkObjectResult>(actionResult.Result);
 			var returnedTravelClassDto = Assert.IsType<TravelClassDto>(okResult.Value);
 			Assert.Equal(travelClassDto, returnedTravelClassDto);
+		}
+
+		[Fact]
+		[Trait("Category", "GetTravelClass")]
+		public async Task GetTravelClass_ReturnsCachedData_WhenCacheHit()
+		{
+			// Arrange
+			int id = 1;
+			var cachedTravelClass = new TravelClassDto { Id = 1, Type = "Business" };
+
+			_inputValidationServiceMock
+				.Setup(x => x.IsNonNegativeInt(id))
+				.Returns(true);
+			_cacheServiceMock
+				.Setup(x => x.GetAsync<TravelClassDto>(It.IsAny<string>()))
+				.ReturnsAsync(cachedTravelClass);
+
+			// Act
+			var result = await _controller.GetTravelClass(id);
+
+			// Assert
+			var okResult = Assert.IsType<OkObjectResult>(result.Result);
+			Assert.Equal(cachedTravelClass, okResult.Value);
+			_travelClassServiceMock.Verify(x => x.TravelClassExists(It.IsAny<int>()), Times.Never);
+			_travelClassServiceMock.Verify(x => x.GetTravelClass(It.IsAny<int>()), Times.Never);
+		}
+
+		[Fact]
+		[Trait("Category", "GetTravelClass")]
+		public async Task GetTravelClass_SetsCache_WhenCacheMiss()
+		{
+			// Arrange
+			int id = 1;
+
+			_inputValidationServiceMock
+				.Setup(x => x.IsNonNegativeInt(id))
+				.Returns(true);
+			_cacheServiceMock
+				.Setup(x => x.GetAsync<TravelClassDto>(It.IsAny<string>()))
+				.ReturnsAsync((TravelClassDto)null);
+			_travelClassServiceMock
+				.Setup(x => x.TravelClassExists(id))
+				.ReturnsAsync(true);
+			_travelClassServiceMock
+				.Setup(x => x.GetTravelClass(id))
+				.ReturnsAsync(travelClassEntity);
+			_mapperMock
+				.Setup(m => m.Map<TravelClassDto>(travelClassEntity))
+				.Returns(travelClassDto);
+
+			// Act
+			var result = await _controller.GetTravelClass(id);
+
+			// Assert
+			Assert.IsType<OkObjectResult>(result.Result);
+			_cacheServiceMock.Verify(x => x.SetAsync(
+				It.IsAny<string>(),
+				It.IsAny<TravelClassDto>(),
+				null, null), Times.Once);
 		}
 
 		#endregion

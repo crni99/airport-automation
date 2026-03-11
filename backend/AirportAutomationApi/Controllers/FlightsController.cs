@@ -1,6 +1,5 @@
 ﻿using AirportAutomation.Api.Helpers;
 using AirportAutomation.Api.Interfaces;
-using AirportAutomation.Application.Dtos.Destination;
 using AirportAutomation.Application.Dtos.Flight;
 using AirportAutomation.Application.Dtos.Response;
 using AirportAutomation.Core.Configuration;
@@ -93,6 +92,14 @@ namespace AirportAutomation.Api.Controllers
 			{
 				return result;
 			}
+
+			string cacheKey = CacheKeys.Flights(page, correctedPageSize);
+			var cachedFlights = await _cacheService.GetAsync<PagedResponse<FlightDto>>(cacheKey);
+			if (cachedFlights != null)
+			{
+				return Ok(cachedFlights);
+			}
+
 			var flights = await _flightService.GetFlights(cancellationToken, page, correctedPageSize);
 			if (flights is null || !flights.Any())
 			{
@@ -102,6 +109,9 @@ namespace AirportAutomation.Api.Controllers
 			var totalItems = await _flightService.FlightsCount(cancellationToken);
 			var data = _mapper.Map<IEnumerable<FlightDto>>(flights);
 			var response = new PagedResponse<FlightDto>(data, page, correctedPageSize, totalItems);
+
+			await _cacheService.SetAsync(cacheKey, response);
+
 			return Ok(response);
 		}
 

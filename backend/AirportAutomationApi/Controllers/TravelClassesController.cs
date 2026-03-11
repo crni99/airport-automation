@@ -92,6 +92,14 @@ namespace AirportAutomation.Api.Controllers
 			{
 				return result;
 			}
+
+			string cacheKey = CacheKeys.TravelClasses(page, correctedPageSize);
+			var cachedTravelClasses = await _cacheService.GetAsync<PagedResponse<TravelClassDto>>(cacheKey);
+			if (cachedTravelClasses != null)
+			{
+				return Ok(cachedTravelClasses);
+			}
+
 			var travelClasses = await _travelClassService.GetTravelClasses(cancellationToken, page, correctedPageSize);
 			if (travelClasses is null || !travelClasses.Any())
 			{
@@ -101,6 +109,9 @@ namespace AirportAutomation.Api.Controllers
 			var totalItems = await _travelClassService.TravelClassesCount(cancellationToken);
 			var data = _mapper.Map<IEnumerable<TravelClassDto>>(travelClasses);
 			var response = new PagedResponse<TravelClassDto>(data, page, correctedPageSize, totalItems);
+
+			await _cacheService.SetAsync(cacheKey, response);
+
 			return Ok(response);
 		}
 

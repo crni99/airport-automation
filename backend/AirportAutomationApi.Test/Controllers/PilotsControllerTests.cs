@@ -82,6 +82,7 @@ namespace AirportAutomationApi.Test.Controllers
 		[Theory]
 		[Trait("Category", "Constructor")]
 		[InlineData("pilotService")]
+		[InlineData("cacheService")]
 		[InlineData("paginationValidationService")]
 		[InlineData("inputValidationService")]
 		[InlineData("utilityService")]
@@ -321,6 +322,71 @@ namespace AirportAutomationApi.Test.Controllers
 			Assert.Equal(expectedData, pagedResponse.Data);
 		}
 
+		[Fact]
+		[Trait("Category", "GetPilots")]
+		public async Task GetPilots_ReturnsCachedData_WhenCacheHit()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			int page = 1;
+			int pageSize = 10;
+			var cachedResponse = new PagedResponse<PilotDto>(
+				new List<PilotDto> { new PilotDto { Id = 1, FirstName = "Ognjen", LastName = "Andjelic", UPRN = "1234567890123", FlyingHours = 100 } },
+				page, pageSize, 1);
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, pageSize, null));
+			_cacheServiceMock
+				.Setup(x => x.GetAsync<PagedResponse<PilotDto>>(It.IsAny<string>()))
+				.ReturnsAsync(cachedResponse);
+
+			// Act
+			var result = await _controller.GetPilots(cancellationToken, page, pageSize);
+
+			// Assert
+			var okResult = Assert.IsType<OkObjectResult>(result.Result);
+			Assert.Equal(cachedResponse, okResult.Value);
+			_pilotServiceMock.Verify(x => x.GetPilots(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+		}
+
+		[Fact]
+		[Trait("Category", "GetPilots")]
+		public async Task GetPilots_SetsCache_WhenCacheMiss()
+		{
+			// Arrange
+			var cancellationToken = new CancellationToken();
+			int page = 1;
+			int pageSize = 10;
+			var pilots = new List<PilotEntity> { new PilotEntity { Id = 1, FirstName = "Ognjen", LastName = "Andjelic", UPRN = "1234567890123", FlyingHours = 100 } };
+
+			_paginationValidationServiceMock
+				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+				.Returns((true, pageSize, null));
+			_cacheServiceMock
+				.Setup(x => x.GetAsync<PagedResponse<PilotDto>>(It.IsAny<string>()))
+				.ReturnsAsync((PagedResponse<PilotDto>)null);
+			_pilotServiceMock
+				.Setup(x => x.GetPilots(cancellationToken, page, pageSize))
+				.ReturnsAsync(pilots);
+			_pilotServiceMock
+				.Setup(x => x.PilotsCount(cancellationToken, null, null))
+				.ReturnsAsync(1);
+			_mapperMock
+				.Setup(m => m.Map<IEnumerable<PilotDto>>(It.IsAny<IEnumerable<PilotEntity>>()))
+				.Returns(new List<PilotDto> { new PilotDto { Id = 1, FirstName = "Ognjen", LastName = "Andjelic", UPRN = "1234567890123", FlyingHours = 100 } });
+
+			// Act
+			var result = await _controller.GetPilots(cancellationToken, page, pageSize);
+
+			// Assert
+			Assert.IsType<OkObjectResult>(result.Result);
+			_cacheServiceMock.Verify(x => x.SetAsync(
+				It.IsAny<string>(),
+				It.IsAny<PagedResponse<PilotDto>>(),
+				null, null), Times.Once);
+		}
+
 		#endregion
 
 		#region GetPilot
@@ -395,6 +461,65 @@ namespace AirportAutomationApi.Test.Controllers
 			var okResult = Assert.IsType<OkObjectResult>(actionResult.Result);
 			var returnedPilotDto = Assert.IsType<PilotDto>(okResult.Value);
 			Assert.Equal(pilotDto, returnedPilotDto);
+		}
+
+		[Fact]
+		[Trait("Category", "GetPilot")]
+		public async Task GetPilot_ReturnsCachedData_WhenCacheHit()
+		{
+			// Arrange
+			int id = 1;
+			var cachedPilot = new PilotDto { Id = 1, FirstName = "Ognjen", LastName = "Andjelic", UPRN = "1234567890123", FlyingHours = 100 };
+
+			_inputValidationServiceMock
+				.Setup(x => x.IsNonNegativeInt(id))
+				.Returns(true);
+			_cacheServiceMock
+				.Setup(x => x.GetAsync<PilotDto>(It.IsAny<string>()))
+				.ReturnsAsync(cachedPilot);
+
+			// Act
+			var result = await _controller.GetPilot(id);
+
+			// Assert
+			var okResult = Assert.IsType<OkObjectResult>(result.Result);
+			Assert.Equal(cachedPilot, okResult.Value);
+			_pilotServiceMock.Verify(x => x.PilotExists(It.IsAny<int>()), Times.Never);
+			_pilotServiceMock.Verify(x => x.GetPilot(It.IsAny<int>()), Times.Never);
+		}
+
+		[Fact]
+		[Trait("Category", "GetPilot")]
+		public async Task GetPilot_SetsCache_WhenCacheMiss()
+		{
+			// Arrange
+			int id = 1;
+
+			_inputValidationServiceMock
+				.Setup(x => x.IsNonNegativeInt(id))
+				.Returns(true);
+			_cacheServiceMock
+				.Setup(x => x.GetAsync<PilotDto>(It.IsAny<string>()))
+				.ReturnsAsync((PilotDto)null);
+			_pilotServiceMock
+				.Setup(x => x.PilotExists(id))
+				.ReturnsAsync(true);
+			_pilotServiceMock
+				.Setup(x => x.GetPilot(id))
+				.ReturnsAsync(pilotEntity);
+			_mapperMock
+				.Setup(m => m.Map<PilotDto>(pilotEntity))
+				.Returns(pilotDto);
+
+			// Act
+			var result = await _controller.GetPilot(id);
+
+			// Assert
+			Assert.IsType<OkObjectResult>(result.Result);
+			_cacheServiceMock.Verify(x => x.SetAsync(
+				It.IsAny<string>(),
+				It.IsAny<PilotDto>(),
+				null, null), Times.Once);
 		}
 
 		#endregion
