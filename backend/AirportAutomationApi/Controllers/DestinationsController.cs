@@ -147,12 +147,12 @@ namespace AirportAutomation.Api.Controllers
 				return Ok(cachedDestination);
 			}
 
-			if (!await _destinationService.DestinationExists(id))
+			var destination = await _destinationService.GetDestination(id);
+			if (destination == null)
 			{
 				_logger.LogInformation("Destination with id {Id} not found.", id);
 				return NotFound();
 			}
-			var destination = await _destinationService.GetDestination(id);
 			var destinationDto = _mapper.Map<DestinationDto>(destination);
 
 			await _cacheService.SetAsync(cacheKey, destinationDto);

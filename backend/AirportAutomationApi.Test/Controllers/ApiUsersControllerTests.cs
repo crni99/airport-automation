@@ -334,8 +334,8 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.IsNonNegativeInt(validId))
 				.Returns(true);
 			_apiUserServiceMock
-				.Setup(service => service.ApiUserExists(validId))
-				.ReturnsAsync(false);
+				.Setup(service => service.GetApiUser(validId))
+				.ReturnsAsync((ApiUserEntity)null);
 
 			// Act
 			var result = await _controller.GetApiUser(validId);
@@ -354,9 +354,6 @@ namespace AirportAutomationApi.Test.Controllers
 			_inputValidationServiceMock
 				.Setup(x => x.IsNonNegativeInt(validId))
 				.Returns(true);
-			_apiUserServiceMock
-				.Setup(service => service.ApiUserExists(validId))
-				.ReturnsAsync(true);
 			_apiUserServiceMock
 				.Setup(service => service.GetApiUser(validId))
 				.ReturnsAsync(apiUserEntity);

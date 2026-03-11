@@ -119,12 +119,13 @@ namespace AirportAutomation.Api.Controllers
 				_logger.LogInformation("Invalid input. The ID {Id} must be a non-negative integer.", id);
 				return BadRequest("Invalid input. The ID must be a non-negative integer.");
 			}
-			if (!await _apiUserService.ApiUserExists(id))
+
+			var apiUser = await _apiUserService.GetApiUser(id);
+			if (apiUser == null)
 			{
 				_logger.LogInformation("Api User with id {Id} not found.", id);
 				return NotFound();
 			}
-			var apiUser = await _apiUserService.GetApiUser(id);
 			var apiUserRoleDto = _mapper.Map<ApiUserRoleDto>(apiUser);
 			return Ok(apiUserRoleDto);
 		}

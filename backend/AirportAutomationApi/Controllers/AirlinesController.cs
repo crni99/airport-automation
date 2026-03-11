@@ -145,12 +145,12 @@ namespace AirportAutomation.Api.Controllers
 				return Ok(cachedAirline);
 			}
 
-			if (!await _airlineService.AirlineExists(id))
+			var airline = await _airlineService.GetAirline(id);
+			if (airline == null)
 			{
 				_logger.LogInformation("Airline with id {Id} not found.", id);
 				return NotFound();
 			}
-			var airline = await _airlineService.GetAirline(id);
 			var airlineDto = _mapper.Map<AirlineDto>(airline);
 
 			await _cacheService.SetAsync(cacheKey, airlineDto);

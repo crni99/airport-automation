@@ -144,12 +144,12 @@ namespace AirportAutomation.Api.Controllers
 				return Ok(cachedTravelClass);
 			}
 
-			if (!await _travelClassService.TravelClassExists(id))
+			var travelClass = await _travelClassService.GetTravelClass(id);
+			if (travelClass == null)
 			{
 				_logger.LogInformation("Travel class with id {Id} not found.", id);
 				return NotFound();
 			}
-			var travelClass = await _travelClassService.GetTravelClass(id);
 			var travelClassDto = _mapper.Map<TravelClassDto>(travelClass);
 
 			await _cacheService.SetAsync(cacheKey, travelClassDto);

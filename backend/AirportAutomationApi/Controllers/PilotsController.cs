@@ -147,12 +147,12 @@ namespace AirportAutomation.Api.Controllers
 				return Ok(cachePilot);
 			}
 
-			if (!await _pilotService.PilotExists(id))
+			var pilot = await _pilotService.GetPilot(id);
+			if (pilot == null)
 			{
 				_logger.LogInformation("Pilot with id {Id} not found.", id);
 				return NotFound();
 			}
-			var pilot = await _pilotService.GetPilot(id);
 			var pilotDto = _mapper.Map<PilotDto>(pilot);
 
 			await _cacheService.SetAsync(cacheKey, pilotDto);

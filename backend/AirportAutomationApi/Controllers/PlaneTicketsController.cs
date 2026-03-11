@@ -147,12 +147,12 @@ namespace AirportAutomation.Api.Controllers
 				return Ok(cachedPlaneTicket);
 			}
 
-			if (!await _planeTicketService.PlaneTicketExists(id))
+			var planeTicket = await _planeTicketService.GetPlaneTicket(id);
+			if (planeTicket == null)
 			{
 				_logger.LogInformation("Plane Ticket with id {Id} not found.", id);
 				return NotFound();
 			}
-			var planeTicket = await _planeTicketService.GetPlaneTicket(id);
 			var planeTicketDto = _mapper.Map<PlaneTicketDto>(planeTicket);
 
 			await _cacheService.SetAsync(cacheKey, planeTicketDto);

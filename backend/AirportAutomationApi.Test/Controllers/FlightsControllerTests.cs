@@ -425,8 +425,8 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.IsNonNegativeInt(validId))
 				.Returns(true);
 			_flightServiceMock
-				.Setup(service => service.FlightExists(validId))
-				.ReturnsAsync(false);
+				.Setup(service => service.GetFlight(validId))
+				.ReturnsAsync((FlightEntity)null);
 
 			// Act
 			var result = await _controller.GetFlight(validId);
@@ -445,9 +445,6 @@ namespace AirportAutomationApi.Test.Controllers
 			_inputValidationServiceMock
 				.Setup(x => x.IsNonNegativeInt(validId))
 				.Returns(true);
-			_flightServiceMock
-				.Setup(service => service.FlightExists(validId))
-				.ReturnsAsync(true);
 			_flightServiceMock
 				.Setup(service => service.GetFlight(validId))
 				.ReturnsAsync(flightEntity);
@@ -503,9 +500,6 @@ namespace AirportAutomationApi.Test.Controllers
 			_cacheServiceMock
 				.Setup(x => x.GetAsync<FlightDto>(It.IsAny<string>()))
 				.ReturnsAsync((FlightDto)null);
-			_flightServiceMock
-				.Setup(x => x.FlightExists(id))
-				.ReturnsAsync(true);
 			_flightServiceMock
 				.Setup(x => x.GetFlight(id))
 				.ReturnsAsync(flightEntity);
