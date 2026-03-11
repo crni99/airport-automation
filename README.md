@@ -20,23 +20,55 @@ This project showcases a comprehensive full-stack solution, combining a robust *
   <tbody>
     <tr>
       <td>ASP.NET Core API</td>
-      <td>Azure (Swagger/Docs)</td>
-      <td><a href="https://airport-automation-bucbb0eff0dzcuaz.switzerlandnorth-01.azurewebsites.net/swagger/index.html"><b>View API Documentation 🡥</b></a></td>
+      <td>
+        <a href="https://airport-automation-bucbb0eff0dzcuaz.switzerlandnorth-01.azurewebsites.net/swagger/index.html">
+            <img src="https://img.shields.io/badge/microsoft%20azure-0089D6?style=for-the-badge&logo=microsoft-azure&logoColor=white" alt="Azure Badge"><img src="https://img.shields.io/badge/-Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black" alt="Swagger Badge">
+        </a>
+      </td>
+      <td>
+          <a href="https://airport-automation-bucbb0eff0dzcuaz.switzerlandnorth-01.azurewebsites.net/swagger/index.html">
+              <b>View API Documentation 🡥</b>
+          </a>
+      </td>
     </tr>
     <tr>
       <td>ASP.NET Web MVC</td>
-      <td>Azure</td>
-      <td><a href="https://airport-automation-mvc-d8ekhabyg5dgeedk.switzerlandnorth-01.azurewebsites.net/"><b>Launch MVC Frontend 🡥</b></a></td>
+      <td>
+          <a href="https://airport-automation-mvc-d8ekhabyg5dgeedk.switzerlandnorth-01.azurewebsites.net/">
+              <img src="https://img.shields.io/badge/microsoft%20azure-0089D6?style=for-the-badge&logo=microsoft-azure&logoColor=white" alt="Azure Badge">
+          </a>
+      </td>
+      <td>
+          <a href="https://airport-automation-mvc-d8ekhabyg5dgeedk.switzerlandnorth-01.azurewebsites.net/">
+              <b>Launch MVC Frontend 🡥</b>
+          </a>
+      </td>
     </tr>
     <tr>
       <td>React SPA</td>
-      <td>Azure</td>
-      <td><a href="https://salmon-sea-0fb92c303.3.azurestaticapps.net/"><b>Launch React Frontend 🡥</b></a></td>
+      <td>
+          <a href="https://salmon-sea-0fb92c303.3.azurestaticapps.net/">
+              <img src="https://img.shields.io/badge/microsoft%20azure-0089D6?style=for-the-badge&logo=microsoft-azure&logoColor=white" alt="Azure Badge">
+          </a>
+      </td>
+      <td>
+          <a href="https://salmon-sea-0fb92c303.3.azurestaticapps.net/">
+              <b>Launch React Frontend 🡥</b>
+          </a>
+      </td>
     </tr>
     <tr>
       <td>React SPA</td>
-      <td>Vercel</td>
-      <td><a href="https://airport-automation.vercel.app/"><b>Launch React Frontend 🡥</b></a></td>
+      <td>
+          <a href="https://airport-automation.vercel.app/">
+              <img src="https://img.shields.io/badge/vercel-%23000000.svg?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel Badge">
+          </a>
+      </td>
+      <td>
+          <a href="https://airport-automation.vercel.app/">
+              <b>Launch React Frontend 🡥</b>
+          </a>
+      </td>
     </tr>
   </tbody>
 </table>
