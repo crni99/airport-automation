@@ -5,10 +5,9 @@ This project showcases a comprehensive full-stack solution, combining a robust *
 <br />
 
 ## ⭐ Live Demo
-> **Note:** All services are hosted on **Free Tier** plans. The database automatically enters **paused mode** after a period of inactivity. When making the initial request, 
-please allow **1-2 minutes** for the database to wake up and for the application to become fully operational. <br />
-**Redis Cloud (Free Tier)** is used for distributed caching — cache may be **evicted or unavailable** during periods of inactivity,
-in which case the application automatically falls back to **In-Memory Cache** to ensure uninterrupted availability.
+> **Note:** All services are hosted on **Free Tier** plans.
+> - 🗄️ **Database** automatically enters **paused mode** after inactivity. On the initial request, please allow **1-2 minutes** for it to wake up.
+> - ⚡ **Redis Cloud** is used for distributed caching — cache may be **evicted or unavailable** during inactivity. The application automatically falls back to **In-Memory Cache** to ensure uninterrupted availability.
 
 <table>
   <thead>
