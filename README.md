@@ -208,17 +208,29 @@ cd airport-automation/backend/AirportAutomationApi
   </thead>
   <tbody>
     <tr>
-      <td><code>SqlServer</code></td>
+      <td>
+        <a href="https://github.com/crni99/airport-automation/blob/main/backend/AirportAutomationInfrastructure/Data/create_airport_automation_db_mssql.sql">
+          <img src="https://img.shields.io/badge/Microsoft%20SQL%20Server-CC2927?style=for-the-badge&logo=microsoft%20sql%20server&logoColor=white" alt="SQL Server Badge">
+        </a>
+      </td>
       <td><a href="https://github.com/crni99/airport-automation/blob/main/backend/AirportAutomationInfrastructure/Data/create_airport_automation_db_mssql.sql"><code>mssql.sql 🡥</code></a></td>
       <td>Execute script against SQL Server instance.</td>
     </tr>
     <tr>
-      <td><code>Postgres</code></td>
+      <td>
+        <a href="https://github.com/crni99/airport-automation/blob/main/backend/AirportAutomationInfrastructure/Data/create_airport_automation_db_npgsql.sql">
+          <img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL Badge">
+        </a>
+      </td>
       <td><a href="https://github.com/crni99/airport-automation/blob/main/backend/AirportAutomationInfrastructure/Data/create_airport_automation_db_npgsql.sql"><code>npgsql.sql 🡥</code></a></td>
       <td>Execute script against PostgreSQL server (e.g., via pgAdmin).</td>
     </tr>
     <tr>
-      <td><code>MySql</code></td>
+      <td>
+        <a href="https://github.com/crni99/airport-automation/blob/main/backend/AirportAutomationInfrastructure/Data/create_airport_automation_db_mysql.sql">
+          <img src="https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL Badge">
+        </a>
+      </td>
       <td><a href="https://github.com/crni99/airport-automation/blob/main/backend/AirportAutomationInfrastructure/Data/create_airport_automation_db_mysql.sql"><code>mysql.sql 🡥</code></a></td>
       <td>Execute script against MySQL server (e.g., via MySQL Workbench).</td>
     </tr>
