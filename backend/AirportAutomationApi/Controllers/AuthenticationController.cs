@@ -2,6 +2,7 @@
 using AirportAutomation.Api.Interfaces;
 using AirportAutomation.Application.Dtos.ApiUser;
 using AirportAutomation.Core.Entities;
+using Asp.Versioning;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.JsonWebTokens;

@@ -19,8 +19,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirportAutomation.Core", "b
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirportAutomation.Infrastructure", "backend\AirportAutomationInfrastructure\AirportAutomation.Infrastructure.csproj", "{E4397154-88C7-4FF5-01F9-02EA29DED936}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirportAutomation.Services", "backend\AirportAutomationServices\AirportAutomation.Services.csproj", "{306751D1-8DB7-7FA0-5CA7-DA14F1B9C975}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirportAutomation.Web", "mvc-frontend\AirportAutomationWeb\AirportAutomation.Web.csproj", "{41050C42-502A-B5ED-C4CC-A680F46811B4}"
 EndProject
 Global
@@ -49,10 +47,6 @@ Global
 		{E4397154-88C7-4FF5-01F9-02EA29DED936}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E4397154-88C7-4FF5-01F9-02EA29DED936}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E4397154-88C7-4FF5-01F9-02EA29DED936}.Release|Any CPU.Build.0 = Release|Any CPU
-		{306751D1-8DB7-7FA0-5CA7-DA14F1B9C975}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{306751D1-8DB7-7FA0-5CA7-DA14F1B9C975}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{306751D1-8DB7-7FA0-5CA7-DA14F1B9C975}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{306751D1-8DB7-7FA0-5CA7-DA14F1B9C975}.Release|Any CPU.Build.0 = Release|Any CPU
 		{41050C42-502A-B5ED-C4CC-A680F46811B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{41050C42-502A-B5ED-C4CC-A680F46811B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41050C42-502A-B5ED-C4CC-A680F46811B4}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -4,11 +4,11 @@ using AirportAutomation.Api.Helpers;
 using AirportAutomation.Core.Configuration;
 using AirportAutomation.Infrastructure.Data;
 using AirportAutomation.Infrastructure.Middlewares;
+using Asp.Versioning;
 using AspNetCoreRateLimit;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
@@ -237,20 +237,20 @@ builder.Services.Configure<IpRateLimitOptions>(options =>
 	};
 });
 
-builder.Services.AddVersionedApiExplorer(o =>
+builder.Services.AddApiVersioning(options =>
 {
-	o.GroupNameFormat = "'v'VVV";
-	o.SubstituteApiVersionInUrl = true;
-});
-
-builder.Services.AddApiVersioning(setupAction =>
+	options.AssumeDefaultVersionWhenUnspecified = true;
+	options.DefaultApiVersion = new ApiVersion(1, 0);
+	options.ReportApiVersions = true;
+	options.ApiVersionReader = ApiVersionReader.Combine(
+		new UrlSegmentApiVersionReader(),
+		new HeaderApiVersionReader("x-api-version"),
+		new MediaTypeApiVersionReader("x-api-version"));
+})
+.AddApiExplorer(options =>
 {
-	setupAction.AssumeDefaultVersionWhenUnspecified = true;
-	setupAction.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
-	setupAction.ReportApiVersions = true;
-	setupAction.ApiVersionReader = ApiVersionReader.Combine(new UrlSegmentApiVersionReader(),
-															new HeaderApiVersionReader("x-api-version"),
-															new MediaTypeApiVersionReader("x-api-version"));
+	options.GroupNameFormat = "'v'VVV";
+	options.SubstituteApiVersionInUrl = true;
 });
 
 builder.Services.AddHttpClient();

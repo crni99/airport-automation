@@ -12,7 +12,6 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" />
     <PackageReference Include="Serilog.Extensions.Logging" />
-    <PackageReference Include="System.Data.SqlClient" />
   </ItemGroup>
 
   <ItemGroup>

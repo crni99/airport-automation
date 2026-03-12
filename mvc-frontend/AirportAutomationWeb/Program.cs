@@ -1,6 +1,7 @@
 ﻿using AirportAutomation.Core.Converters;
 using AirportAutomation.Infrastructure.Middlewares;
 using AirportAutomation.Web.Binders;
+using Microsoft.Extensions.Http.Resilience;
 using Microsoft.IdentityModel.Logging;
 using Polly;
 using Serilog;
@@ -25,19 +26,26 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddHttpClient("AirportAutomationApi")
-	.AddPolicyHandler(Policy.TimeoutAsync<HttpResponseMessage>(TimeSpan.FromSeconds(10)))
-	.AddTransientHttpErrorPolicy(policyBuilder =>
-		policyBuilder.WaitAndRetryAsync(
-			3,
-			retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))
-		)
-	)
-	.AddTransientHttpErrorPolicy(policyBuilder =>
-		policyBuilder.CircuitBreakerAsync(
-			5,
-			TimeSpan.FromSeconds(30)
-		)
-	);
+	.AddResilienceHandler("AirportAutomationApi", pipeline =>
+	{
+		pipeline.AddTimeout(TimeSpan.FromSeconds(10));
+
+		pipeline.AddRetry(new HttpRetryStrategyOptions
+		{
+			MaxRetryAttempts = 3,
+			Delay = TimeSpan.FromSeconds(2),
+			BackoffType = DelayBackoffType.Exponential,
+			UseJitter = true
+		});
+
+		pipeline.AddCircuitBreaker(new HttpCircuitBreakerStrategyOptions
+		{
+			SamplingDuration = TimeSpan.FromSeconds(30),
+			BreakDuration = TimeSpan.FromSeconds(30),
+			FailureRatio = 0.5,
+			MinimumThroughput = 5
+		});
+	});
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {

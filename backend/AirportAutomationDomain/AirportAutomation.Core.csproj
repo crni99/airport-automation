@@ -7,9 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+	<FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="AutoMapper" />
     <PackageReference Include="Microsoft.AspNetCore.JsonPatch" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" />
   </ItemGroup>
 

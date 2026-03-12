@@ -22,14 +22,12 @@
     <PackageReference Include="AspNetCore.HealthChecks.UI.Client" />
     <PackageReference Include="AspNetCoreRateLimit" />
     <PackageReference Include="BCrypt.Net-Next" />
-    <PackageReference Include="DateOnlyTimeOnly.AspNet" />
     <PackageReference Include="DateOnlyTimeOnly.AspNet.Swashbuckle" />
-    <PackageReference Include="Microsoft.AspNet.WebApi.OwinSelfHost" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
     <PackageReference Include="Microsoft.AspNetCore.JsonPatch" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" />
+    <PackageReference Include="Asp.Versioning.Mvc" />
+    <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
       <PrivateAssets>all</PrivateAssets>
@@ -37,8 +35,6 @@
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
     <PackageReference Include="Microsoft.FeatureManagement" />
-    <PackageReference Include="Microsoft.Owin.Security.OAuth" />
-    <PackageReference Include="Microsoft.Web.Services3" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" />
     <PackageReference Include="QuestPDF" />

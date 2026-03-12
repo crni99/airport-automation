@@ -11,18 +11,17 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" />
 	<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
-    <PackageReference Include="Microsoft.Extensions.Http.Polly" />
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" />
     <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" />
     <PackageReference Include="Newtonsoft.Json" />
-    <PackageReference Include="PagedList" />
-    <PackageReference Include="PagedList.Mvc" />
+    <PackageReference Include="X.PagedList" />
+    <PackageReference Include="X.PagedList.Mvc.Core" />
     <PackageReference Include="Polly" />
     <PackageReference Include="Serilog" />
     <PackageReference Include="Serilog.AspNetCore" />
     <PackageReference Include="Serilog.Sinks.Console" />
     <PackageReference Include="Serilog.Sinks.File" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
-    <PackageReference Include="System.Resources.ResourceManager" />
   </ItemGroup>
 
   <ItemGroup>
