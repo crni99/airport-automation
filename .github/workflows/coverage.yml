@@ -1,6 +1,10 @@
 name: Coverage Badge
 
 on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'backend/**'
   workflow_dispatch:
 
 jobs:
@@ -22,9 +26,6 @@ jobs:
 
       - name: Test
         run: dotnet test -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=opencover --no-build --verbosity normal backend/AirportAutomationApi.Test/
-
-      - name: Show generated files
-        run: find . -name "*.xml" -path "*/TestResults/*"
 
       - name: Create Coverage Badge
         uses: simon-k/dotnet-code-coverage-badge@v1.0.0
