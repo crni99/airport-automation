@@ -279,12 +279,6 @@ ___
 <a name="-architecture"></a>
 ## 🏗️ Architecture
 
-### Core Architecture
-<a href="https://github.com/crni99/airport-automation/blob/main/docs/AA_Core_Architecture.svg" target="_blank">
-<img src="https://raw.githubusercontent.com/crni99/airport-automation/3522c30f0cb3f048c684829ecbd822c90c62f121/docs/AA_Core_Architecture.svg" alt="Core_Architecture" width="66%" height="66%">
-</a>
-
-### Extended Architecture (CI/CD + Deployments)
 <a href="https://github.com/crni99/airport-automation/blob/main/docs/AA_Extended_Architecture.svg" target="_blank">
 <img src="https://raw.githubusercontent.com/crni99/airport-automation/b109f0eccdc424cfda36aee0501211854a474670/docs/AA_Extended_Architecture.svg" alt="Extended_Architecture" width="100%" height="100%">
 </a>
