@@ -281,8 +281,8 @@ ___
 <a name="-architecture"></a>
 ## 🏗️ Architecture
 
-<a href="https://github.com/crni99/airport-automation/blob/main/docs/AA_Extended_Architecture.svg" target="_blank">
-<img src="https://raw.githubusercontent.com/crni99/airport-automation/d859e08aa009af29bc1adddbfa6958cf06ce2abc/docs/AA_Extended_Architecture.svg" width="100%" height="100%">
+<a href="https://github.com/crni99/airport-automation/blob/main/docs/AA_Architecture.svg" target="_blank">
+<img src="https://raw.githubusercontent.com/crni99/airport-automation/242c160a70d2e3f4ccc775079616d9e0e53ebfd4/docs/AA_Architecture.svg" width="100%" height="100%">
 </a>
 
 ___
