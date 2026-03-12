@@ -116,6 +116,8 @@ ___
 ### ⚙️ Compatibility / Continuous Integration (CI) Checks
 [![Build & Test .NET Backend](https://github.com/crni99/airport-automation/actions/workflows/dotnet.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/dotnet.yml)
 [![Build & Test React Frontend](https://github.com/crni99/airport-automation/actions/workflows/node.js.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/node.js.yml)
+[![Coverage Badge](https://github.com/crni99/airport-automation/actions/workflows/coverage.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/coverage.yml)
+![Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/crni99/c3864cd60e989428b8d210d2885941e4/raw/airport_automation_coverage.json)
 ---
 ### 🔍 CodeQL, ESLint, and Security Analysis 🛡️
 [![CodeQL Analysis (.NET/C#)](https://github.com/crni99/airport-automation/actions/workflows/csharp-codeql.yml/badge.svg)](https://github.com/crni99/airport-automation/actions/workflows/csharp-codeql.yml)
