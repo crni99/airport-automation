@@ -1,0 +1,35 @@
+name: Coverage Badge
+
+on:
+  workflow_dispatch:
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.x
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore
+
+      - name: Test
+        run: dotnet test -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=opencover --no-build --verbosity normal backend/AirportAutomationApi.Test/
+
+      - name: Create Coverage Badge
+        uses: simon-k/dotnet-code-coverage-badge@v1.0.0
+        id: create_coverage_badge
+        with:
+          label: Coverage
+          color: brightgreen
+          path: backend/AirportAutomationApi.Test/TestResults/coverage.opencover.xml
+          gist-filename: airport_automation_coverage.json
+          gist-id: c3864cd60e989428b8d210d2885941e4
+          gist-auth-token: ${{ secrets.GIST_AUTH_TOKEN }}
