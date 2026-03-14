@@ -529,7 +529,7 @@ ___
 <a name="-deployment"></a>
 ## 🚀 [Deployment](https://github.com/crni99/airport-automation/tree/main/.github/workflows) 🡥
 - The .NET API is deployed to **[Azure Web App](https://airport-automation-bucbb0eff0dzcuaz.switzerlandnorth-01.azurewebsites.net/swagger/index.html)** (service name `airport-automation`) via the automated GitHub Actions CI/CD pipeline.
-- The .NET Web MCC is deployed to **[Azure Web App](https://airport-automation-mvc-d8ekhabyg5dgeedk.switzerlandnorth-01.azurewebsites.net/)**.
+- The .NET Web MVC is deployed to **[Azure Web App](https://airport-automation-mvc-d8ekhabyg5dgeedk.switzerlandnorth-01.azurewebsites.net/)**.
 - The React Frontend is deployed to two platforms to ensure high availability and redundancy:
   - **[Azure Static Web Apps](https://salmon-sea-0fb92c303.3.azurestaticapps.net/)**
   - **[Vercel](https://airport-automation.vercel.app/)**
