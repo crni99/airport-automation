@@ -335,6 +335,7 @@ ___
 - **Smart Switch Mechanism**: The system automatically detects if Redis is enabled and reachable; if not, it seamlessly falls back to local memory to ensure 100% uptime.
 - **Resilient Cache Layer**: If Redis becomes unavailable or runs out of memory during runtime, the system gracefully handles the failure and falls back to the database, ensuring uninterrupted API availability.
 - Use caching to optimize performance-heavy operations, such as frequently accessed lookups and search results.
+- **Cache Stampede Prevention**: Under high concurrency, a `SemaphoreSlim` lock per cache key ensures only one request hits the database on a cache miss — all other concurrent requests wait and read from cache once it's populated.
 
 ### Advanced Filtering with Filter Pattern
 - Implement **dedicated filter classes** for each entity type (PassengerSearchFilter, PilotSearchFilter, etc.) to enable multi-field search capabilities.
