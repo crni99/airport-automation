@@ -94,24 +94,24 @@ namespace AirportAutomation.Api.Controllers
 			}
 
 			string cacheKey = CacheKeys.TravelClasses(page, correctedPageSize);
-			var cachedTravelClasses = await _cacheService.GetAsync<PagedResponse<TravelClassDto>>(cacheKey);
-			if (cachedTravelClasses != null)
-			{
-				return Ok(cachedTravelClasses);
-			}
 
-			var travelClasses = await _travelClassService.GetTravelClasses(cancellationToken, page, correctedPageSize);
-			if (travelClasses is null || !travelClasses.Any())
+			var response = await _cacheService.GetOrCreateAsync<PagedResponse<TravelClassDto>>(cacheKey, async () =>
 			{
-				_logger.LogInformation("Travel classes not found.");
+				var travelClasses = await _travelClassService.GetTravelClasses(cancellationToken, page, correctedPageSize);
+				if (travelClasses is null || !travelClasses.Any())
+				{
+					_logger.LogInformation("Travel classes not found.");
+					return null;
+				}
+				var totalItems = await _travelClassService.TravelClassesCount(cancellationToken);
+				var data = _mapper.Map<IEnumerable<TravelClassDto>>(travelClasses);
+				return new PagedResponse<TravelClassDto>(data, page, correctedPageSize, totalItems);
+			});
+
+			if (response == null)
+			{
 				return NoContent();
 			}
-			var totalItems = await _travelClassService.TravelClassesCount(cancellationToken);
-			var data = _mapper.Map<IEnumerable<TravelClassDto>>(travelClasses);
-			var response = new PagedResponse<TravelClassDto>(data, page, correctedPageSize, totalItems);
-
-			await _cacheService.SetAsync(cacheKey, response);
-
 			return Ok(response);
 		}
 
@@ -138,22 +138,22 @@ namespace AirportAutomation.Api.Controllers
 			}
 
 			string cacheKey = CacheKeys.TravelClass(id);
-			var cachedTravelClass = await _cacheService.GetAsync<TravelClassDto>(cacheKey);
-			if (cachedTravelClass != null)
-			{
-				return Ok(cachedTravelClass);
-			}
 
-			var travelClass = await _travelClassService.GetTravelClass(id);
-			if (travelClass == null)
+			var travelClassDto = await _cacheService.GetOrCreateAsync<TravelClassDto>(cacheKey, async () =>
 			{
-				_logger.LogInformation("Travel class with id {Id} not found.", id);
+				var travelClass = await _travelClassService.GetTravelClass(id);
+				if (travelClass == null)
+				{
+					_logger.LogInformation("Travel class with id {Id} not found.", id);
+					return null;
+				}
+				return _mapper.Map<TravelClassDto>(travelClass);
+			});
+
+			if (travelClassDto == null)
+			{
 				return NotFound();
 			}
-			var travelClassDto = _mapper.Map<TravelClassDto>(travelClass);
-
-			await _cacheService.SetAsync(cacheKey, travelClassDto);
-
 			return Ok(travelClassDto);
 		}
 

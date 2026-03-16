@@ -96,24 +96,24 @@ namespace AirportAutomation.Api.Controllers
 			}
 
 			string cacheKey = CacheKeys.Airlines(page, correctedPageSize);
-			var cachedAirlines = await _cacheService.GetAsync<PagedResponse<AirlineDto>>(cacheKey);
-			if (cachedAirlines != null)
-			{
-				return Ok(cachedAirlines);
-			}
 
-			var airlines = await _airlineService.GetAirlines(cancellationToken, page, correctedPageSize);
-			if (airlines is null || !airlines.Any())
+			var response = await _cacheService.GetOrCreateAsync<PagedResponse<AirlineDto>>(cacheKey, async () =>
 			{
-				_logger.LogInformation("Airlines not found.");
+				var airlines = await _airlineService.GetAirlines(cancellationToken, page, correctedPageSize);
+				if (airlines is null || !airlines.Any())
+				{
+					_logger.LogInformation("Airlines not found.");
+					return null;
+				}
+				var totalItems = await _airlineService.AirlinesCount(cancellationToken);
+				var data = _mapper.Map<IEnumerable<AirlineDto>>(airlines);
+				return new PagedResponse<AirlineDto>(data, page, correctedPageSize, totalItems);
+			});
+
+			if (response == null)
+			{
 				return NoContent();
 			}
-			var totalItems = await _airlineService.AirlinesCount(cancellationToken);
-			var data = _mapper.Map<IEnumerable<AirlineDto>>(airlines);
-			var response = new PagedResponse<AirlineDto>(data, page, correctedPageSize, totalItems);
-
-			await _cacheService.SetAsync(cacheKey, response);
-
 			return Ok(response);
 		}
 
@@ -140,22 +140,22 @@ namespace AirportAutomation.Api.Controllers
 			}
 
 			string cacheKey = CacheKeys.Airline(id);
-			var cachedAirline = await _cacheService.GetAsync<AirlineDto>(cacheKey);
-			if (cachedAirline != null)
-			{
-				return Ok(cachedAirline);
-			}
 
-			var airline = await _airlineService.GetAirline(id);
-			if (airline == null)
+			var airlineDto = await _cacheService.GetOrCreateAsync<AirlineDto>(cacheKey, async () =>
 			{
-				_logger.LogInformation("Airline with id {Id} not found.", id);
+				var airline = await _airlineService.GetAirline(id);
+				if (airline == null)
+				{
+					_logger.LogInformation("Airline with id {Id} not found.", id);
+					return null;
+				}
+				return _mapper.Map<AirlineDto>(airline);
+			});
+
+			if (airlineDto == null)
+			{
 				return NotFound();
 			}
-			var airlineDto = _mapper.Map<AirlineDto>(airline);
-
-			await _cacheService.SetAsync(cacheKey, airlineDto);
-
 			return Ok(airlineDto);
 		}
 

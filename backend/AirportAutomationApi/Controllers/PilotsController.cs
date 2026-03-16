@@ -98,24 +98,24 @@ namespace AirportAutomation.Api.Controllers
 			}
 
 			string cacheKey = CacheKeys.Pilots(page, correctedPageSize);
-			var cachedPilots = await _cacheService.GetAsync<PagedResponse<PilotDto>>(cacheKey);
-			if (cachedPilots != null)
-			{
-				return Ok(cachedPilots);
-			}
 
-			var pilots = await _pilotService.GetPilots(cancellationToken, page, correctedPageSize);
-			if (pilots is null || !pilots.Any())
+			var response = await _cacheService.GetOrCreateAsync<PagedResponse<PilotDto>>(cacheKey, async () =>
 			{
-				_logger.LogInformation("Pilots not found.");
+				var pilots = await _pilotService.GetPilots(cancellationToken, page, correctedPageSize);
+				if (pilots is null || !pilots.Any())
+				{
+					_logger.LogInformation("Pilots not found.");
+					return null;
+				}
+				var totalItems = await _pilotService.PilotsCount(cancellationToken);
+				var data = _mapper.Map<IEnumerable<PilotDto>>(pilots);
+				return new PagedResponse<PilotDto>(data, page, correctedPageSize, totalItems);
+			});
+
+			if (response == null)
+			{
 				return NoContent();
 			}
-			var totalItems = await _pilotService.PilotsCount(cancellationToken);
-			var data = _mapper.Map<IEnumerable<PilotDto>>(pilots);
-			var response = new PagedResponse<PilotDto>(data, page, correctedPageSize, totalItems);
-
-			await _cacheService.SetAsync(cacheKey, response);
-
 			return Ok(response);
 		}
 
@@ -142,22 +142,22 @@ namespace AirportAutomation.Api.Controllers
 			}
 
 			string cacheKey = CacheKeys.Pilot(id);
-			var cachePilot = await _cacheService.GetAsync<PilotDto>(cacheKey);
-			if (cachePilot != null)
-			{
-				return Ok(cachePilot);
-			}
 
-			var pilot = await _pilotService.GetPilot(id);
-			if (pilot == null)
+			var pilotDto = await _cacheService.GetOrCreateAsync<PilotDto>(cacheKey, async () =>
 			{
-				_logger.LogInformation("Pilot with id {Id} not found.", id);
+				var pilot = await _pilotService.GetPilot(id);
+				if (pilot == null)
+				{
+					_logger.LogInformation("Pilot with id {Id} not found.", id);
+					return null;
+				}
+				return _mapper.Map<PilotDto>(pilot);
+			});
+
+			if (pilotDto == null)
+			{
 				return NotFound();
 			}
-			var pilotDto = _mapper.Map<PilotDto>(pilot);
-
-			await _cacheService.SetAsync(cacheKey, pilotDto);
-
 			return Ok(pilotDto);
 		}
 

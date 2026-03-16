@@ -4,6 +4,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using System.Collections.Concurrent;
 
 namespace AirportAutomation.Application.Services
 {
@@ -12,12 +13,37 @@ namespace AirportAutomation.Application.Services
 		private readonly IDistributedCache _cache;
 		private readonly RedisSettings _settings;
 		private readonly ILogger<CacheService> _logger;
+		private static readonly ConcurrentDictionary<string, SemaphoreSlim> _locks = new();
 
 		public CacheService(IDistributedCache cache, IOptions<RedisSettings> settings, ILogger<CacheService> logger)
 		{
 			_cache = cache;
 			_settings = settings.Value;
 			_logger = logger;
+		}
+
+		public async Task<T?> GetOrCreateAsync<T>(string key, Func<Task<T?>> factory, TimeSpan? absoluteExpiration = null, TimeSpan? slidingExpiration = null)
+		{
+			var cached = await GetAsync<T>(key);
+			if (cached != null) return cached;
+
+			var semaphore = _locks.GetOrAdd(key, _ => new SemaphoreSlim(1, 1));
+			await semaphore.WaitAsync();
+			try
+			{
+				cached = await GetAsync<T>(key);
+				if (cached != null) return cached;
+
+				var result = await factory();
+				if (result != null)
+					await SetAsync(key, result, absoluteExpiration, slidingExpiration);
+
+				return result;
+			}
+			finally
+			{
+				semaphore.Release();
+			}
 		}
 
 		public async Task<T?> GetAsync<T>(string key)

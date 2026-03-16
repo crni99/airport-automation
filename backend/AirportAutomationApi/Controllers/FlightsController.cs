@@ -95,24 +95,24 @@ namespace AirportAutomation.Api.Controllers
 			}
 
 			string cacheKey = CacheKeys.Flights(page, correctedPageSize);
-			var cachedFlights = await _cacheService.GetAsync<PagedResponse<FlightDto>>(cacheKey);
-			if (cachedFlights != null)
-			{
-				return Ok(cachedFlights);
-			}
 
-			var flights = await _flightService.GetFlights(cancellationToken, page, correctedPageSize);
-			if (flights is null || !flights.Any())
+			var response = await _cacheService.GetOrCreateAsync<PagedResponse<FlightDto>>(cacheKey, async () =>
 			{
-				_logger.LogInformation("Flights not found.");
+				var flights = await _flightService.GetFlights(cancellationToken, page, correctedPageSize);
+				if (flights is null || !flights.Any())
+				{
+					_logger.LogInformation("Flights not found.");
+					return null;
+				}
+				var totalItems = await _flightService.FlightsCount(cancellationToken);
+				var data = _mapper.Map<IEnumerable<FlightDto>>(flights);
+				return new PagedResponse<FlightDto>(data, page, correctedPageSize, totalItems);
+			});
+
+			if (response == null)
+			{
 				return NoContent();
 			}
-			var totalItems = await _flightService.FlightsCount(cancellationToken);
-			var data = _mapper.Map<IEnumerable<FlightDto>>(flights);
-			var response = new PagedResponse<FlightDto>(data, page, correctedPageSize, totalItems);
-
-			await _cacheService.SetAsync(cacheKey, response);
-
 			return Ok(response);
 		}
 
@@ -139,22 +139,22 @@ namespace AirportAutomation.Api.Controllers
 			}
 
 			string cacheKey = CacheKeys.Flight(id);
-			var cachedFlight = await _cacheService.GetAsync<FlightDto>(cacheKey);
-			if (cachedFlight != null)
-			{
-				return Ok(cachedFlight);
-			}
 
-			var flight = await _flightService.GetFlight(id);
-			if (flight == null)
+			var flightDto = await _cacheService.GetOrCreateAsync<FlightDto>(cacheKey, async () =>
 			{
-				_logger.LogInformation("Flight with id {Id} not found.", id);
+				var flight = await _flightService.GetFlight(id);
+				if (flight == null)
+				{
+					_logger.LogInformation("Flight with id {Id} not found.", id);
+					return null;
+				}
+				return _mapper.Map<FlightDto>(flight);
+			});
+
+			if (flightDto == null)
+			{
 				return NotFound();
 			}
-			var flightDto = _mapper.Map<FlightDto>(flight);
-
-			await _cacheService.SetAsync(cacheKey, flightDto);
-
 			return Ok(flightDto);
 		}
 

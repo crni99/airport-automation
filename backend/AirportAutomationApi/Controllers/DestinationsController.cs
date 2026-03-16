@@ -98,24 +98,24 @@ namespace AirportAutomation.Api.Controllers
 			}
 
 			string cacheKey = CacheKeys.Destinations(page, correctedPageSize);
-			var cachedDestinations = await _cacheService.GetAsync<PagedResponse<DestinationDto>>(cacheKey);
-			if (cachedDestinations != null)
-			{
-				return Ok(cachedDestinations);
-			}
 
-			var destinations = await _destinationService.GetDestinations(cancellationToken, page, correctedPageSize);
-			if (destinations is null || !destinations.Any())
+			var response = await _cacheService.GetOrCreateAsync<PagedResponse<DestinationDto>>(cacheKey, async () =>
 			{
-				_logger.LogInformation("Destinations not found.");
+				var destinations = await _destinationService.GetDestinations(cancellationToken, page, correctedPageSize);
+				if (destinations is null || !destinations.Any())
+				{
+					_logger.LogInformation("Destinations not found.");
+					return null;
+				}
+				var totalItems = await _destinationService.DestinationsCount(cancellationToken);
+				var data = _mapper.Map<IEnumerable<DestinationDto>>(destinations);
+				return new PagedResponse<DestinationDto>(data, page, correctedPageSize, totalItems);
+			});
+
+			if (response == null)
+			{
 				return NoContent();
 			}
-			var totalItems = await _destinationService.DestinationsCount(cancellationToken);
-			var data = _mapper.Map<IEnumerable<DestinationDto>>(destinations);
-			var response = new PagedResponse<DestinationDto>(data, page, correctedPageSize, totalItems);
-
-			await _cacheService.SetAsync(cacheKey, response);
-
 			return Ok(response);
 		}
 
@@ -142,22 +142,22 @@ namespace AirportAutomation.Api.Controllers
 			}
 
 			string cacheKey = CacheKeys.Destination(id);
-			var cachedDestination = await _cacheService.GetAsync<DestinationDto>(cacheKey);
-			if (cachedDestination != null)
-			{
-				return Ok(cachedDestination);
-			}
 
-			var destination = await _destinationService.GetDestination(id);
-			if (destination == null)
+			var destinationDto = await _cacheService.GetOrCreateAsync<DestinationDto>(cacheKey, async () =>
 			{
-				_logger.LogInformation("Destination with id {Id} not found.", id);
+				var destination = await _destinationService.GetDestination(id);
+				if (destination == null)
+				{
+					_logger.LogInformation("Destination with id {Id} not found.", id);
+					return null;
+				}
+				return _mapper.Map<DestinationDto>(destination);
+			});
+
+			if (destinationDto == null)
+			{
 				return NotFound();
 			}
-			var destinationDto = _mapper.Map<DestinationDto>(destination);
-
-			await _cacheService.SetAsync(cacheKey, destinationDto);
-
 			return Ok(destinationDto);
 		}
 

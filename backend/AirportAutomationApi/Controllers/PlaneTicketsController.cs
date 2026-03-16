@@ -98,24 +98,24 @@ namespace AirportAutomation.Api.Controllers
 			}
 
 			string cacheKey = CacheKeys.PlaneTickets(page, correctedPageSize);
-			var cachedPlaneTickets = await _cacheService.GetAsync<PagedResponse<PlaneTicketDto>>(cacheKey);
-			if (cachedPlaneTickets != null)
-			{
-				return Ok(cachedPlaneTickets);
-			}
 
-			var planeTickets = await _planeTicketService.GetPlaneTickets(cancellationToken, page, correctedPageSize);
-			if (planeTickets is null || !planeTickets.Any())
+			var response = await _cacheService.GetOrCreateAsync<PagedResponse<PlaneTicketDto>>(cacheKey, async () =>
 			{
-				_logger.LogInformation("Plane Tickets not found.");
+				var planeTickets = await _planeTicketService.GetPlaneTickets(cancellationToken, page, correctedPageSize);
+				if (planeTickets is null || !planeTickets.Any())
+				{
+					_logger.LogInformation("Plane tickets not found.");
+					return null;
+				}
+				var totalItems = await _planeTicketService.PlaneTicketsCount(cancellationToken);
+				var data = _mapper.Map<IEnumerable<PlaneTicketDto>>(planeTickets);
+				return new PagedResponse<PlaneTicketDto>(data, page, correctedPageSize, totalItems);
+			});
+
+			if (response == null)
+			{
 				return NoContent();
 			}
-			var totalItems = await _planeTicketService.PlaneTicketsCount(cancellationToken);
-			var data = _mapper.Map<IEnumerable<PlaneTicketDto>>(planeTickets);
-			var response = new PagedResponse<PlaneTicketDto>(data, page, correctedPageSize, totalItems);
-
-			await _cacheService.SetAsync(cacheKey, response);
-
 			return Ok(response);
 		}
 
@@ -142,22 +142,22 @@ namespace AirportAutomation.Api.Controllers
 			}
 
 			string cacheKey = CacheKeys.PlaneTicket(id);
-			var cachedPlaneTicket = await _cacheService.GetAsync<PlaneTicketDto>(cacheKey);
-			if (cachedPlaneTicket != null)
-			{
-				return Ok(cachedPlaneTicket);
-			}
 
-			var planeTicket = await _planeTicketService.GetPlaneTicket(id);
-			if (planeTicket == null)
+			var planeTicketDto = await _cacheService.GetOrCreateAsync<PlaneTicketDto>(cacheKey, async () =>
 			{
-				_logger.LogInformation("Plane Ticket with id {Id} not found.", id);
+				var planeTicket = await _planeTicketService.GetPlaneTicket(id);
+				if (planeTicket == null)
+				{
+					_logger.LogInformation("Plane Ticket with id {Id} not found.", id);
+					return null;
+				}
+				return _mapper.Map<PlaneTicketDto>(planeTicket);
+			});
+
+			if (planeTicketDto == null)
+			{
 				return NotFound();
 			}
-			var planeTicketDto = _mapper.Map<PlaneTicketDto>(planeTicket);
-
-			await _cacheService.SetAsync(cacheKey, planeTicketDto);
-
 			return Ok(planeTicketDto);
 		}
 

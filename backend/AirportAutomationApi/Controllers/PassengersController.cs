@@ -98,24 +98,24 @@ namespace AirportAutomation.Api.Controllers
 			}
 
 			string cacheKey = CacheKeys.Passengers(page, correctedPageSize);
-			var cachedPassengers = await _cacheService.GetAsync<PagedResponse<PassengerDto>>(cacheKey);
-			if (cachedPassengers != null)
-			{
-				return Ok(cachedPassengers);
-			}
 
-			var passengers = await _passengerService.GetPassengers(cancellationToken, page, correctedPageSize);
-			if (passengers is null || !passengers.Any())
+			var response = await _cacheService.GetOrCreateAsync<PagedResponse<PassengerDto>>(cacheKey, async () =>
 			{
-				_logger.LogInformation("Passengers not found.");
+				var passengers = await _passengerService.GetPassengers(cancellationToken, page, correctedPageSize);
+				if (passengers is null || !passengers.Any())
+				{
+					_logger.LogInformation("Passengers not found.");
+					return null;
+				}
+				var totalItems = await _passengerService.PassengersCount(cancellationToken);
+				var data = _mapper.Map<IEnumerable<PassengerDto>>(passengers);
+				return new PagedResponse<PassengerDto>(data, page, correctedPageSize, totalItems);
+			});
+
+			if (response == null)
+			{
 				return NoContent();
 			}
-			var totalItems = await _passengerService.PassengersCount(cancellationToken);
-			var data = _mapper.Map<IEnumerable<PassengerDto>>(passengers);
-			var response = new PagedResponse<PassengerDto>(data, page, correctedPageSize, totalItems);
-
-			await _cacheService.SetAsync(cacheKey, response);
-
 			return Ok(response);
 		}
 
@@ -142,22 +142,22 @@ namespace AirportAutomation.Api.Controllers
 			}
 
 			string cacheKey = CacheKeys.Passenger(id);
-			var cachedPassenger = await _cacheService.GetAsync<PassengerDto>(cacheKey);
-			if (cachedPassenger != null)
-			{
-				return Ok(cachedPassenger);
-			}
 
-			var passenger = await _passengerService.GetPassenger(id);
-			if (passenger == null)
+			var passengerDto = await _cacheService.GetOrCreateAsync<PassengerDto>(cacheKey, async () =>
 			{
-				_logger.LogInformation("Passenger with id {Id} not found.", id);
+				var passenger = await _passengerService.GetPassenger(id);
+				if (passenger == null)
+				{
+					_logger.LogInformation("Passenger with id {Id} not found.", id);
+					return null;
+				}
+				return _mapper.Map<PassengerDto>(passenger);
+			});
+
+			if (passengerDto == null)
+			{
 				return NotFound();
 			}
-			var passengerDto = _mapper.Map<PassengerDto>(passenger);
-
-			await _cacheService.SetAsync(cacheKey, passengerDto);
-
 			return Ok(passengerDto);
 		}
 
