@@ -212,6 +212,13 @@ namespace AirportAutomationApi.Test.Controllers
 			_paginationValidationServiceMock
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, pageSize, null));
+			_cacheServiceMock
+				.Setup(x => x.GetOrCreateAsync<PagedResponse<FlightDto>>(
+					It.IsAny<string>(),
+					It.IsAny<Func<Task<PagedResponse<FlightDto>?>>>(),
+					null, null))
+				.Returns<string, Func<Task<PagedResponse<FlightDto>?>>, TimeSpan?, TimeSpan?>(
+					async (key, factory, abs, sld) => await factory());
 			_flightServiceMock.Setup(service => service.GetFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>()))
 				.ThrowsAsync(new Exception("Simulated exception"));
 
@@ -237,6 +244,13 @@ namespace AirportAutomationApi.Test.Controllers
 			_paginationValidationServiceMock
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, pageSize, null));
+			_cacheServiceMock
+			.Setup(x => x.GetOrCreateAsync<PagedResponse<FlightDto>>(
+				It.IsAny<string>(),
+				It.IsAny<Func<Task<PagedResponse<FlightDto>?>>>(),
+				null, null))
+			.Returns<string, Func<Task<PagedResponse<FlightDto>?>>, TimeSpan?, TimeSpan?>(
+				async (key, factory, abs, sld) => await factory());
 			_flightServiceMock
 				.Setup(service => service.GetFlights(cancellationToken, page, pageSize))
 				.ReturnsAsync(flights);
@@ -292,6 +306,13 @@ namespace AirportAutomationApi.Test.Controllers
 			_paginationValidationServiceMock
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, pageSize, null));
+			_cacheServiceMock
+				.Setup(x => x.GetOrCreateAsync<PagedResponse<FlightDto>>(
+					It.IsAny<string>(),
+					It.IsAny<Func<Task<PagedResponse<FlightDto>?>>>(),
+					null, null))
+				.Returns<string, Func<Task<PagedResponse<FlightDto>?>>, TimeSpan?, TimeSpan?>(
+					async (key, factory, abs, sld) => await factory());
 			_flightServiceMock
 				.Setup(service => service.GetFlights(cancellationToken, page, pageSize))
 				.ReturnsAsync(pagedFlights);
@@ -340,7 +361,10 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, pageSize, null));
 			_cacheServiceMock
-				.Setup(x => x.GetAsync<PagedResponse<FlightDto>>(It.IsAny<string>()))
+				.Setup(x => x.GetOrCreateAsync<PagedResponse<FlightDto>>(
+					It.IsAny<string>(),
+					It.IsAny<Func<Task<PagedResponse<FlightDto>?>>>(),
+					null, null))
 				.ReturnsAsync(cachedResponse);
 
 			// Act
@@ -366,8 +390,12 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, pageSize, null));
 			_cacheServiceMock
-				.Setup(x => x.GetAsync<PagedResponse<FlightDto>>(It.IsAny<string>()))
-				.ReturnsAsync((PagedResponse<FlightDto>)null);
+				.Setup(x => x.GetOrCreateAsync<PagedResponse<FlightDto>>(
+					It.IsAny<string>(),
+					It.IsAny<Func<Task<PagedResponse<FlightDto>?>>>(),
+					null, null))
+				.Returns<string, Func<Task<PagedResponse<FlightDto>?>>, TimeSpan?, TimeSpan?>(
+					async (key, factory, abs, sld) => await factory());
 			_flightServiceMock
 				.Setup(x => x.GetFlights(cancellationToken, page, pageSize))
 				.ReturnsAsync(flights);
@@ -383,9 +411,9 @@ namespace AirportAutomationApi.Test.Controllers
 
 			// Assert
 			Assert.IsType<OkObjectResult>(result.Result);
-			_cacheServiceMock.Verify(x => x.SetAsync(
+			_cacheServiceMock.Verify(x => x.GetOrCreateAsync<PagedResponse<FlightDto>>(
 				It.IsAny<string>(),
-				It.IsAny<PagedResponse<FlightDto>>(),
+				It.IsAny<Func<Task<PagedResponse<FlightDto>?>>>(),
 				null, null), Times.Once);
 		}
 
@@ -445,6 +473,13 @@ namespace AirportAutomationApi.Test.Controllers
 			_inputValidationServiceMock
 				.Setup(x => x.IsNonNegativeInt(validId))
 				.Returns(true);
+			_cacheServiceMock
+				.Setup(x => x.GetOrCreateAsync<FlightDto>(
+					It.IsAny<string>(),
+					It.IsAny<Func<Task<FlightDto?>>>(),
+					null, null))
+				.Returns<string, Func<Task<FlightDto?>>, TimeSpan?, TimeSpan?>(
+					async (key, factory, abs, sld) => await factory());
 			_flightServiceMock
 				.Setup(service => service.GetFlight(validId))
 				.ReturnsAsync(flightEntity);
@@ -474,7 +509,10 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.IsNonNegativeInt(id))
 				.Returns(true);
 			_cacheServiceMock
-				.Setup(x => x.GetAsync<FlightDto>(It.IsAny<string>()))
+				.Setup(x => x.GetOrCreateAsync<FlightDto>(
+					It.IsAny<string>(),
+					It.IsAny<Func<Task<FlightDto?>>>(),
+					null, null))
 				.ReturnsAsync(cachedFlight);
 
 			// Act
@@ -483,7 +521,6 @@ namespace AirportAutomationApi.Test.Controllers
 			// Assert
 			var okResult = Assert.IsType<OkObjectResult>(result.Result);
 			Assert.Equal(cachedFlight, okResult.Value);
-			_flightServiceMock.Verify(x => x.FlightExists(It.IsAny<int>()), Times.Never);
 			_flightServiceMock.Verify(x => x.GetFlight(It.IsAny<int>()), Times.Never);
 		}
 
@@ -498,8 +535,12 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.IsNonNegativeInt(id))
 				.Returns(true);
 			_cacheServiceMock
-				.Setup(x => x.GetAsync<FlightDto>(It.IsAny<string>()))
-				.ReturnsAsync((FlightDto)null);
+				.Setup(x => x.GetOrCreateAsync<FlightDto>(
+					It.IsAny<string>(),
+					It.IsAny<Func<Task<FlightDto?>>>(),
+					null, null))
+				.Returns<string, Func<Task<FlightDto?>>, TimeSpan?, TimeSpan?>(
+					async (key, factory, abs, sld) => await factory());
 			_flightServiceMock
 				.Setup(x => x.GetFlight(id))
 				.ReturnsAsync(flightEntity);
@@ -512,9 +553,9 @@ namespace AirportAutomationApi.Test.Controllers
 
 			// Assert
 			Assert.IsType<OkObjectResult>(result.Result);
-			_cacheServiceMock.Verify(x => x.SetAsync(
+			_cacheServiceMock.Verify(x => x.GetOrCreateAsync<FlightDto>(
 				It.IsAny<string>(),
-				It.IsAny<FlightDto>(),
+				It.IsAny<Func<Task<FlightDto?>>>(),
 				null, null), Times.Once);
 		}
 

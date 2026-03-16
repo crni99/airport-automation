@@ -28,6 +28,69 @@ namespace AirportAutomationApi.Test.Services
 		}
 
 		[Fact]
+		public async Task GetOrCreateAsync_ReturnsCachedValue_WhenCacheHit()
+		{
+			var expected = "cached_value";
+			var json = JsonConvert.SerializeObject(expected);
+			_cacheMock.Setup(x => x.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(System.Text.Encoding.UTF8.GetBytes(json));
+
+			var result = await _cacheService.GetOrCreateAsync<string>("test_key", () => Task.FromResult<string?>("factory_value"));
+
+			Assert.Equal(expected, result);
+			_cacheMock.Verify(x => x.SetAsync(
+				It.IsAny<string>(),
+				It.IsAny<byte[]>(),
+				It.IsAny<DistributedCacheEntryOptions>(),
+				It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Fact]
+		public async Task GetOrCreateAsync_CallsFactory_WhenCacheMiss()
+		{
+			var expected = "factory_value";
+			_cacheMock.Setup(x => x.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((byte[])null);
+
+			var result = await _cacheService.GetOrCreateAsync<string>("test_key", () => Task.FromResult<string?>(expected));
+
+			Assert.Equal(expected, result);
+			_cacheMock.Verify(x => x.SetAsync(
+				It.IsAny<string>(),
+				It.IsAny<byte[]>(),
+				It.IsAny<DistributedCacheEntryOptions>(),
+				It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Fact]
+		public async Task GetOrCreateAsync_ReturnsNull_WhenFactoryReturnsNull()
+		{
+			_cacheMock.Setup(x => x.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((byte[])null);
+
+			var result = await _cacheService.GetOrCreateAsync<string>("test_key", () => Task.FromResult<string?>(null));
+
+			Assert.Null(result);
+			_cacheMock.Verify(x => x.SetAsync(
+				It.IsAny<string>(),
+				It.IsAny<byte[]>(),
+				It.IsAny<DistributedCacheEntryOptions>(),
+				It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Fact]
+		public async Task GetOrCreateAsync_CallsFactory_WhenCacheThrowsException()
+		{
+			var expected = "factory_value";
+			_cacheMock.Setup(x => x.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new Exception("Redis unavailable"));
+
+			var result = await _cacheService.GetOrCreateAsync<string>("test_key", () => Task.FromResult<string?>(expected));
+
+			Assert.Equal(expected, result);
+		}
+
+		[Fact]
 		public async Task GetAsync_ReturnsDeserializedObject_WhenKeyExists()
 		{
 			var expected = new { Name = "Test" };

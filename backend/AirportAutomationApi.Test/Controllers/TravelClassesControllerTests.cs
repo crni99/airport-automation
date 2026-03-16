@@ -203,6 +203,13 @@ namespace AirportAutomationApi.Test.Controllers
 			_paginationValidationServiceMock
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, pageSize, null));
+			_cacheServiceMock
+				.Setup(x => x.GetOrCreateAsync<PagedResponse<TravelClassDto>>(
+					It.IsAny<string>(),
+					It.IsAny<Func<Task<PagedResponse<TravelClassDto>?>>>(),
+					null, null))
+				.Returns<string, Func<Task<PagedResponse<TravelClassDto>?>>, TimeSpan?, TimeSpan?>(
+					async (key, factory, abs, sld) => await factory());
 			_travelClassServiceMock.Setup(service => service.GetTravelClasses(cancellationToken, It.IsAny<int>(), It.IsAny<int>()))
 				.ThrowsAsync(new Exception("Simulated exception"));
 
@@ -228,6 +235,13 @@ namespace AirportAutomationApi.Test.Controllers
 			_paginationValidationServiceMock
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, pageSize, null));
+			_cacheServiceMock
+				.Setup(x => x.GetOrCreateAsync<PagedResponse<TravelClassDto>>(
+					It.IsAny<string>(),
+					It.IsAny<Func<Task<PagedResponse<TravelClassDto>?>>>(),
+					null, null))
+				.Returns<string, Func<Task<PagedResponse<TravelClassDto>?>>, TimeSpan?, TimeSpan?>(
+					async (key, factory, abs, sld) => await factory());
 			_travelClassServiceMock
 				.Setup(service => service.GetTravelClasses(cancellationToken, page, pageSize))
 				.ReturnsAsync(travelClasses);
@@ -283,6 +297,13 @@ namespace AirportAutomationApi.Test.Controllers
 			_paginationValidationServiceMock
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, pageSize, null));
+			_cacheServiceMock
+				.Setup(x => x.GetOrCreateAsync<PagedResponse<TravelClassDto>>(
+					It.IsAny<string>(),
+					It.IsAny<Func<Task<PagedResponse<TravelClassDto>?>>>(),
+					null, null))
+				.Returns<string, Func<Task<PagedResponse<TravelClassDto>?>>, TimeSpan?, TimeSpan?>(
+					async (key, factory, abs, sld) => await factory());
 			_travelClassServiceMock
 				.Setup(service => service.GetTravelClasses(cancellationToken, page, pageSize))
 				.ReturnsAsync(pagedTravelClasses);
@@ -331,7 +352,10 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, pageSize, null));
 			_cacheServiceMock
-				.Setup(x => x.GetAsync<PagedResponse<TravelClassDto>>(It.IsAny<string>()))
+				.Setup(x => x.GetOrCreateAsync<PagedResponse<TravelClassDto>>(
+					It.IsAny<string>(),
+					It.IsAny<Func<Task<PagedResponse<TravelClassDto>?>>>(),
+					null, null))
 				.ReturnsAsync(cachedResponse);
 
 			// Act
@@ -357,8 +381,12 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, pageSize, null));
 			_cacheServiceMock
-				.Setup(x => x.GetAsync<PagedResponse<TravelClassDto>>(It.IsAny<string>()))
-				.ReturnsAsync((PagedResponse<TravelClassDto>)null);
+				.Setup(x => x.GetOrCreateAsync<PagedResponse<TravelClassDto>>(
+					It.IsAny<string>(),
+					It.IsAny<Func<Task<PagedResponse<TravelClassDto>?>>>(),
+					null, null))
+				.Returns<string, Func<Task<PagedResponse<TravelClassDto>?>>, TimeSpan?, TimeSpan?>(
+					async (key, factory, abs, sld) => await factory());
 			_travelClassServiceMock
 				.Setup(x => x.GetTravelClasses(cancellationToken, page, pageSize))
 				.ReturnsAsync(travelClasses);
@@ -374,9 +402,9 @@ namespace AirportAutomationApi.Test.Controllers
 
 			// Assert
 			Assert.IsType<OkObjectResult>(result.Result);
-			_cacheServiceMock.Verify(x => x.SetAsync(
+			_cacheServiceMock.Verify(x => x.GetOrCreateAsync<PagedResponse<TravelClassDto>>(
 				It.IsAny<string>(),
-				It.IsAny<PagedResponse<TravelClassDto>>(),
+				It.IsAny<Func<Task<PagedResponse<TravelClassDto>?>>>(),
 				null, null), Times.Once);
 		}
 
@@ -436,6 +464,13 @@ namespace AirportAutomationApi.Test.Controllers
 			_inputValidationServiceMock
 				.Setup(x => x.IsNonNegativeInt(validId))
 				.Returns(true);
+			_cacheServiceMock
+				.Setup(x => x.GetOrCreateAsync<TravelClassDto>(
+					It.IsAny<string>(),
+					It.IsAny<Func<Task<TravelClassDto?>>>(),
+					null, null))
+				.Returns<string, Func<Task<TravelClassDto?>>, TimeSpan?, TimeSpan?>(
+					async (key, factory, abs, sld) => await factory());
 			_travelClassServiceMock
 				.Setup(service => service.GetTravelClass(validId))
 				.ReturnsAsync(travelClassEntity);
@@ -465,7 +500,10 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.IsNonNegativeInt(id))
 				.Returns(true);
 			_cacheServiceMock
-				.Setup(x => x.GetAsync<TravelClassDto>(It.IsAny<string>()))
+				.Setup(x => x.GetOrCreateAsync<TravelClassDto>(
+					It.IsAny<string>(),
+					It.IsAny<Func<Task<TravelClassDto?>>>(),
+					null, null))
 				.ReturnsAsync(cachedTravelClass);
 
 			// Act
@@ -474,7 +512,6 @@ namespace AirportAutomationApi.Test.Controllers
 			// Assert
 			var okResult = Assert.IsType<OkObjectResult>(result.Result);
 			Assert.Equal(cachedTravelClass, okResult.Value);
-			_travelClassServiceMock.Verify(x => x.TravelClassExists(It.IsAny<int>()), Times.Never);
 			_travelClassServiceMock.Verify(x => x.GetTravelClass(It.IsAny<int>()), Times.Never);
 		}
 
@@ -489,8 +526,12 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.IsNonNegativeInt(id))
 				.Returns(true);
 			_cacheServiceMock
-				.Setup(x => x.GetAsync<TravelClassDto>(It.IsAny<string>()))
-				.ReturnsAsync((TravelClassDto)null);
+				.Setup(x => x.GetOrCreateAsync<TravelClassDto>(
+					It.IsAny<string>(),
+					It.IsAny<Func<Task<TravelClassDto?>>>(),
+					null, null))
+				.Returns<string, Func<Task<TravelClassDto?>>, TimeSpan?, TimeSpan?>(
+					async (key, factory, abs, sld) => await factory());
 			_travelClassServiceMock
 				.Setup(x => x.GetTravelClass(id))
 				.ReturnsAsync(travelClassEntity);
@@ -503,9 +544,9 @@ namespace AirportAutomationApi.Test.Controllers
 
 			// Assert
 			Assert.IsType<OkObjectResult>(result.Result);
-			_cacheServiceMock.Verify(x => x.SetAsync(
+			_cacheServiceMock.Verify(x => x.GetOrCreateAsync<TravelClassDto>(
 				It.IsAny<string>(),
-				It.IsAny<TravelClassDto>(),
+				It.IsAny<Func<Task<TravelClassDto?>>>(),
 				null, null), Times.Once);
 		}
 
