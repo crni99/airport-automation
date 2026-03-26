@@ -74,6 +74,8 @@ jobs:
           slot-name: 'Production'
           package: .
           publish-profile: ${{ secrets.AZURE_API_PUBLISH_PROFILE }}
+        env:
+          OpenTelemetry__Headers: ${{ secrets.OTEL_HEADERS }}
 
 
 

@@ -13,6 +13,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+
 //using QuestPDF.Infrastructure;
 using Serilog;
 using System.Reflection;
@@ -66,6 +70,38 @@ else
 	builder.Services.AddSingleton(redisSettings ?? new RedisSettings());
 }
 
+builder.Services.AddOpenTelemetry()
+	.WithTracing(tracing => tracing
+		.SetResourceBuilder(ResourceBuilder.CreateDefault()
+			.AddService(
+				serviceName: builder.Configuration["OpenTelemetry:ServiceName"]!,
+				serviceVersion: builder.Configuration["OpenTelemetry:ServiceVersion"]!
+			))
+		.AddAspNetCoreInstrumentation(options =>
+		{
+			options.RecordException = true;
+		})
+		.AddHttpClientInstrumentation()
+		.AddEntityFrameworkCoreInstrumentation()
+		.AddOtlpExporter(options =>
+		{
+			options.Endpoint = new Uri(builder.Configuration["OpenTelemetry:Endpoint"]!);
+			options.Headers = builder.Configuration["OpenTelemetry:Headers"]!;
+		}))
+	.WithMetrics(metrics => metrics
+		.SetResourceBuilder(ResourceBuilder.CreateDefault()
+			.AddService(
+				serviceName: builder.Configuration["OpenTelemetry:ServiceName"]!,
+				serviceVersion: builder.Configuration["OpenTelemetry:ServiceVersion"]!
+			))
+		.AddAspNetCoreInstrumentation()
+		.AddHttpClientInstrumentation()
+		.AddRuntimeInstrumentation()
+		.AddOtlpExporter(options =>
+		{
+			options.Endpoint = new Uri(builder.Configuration["OpenTelemetry:Endpoint"]!);
+			options.Headers = builder.Configuration["OpenTelemetry:Headers"]!;
+		}));
 
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {

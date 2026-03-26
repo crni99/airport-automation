@@ -49,6 +49,12 @@
     <PackageReference Include="System.Threading.RateLimiting" />
 	<PackageReference Include="StackExchange.Redis" />
 	<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" />
+	<PackageReference Include="OpenTelemetry.Extensions.Hosting" />
+	<PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
+	<PackageReference Include="OpenTelemetry.Instrumentation.Http" />
+	<PackageReference Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" />
+	<PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
+	<PackageReference Include="OpenTelemetry.Instrumentation.Runtime" />
   </ItemGroup>
 
   <ItemGroup>
