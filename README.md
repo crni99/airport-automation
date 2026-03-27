@@ -8,6 +8,7 @@ This project showcases a comprehensive full-stack solution, combining a robust *
 > **Note:** All services are hosted on **Free Tier** plans.
 > - 🗄️ **Database** automatically enters **paused mode** after inactivity. On the initial request, please allow **1-2 minutes** for it to wake up.
 > - ⚡ **Redis Cloud** is used for distributed caching — cache may be **evicted or unavailable** during inactivity. The application automatically falls back to **In-Memory Cache** to ensure uninterrupted availability.
+> - 📊 **OpenTelemetry** is **enabled** in the live demo — telemetry data may be **unavailable or delayed** due to free tier limits on the observability backend.
 
 <table>
   <thead>
