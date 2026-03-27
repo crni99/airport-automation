@@ -337,6 +337,14 @@ ___
 - Use caching to optimize performance-heavy operations, such as frequently accessed lookups and search results.
 - **Cache Stampede Prevention**: Under high concurrency, a `SemaphoreSlim` lock per cache key ensures only one request hits the database on a cache miss — all other concurrent requests wait and read from cache once it's populated.
 
+### Observability with OpenTelemetry
+- Implement a unified observability stack using **`OpenTelemetry`** for distributed tracing, metrics collection, and structured log export.
+- **Smart Switch Mechanism**: OpenTelemetry instrumentation is conditionally enabled via configuration — if disabled, the application runs without any telemetry overhead, ensuring zero performance impact in lightweight environments.
+- **Distributed Tracing**: Instrument ASP.NET Core request pipeline, outbound HTTP calls, and Entity Framework Core database queries to produce end-to-end traces across service boundaries.
+- **Metrics Collection**: Capture runtime, HTTP, and application-level metrics using ASP.NET Core and HTTP client instrumentation for real-time performance monitoring.
+- **Structured Log Export**: Export enriched, formatted log entries (including scopes) via OTLP to a centralized observability backend for centralized analysis and alerting.
+- Export all telemetry signals (traces, metrics, logs) over `OTLP/HTTP` Protobuf to a configurable endpoint, enabling integration with backends such as `Grafana`, `Jaeger`, `Tempo`, or any OpenTelemetry-compatible collector.
+
 ### Advanced Filtering with Filter Pattern
 - Implement **dedicated filter classes** for each entity type (PassengerSearchFilter, PilotSearchFilter, etc.) to enable multi-field search capabilities.
 - Create **filter extension methods** to encapsulate query building logic and promote reusability.
