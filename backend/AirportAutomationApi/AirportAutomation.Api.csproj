@@ -55,6 +55,7 @@
 	<PackageReference Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" />
 	<PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
 	<PackageReference Include="OpenTelemetry.Instrumentation.Runtime" />
+	<PackageVersion Include="OpenTelemetry.Exporter.Console" />
   </ItemGroup>
 
   <ItemGroup>

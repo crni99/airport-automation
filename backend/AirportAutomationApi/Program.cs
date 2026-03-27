@@ -13,10 +13,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using OpenTelemetry;
+using OpenTelemetry.Exporter;
+using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-
 //using QuestPDF.Infrastructure;
 using Serilog;
 using System.Reflection;
@@ -48,7 +50,6 @@ builder.Services.AddControllers(
 
 var redisSettings = builder.Configuration.GetSection("Redis").Get<RedisSettings>();
 bool isRedisEnabled = redisSettings?.Enabled == true;
-
 if (isRedisEnabled)
 {
 	var redisConnectionString = builder.Configuration.GetConnectionString("Redis");
@@ -70,38 +71,58 @@ else
 	builder.Services.AddSingleton(redisSettings ?? new RedisSettings());
 }
 
-builder.Services.AddOpenTelemetry()
-	.WithTracing(tracing => tracing
-		.SetResourceBuilder(ResourceBuilder.CreateDefault()
-			.AddService(
-				serviceName: builder.Configuration["OpenTelemetry:ServiceName"]!,
-				serviceVersion: builder.Configuration["OpenTelemetry:ServiceVersion"]!
-			))
-		.AddAspNetCoreInstrumentation(options =>
+bool isOpenTelemetryEnabled = builder.Configuration.GetValue<bool>("OpenTelemetry:Enabled");
+if (isOpenTelemetryEnabled)
+{
+	var otelResource = ResourceBuilder.CreateDefault()
+		.AddService(
+			serviceName: builder.Configuration["OpenTelemetry:ServiceName"]!,
+			serviceVersion: builder.Configuration["OpenTelemetry:ServiceVersion"]!
+		);
+
+	builder.Services.AddOpenTelemetry()
+		.WithTracing(tracing =>
 		{
-			options.RecordException = true;
+			tracing.SetResourceBuilder(otelResource)
+				   .AddAspNetCoreInstrumentation(options => options.RecordException = true)
+				   .AddHttpClientInstrumentation()
+				   .AddEntityFrameworkCoreInstrumentation();
+
+			tracing.AddOtlpExporter(options =>
+			{
+				options.Endpoint = new Uri($"{builder.Configuration["OpenTelemetry:Endpoint"]!.TrimEnd('/')}/v1/traces");
+				options.Headers = builder.Configuration["OpenTelemetry:Headers"];
+				options.Protocol = OtlpExportProtocol.HttpProtobuf;
+			});
 		})
-		.AddHttpClientInstrumentation()
-		.AddEntityFrameworkCoreInstrumentation()
-		.AddOtlpExporter(options =>
+		.WithMetrics(metrics =>
 		{
-			options.Endpoint = new Uri(builder.Configuration["OpenTelemetry:Endpoint"]!);
-			options.Headers = builder.Configuration["OpenTelemetry:Headers"]!;
-		}))
-	.WithMetrics(metrics => metrics
-		.SetResourceBuilder(ResourceBuilder.CreateDefault()
-			.AddService(
-				serviceName: builder.Configuration["OpenTelemetry:ServiceName"]!,
-				serviceVersion: builder.Configuration["OpenTelemetry:ServiceVersion"]!
-			))
-		.AddAspNetCoreInstrumentation()
-		.AddHttpClientInstrumentation()
-		.AddRuntimeInstrumentation()
-		.AddOtlpExporter(options =>
+			metrics.SetResourceBuilder(otelResource)
+				   .AddAspNetCoreInstrumentation()
+				   .AddHttpClientInstrumentation()
+				   .AddRuntimeInstrumentation();
+
+			metrics.AddOtlpExporter(options =>
+			{
+				options.Endpoint = new Uri($"{builder.Configuration["OpenTelemetry:Endpoint"]!.TrimEnd('/')}/v1/metrics");
+				options.Headers = builder.Configuration["OpenTelemetry:Headers"];
+				options.Protocol = OtlpExportProtocol.HttpProtobuf;
+			});
+		});
+
+	builder.Logging.AddOpenTelemetry(logging =>
+	{
+		logging.SetResourceBuilder(otelResource);
+		logging.IncludeFormattedMessage = true;
+		logging.IncludeScopes = true;
+		logging.AddOtlpExporter(options =>
 		{
-			options.Endpoint = new Uri(builder.Configuration["OpenTelemetry:Endpoint"]!);
-			options.Headers = builder.Configuration["OpenTelemetry:Headers"]!;
-		}));
+			options.Endpoint = new Uri($"{builder.Configuration["OpenTelemetry:Endpoint"]!.TrimEnd('/')}/v1/logs");
+			options.Headers = builder.Configuration["OpenTelemetry:Headers"];
+			options.Protocol = OtlpExportProtocol.HttpProtobuf;
+		});
+	});
+}
 
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
@@ -294,10 +315,13 @@ builder.Services.AddHttpClient();
 var healthChecksBuilder = builder.Services.AddHealthChecks()
 	.AddCheck<ApiHealthCheck>("API")
 	.AddCheck<DatabaseHealthCheck>("Database");
-
 if (isRedisEnabled)
 {
 	healthChecksBuilder.AddCheck<RedisHealthCheck>("Redis");
+}
+if (isOpenTelemetryEnabled)
+{
+	healthChecksBuilder.AddCheck<OpenTelemetryHealthCheck>("Open Telemetry");
 }
 
 var app = builder.Build();
