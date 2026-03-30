@@ -245,21 +245,34 @@ cd airport-automation/backend/AirportAutomationApi
 - However, for better performance and distributed environments, you can easily switch that.
 ```json
 "ConnectionStrings": {
-  "Redis": "[host]:[port],password=[password],ssl=True,abortConnect=False
+  "Redis": "[host]:[port],password=[password],ssl=True,abortConnect=False"
 },
 "Redis": {
-  "Enabled": true,
+  "Enabled": true
 }
 ```
 
-6. **In your IDE (e.g., Visual Studio / JetBrains Rider):**
+6. **Optional: Enable OpenTelemetry**
+- By default, the application has telemetry disabled for seamless local development.
+- However, for observability in distributed environments, you can easily switch that.
+```json
+"OpenTelemetry": {
+  "Enabled": true,
+  "Endpoint": "https://otlp-gateway-prod-eu-central-0.grafana.net/otlp",
+  "Headers": "Authorization=Basic YOUR_BASE64_TOKEN",
+  "ServiceName": "your-service-name",
+  "ServiceVersion": "1.0.0"
+}
+```
+
+7. **In your IDE (e.g., Visual Studio / JetBrains Rider):**
 - Set `AirportAutomationApi` (Web API) and `AirportAutomationWeb` (MVC Web) as the startup projects.
 - This ensures the API and MVC frontend run together.
 - Alternatively (using CLI/VS Code): Open two separate terminal windows in the `airport-automation/backend` directory and run the following commands concurrently:
     - For the **Web API**: `dotnet run --project AirportAutomationApi/AirportAutomationApi.csproj`
     - For the **MVC Frontend**: `dotnet run --project AirportAutomationWeb/AirportAutomationWeb.csproj`
 
-7. Start the application
+8. Start the application
 ```bash
 dotnet run
 ```
