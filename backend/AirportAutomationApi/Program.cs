@@ -336,6 +336,7 @@ app.UseSwaggerUI(c =>
 	c.DefaultModelsExpandDepth(-1);
 	c.InjectStylesheet("/swagger-ui/swagger-ui-overrides.css");
 	c.InjectJavascript("/swagger-ui/swagger-ui.js");
+	c.DocumentTitle = "Airport Automation API";
 });
 
 if (!app.Environment.IsDevelopment())
@@ -355,8 +356,8 @@ app.MapHealthChecks("/api/v{version:apiVersion}/HealthCheck", new()
 		[HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable
 	}
 }).RequireAuthorization();
-app.UseCors("_AllowAll");
 app.UseIpRateLimiting();
+app.UseCors("_AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<GlobalExceptionHandler>();
