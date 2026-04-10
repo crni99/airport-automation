@@ -1,5 +1,9 @@
-.topbar-wrapper .link img {
+.topbar-wrapper .link {
     content: url('AirportAutomationLogo.svg') !important;
+    height: 30px;
+    display: block;
+    object-position: left;
+    object-fit: contain;
 }
 
 .contact-link {
