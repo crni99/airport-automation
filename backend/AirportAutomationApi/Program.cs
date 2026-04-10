@@ -335,6 +335,7 @@ app.UseSwaggerUI(c =>
 	// c.SwaggerEndpoint("/swagger/v2/swagger.json", "Airport Automation API V2");
 	c.DefaultModelsExpandDepth(-1);
 	c.InjectStylesheet("/swagger-ui/swagger-ui-overrides.css");
+	c.InjectStylesheet("/swagger-ui/swagger-dark.css");
 	c.InjectJavascript("/swagger-ui/swagger-ui.js");
 	c.DocumentTitle = "Airport Automation API";
 });

@@ -109,20 +109,18 @@
     let isDark = false;
 
     function enableDarkTheme() {
-        if (!document.querySelector(`link[href="${darkThemeHref}"]`)) {
-            const link = document.createElement('link');
-            link.rel = 'stylesheet';
-            link.href = darkThemeHref;
-            document.head.appendChild(link);
+        const link = document.querySelector(`link[href="${darkThemeHref}"]`);
+        if (link) {
+            link.disabled = false;
         }
         isDark = true;
         button.innerText = 'Light Mode ☀️';
     }
 
     function disableDarkTheme() {
-        const existingLink = document.querySelector(`link[href="${darkThemeHref}"]`);
-        if (existingLink) {
-            existingLink.remove();
+        const link = document.querySelector(`link[href="${darkThemeHref}"]`);
+        if (link) {
+            link.disabled = true;
         }
         isDark = false;
         button.innerText = 'Dark Mode 🌙';
