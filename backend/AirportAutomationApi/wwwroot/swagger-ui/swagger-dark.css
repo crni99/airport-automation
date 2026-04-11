@@ -567,7 +567,11 @@
         color: #b5bac9;
     }
 
-    .swagger-ui .btn:hover { box-shadow: rgba(0, 0, 0, .3) 0 0 5px; }
+    .swagger-ui .btn:hover { 
+        box-shadow: rgba(0, 0, 0, .3) 0 0 5px; 
+        background:  gray; 
+        color: white;
+    }
 
     .swagger-ui .btn.authorize, .swagger-ui .btn.cancel {
         background-color: transparent;
