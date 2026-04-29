@@ -2,6 +2,7 @@
 using AirportAutomation.Api.Interfaces;
 using AirportAutomation.Application.Dtos.Destination;
 using AirportAutomation.Application.Dtos.Response;
+using AirportAutomation.Core.Configuration;
 using AirportAutomation.Core.Entities;
 using AirportAutomation.Core.Enums;
 using AirportAutomation.Core.Filters;
@@ -11,8 +12,8 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Moq;
 
 namespace AirportAutomationApi.Test.Controllers
@@ -28,7 +29,7 @@ namespace AirportAutomationApi.Test.Controllers
 		private readonly Mock<IExportService> _exportServiceMock;
 		private readonly Mock<IMapper> _mapperMock;
 		private readonly Mock<ILogger<DestinationsController>> _loggerMock;
-		private readonly Mock<IConfiguration> _configurationMock;
+		private readonly IOptions<PageSettings> _pageSettingsOptions;
 
 		private readonly DestinationEntity destinationEntity = new()
 		{
@@ -53,14 +54,7 @@ namespace AirportAutomationApi.Test.Controllers
 			_exportServiceMock = new Mock<IExportService>();
 			_mapperMock = new Mock<IMapper>();
 			_loggerMock = new Mock<ILogger<DestinationsController>>();
-			_configurationMock = new Mock<IConfiguration>();
-			var configBuilder = new ConfigurationBuilder();
-			configBuilder.AddInMemoryCollection(new Dictionary<string, string>
-			{
-				{"pageSettings:maxPageSize", "10"}
-			});
-			_configurationMock.Setup(x => x.GetSection(It.IsAny<string>()))
-				.Returns(configBuilder.Build().GetSection(""));
+			_pageSettingsOptions = Options.Create(new PageSettings { MaxPageSize = 10 });
 
 			_controller = new DestinationsController(
 				_destinationServiceMock.Object,
@@ -71,7 +65,7 @@ namespace AirportAutomationApi.Test.Controllers
 				_exportServiceMock.Object,
 				_mapperMock.Object,
 				_loggerMock.Object,
-				_configurationMock.Object
+				_pageSettingsOptions
 			);
 		}
 
@@ -96,7 +90,7 @@ namespace AirportAutomationApi.Test.Controllers
 			var exportServiceMock = new Mock<IExportService>();
 			var mapperMock = new Mock<IMapper>();
 			var loggerMock = new Mock<ILogger<DestinationsController>>();
-			var configurationMock = new Mock<IConfiguration>();
+			var pageSettingsOptions = Options.Create(new PageSettings { MaxPageSize = 10 });
 
 			// Set up mocks to return null based on the test case
 			IDestinationService destinationService = serviceName == "destinationService" ? null : destinationServiceMock.Object;
@@ -118,7 +112,7 @@ namespace AirportAutomationApi.Test.Controllers
 				exportService,
 				mapper,
 				logger,
-				configurationMock.Object
+				pageSettingsOptions
 			));
 
 			// Assert

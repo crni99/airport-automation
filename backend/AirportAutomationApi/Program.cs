@@ -145,6 +145,8 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 	};
 });
 
+builder.Services.Configure<PageSettings>(builder.Configuration.GetSection("PageSettings"));
+
 builder.Services.AddEndpointsApiExplorer();
 
 SwaggerControllerOrder<ControllerBase> swaggerControllerOrder = new SwaggerControllerOrder<ControllerBase>(Assembly.GetEntryAssembly());
@@ -251,7 +253,7 @@ builder.Services.AddAuthentication(options =>
 	})
 	.AddJwtBearer(o =>
 	{
-		o.IncludeErrorDetails = true;
+		o.IncludeErrorDetails = builder.Environment.IsDevelopment();
 		o.TokenValidationParameters = new()
 		{
 			RoleClaimType = ClaimTypes.Role,

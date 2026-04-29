@@ -6,9 +6,9 @@ using Microsoft.IdentityModel.Logging;
 using Polly;
 using Serilog;
 
-IdentityModelEventSource.ShowPII = true;
-
 var builder = WebApplication.CreateBuilder(args);
+
+IdentityModelEventSource.ShowPII = builder.Environment.IsDevelopment();
 
 builder.Host.UseSerilog((context, loggerConfig) =>
 	loggerConfig.ReadFrom.Configuration(context.Configuration));

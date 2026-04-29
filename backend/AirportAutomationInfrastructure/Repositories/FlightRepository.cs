@@ -49,7 +49,6 @@ namespace AirportAutomation.Infrastructure.Repositories
 				.Include(l => l.Airline)
 				.Include(l => l.Destination)
 				.Include(l => l.Pilot)
-				.AsNoTracking()
 				.FirstOrDefaultAsync(l => l.Id == id);
 		}
 

@@ -50,7 +50,6 @@ namespace AirportAutomation.Infrastructure.Repositories
 				.Include(k => k.Passenger)
 				.Include(k => k.TravelClass)
 				.Include(k => k.Flight)
-				.AsNoTracking()
 				.FirstOrDefaultAsync(k => k.Id == id);
 		}
 

@@ -10,6 +10,7 @@ using Asp.Versioning;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace AirportAutomation.Api.Controllers
 {
@@ -42,7 +43,7 @@ namespace AirportAutomation.Api.Controllers
 		/// <param name="exportService">The service for exporting data.</param>
 		/// <param name="mapper">The mapper for object-to-object mapping.</param>
 		/// <param name="logger">The logger for logging actions and errors.</param>
-		/// <param name="configuration">The application configuration.</param>
+		/// <param name="pageSettingsOptions">Typed pagination configuration.</param>
 		public TravelClassesController(
 			ITravelClassService travelClassService,
 			ICacheService cacheService,
@@ -52,7 +53,7 @@ namespace AirportAutomation.Api.Controllers
 			IExportService exportService,
 			IMapper mapper,
 			ILogger<TravelClassesController> logger,
-			IConfiguration configuration
+			IOptions<PageSettings> pageSettingsOptions
 		)
 		{
 			_travelClassService = travelClassService ?? throw new ArgumentNullException(nameof(travelClassService));
@@ -63,7 +64,7 @@ namespace AirportAutomation.Api.Controllers
 			_exportService = exportService ?? throw new ArgumentNullException(nameof(exportService));
 			_mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
-			maxPageSize = configuration.GetValue<int>("pageSettings:maxPageSize");
+			maxPageSize = pageSettingsOptions?.Value?.MaxPageSize ?? 20;
 		}
 
 		/// <summary>

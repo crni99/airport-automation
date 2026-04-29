@@ -2,13 +2,14 @@
 using AirportAutomation.Api.Interfaces;
 using AirportAutomation.Application.Dtos.ApiUser;
 using AirportAutomation.Application.Dtos.Response;
+using AirportAutomation.Core.Configuration;
 using AirportAutomation.Core.Entities;
 using AirportAutomation.Core.Filters;
 using AirportAutomation.Core.Interfaces.IServices;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Moq;
 
 namespace AirportAutomationApi.Test.Controllers
@@ -22,7 +23,7 @@ namespace AirportAutomationApi.Test.Controllers
 		private readonly Mock<IUtilityService> _utilityServiceMock;
 		private readonly Mock<IMapper> _mapperMock;
 		private readonly Mock<ILogger<ApiUsersController>> _loggerMock;
-		private readonly Mock<IConfiguration> _configurationMock;
+		private readonly IOptions<PageSettings> _pageSettingsOptions;
 
 		private readonly ApiUserEntity apiUserEntity = new()
 		{
@@ -47,14 +48,7 @@ namespace AirportAutomationApi.Test.Controllers
 			_utilityServiceMock = new Mock<IUtilityService>();
 			_mapperMock = new Mock<IMapper>();
 			_loggerMock = new Mock<ILogger<ApiUsersController>>();
-			_configurationMock = new Mock<IConfiguration>();
-			var configBuilder = new ConfigurationBuilder();
-			configBuilder.AddInMemoryCollection(new Dictionary<string, string>
-			{
-				{"pageSettings:maxPageSize", "10"}
-			});
-			_configurationMock.Setup(x => x.GetSection(It.IsAny<string>()))
-				.Returns(configBuilder.Build().GetSection(""));
+			_pageSettingsOptions = Options.Create(new PageSettings { MaxPageSize = 10 });
 
 			_controller = new ApiUsersController(
 				_apiUserServiceMock.Object,
@@ -62,7 +56,7 @@ namespace AirportAutomationApi.Test.Controllers
 				_inputValidationServiceMock.Object,
 				_mapperMock.Object,
 				_loggerMock.Object,
-				_configurationMock.Object
+				_pageSettingsOptions
 			);
 		}
 
@@ -81,7 +75,7 @@ namespace AirportAutomationApi.Test.Controllers
 			var inputValidationServiceMock = new Mock<IInputValidationService>();
 			var mapperMock = new Mock<IMapper>();
 			var loggerMock = new Mock<ILogger<ApiUsersController>>();
-			var configurationMock = new Mock<IConfiguration>();
+			var pageSettingsOptions = Options.Create(new PageSettings { MaxPageSize = 10 });
 
 			// Set up mocks to return null based on the test case
 			IApiUserService apiUserService = serviceName == "apiUserService" ? null : apiUserServiceMock.Object;
@@ -97,7 +91,7 @@ namespace AirportAutomationApi.Test.Controllers
 				inputValidationService,
 				mapper,
 				logger,
-				configurationMock.Object
+				pageSettingsOptions
 			));
 
 			// Assert

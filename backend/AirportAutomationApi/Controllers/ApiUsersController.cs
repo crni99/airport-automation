@@ -2,6 +2,7 @@
 using AirportAutomation.Api.Interfaces;
 using AirportAutomation.Application.Dtos.ApiUser;
 using AirportAutomation.Application.Dtos.Response;
+using AirportAutomation.Core.Configuration;
 using AirportAutomation.Core.Entities;
 using AirportAutomation.Core.FilterExtensions;
 using AirportAutomation.Core.Filters;
@@ -10,6 +11,7 @@ using Asp.Versioning;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace AirportAutomation.Api.Controllers
 {
@@ -39,14 +41,14 @@ namespace AirportAutomation.Api.Controllers
 		/// <param name="inputValidationService">The service for validating input data.</param>
 		/// <param name="mapper">The mapper for object-to-object mapping.</param>
 		/// <param name="logger">The logger for logging actions and errors.</param>
-		/// <param name="configuration">The application configuration.</param>
+		/// <param name="pageSettingsOptions">Typed pagination configuration.</param>
 		public ApiUsersController(
 			IApiUserService apiUserService,
 			IPaginationValidationService paginationValidationService,
 			IInputValidationService inputValidationService,
 			IMapper mapper,
 			ILogger<ApiUsersController> logger,
-			IConfiguration configuration
+			IOptions<PageSettings> pageSettingsOptions
 		)
 		{
 			_apiUserService = apiUserService ?? throw new ArgumentNullException(nameof(apiUserService));
@@ -54,7 +56,7 @@ namespace AirportAutomation.Api.Controllers
 			_inputValidationService = inputValidationService ?? throw new ArgumentNullException(nameof(inputValidationService));
 			_mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
-			maxPageSize = configuration.GetValue<int>("pageSettings:maxPageSize");
+			maxPageSize = pageSettingsOptions?.Value?.MaxPageSize ?? 20;
 		}
 
 		/// <summary>
