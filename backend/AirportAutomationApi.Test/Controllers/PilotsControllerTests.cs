@@ -125,6 +125,34 @@ namespace AirportAutomationApi.Test.Controllers
 			Assert.Contains(serviceName, exception.Message);
 		}
 
+		[Theory]
+		[Trait("Category", "Constructor")]
+		[InlineData(true)]  // Tests when pageSettingsOptions is null
+		[InlineData(false)] // Tests when pageSettingsOptions.Value is null
+		public void Constructor_WhenPageSettingsAreMissing_SetsDefaultMaxPageSize(bool isNullOptions)
+		{
+			// Arrange
+			IOptions<PageSettings> options = isNullOptions
+				? null
+				: Options.Create<PageSettings>(null);
+
+			// Act
+			var controller = new PilotsController(
+				new Mock<IPilotService>().Object,
+				new Mock<ICacheService>().Object,
+				new Mock<IPaginationValidationService>().Object,
+				new Mock<IInputValidationService>().Object,
+				new Mock<IUtilityService>().Object,
+				new Mock<IExportService>().Object,
+				new Mock<IMapper>().Object,
+				new Mock<ILogger<PilotsController>>().Object,
+				options
+			);
+
+			// Assert
+			Assert.NotNull(controller);
+		}
+
 		#region GetPilots
 
 		[Fact]

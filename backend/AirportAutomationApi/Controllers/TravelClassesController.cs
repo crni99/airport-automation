@@ -3,6 +3,7 @@ using AirportAutomation.Api.Interfaces;
 using AirportAutomation.Application.Dtos.Response;
 using AirportAutomation.Application.Dtos.TravelClass;
 using AirportAutomation.Core.Configuration;
+using AirportAutomation.Core.Entities;
 using AirportAutomation.Core.Enums;
 using AirportAutomation.Core.Interfaces;
 using AirportAutomation.Core.Interfaces.IServices;
@@ -83,38 +84,16 @@ namespace AirportAutomation.Api.Controllers
 		[ProducesResponseType(204)]
 		[ProducesResponseType(400)]
 		[ProducesResponseType(401)]
-		public async Task<ActionResult<PagedResponse<TravelClassDto>>> GetTravelClasses(
-			CancellationToken cancellationToken,
+		public Task<ActionResult<PagedResponse<TravelClassDto>>> GetTravelClasses(
+			CancellationToken ct,
 			[FromQuery] int page = 1,
 			[FromQuery] int pageSize = 10)
-		{
-			var (isValid, correctedPageSize, result) = _paginationValidationService.ValidatePaginationParameters(page, pageSize, maxPageSize);
-			if (!isValid)
-			{
-				return result;
-			}
-
-			string cacheKey = CacheKeys.TravelClasses(page, correctedPageSize);
-
-			var response = await _cacheService.GetOrCreateAsync<PagedResponse<TravelClassDto>>(cacheKey, async () =>
-			{
-				var travelClasses = await _travelClassService.GetTravelClasses(cancellationToken, page, correctedPageSize);
-				if (travelClasses is null || !travelClasses.Any())
-				{
-					_logger.LogInformation("Travel classes not found.");
-					return null;
-				}
-				var totalItems = await _travelClassService.TravelClassesCount(cancellationToken);
-				var data = _mapper.Map<IEnumerable<TravelClassDto>>(travelClasses);
-				return new PagedResponse<TravelClassDto>(data, page, correctedPageSize, totalItems);
-			});
-
-			if (response == null)
-			{
-				return NoContent();
-			}
-			return Ok(response);
-		}
+			=> GetPagedAsync<TravelClassEntity, TravelClassDto>(
+				_cacheService, _paginationValidationService, _mapper, _logger,
+				page, pageSize, maxPageSize,
+				cacheKey: CacheKeys.TravelClasses(page, pageSize),
+				fetchItems: () => _travelClassService.GetTravelClasses(ct, page, pageSize),
+				fetchCount: () => _travelClassService.TravelClassesCount(ct));
 
 		/// <summary>
 		/// Endpoint for retrieving a single travel class.
@@ -130,33 +109,12 @@ namespace AirportAutomation.Api.Controllers
 		[ProducesResponseType(400)]
 		[ProducesResponseType(404)]
 		[ProducesResponseType(401)]
-		public async Task<ActionResult<TravelClassDto>> GetTravelClass(int id)
-		{
-			if (!_inputValidationService.IsNonNegativeInt(id))
-			{
-				_logger.LogInformation("Invalid input. The ID {Id} must be a non-negative integer.", id);
-				return BadRequest("Invalid input. The ID must be a non-negative integer.");
-			}
-
-			string cacheKey = CacheKeys.TravelClass(id);
-
-			var travelClassDto = await _cacheService.GetOrCreateAsync<TravelClassDto>(cacheKey, async () =>
-			{
-				var travelClass = await _travelClassService.GetTravelClass(id);
-				if (travelClass == null)
-				{
-					_logger.LogInformation("Travel class with id {Id} not found.", id);
-					return null;
-				}
-				return _mapper.Map<TravelClassDto>(travelClass);
-			});
-
-			if (travelClassDto == null)
-			{
-				return NotFound();
-			}
-			return Ok(travelClassDto);
-		}
+		public Task<ActionResult<TravelClassDto>> GetTravelClass(int id)
+			=> GetByIdAsync<TravelClassEntity, TravelClassDto>(
+				_cacheService, _inputValidationService, _mapper, _logger,
+				id,
+				cacheKey: CacheKeys.TravelClass(id),
+				fetchItem: () => _travelClassService.GetTravelClass(id));
 
 		/// <summary>
 		/// Endpoint for exporting travel class data to PDF.

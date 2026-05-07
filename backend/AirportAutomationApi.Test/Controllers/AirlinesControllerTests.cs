@@ -119,6 +119,34 @@ namespace AirportAutomationApi.Test.Controllers
 			Assert.Contains(serviceName, exception.Message);
 		}
 
+		[Theory]
+		[Trait("Category", "Constructor")]
+		[InlineData(true)]  // Tests when pageSettingsOptions is null
+		[InlineData(false)] // Tests when pageSettingsOptions.Value is null
+		public void Constructor_WhenPageSettingsAreMissing_SetsDefaultMaxPageSize(bool isNullOptions)
+		{
+			// Arrange
+			IOptions<PageSettings> options = isNullOptions
+				? null
+				: Options.Create<PageSettings>(null);
+
+			// Act
+			var controller = new AirlinesController(
+				new Mock<IAirlineService>().Object,
+				new Mock<ICacheService>().Object,
+				new Mock<IPaginationValidationService>().Object,
+				new Mock<IInputValidationService>().Object,
+				new Mock<IUtilityService>().Object,
+				new Mock<IExportService>().Object,
+				new Mock<IMapper>().Object,
+				new Mock<ILogger<AirlinesController>>().Object,
+				options
+			);
+
+			// Assert
+			Assert.NotNull(controller);
+		}
+
 		#region GetAirlines
 
 		/// <summary>
@@ -473,23 +501,17 @@ namespace AirportAutomationApi.Test.Controllers
 		[Trait("Category", "GetAirline")]
 		public async Task GetAirline_AirlineNotFound_ReturnsNotFound()
 		{
-			// Arrange
 			int validId = 1;
+			_inputValidationServiceMock.Setup(x => x.IsNonNegativeInt(validId)).Returns(true);
 
-			_inputValidationServiceMock
-				.Setup(x => x.IsNonNegativeInt(validId))
-				.Returns(true);
 			_cacheServiceMock
-				.Setup(x => x.GetAsync<AirlineDto>(It.IsAny<string>()))
-				.ReturnsAsync((AirlineDto)null);
-			_airlineServiceMock
-				.Setup(service => service.GetAirline(validId))
-				.ReturnsAsync((AirlineEntity)null);
+				.Setup(x => x.GetOrCreateAsync<AirlineDto>(It.IsAny<string>(), It.IsAny<Func<Task<AirlineDto?>>>(), null, null))
+				.Returns<string, Func<Task<AirlineDto?>>, TimeSpan?, bool>(async (key, factory, exp, sliding) => await factory());
 
-			// Act
+			_airlineServiceMock.Setup(service => service.GetAirline(validId)).ReturnsAsync((AirlineEntity)null);
+
 			var result = await _controller.GetAirline(validId);
 
-			// Assert
 			Assert.IsType<NotFoundResult>(result.Result);
 		}
 
@@ -499,29 +521,25 @@ namespace AirportAutomationApi.Test.Controllers
 		/// </summary>
 		[Fact]
 		[Trait("Category", "GetAirline")]
-		public async Task GetAirline_ReturnsAirlineDto_WhenAirlineExists()
+		public async Task GetAirline_WhenCacheMiss_CallsServiceAndReturnsData()
 		{
-			// Arrange
 			int validId = 1;
+			var entity = new AirlineEntity { Id = validId, Name = "Air Serbia" };
+			var dto = new AirlineDto { Id = validId, Name = "Air Serbia" };
 
-			_inputValidationServiceMock
-				.Setup(x => x.IsNonNegativeInt(validId))
-				.Returns(true);
+			_inputValidationServiceMock.Setup(x => x.IsNonNegativeInt(validId)).Returns(true);
+			_airlineServiceMock.Setup(s => s.GetAirline(validId)).ReturnsAsync(entity);
+			_mapperMock.Setup(m => m.Map<AirlineDto>(entity)).Returns(dto);
+
 			_cacheServiceMock
-				.Setup(x => x.GetOrCreateAsync<AirlineDto>(
-					It.IsAny<string>(),
-					It.IsAny<Func<Task<AirlineDto?>>>(),
-					null, null))
-				.ReturnsAsync(airlineDto);
+				.Setup(x => x.GetOrCreateAsync<AirlineDto>(It.IsAny<string>(), It.IsAny<Func<Task<AirlineDto?>>>(), null, null))
+				.Returns<string, Func<Task<AirlineDto?>>, TimeSpan?, bool>(async (key, factory, exp, sliding) => await factory());
 
-			// Act
 			var result = await _controller.GetAirline(validId);
 
-			// Assert
-			var actionResult = Assert.IsType<ActionResult<AirlineDto>>(result);
-			var okResult = Assert.IsType<OkObjectResult>(actionResult.Result);
-			var returnedAirlineDto = Assert.IsType<AirlineDto>(okResult.Value);
-			Assert.Equal(airlineDto, returnedAirlineDto);
+			var okResult = Assert.IsType<OkObjectResult>(result.Result);
+			Assert.Equal(dto, okResult.Value);
+			_airlineServiceMock.Verify(s => s.GetAirline(validId), Times.Once);
 		}
 
 		[Fact]
@@ -1061,8 +1079,7 @@ namespace AirportAutomationApi.Test.Controllers
 			var mockPdfBytes = new byte[] { 1, 2, 3 };
 			_airlineServiceMock.Setup(s => s.GetAllAirlines(It.IsAny<CancellationToken>()))
 				.ReturnsAsync(mockAirlines);
-			_exportServiceMock.Setup(s => s.ExportToPDF("Airlines", mockAirlines))
-				.Returns(mockPdfBytes);
+			_exportServiceMock.Setup(s => s.ExportToPDF("Airlines", It.IsAny<IList<AirlineEntity>>())).Returns(mockPdfBytes);
 			_utilityServiceMock.Setup(s => s.GenerateUniqueFileName("Airlines", FileExtension.Pdf))
 				.Returns("Airlines-test.pdf");
 
@@ -1212,13 +1229,18 @@ namespace AirportAutomationApi.Test.Controllers
 		{
 			// Arrange
 			int maxPageSize = 10;
-			_paginationValidationServiceMock.Setup(s => s.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+			_paginationValidationServiceMock
+				.Setup(s => s.ValidatePaginationParameters(
+					It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((false, 0, new BadRequestObjectResult($"Invalid page size. It should be between 1 and {maxPageSize}.")));
 
 			// Act
 			var result = await _controller.ExportToPdf(CancellationToken.None, pageSize: 0);
 
 			// Assert
+			_paginationValidationServiceMock.Verify(
+				s => s.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()),
+				Times.Once);  // if this fails, the mock is never called
 			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
 			Assert.Equal($"Invalid page size. It should be between 1 and {maxPageSize}.", badRequestResult.Value);
 		}

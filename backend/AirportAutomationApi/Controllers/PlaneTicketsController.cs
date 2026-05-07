@@ -87,38 +87,16 @@ namespace AirportAutomation.Api.Controllers
 		[ProducesResponseType(204)]
 		[ProducesResponseType(400)]
 		[ProducesResponseType(401)]
-		public async Task<ActionResult<PagedResponse<PlaneTicketDto>>> GetPlaneTickets(
-			CancellationToken cancellationToken,
+		public Task<ActionResult<PagedResponse<PlaneTicketDto>>> GetPlaneTickets(
+			CancellationToken ct,
 			[FromQuery] int page = 1,
 			[FromQuery] int pageSize = 10)
-		{
-			var (isValid, correctedPageSize, result) = _paginationValidationService.ValidatePaginationParameters(page, pageSize, maxPageSize);
-			if (!isValid)
-			{
-				return result;
-			}
-
-			string cacheKey = CacheKeys.PlaneTickets(page, correctedPageSize);
-
-			var response = await _cacheService.GetOrCreateAsync<PagedResponse<PlaneTicketDto>>(cacheKey, async () =>
-			{
-				var planeTickets = await _planeTicketService.GetPlaneTickets(cancellationToken, page, correctedPageSize);
-				if (planeTickets is null || !planeTickets.Any())
-				{
-					_logger.LogInformation("Plane tickets not found.");
-					return null;
-				}
-				var totalItems = await _planeTicketService.PlaneTicketsCount(cancellationToken);
-				var data = _mapper.Map<IEnumerable<PlaneTicketDto>>(planeTickets);
-				return new PagedResponse<PlaneTicketDto>(data, page, correctedPageSize, totalItems);
-			});
-
-			if (response == null)
-			{
-				return NoContent();
-			}
-			return Ok(response);
-		}
+			=> GetPagedAsync<PlaneTicketEntity, PlaneTicketDto>(
+				_cacheService, _paginationValidationService, _mapper, _logger,
+				page, pageSize, maxPageSize,
+				cacheKey: CacheKeys.PlaneTickets(page, pageSize),
+				fetchItems: () => _planeTicketService.GetPlaneTickets(ct, page, pageSize),
+				fetchCount: () => _planeTicketService.PlaneTicketsCount(ct));
 
 		/// <summary>
 		/// Endpoint for retrieving a single plane ticket.
@@ -134,33 +112,12 @@ namespace AirportAutomation.Api.Controllers
 		[ProducesResponseType(400)]
 		[ProducesResponseType(404)]
 		[ProducesResponseType(401)]
-		public async Task<ActionResult<PlaneTicketDto>> GetPlaneTicket(int id)
-		{
-			if (!_inputValidationService.IsNonNegativeInt(id))
-			{
-				_logger.LogInformation("Invalid input. The ID {Id} must be a non-negative integer.", id);
-				return BadRequest("Invalid input. The ID must be a non-negative integer.");
-			}
-
-			string cacheKey = CacheKeys.PlaneTicket(id);
-
-			var planeTicketDto = await _cacheService.GetOrCreateAsync<PlaneTicketDto>(cacheKey, async () =>
-			{
-				var planeTicket = await _planeTicketService.GetPlaneTicket(id);
-				if (planeTicket == null)
-				{
-					_logger.LogInformation("Plane Ticket with id {Id} not found.", id);
-					return null;
-				}
-				return _mapper.Map<PlaneTicketDto>(planeTicket);
-			});
-
-			if (planeTicketDto == null)
-			{
-				return NotFound();
-			}
-			return Ok(planeTicketDto);
-		}
+		public Task<ActionResult<PlaneTicketDto>> GetPlaneTicket(int id)
+			=> GetByIdAsync<PlaneTicketEntity, PlaneTicketDto>(
+				_cacheService, _inputValidationService, _mapper, _logger,
+				id,
+				cacheKey: CacheKeys.PlaneTicket(id),
+				fetchItem: () => _planeTicketService.GetPlaneTicket(id));
 
 		/// <summary>
 		/// Endpoint for retrieving a paginated list of plane tickets matching the specified search filter criteria.
@@ -358,13 +315,10 @@ namespace AirportAutomation.Api.Controllers
 			{
 				string cacheKey = CacheKeys.PlaneTicket(id);
 				await _cacheService.RemoveAsync(cacheKey);
-
 				return NoContent();
 			}
-			else
-			{
-				return Conflict();
-			}
+			_logger.LogInformation("Plane Ticket with id {Id} is being referenced by other entities and cannot be deleted.", id);
+			return Conflict();
 		}
 
 		/// <summary>

@@ -87,38 +87,16 @@ namespace AirportAutomation.Api.Controllers
 		[ProducesResponseType(204)]
 		[ProducesResponseType(400)]
 		[ProducesResponseType(401)]
-		public async Task<ActionResult<PagedResponse<PassengerDto>>> GetPassengers(
-			CancellationToken cancellationToken,
+		public Task<ActionResult<PagedResponse<PassengerDto>>> GetPassengers(
+			CancellationToken ct,
 			[FromQuery] int page = 1,
 			[FromQuery] int pageSize = 10)
-		{
-			var (isValid, correctedPageSize, result) = _paginationValidationService.ValidatePaginationParameters(page, pageSize, maxPageSize);
-			if (!isValid)
-			{
-				return result;
-			}
-
-			string cacheKey = CacheKeys.Passengers(page, correctedPageSize);
-
-			var response = await _cacheService.GetOrCreateAsync<PagedResponse<PassengerDto>>(cacheKey, async () =>
-			{
-				var passengers = await _passengerService.GetPassengers(cancellationToken, page, correctedPageSize);
-				if (passengers is null || !passengers.Any())
-				{
-					_logger.LogInformation("Passengers not found.");
-					return null;
-				}
-				var totalItems = await _passengerService.PassengersCount(cancellationToken);
-				var data = _mapper.Map<IEnumerable<PassengerDto>>(passengers);
-				return new PagedResponse<PassengerDto>(data, page, correctedPageSize, totalItems);
-			});
-
-			if (response == null)
-			{
-				return NoContent();
-			}
-			return Ok(response);
-		}
+			=> GetPagedAsync<PassengerEntity, PassengerDto>(
+				_cacheService, _paginationValidationService, _mapper, _logger,
+				page, pageSize, maxPageSize,
+				cacheKey: CacheKeys.Passengers(page, pageSize),
+				fetchItems: () => _passengerService.GetPassengers(ct, page, pageSize),
+				fetchCount: () => _passengerService.PassengersCount(ct));
 
 		/// <summary>
 		/// Endpoint for retrieving a single passenger.
@@ -134,33 +112,12 @@ namespace AirportAutomation.Api.Controllers
 		[ProducesResponseType(400)]
 		[ProducesResponseType(404)]
 		[ProducesResponseType(401)]
-		public async Task<ActionResult<PassengerDto>> GetPassenger(int id)
-		{
-			if (!_inputValidationService.IsNonNegativeInt(id))
-			{
-				_logger.LogInformation("Invalid input. The ID {Id} must be a non-negative integer.", id);
-				return BadRequest("Invalid input. The ID must be a non-negative integer.");
-			}
-
-			string cacheKey = CacheKeys.Passenger(id);
-
-			var passengerDto = await _cacheService.GetOrCreateAsync<PassengerDto>(cacheKey, async () =>
-			{
-				var passenger = await _passengerService.GetPassenger(id);
-				if (passenger == null)
-				{
-					_logger.LogInformation("Passenger with id {Id} not found.", id);
-					return null;
-				}
-				return _mapper.Map<PassengerDto>(passenger);
-			});
-
-			if (passengerDto == null)
-			{
-				return NotFound();
-			}
-			return Ok(passengerDto);
-		}
+		public Task<ActionResult<PassengerDto>> GetPassenger(int id)
+			=> GetByIdAsync<PassengerEntity, PassengerDto>(
+				_cacheService, _inputValidationService, _mapper, _logger,
+				id,
+				cacheKey: CacheKeys.Passenger(id),
+				fetchItem: () => _passengerService.GetPassenger(id));
 
 		/// <summary>
 		/// Endpoint for retrieving a paginated list of passengers matching the specified search filter criteria.
@@ -372,14 +329,10 @@ namespace AirportAutomation.Api.Controllers
 			{
 				string cacheKey = CacheKeys.Passenger(id);
 				await _cacheService.RemoveAsync(cacheKey);
-
 				return NoContent();
 			}
-			else
-			{
-				_logger.LogInformation("Passenger with id {Id} is being referenced by other entities and cannot be deleted.", id);
-				return Conflict("Passenger cannot be deleted because it is being referenced by other entities.");
-			}
+			_logger.LogInformation("Passenger with id {Id} is being referenced by other entities and cannot be deleted.", id);
+			return Conflict("Passenger cannot be deleted because it is being referenced by other entities.");
 		}
 
 		/// <summary>

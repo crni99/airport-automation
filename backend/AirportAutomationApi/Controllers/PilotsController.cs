@@ -87,38 +87,16 @@ namespace AirportAutomation.Api.Controllers
 		[ProducesResponseType(204)]
 		[ProducesResponseType(400)]
 		[ProducesResponseType(401)]
-		public async Task<ActionResult<PagedResponse<PilotDto>>> GetPilots(
-			CancellationToken cancellationToken,
+		public Task<ActionResult<PagedResponse<PilotDto>>> GetPilots(
+			CancellationToken ct,
 			[FromQuery] int page = 1,
 			[FromQuery] int pageSize = 10)
-		{
-			var (isValid, correctedPageSize, result) = _paginationValidationService.ValidatePaginationParameters(page, pageSize, maxPageSize);
-			if (!isValid)
-			{
-				return result;
-			}
-
-			string cacheKey = CacheKeys.Pilots(page, correctedPageSize);
-
-			var response = await _cacheService.GetOrCreateAsync<PagedResponse<PilotDto>>(cacheKey, async () =>
-			{
-				var pilots = await _pilotService.GetPilots(cancellationToken, page, correctedPageSize);
-				if (pilots is null || !pilots.Any())
-				{
-					_logger.LogInformation("Pilots not found.");
-					return null;
-				}
-				var totalItems = await _pilotService.PilotsCount(cancellationToken);
-				var data = _mapper.Map<IEnumerable<PilotDto>>(pilots);
-				return new PagedResponse<PilotDto>(data, page, correctedPageSize, totalItems);
-			});
-
-			if (response == null)
-			{
-				return NoContent();
-			}
-			return Ok(response);
-		}
+			=> GetPagedAsync<PilotEntity, PilotDto>(
+				_cacheService, _paginationValidationService, _mapper, _logger,
+				page, pageSize, maxPageSize,
+				cacheKey: CacheKeys.Pilots(page, pageSize),
+				fetchItems: () => _pilotService.GetPilots(ct, page, pageSize),
+				fetchCount: () => _pilotService.PilotsCount(ct));
 
 		/// <summary>
 		/// Endpoint for retrieving a single pilot.
@@ -134,33 +112,12 @@ namespace AirportAutomation.Api.Controllers
 		[ProducesResponseType(400)]
 		[ProducesResponseType(404)]
 		[ProducesResponseType(401)]
-		public async Task<ActionResult<PilotDto>> GetPilot(int id)
-		{
-			if (!_inputValidationService.IsNonNegativeInt(id))
-			{
-				_logger.LogInformation("Invalid input. The ID {Id} must be a non-negative integer.", id);
-				return BadRequest("Invalid input. The ID must be a non-negative integer.");
-			}
-
-			string cacheKey = CacheKeys.Pilot(id);
-
-			var pilotDto = await _cacheService.GetOrCreateAsync<PilotDto>(cacheKey, async () =>
-			{
-				var pilot = await _pilotService.GetPilot(id);
-				if (pilot == null)
-				{
-					_logger.LogInformation("Pilot with id {Id} not found.", id);
-					return null;
-				}
-				return _mapper.Map<PilotDto>(pilot);
-			});
-
-			if (pilotDto == null)
-			{
-				return NotFound();
-			}
-			return Ok(pilotDto);
-		}
+		public Task<ActionResult<PilotDto>> GetPilot(int id)
+			=> GetByIdAsync<PilotEntity, PilotDto>(
+				_cacheService, _inputValidationService, _mapper, _logger,
+				id,
+				cacheKey: CacheKeys.Pilot(id),
+				fetchItem: () => _pilotService.GetPilot(id));
 
 		/// <summary>
 		/// Endpoint for retrieving a paginated list of pilots matching the specified search filter criteria.
@@ -372,14 +329,10 @@ namespace AirportAutomation.Api.Controllers
 			{
 				string cacheKey = CacheKeys.Pilot(id);
 				await _cacheService.RemoveAsync(cacheKey);
-
 				return NoContent();
 			}
-			else
-			{
-				_logger.LogInformation("Pilot with id {Id} is being referenced by other entities and cannot be deleted.", id);
-				return Conflict("Pilot cannot be deleted because it is being referenced by other entities.");
-			}
+			_logger.LogInformation("Pilot with id {Id} is being referenced by other entities and cannot be deleted.", id);
+			return Conflict("Pilot cannot be deleted because it is being referenced by other entities.");
 		}
 
 		/// <summary>
