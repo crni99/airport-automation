@@ -51,9 +51,9 @@ namespace AirportAutomation.Web.Controllers
 
 		[HttpGet]
 		[Route("SignOut")]
-		public IActionResult SignOut()
+		public async Task<IActionResult> SignOut()
 		{
-			bool removed = _httpCallService.RemoveToken();
+			bool removed = await _httpCallService.RemoveToken();
 			return (removed) ? Json(new { success = true }) : Json(new { success = false });
 		}
 	}

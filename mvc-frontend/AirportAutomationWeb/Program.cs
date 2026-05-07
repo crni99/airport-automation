@@ -23,7 +23,11 @@ builder.Services.AddCors(options =>
 	});
 });
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews().AddJsonOptions(options =>
+{
+	options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
+	options.JsonSerializerOptions.Converters.Add(new TimeOnlyJsonConverter());
+});
 
 builder.Services.AddHttpClient("AirportAutomationApi")
 	.AddResilienceHandler("AirportAutomationApi", pipeline =>
@@ -46,12 +50,6 @@ builder.Services.AddHttpClient("AirportAutomationApi")
 			MinimumThroughput = 5
 		});
 	});
-
-builder.Services.AddControllers().AddJsonOptions(options =>
-{
-	options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
-	options.JsonSerializerOptions.Converters.Add(new TimeOnlyJsonConverter());
-});
 
 builder.Services.AddSession();
 builder.Services.AddAntiforgery();

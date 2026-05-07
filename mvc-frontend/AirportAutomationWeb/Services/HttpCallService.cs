@@ -21,7 +21,7 @@ namespace AirportAutomation.Web.Services
 		private readonly IHttpContextAccessor _httpContextAccessor;
 		private readonly IConfiguration _configuration;
 		private readonly ILogger<HttpCallService> _logger;
-		private readonly string apiURL;
+		private readonly string apiUrl;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="HttpCallService"/> class.
@@ -37,7 +37,7 @@ namespace AirportAutomation.Web.Services
 			_httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
 			_configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
-			apiURL = _configuration.GetValue<string>("ApiSettings:apiUrl");
+			apiUrl = _configuration.GetValue<string>("ApiSettings:apiUrl");
 		}
 
 		#region Auth
@@ -58,7 +58,7 @@ namespace AirportAutomation.Web.Services
 			}
 
 			var bearerToken = string.Empty;
-			var requestUri = $"{apiURL}/Authentication";
+			var requestUri = $"{apiUrl}/Authentication";
 
 			using var httpClient = _httpClientFactory.CreateClient("AirportAutomationApi");
 			ConfigureHttpClient(httpClient);
@@ -144,14 +144,14 @@ namespace AirportAutomation.Web.Services
 		/// <remarks>
 		/// If the Bearer token is missing or invalid, the removal is not performed.
 		/// </remarks>
-		public bool RemoveToken()
+		public async Task<bool> RemoveToken()
 		{
 			string token = GetToken();
 			if (!string.IsNullOrEmpty(token))
 			{
 				_httpContextAccessor.HttpContext.Session.Remove("AccessToken");
 				_httpContextAccessor.HttpContext.Session.Remove("AccessRole");
-				_httpContextAccessor.HttpContext.Session.CommitAsync().Wait();
+				await _httpContextAccessor.HttpContext.Session.CommitAsync();
 				return true;
 			}
 			return false;
@@ -203,7 +203,7 @@ namespace AirportAutomation.Web.Services
 		public async Task<PagedResponse<T>> GetDataList<T>(int page, int pageSize)
 		{
 			var modelName = GetModelName<T>();
-			var requestUri = $"{apiURL}/{modelName}";
+			var requestUri = $"{apiUrl}/{modelName}";
 			if (modelName.Equals("TravelClass"))
 			{
 				requestUri += $"es/";
@@ -249,7 +249,7 @@ namespace AirportAutomation.Web.Services
 			T data = default;
 			var modelName = GetModelName<T>();
 
-			string requestUri = $"{apiURL}/{modelName}";
+			string requestUri = $"{apiUrl}/{modelName}";
 			if (modelName.Equals("TravelClass"))
 			{
 				requestUri += $"es/{id}";
@@ -289,7 +289,7 @@ namespace AirportAutomation.Web.Services
 		{
 			var modelName = GetModelName<T>();
 
-			string requestUri = $"{apiURL}/{modelName}";
+			string requestUri = $"{apiUrl}/{modelName}";
 			if (modelName.Equals("TravelClass"))
 			{
 				requestUri += "es";
@@ -330,7 +330,7 @@ namespace AirportAutomation.Web.Services
 		{
 			var modelName = GetModelName<T>();
 
-			string requestUri = $"{apiURL}/{modelName}";
+			string requestUri = $"{apiUrl}/{modelName}";
 			if (modelName.Equals("TravelClass"))
 			{
 				requestUri += $"es/search?name={name}";
@@ -380,7 +380,7 @@ namespace AirportAutomation.Web.Services
 		{
 			var modelName = GetModelName<T>();
 
-			string requestUri = $"{apiURL}/{modelName}";
+			string requestUri = $"{apiUrl}/{modelName}";
 			if (modelName.Equals("TravelClass"))
 			{
 				requestUri += $"es/search?";
@@ -471,7 +471,7 @@ namespace AirportAutomation.Web.Services
 		{
 			T data = default;
 			var modelName = GetModelName<T>();
-			string requestUri = $"{apiURL}/{modelName}s";
+			string requestUri = $"{apiUrl}/{modelName}s";
 
 			using var httpClient = _httpClientFactory.CreateClient("AirportAutomationApi");
 			ConfigureHttpClient(httpClient);
@@ -502,7 +502,7 @@ namespace AirportAutomation.Web.Services
 		public async Task<bool> EditData<T>(T t, int id)
 		{
 			var modelName = GetModelName<T>();
-			string requestUri = $"{apiURL}/{modelName}s/{id}";
+			string requestUri = $"{apiUrl}/{modelName}s/{id}";
 
 			using var httpClient = _httpClientFactory.CreateClient("AirportAutomationApi");
 			ConfigureHttpClient(httpClient);
@@ -533,7 +533,7 @@ namespace AirportAutomation.Web.Services
 		public async Task<bool> DeleteData<T>(int id)
 		{
 			var modelName = GetModelName<T>();
-			var requestUri = $"{apiURL}/{modelName}s/{id}";
+			var requestUri = $"{apiUrl}/{modelName}s/{id}";
 
 			using var httpClient = _httpClientFactory.CreateClient("AirportAutomationApi");
 			ConfigureHttpClient(httpClient);
@@ -566,7 +566,7 @@ namespace AirportAutomation.Web.Services
 			var exportEndpoint = fileType.ToLower() == "pdf" ? "export/pdf" : "export/excel";
 			string pluralSuffix = modelName.Equals("TravelClass", StringComparison.OrdinalIgnoreCase) ? "es" : "s";
 
-			var baseUri = $"{apiURL}/{modelName}{pluralSuffix}/{exportEndpoint}";
+			var baseUri = $"{apiUrl}/{modelName}{pluralSuffix}/{exportEndpoint}";
 
 			var queryParameters = new List<string>
 			{
@@ -658,7 +658,7 @@ namespace AirportAutomation.Web.Services
 			T data = default;
 			var modelName = GetModelName<T>();
 
-			string requestUri = $"{apiURL}/{modelName}";
+			string requestUri = $"{apiUrl}/{modelName}";
 
 			var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 
@@ -701,12 +701,12 @@ namespace AirportAutomation.Web.Services
 				"Pilot",
 				"PlaneTicket"
 			};
-			requestUri = $"{apiURL}/{modelName}/search";
+			requestUri = $"{apiUrl}/{modelName}/search";
 
 			var filterQuery = BuildFilterQueryString(modelName, filter);
 
 			string pluralSuffix = modelName.Equals("TravelClass", StringComparison.OrdinalIgnoreCase) ? "es" : "s";
-			requestUri = $"{apiURL}/{modelName}{pluralSuffix}/search";
+			requestUri = $"{apiUrl}/{modelName}{pluralSuffix}/search";
 			requestUri += $"?{filterQuery}&page={page}&pageSize={pageSize}";
 
 			return requestUri;

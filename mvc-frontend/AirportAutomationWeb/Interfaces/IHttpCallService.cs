@@ -8,7 +8,7 @@ namespace AirportAutomation.Web.Interfaces
 	{
 		Task<bool> Authenticate(UserViewModel user);
 		string GetToken();
-		bool RemoveToken();
+		Task<bool> RemoveToken();
 		Task<PagedResponse<T>> GetDataList<T>(int page, int pageSize);
 		Task<PagedResponse<T>> GetDataList<T>();
 		Task<T> GetData<T>(int id);
