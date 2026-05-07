@@ -4,7 +4,7 @@ import DestinationsList from "../pages/destination/DestinationsList";
 import DestinationDetails from "../pages/destination/DestinationDetails";
 import DestinationCreateForm from "../pages/destination/DestinationCreateForm";
 import DestinationEditForm from "../pages/destination/DestinationEditForm";
-import ProtectedRoute from "../routes/ProtectedRoute";
+import RequireAdminRole from "../routes/RequireAdminRole";
 import { ENTITY_PATHS } from '../utils/const';
 
 const DestinationsRoutes = (
@@ -18,11 +18,11 @@ const DestinationsRoutes = (
             element={<DestinationDetails />} />
         <Route
             path={`${ENTITY_PATHS.DESTINATIONS}/create`}
-            element={<ProtectedRoute element={<DestinationCreateForm />} />}
+            element={<RequireAdminRole element={<DestinationCreateForm />} />}
         />
         <Route
             path={`${ENTITY_PATHS.DESTINATIONS}/edit/:id`}
-            element={<ProtectedRoute element={<DestinationEditForm />} />}
+            element={<RequireAdminRole element={<DestinationEditForm />} />}
         />
     </>
 );

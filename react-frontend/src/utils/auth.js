@@ -1,4 +1,3 @@
-import { redirect } from 'react-router-dom';
 import { generateErrorMessage, handleNetworkError } from '../utils/errorUtils.js';
 
 // Prevent XSS vulnerabilities
@@ -30,6 +29,7 @@ export async function authenticateUser(userName, password, apiUrl) {
         if (!apiUrl) {
             throw new Error('API URL is not available');
         }
+        
         const response = await fetch(`${apiUrl}/Authentication`, {
             method: 'POST',
             headers: {
@@ -37,6 +37,8 @@ export async function authenticateUser(userName, password, apiUrl) {
             },
             body: JSON.stringify(userCredentials)
         });
+
+        console.log(apiUrl);
 
         if (!response.ok) {
             const networkErrorMessage = handleNetworkError(response);
@@ -118,21 +120,6 @@ export function getRole() {
         return null;
     }
     return role;
-}
-
-// Not used..
-export function tokenLoader() {
-    const token = getAuthToken();
-    return token;
-}
-
-// FIX
-export function checkAuthLoader() {
-    const token = getAuthToken();
-
-    if (!token) {
-        return redirect('/auth');
-    }
 }
 
 function getRoleFromToken(token) {

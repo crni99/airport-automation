@@ -4,7 +4,7 @@ import FlightsList from "../pages/flight/FlightsList";
 import FlightDetails from "../pages/flight/FlightDetails";
 import FlightCreateForm from "../pages/flight/FlightCreateForm";
 import FlightEditForm from "../pages/flight/FlightEditForm";
-import ProtectedRoute from "./ProtectedRoute";
+import RequireAdminRole from "./RequireAdminRole";
 import { ENTITY_PATHS } from '../utils/const';
 
 const FlightsRoutes = (
@@ -19,11 +19,11 @@ const FlightsRoutes = (
         />
         <Route
             path={`${ENTITY_PATHS.FLIGHTS}/create`}
-            element={<ProtectedRoute element={<FlightCreateForm />} />}
+            element={<RequireAdminRole element={<FlightCreateForm />} />}
         />
         <Route
             path={`${ENTITY_PATHS.FLIGHTS}/edit/:id`}
-            element={<ProtectedRoute element={<FlightEditForm />} />}
+            element={<RequireAdminRole element={<FlightEditForm />} />}
         />
     </>
 );

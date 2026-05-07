@@ -4,7 +4,7 @@ import PassengersList from "../pages/passenger/PassengersList";
 import PassengerDetails from "../pages/passenger/PassengerDetails";
 import PassengerCreateForm from "../pages/passenger/PassengerCreateForm";
 import PassengerEditForm from "../pages/passenger/PassengerEditForm";
-import ProtectedRoute from "../routes/ProtectedRoute";
+import RequireAdminRole from "../routes/RequireAdminRole";
 import { ENTITY_PATHS } from '../utils/const';
 
 const PassengersRoutes = (
@@ -19,11 +19,11 @@ const PassengersRoutes = (
         />
         <Route 
             path={`${ENTITY_PATHS.PASSENGERS}/create`}
-            element={<ProtectedRoute element={<PassengerCreateForm />} />} 
+            element={<RequireAdminRole element={<PassengerCreateForm />} />} 
         />
         <Route 
             path={`${ENTITY_PATHS.PASSENGERS}/edit/:id`}
-            element={<ProtectedRoute element={<PassengerEditForm />} />} 
+            element={<RequireAdminRole element={<PassengerEditForm />} />} 
         />
     </>
 );

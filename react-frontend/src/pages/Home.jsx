@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { DataContext } from '../store/DataContext';
 import { getAuthToken, authenticateUser } from '../utils/auth';
 import Box from '@mui/material/Box';
@@ -12,21 +13,14 @@ import Stack from '@mui/material/Stack';
 
 export default function Home() {
     const dataCtx = useContext(DataContext);
+    const location = useLocation();
     const isLoggedIn = getAuthToken() !== null;
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
     const [currentDateTime, setCurrentDateTime] = useState('');
-    const [message, setMessage] = useState(null);
-
-    useEffect(() => {
-        const storedMessage = localStorage.getItem('authErrorMessage');
-        if (storedMessage) {
-            setMessage(storedMessage);
-            localStorage.removeItem('authErrorMessage');
-        }
-    }, []);
+    const [message, setMessage] = useState(location.state?.authErrorMessage || null);
 
     const handleFormSubmit = async (event) => {
         event.preventDefault();

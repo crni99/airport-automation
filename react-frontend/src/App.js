@@ -12,7 +12,7 @@ import HealthCheck from './pages/HealthCheck.jsx';
 import NotFound from './pages/NotFound.jsx';
 import Unauthorized from './pages/Unauthorized.jsx';
 import ApiUsersRoutes from './routes/apiUserRoutes.jsx';
-import ProtectedRouteV3 from './routes/ProtectedRouteV3.jsx';
+import RequireAuth from './routes/RequireAuth.jsx';
 import { Container, Box } from '@mui/material';
 import Navbar from './components/common/header/Navbar.jsx';
 import Footer from './components/common/Footer.jsx';
@@ -49,7 +49,7 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path={ENTITY_PATHS.HEALTH_CHECKS} element={<HealthCheck />} />
               <Route path="/unauthorized" element={<Unauthorized />} />
-              <Route element={<ProtectedRouteV3 />}>
+              <Route element={<RequireAuth />}>
                 {AirlineRoutes}
                 {DestinationsRoutes}
                 {TravelClassesRoutes}

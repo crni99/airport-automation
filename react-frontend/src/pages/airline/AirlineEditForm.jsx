@@ -83,8 +83,8 @@ export default function AirlineEditForm() {
                                 value={name}
                                 onChange={handleChange}
                                 required
-                                error={!!validationError?.firstName}
-                                helperText={validationError?.firstName || ' '}
+                                error={!!validationError?.name}
+                                helperText={validationError?.name || ' '}
                             />
                         </Grid>
                         <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>

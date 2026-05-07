@@ -21,11 +21,8 @@ import { useTheme } from '../../../store/ThemeContext';
 import { useSidebar } from '../../../store/SidebarContext';
 import Box from '@mui/material/Box';
 
-const drawerWidthExpanded = 240;
-const drawerWidthShrunk = 60;
-
 const Navbar = () => {
-    const { isExpanded, toggleSidebar } = useSidebar();
+    const { isExpanded, toggleSidebar, sidebarWidth } = useSidebar();
     const isLoggedIn = getAuthToken() !== null;
     const role = getRole();
     const { theme, toggleTheme } = useTheme();
@@ -46,7 +43,7 @@ const Navbar = () => {
             anchor="left"
             sx={{
                 '& .MuiDrawer-paper': {
-                    width: isExpanded ? drawerWidthExpanded : drawerWidthShrunk,
+                    width: sidebarWidth,
                     boxSizing: 'border-box',
                     display: 'flex',
                     flexDirection: 'column',
