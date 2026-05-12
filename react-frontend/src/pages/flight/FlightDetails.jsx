@@ -15,6 +15,7 @@ import DeleteOperationSnackbarManager from '../../components/common/feedback/Del
 import { useDelete } from '../../hooks/useDelete.jsx';
 
 export default function FlightDetails() {
+    
     const { id } = useParams();
     const [triggerFetch, setTriggerFetch] = useState(true);
     const { data: flight, dataExist, error, isLoading } = useFetch(ENTITIES.FLIGHTS, id, undefined, undefined, triggerFetch)

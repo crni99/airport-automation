@@ -44,8 +44,8 @@ const transformFlightForForm = (fetchedData) => ({
 });
 
 export default function FlightEditForm() {
+    
     const { id } = useParams();
-
     const {
         departureDate,
         departureTime,

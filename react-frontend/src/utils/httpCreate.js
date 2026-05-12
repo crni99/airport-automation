@@ -1,10 +1,11 @@
 import { getAuthToken } from './auth.js';
+import logger from './logger.js'
 import { generateErrorMessage, handleNetworkError } from './errorUtils.js';
 import { CustomAPIError } from './CustomError.js';
 
 export async function createData(data, dataType, apiUrl) {
+    
     try {
-
         const authToken = getAuthToken();
         const headers = {
             'Content-Type': 'application/json'
@@ -38,7 +39,7 @@ export async function createData(data, dataType, apiUrl) {
         if (error instanceof CustomAPIError) {
             throw error;
         } else {
-            console.error('Error creating data:', error);
+            logger.error('Error creating data:', error);
             const message = error.message || 'An unexpected error occurred during the create operation.';
             throw new CustomAPIError('UNEXPECTED_ERROR', message);
         }

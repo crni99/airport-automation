@@ -5,6 +5,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ENTITIES } from '../../../utils/const';
 
 export default function BackToListAction({ dataType }) {
+    
     const navigate = useNavigate();
 
     var pathType = dataType;

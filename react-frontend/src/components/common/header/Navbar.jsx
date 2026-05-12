@@ -22,6 +22,7 @@ import { useSidebar } from '../../../store/SidebarContext';
 import Box from '@mui/material/Box';
 
 const Navbar = () => {
+    
     const { isExpanded, toggleSidebar, sidebarWidth } = useSidebar();
     const isLoggedIn = getAuthToken() !== null;
     const role = getRole();

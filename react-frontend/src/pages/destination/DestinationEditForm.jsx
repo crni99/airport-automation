@@ -26,8 +26,8 @@ const transformDestinationForForm = (fetchedData) => ({
 });
 
 export default function DestinationEditForm() {
+    
     const { id } = useParams();
-
     const {
         city,
         airport,

@@ -1,23 +1,5 @@
-import { generateErrorMessage, handleNetworkError } from '../utils/errorUtils.js';
-
-// Prevent XSS vulnerabilities
-
-/*
-Use React Router: 
-Replace direct manipulation of window.location.href with React Router's <Redirect> component or 
-history object for navigation.
-*/
-
-/*
-Centralized Error Handling: 
-Consider centralizing error handling to avoid repetitive error logging and improve maintainability.
-*/
-
-/*
-Security Considerations: 
-Evaluate the security of storing tokens in localStorage and 
-consider alternatives like HTTP-only cookies for storing sensitive authentication data.
-*/
+import { generateErrorMessage, handleNetworkError } from './errorUtils.js';
+import logger from './logger.js'
 
 export async function authenticateUser(userName, password, apiUrl) {
     const userCredentials = {
@@ -29,7 +11,6 @@ export async function authenticateUser(userName, password, apiUrl) {
         if (!apiUrl) {
             throw new Error('API URL is not available');
         }
-        
         const response = await fetch(`${apiUrl}/Authentication`, {
             method: 'POST',
             headers: {
@@ -37,8 +18,6 @@ export async function authenticateUser(userName, password, apiUrl) {
             },
             body: JSON.stringify(userCredentials)
         });
-
-        console.log(apiUrl);
 
         if (!response.ok) {
             const networkErrorMessage = handleNetworkError(response);
@@ -64,10 +43,10 @@ export async function authenticateUser(userName, password, apiUrl) {
     } catch (error) {
         const networkErrorMessage = handleNetworkError(error);
         if (networkErrorMessage) {
-            console.error(networkErrorMessage);
+            logger.error('Auth network error:', networkErrorMessage);
             return networkErrorMessage;
         } else {
-            console.error(error);
+            logger.error('Auth error:', error);
             return error;
         }
     }
@@ -82,9 +61,9 @@ export function handleSignOut() {
     } catch (error) {
         const errorMessage = handleNetworkError(error);
         if (errorMessage) {
-            console.error('Error while signing out:', errorMessage);
+            logger.error('Error while signing out:', errorMessage);
         } else {
-            console.error('Error while signing out:', error);
+            logger.error('Error while signing out:', error);
         }
         return error;
     }
@@ -122,16 +101,19 @@ export function getRole() {
     return role;
 }
 
+
 function getRoleFromToken(token) {
-    if (!token) {
-        throw new Error('Token is required');
+    if (!token) return null;
+
+    try {
+        const parts = token.split('.');
+        if (parts.length !== 3) return null;
+
+        const payload = parts[1];
+        const decodedPayload = JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/')));
+        const roleClaim = decodedPayload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+        return roleClaim || null;
+    } catch {
+        return null;
     }
-    const parts = token.split('.');
-    if (parts.length !== 3) {
-        throw new Error('Invalid JWT token');
-    }
-    const payload = parts[1];
-    const decodedPayload = JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/')));
-    const roleClaim = decodedPayload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
-    return roleClaim || null;
 }

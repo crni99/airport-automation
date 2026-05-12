@@ -4,6 +4,7 @@ import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
 
 export default function CreateButton({ destination, title }) {
+    
     const navigate = useNavigate();
 
     const handleCreateClick = () => {

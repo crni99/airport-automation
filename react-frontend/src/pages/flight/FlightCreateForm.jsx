@@ -38,6 +38,7 @@ const transformFlightForAPI = (formData) => ({
 });
 
 export default function FlightCreateForm() {
+    
     const [pageNumber, setPageNumber] = useState(1);
     const isInitialLoad = useRef(true);
     const [allAirlines, setAllAirlines] = useState([]);

@@ -4,6 +4,7 @@ import Button from '@mui/material/Button';
 import EditIcon from '@mui/icons-material/Edit';
 
 export default function EditAction({ dataType, dataId }) {
+    
     const navigate = useNavigate();
 
     const handleEdit = () => {

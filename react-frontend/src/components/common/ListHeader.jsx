@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import SearchInputWithButton from "../common/SearchInputWithButton";
 
-export default function ListHeader({ dataType, createButtonTitle, setTriggerFetch }) {
+export default function ListHeader({ dataType, createButtonTitle, setTriggerFetch, setSearchParams }) {
 
     const isPassenger = dataType === 'Passengers';
     const marginTop = isPassenger ? 3 : 5;
@@ -23,6 +23,7 @@ export default function ListHeader({ dataType, createButtonTitle, setTriggerFetc
                 <SearchInputWithButton
                     type={dataType}
                     setTriggerFetch={setTriggerFetch}
+                    setSearchParams={setSearchParams}
                     createButtonTitle={createButtonTitle}
                 />
             </Stack>

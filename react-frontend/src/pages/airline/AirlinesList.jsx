@@ -9,16 +9,19 @@ import Pagination from '../../components/common/pagination/Pagination.jsx'
 import CircularProgress from '@mui/material/CircularProgress';
 
 export default function AirlineList() {
+    
     const [pageNumber, setPageNumber] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [airlines, setAirlines] = useState([]);
     const [triggerFetch, setTriggerFetch] = useState(false);
+    const [searchParams, setSearchParams] = useState({});
+    const [hasFetched, setHasFetched] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(() => {
         const saved = localStorage.getItem("rowsPerPage");
         return saved ? Number(saved) : 10;
     });
 
-    const { data, dataExist, error, isLoading, isError } = useFetch(ENTITIES.AIRLINES, null, pageNumber, rowsPerPage, triggerFetch)
+    const { data, dataExist, error, isLoading, isError } = useFetch(ENTITIES.AIRLINES, null, pageNumber, rowsPerPage, triggerFetch, searchParams)
 
     useEffect(() => {
         if (data) {
@@ -32,6 +35,7 @@ export default function AirlineList() {
                 setAirlines([]);
             }
             setTriggerFetch(false);
+            setHasFetched(true);
         }
     }, [data]);
 
@@ -51,10 +55,10 @@ export default function AirlineList() {
     return (
         <>
             <ListHeader
-                dataExist={dataExist}
                 dataType={ENTITIES.AIRLINES}
                 createButtonTitle="Create Airline"
                 setTriggerFetch={setTriggerFetch}
+                setSearchParams={setSearchParams}
             />
 
             <Box sx={{ mt: 5 }}>
@@ -79,7 +83,7 @@ export default function AirlineList() {
                                 />
                             </>
                         ) : (
-                            <CustomAlert alertType='info' type='Info' message='No airlines available' />
+                            hasFetched && <CustomAlert alertType='info' type='Info' message='No airlines available' />
                         )}
                     </>
                 )}

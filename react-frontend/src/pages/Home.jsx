@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
+import logger from '../utils/logger';
 import { useLocation } from 'react-router-dom';
 import { DataContext } from '../store/DataContext';
 import { getAuthToken, authenticateUser } from '../utils/auth';
@@ -14,7 +15,13 @@ import Stack from '@mui/material/Stack';
 export default function Home() {
     const dataCtx = useContext(DataContext);
     const location = useLocation();
-    const isLoggedIn = getAuthToken() !== null;
+    const [isLoggedIn, setIsLoggedIn] = useState(() => getAuthToken() !== null);
+
+    useEffect(() => {
+        const handleStorageChange = () => setIsLoggedIn(getAuthToken() !== null);
+        window.addEventListener('storage', handleStorageChange);
+        return () => window.removeEventListener('storage', handleStorageChange);
+    }, []);
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
@@ -32,7 +39,7 @@ export default function Home() {
                 setError(authError.message);
             }
         } catch (error) {
-            console.error('Error:', error);
+            logger.error('Login error:', error);
             setError('An unexpected error occurred. Please try again later.');
         } finally {
             setLoading(false);

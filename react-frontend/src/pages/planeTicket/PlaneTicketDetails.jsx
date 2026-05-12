@@ -16,6 +16,7 @@ import { useDelete } from '../../hooks/useDelete.jsx';
 import { currencyFormatter } from '../../utils/formatting.js';
 
 export default function PlaneTicketDetails() {
+    
     const { id } = useParams();
     const [triggerFetch, setTriggerFetch] = useState(true);
     const { data: planeTicket, dataExist, error, isLoading } = useFetch(ENTITIES.PLANE_TICKETS, id, undefined, undefined, triggerFetch)

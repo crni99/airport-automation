@@ -12,6 +12,7 @@ import DeleteOperationSnackbarManager from '../../components/common/feedback/Del
 import { useDelete } from '../../hooks/useDelete.jsx';
 
 export default function ApiUserDetails() {
+    
     const { id } = useParams();
     const [triggerFetch, setTriggerFetch] = useState(true);
     const { data: apiUser, dataExist, error, isLoading } = useFetch(ENTITIES.API_USERS, id, undefined, undefined, triggerFetch)

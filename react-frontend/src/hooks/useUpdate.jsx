@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext, useCallback } from 'react';
+import logger from '../utils/logger.js';
 import { useNavigate } from 'react-router-dom';
 import { DataContext } from '../store/DataContext.jsx';
 import { updateData } from '../utils/httpUpdate.js';
@@ -6,6 +7,7 @@ import useFetch from './useFetch.jsx';
 import { validateFields } from '../utils/validation/validateFields.js';
 
 export const useUpdate = (dataType, dataPath, dataId, initialDataShape, requiredFields, transformDataForAPI, transformDataForForm) => {
+    
     const dataCtx = useContext(DataContext);
     const [triggerFetch, setTriggerFetch] = useState(true);
     const navigate = useNavigate();
@@ -88,7 +90,7 @@ export const useUpdate = (dataType, dataPath, dataId, initialDataShape, required
                 setFormData((prevState) => ({ ...prevState, success: null, formError: 'Update failed with an unknown response.', validationError: null, isPending: false }));
             }
         } catch (err) {
-            console.error('Submission Error:', err);
+            logger.error('Submission Error:', err);
             const errorMessage = err.message || 'Failed to update data due to an unexpected error.';
 
             setFormData((prevState) => ({

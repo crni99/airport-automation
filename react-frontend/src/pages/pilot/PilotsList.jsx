@@ -9,15 +9,18 @@ import CustomAlert from "../../components/common/feedback/CustomAlert.jsx";
 import Pagination from '../../components/common/pagination/Pagination.jsx'
 
 export default function PilotsList() {
+    
     const [pageNumber, setPageNumber] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [pilots, setPilots] = useState([]);
     const [triggerFetch, setTriggerFetch] = useState(false);
+    const [searchParams, setSearchParams] = useState({});
+    const [hasFetched, setHasFetched] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(() => {
         const saved = localStorage.getItem("rowsPerPage");
         return saved ? Number(saved) : 10;
     });
-    const { data, dataExist, error, isLoading, isError } = useFetch(ENTITIES.PILOTS, null, pageNumber, rowsPerPage, triggerFetch)
+    const { data, dataExist, error, isLoading, isError } = useFetch(ENTITIES.PILOTS, null, pageNumber, rowsPerPage, triggerFetch, searchParams)
 
     useEffect(() => {
         if (data) {
@@ -31,6 +34,7 @@ export default function PilotsList() {
                 setPilots([]);
             }
             setTriggerFetch(false);
+            setHasFetched(true);
         }
     }, [data]);
 
@@ -50,10 +54,10 @@ export default function PilotsList() {
     return (
         <>
             <ListHeader
-                dataExist={dataExist}
                 dataType={ENTITIES.PILOTS}
                 createButtonTitle="Create Pilot"
                 setTriggerFetch={setTriggerFetch}
+                setSearchParams={setSearchParams}
             />
 
             <Box sx={{ mt: 5 }}>
@@ -78,7 +82,7 @@ export default function PilotsList() {
                                 />
                             </>
                         ) : (
-                            <CustomAlert alertType='info' type='Info' message='No pilots available' />
+                            hasFetched && <CustomAlert alertType='info' type='Info' message='No pilots available' />
                         )}
                     </>
                 )}

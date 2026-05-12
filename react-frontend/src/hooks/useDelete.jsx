@@ -1,9 +1,11 @@
 import { useState, useContext } from 'react';
+import logger from '../utils/logger.js';
 import { useNavigate } from 'react-router-dom';
 import { deleteData } from '../utils/httpDelete.js';
 import { DataContext } from '../store/DataContext.jsx';
 
 export const useDelete = (entityType, entityId, redirectPath) => {
+    
     const dataCtx = useContext(DataContext);
     const navigate = useNavigate();
 
@@ -28,7 +30,7 @@ export const useDelete = (entityType, entityId, redirectPath) => {
     const handleOperation = async (operation) => {
 
         if (operation !== 'delete') {
-            console.warn(`useDataOperation called with unsupported operation: ${operation}`);
+            logger.warn(`useDataOperation called with unsupported operation: ${operation}`);
             return;
         }
 

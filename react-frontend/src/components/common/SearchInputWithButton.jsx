@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ENTITIES } from '../../utils/const';
+import { ENTITIES, ENTITY_PATHS } from '../../utils/const';
 import SearchButton from './search/SearchButton';
 import ClearInputButton from './search/ClearInputsButton';
 import ExportButtons from './ExportButtons';
@@ -13,7 +13,8 @@ import InputLabel from '@mui/material/InputLabel';
 import CreateButton from "../common/CreateButton";
 import { getRole } from "../../utils/auth";
 
-export default function SearchInputWithButton({ type, setTriggerFetch, createButtonTitle }) {
+export default function SearchInputWithButton({ type, setTriggerFetch, setSearchParams, createButtonTitle }) {
+    
     const [searchTerms, setSearchTerms] = useState({});
 
     const isUser = getRole();
@@ -24,6 +25,7 @@ export default function SearchInputWithButton({ type, setTriggerFetch, createBut
     }, [type]);
 
     const handleSearch = () => {
+        if (setSearchParams) setSearchParams(searchTerms);
         setTriggerFetch(true);
     };
 
@@ -34,20 +36,15 @@ export default function SearchInputWithButton({ type, setTriggerFetch, createBut
 
     const handleClear = () => {
         setSearchTerms({});
+        if (setSearchParams) setSearchParams({});
         setTriggerFetch(true);
     };
 
-    var pathType = type;
-    if (type === ENTITIES.PLANE_TICKETS) {
-        pathType = 'plane-tickets';
-    }
+    const pathType = ENTITY_PATHS[Object.keys(ENTITIES).find(k => ENTITIES[k] === type)];
     const createButton = !disableCreateButton && (
-        <CreateButton destination={`/${pathType}/create`} title={createButtonTitle} />
+        <CreateButton destination={`${pathType}/create`} title={createButtonTitle} />
     );
 
-    const exportButtonsOrSpace = isUser !== 'User' && (
-        <ExportButtons dataType={type} />
-    );
 
     const renderInput = () => {
         switch (type) {
@@ -67,7 +64,7 @@ export default function SearchInputWithButton({ type, setTriggerFetch, createBut
                                 />
                                 <SearchButton onClick={handleSearch} />
                                 <ClearInputButton onClear={handleClear} />
-                                {exportButtonsOrSpace}
+                                {isUser !== 'User' && <ExportButtons dataType={type} searchParams={searchTerms} />}
                             </Stack>
                         </Box>
                     </>
@@ -130,7 +127,7 @@ export default function SearchInputWithButton({ type, setTriggerFetch, createBut
                                 />
                                 <SearchButton onClick={handleSearch} />
                                 <ClearInputButton onClear={handleClear} />
-                                {exportButtonsOrSpace}
+                                {isUser !== 'User' && <ExportButtons dataType={type} searchParams={searchTerms} />}
                             </Stack>
                         </Box>
                     </>
@@ -161,7 +158,7 @@ export default function SearchInputWithButton({ type, setTriggerFetch, createBut
                                 />
                                 <SearchButton onClick={handleSearch} />
                                 <ClearInputButton onClear={handleClear} />
-                                {exportButtonsOrSpace}
+                                {isUser !== 'User' && <ExportButtons dataType={type} searchParams={searchTerms} />}
                             </Stack>
                         </Box >
                     </>
@@ -179,7 +176,7 @@ export default function SearchInputWithButton({ type, setTriggerFetch, createBut
                             <Stack direction="row" spacing={2} alignItems="center">
                                 <SearchButton onClick={handleSearch} />
                                 <ClearInputButton onClear={handleClear} />
-                                {exportButtonsOrSpace}
+                                {isUser !== 'User' && <ExportButtons dataType={type} searchParams={searchTerms} />}
                             </Stack>
                         </Stack>
                         <Stack
@@ -290,7 +287,7 @@ export default function SearchInputWithButton({ type, setTriggerFetch, createBut
                                 />
                                 <SearchButton onClick={handleSearch} />
                                 <ClearInputButton onClear={handleClear} />
-                                {exportButtonsOrSpace}
+                                {isUser !== 'User' && <ExportButtons dataType={type} searchParams={searchTerms} />}
                             </Stack>
                         </Box>
                     </>
@@ -330,7 +327,7 @@ export default function SearchInputWithButton({ type, setTriggerFetch, createBut
                                 />
                                 <SearchButton onClick={handleSearch} />
                                 <ClearInputButton onClear={handleClear} />
-                                {exportButtonsOrSpace}
+                                {isUser !== 'User' && <ExportButtons dataType={type} searchParams={searchTerms} />}
                             </Stack>
                         </Box>
                     </>
@@ -338,7 +335,7 @@ export default function SearchInputWithButton({ type, setTriggerFetch, createBut
             case ENTITIES.TRAVEL_CLASSES:
                 return (
                     <Box sx={{ mb: 3 }}>
-                        {exportButtonsOrSpace}
+                        {isUser !== 'User' && <ExportButtons dataType={type} searchParams={searchTerms} />}
                     </Box>
                 );
             default:

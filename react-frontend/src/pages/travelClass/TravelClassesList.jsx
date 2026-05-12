@@ -8,21 +8,23 @@ import CircularProgress from '@mui/material/CircularProgress';
 import CustomAlert from "../../components/common/feedback/CustomAlert.jsx";
 
 export default function TravelClassesList() {
+    
     const [travelClasses, settravelClasses] = useState([]);
     const [triggerFetch, setTriggerFetch] = useState(true);
+    const [hasFetched, setHasFetched] = useState(false);
     const { data, dataExist, error, isLoading, isError } = useFetch(ENTITIES.TRAVEL_CLASSES, null, 1, 10, triggerFetch)
 
     useEffect(() => {
         if (data) {
             settravelClasses(data.data);
             setTriggerFetch(false);
+            setHasFetched(true);
         }
     }, [data]);
 
     return (
         <>
             <ListHeader
-                dataExist={dataExist}
                 dataType={ENTITIES.TRAVEL_CLASSES}
             />
 
@@ -40,7 +42,7 @@ export default function TravelClassesList() {
                                 <TravelClassesListTable travelClasses={travelClasses} />
                             </>
                         ) : (
-                            <CustomAlert alertType='info' type='Info' message='No travel classes available' />
+                            hasFetched && <CustomAlert alertType='info' type='Info' message='No travel classes available' />
                         )}
                     </>
                 )}

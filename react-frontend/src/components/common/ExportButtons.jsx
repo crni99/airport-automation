@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useExport } from '../../hooks/useExport';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -9,8 +9,14 @@ import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import DescriptionIcon from '@mui/icons-material/Description';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 
-export default function ExportButton({ dataType }) {
+export default function ExportButton({ dataType, searchParams = {} }) {
+    
     const { triggerExport, isLoading } = useExport();
+    const searchParamsRef = useRef(searchParams);
+
+    useEffect(() => {
+        searchParamsRef.current = searchParams;
+    }, [searchParams]);
 
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
@@ -24,7 +30,7 @@ export default function ExportButton({ dataType }) {
     };
 
     const handleExport = (format) => {
-        triggerExport(dataType, format);
+        triggerExport(dataType, format, searchParamsRef.current);
         handleClose();
     };
 

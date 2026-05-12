@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import AirlineRoutes from './routes/airlineRoutes.jsx';
 import DestinationsRoutes from './routes/destinationRoutes.jsx';
@@ -21,8 +21,14 @@ import { ENTITY_PATHS } from './utils/const.js';
 import { useSidebar } from './store/SidebarContext.jsx';
 
 function App() {
-  const isLoggedIn = getAuthToken() !== null;
+  const [isLoggedIn, setIsLoggedIn] = useState(() => getAuthToken() !== null);
   const { sidebarWidth } = useSidebar();
+
+  useEffect(() => {
+    const handleStorageChange = () => setIsLoggedIn(getAuthToken() !== null);
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>

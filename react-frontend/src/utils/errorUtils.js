@@ -28,7 +28,6 @@ export const generateErrorMessage = (response, dataType = '', dataId = null) => 
     if (typeof errorMessageGenerator === 'function') {
         return errorMessageGenerator(dataType, dataId);
     } else if (errorMessageGenerator !== undefined) {
-        console.log(errorMessageGenerator);
         return errorMessageGenerator;
     } else {
         return `Failed to ${dataType}: Server returned an unexpected status.`;

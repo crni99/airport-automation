@@ -1,4 +1,5 @@
 import { useState, useContext } from 'react';
+import logger from '../utils/logger.js';
 import { buildExportURL } from '../utils/export.js';
 import { DataContext } from '../store/DataContext.jsx';
 import { getAuthToken } from '../utils/auth';
@@ -6,21 +7,21 @@ import { getAuthToken } from '../utils/auth';
 export function useExport() {
 
     const dataCtx = useContext(DataContext);
-    const [isLoading, setLoading] = useState(false); 
+    const [isLoading, setLoading] = useState(false);
 
-    async function triggerExport(dataType, exportType) {
+    async function triggerExport(dataType, exportType, searchParams = {}) {
         if (!dataCtx || !dataCtx.apiUrl) {
-            console.warn('API URL not set');
+            logger.warn('API URL not set');
             return;
         }
 
         setLoading(true);
 
-        const { baseUrl, params } = buildExportURL(dataCtx.apiUrl, dataType, exportType);
+        const { baseUrl, params } = buildExportURL(dataCtx.apiUrl, dataType, exportType, searchParams);
 
         const token = getAuthToken();
         if (!token) {
-            console.warn('No auth token found');
+            logger.warn('No auth token found');
             return;
         }
 
@@ -67,7 +68,7 @@ export function useExport() {
             window.URL.revokeObjectURL(downloadUrl);
 
         } catch (err) {
-            console.error(err);
+            logger.error('Export error:', err);
             alert('Export failed. Please try again.');
         } finally {
             setLoading(false);

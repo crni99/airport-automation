@@ -19,6 +19,7 @@ const transformDestinationForAPI = (formData) => ({
 });
 
 export default function DestinationCreateForm() {
+    
     const {
         city,
         airport,

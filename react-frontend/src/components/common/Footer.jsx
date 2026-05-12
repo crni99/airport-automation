@@ -8,6 +8,7 @@ import MailIcon from '@mui/icons-material/Mail';
 import Stack from '@mui/material/Stack';
 
 export default function Footer() {
+    
     const currentYear = new Date().getFullYear();
 
     return (

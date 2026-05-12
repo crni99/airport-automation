@@ -24,8 +24,8 @@ const transformAirlineForForm = (fetchedData) => ({
 });
 
 export default function AirlineEditForm() {
-    const { id } = useParams();
 
+    const { id } = useParams();
     const {
         name,
         success,

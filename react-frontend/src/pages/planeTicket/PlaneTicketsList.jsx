@@ -9,15 +9,18 @@ import CircularProgress from '@mui/material/CircularProgress';
 import CustomAlert from "../../components/common/feedback/CustomAlert.jsx";
 
 export default function PlaneTicketsList() {
+    
     const [pageNumber, setPageNumber] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [planeTickets, setPlaneTickets] = useState([]);
     const [triggerFetch, setTriggerFetch] = useState(false);
+    const [searchParams, setSearchParams] = useState({});
+    const [hasFetched, setHasFetched] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(() => {
         const saved = localStorage.getItem("rowsPerPage");
         return saved ? Number(saved) : 10;
     });
-    const { data, dataExist, error, isLoading, isError } = useFetch(ENTITIES.PLANE_TICKETS, null, pageNumber, rowsPerPage, triggerFetch)
+    const { data, dataExist, error, isLoading, isError } = useFetch(ENTITIES.PLANE_TICKETS, null, pageNumber, rowsPerPage, triggerFetch, searchParams)
 
     useEffect(() => {
         if (data) {
@@ -31,6 +34,7 @@ export default function PlaneTicketsList() {
                 setPlaneTickets([]);
             }
             setTriggerFetch(false);
+            setHasFetched(true);
         }
     }, [data]);
 
@@ -53,10 +57,10 @@ export default function PlaneTicketsList() {
     return (
         <>
             <ListHeader
-                dataExist={dataExist}
                 dataType={ENTITIES.PLANE_TICKETS}
                 createButtonTitle="Create Ticket"
                 setTriggerFetch={setTriggerFetch}
+                setSearchParams={setSearchParams}
             />
 
             <Box sx={{ mt: 5 }}>
@@ -81,7 +85,7 @@ export default function PlaneTicketsList() {
                                 />
                             </>
                         ) : (
-                            <CustomAlert alertType='info' type='Info' message='No tickets available' />
+                            hasFetched && <CustomAlert alertType='info' type='Info' message='No tickets available' />
                         )}
                     </>
                 )}

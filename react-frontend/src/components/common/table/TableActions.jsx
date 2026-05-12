@@ -12,6 +12,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { CustomSnackbar } from '../feedback/CustomSnackbar.jsx';
 
 const TableActions = ({ entity, id, entityType, currentUserRole }) => {
+
+    console.log("currentUserRole", currentUserRole);
+    
     const [isDeleting, setIsDeleting] = useState(false);
     const [successMessage, setSuccessMessage] = useState(null);
     const [deleteError, setDeleteError] = useState(null);

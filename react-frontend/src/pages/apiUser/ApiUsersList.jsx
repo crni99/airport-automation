@@ -9,16 +9,19 @@ import Pagination from '../../components/common/pagination/Pagination';
 import CustomAlert from "../../components/common/feedback/CustomAlert.jsx";
 
 export default function ApiUsersList() {
+
     const [triggerFetch, setTriggerFetch] = useState(false);
+    const [searchParams, setSearchParams] = useState({});
     const [pageNumber, setPageNumber] = useState(1);
     const [apiUsers, setApiUsers] = useState([]);
     const [totalPages, setTotalPages] = useState(1);
+    const [hasFetched, setHasFetched] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(() => {
         const saved = localStorage.getItem("rowsPerPage");
         return saved ? Number(saved) : 10;
     });
 
-    const { data, dataExist, error, isLoading, isError } = useFetch(ENTITIES.API_USERS, null, pageNumber, rowsPerPage, triggerFetch)
+    const { data, dataExist, error, isLoading, isError } = useFetch(ENTITIES.API_USERS, null, pageNumber, rowsPerPage, triggerFetch, searchParams)
 
     useEffect(() => {
         if (data) {
@@ -32,6 +35,7 @@ export default function ApiUsersList() {
                 setApiUsers([]);
             }
             setTriggerFetch(false);
+            setHasFetched(true);
         }
     }, [data]);
 
@@ -52,10 +56,10 @@ export default function ApiUsersList() {
     return (
         <>
             <ListHeader
-                dataExist={dataExist}
                 dataType={ENTITIES.API_USERS}
                 createButtonTitle="Create Airline"
                 setTriggerFetch={setTriggerFetch}
+                setSearchParams={setSearchParams}
             />
 
             <Box sx={{ mt: 5 }}>
@@ -80,7 +84,7 @@ export default function ApiUsersList() {
                                 />
                             </>
                         ) : (
-                            <CustomAlert alertType='info' type='Info' message='No api users available' />
+                            hasFetched && <CustomAlert alertType='info' type='Info' message='No api users available' />
                         )}
                     </>
                 )}

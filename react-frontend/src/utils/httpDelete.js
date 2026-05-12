@@ -1,8 +1,10 @@
 import { getAuthToken } from './auth.js';
+import logger from './logger.js'
 import { generateErrorMessage, handleNetworkError } from './errorUtils.js';
 import { CustomAPIError } from './CustomError.js';
 
 export async function deleteData(dataType, dataId, apiUrl) {
+    
     try {
         const authToken = getAuthToken();
         const headers = {
@@ -36,7 +38,7 @@ export async function deleteData(dataType, dataId, apiUrl) {
             throw error;
         }
         else {
-            console.error('Error deleting data:', error);
+            logger.error('Error deleting data:', error);
             const message = error.message || 'An unexpected error occurred during the delete operation.';
             throw new CustomAPIError('UNEXPECTED_ERROR', message);
         }

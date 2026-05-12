@@ -3,6 +3,7 @@ import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { getAuthToken } from '../utils/auth';
 
 const RequireAuth = () => {
+    
     const token = getAuthToken();
     const location = useLocation();
 

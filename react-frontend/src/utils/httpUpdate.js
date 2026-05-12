@@ -1,8 +1,10 @@
 import { getAuthToken } from './auth.js';
+import logger from './logger.js'
 import { generateErrorMessage, handleNetworkError } from './errorUtils.js';
 import { CustomAPIError } from './CustomError.js';
 
 export async function updateData(data, dataType, dataId, apiUrl) {
+    
     try {
         const authToken = getAuthToken();
         const headers = {
@@ -37,7 +39,7 @@ export async function updateData(data, dataType, dataId, apiUrl) {
             throw error;
         }
         else {
-            console.error('Error editing data:', error);
+            logger.error('Error editing data:', error);
             const message = error.message || 'An unexpected error occurred during the edit operation.';
             throw new CustomAPIError('UNEXPECTED_ERROR', message);
         }

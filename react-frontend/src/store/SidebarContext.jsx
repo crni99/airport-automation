@@ -8,6 +8,7 @@ const drawerWidthExpanded = 240;
 const drawerWidthShrunk = 60;
 
 export const SidebarProvider = ({ children }) => {
+    
     const [isExpanded, setIsExpanded] = useState(true);
 
     const toggleSidebar = () => {

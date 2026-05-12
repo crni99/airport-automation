@@ -42,8 +42,8 @@ const transformPlaneTicketForForm = (fetchedData) => ({
 });
 
 export default function PlaneTicketEditForm() {
+    
     const { id } = useParams();
-
     const {
         price,
         purchaseDate,

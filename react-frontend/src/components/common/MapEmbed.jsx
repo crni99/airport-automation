@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
 const MapEmbed = ({ address }) => {
+    
     if (!address) {
         return (
             <Typography variant="body1" color="text.secondary" sx={{ p: 2, textAlign: 'center' }}>

@@ -4,7 +4,8 @@ import { DataContext } from '../store/DataContext.jsx';
 import { fetchData } from '../utils/httpFetch.js';
 import { handleNetworkError } from '../utils/errorUtils.js';
 
-export default function useFetch(dataType, dataId, page = 1, rowsPerPage, triggerFetch) {
+export default function useFetch(dataType, dataId, page = 1, rowsPerPage, triggerFetch, searchParams = {}) {
+    
     const dataCtx = useContext(DataContext);
     const [data, setData] = useState(null);
     const [dataExist, setDataExist] = useState(false);
@@ -56,7 +57,8 @@ export default function useFetch(dataType, dataId, page = 1, rowsPerPage, trigge
                     dataCtx.apiUrl,
                     page,
                     rowsPerPage,
-                    signal
+                    signal,
+                    searchParams
                 );
 
                 if (!signal.aborted) {
@@ -90,7 +92,7 @@ export default function useFetch(dataType, dataId, page = 1, rowsPerPage, trigge
         return () => {
             controller.abort();
         };
-    }, [dataType, dataId, page, dataCtx.apiUrl, triggerFetch, rowsPerPage, handleFetchError]);
+    }, [dataType, dataId, page, dataCtx.apiUrl, triggerFetch, rowsPerPage, searchParams, handleFetchError]);
 
     return { data, dataExist, error, isLoading, isError, isSearchNoResult };
 }

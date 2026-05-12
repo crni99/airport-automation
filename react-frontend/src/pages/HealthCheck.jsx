@@ -18,6 +18,7 @@ import TableRow from '@mui/material/TableRow';
 import CustomAlert from "../components/common/feedback/CustomAlert.jsx";
 
 export default function HealthCheck() {
+    
     const [triggerFetch, setTriggerFetch] = useState(true);
     const { data, dataExist, error, isLoading, isError } = useFetch(ENTITIES.HEALTH_CHECKS, null, null, null, triggerFetch)
 
