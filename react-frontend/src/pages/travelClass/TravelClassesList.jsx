@@ -12,7 +12,7 @@ export default function TravelClassesList() {
     const [travelClasses, settravelClasses] = useState([]);
     const [triggerFetch, setTriggerFetch] = useState(true);
     const [hasFetched, setHasFetched] = useState(false);
-    const { data, dataExist, error, isLoading, isError } = useFetch(ENTITIES.TRAVEL_CLASSES, null, 1, 10, triggerFetch)
+    const { data, error, isLoading, isError } = useFetch(ENTITIES.TRAVEL_CLASSES, null, 1, 10, triggerFetch)
 
     useEffect(() => {
         if (data) {

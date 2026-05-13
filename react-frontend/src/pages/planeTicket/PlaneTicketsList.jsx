@@ -20,7 +20,7 @@ export default function PlaneTicketsList() {
         const saved = localStorage.getItem("rowsPerPage");
         return saved ? Number(saved) : 10;
     });
-    const { data, dataExist, error, isLoading, isError } = useFetch(ENTITIES.PLANE_TICKETS, null, pageNumber, rowsPerPage, triggerFetch, searchParams)
+    const { data, error, isLoading, isError } = useFetch(ENTITIES.PLANE_TICKETS, null, pageNumber, rowsPerPage, triggerFetch, searchParams)
 
     useEffect(() => {
         if (data) {

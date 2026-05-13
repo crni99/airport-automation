@@ -9,7 +9,7 @@ import CustomAlert from "../../components/common/feedback/CustomAlert.jsx";
 import Pagination from '../../components/common/pagination/Pagination.jsx'
 
 export default function PilotsList() {
-    
+
     const [pageNumber, setPageNumber] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [pilots, setPilots] = useState([]);
@@ -20,7 +20,7 @@ export default function PilotsList() {
         const saved = localStorage.getItem("rowsPerPage");
         return saved ? Number(saved) : 10;
     });
-    const { data, dataExist, error, isLoading, isError } = useFetch(ENTITIES.PILOTS, null, pageNumber, rowsPerPage, triggerFetch, searchParams)
+    const { data, error, isLoading, isError } = useFetch(ENTITIES.PILOTS, null, pageNumber, rowsPerPage, triggerFetch, searchParams)
 
     useEffect(() => {
         if (data) {
@@ -47,8 +47,10 @@ export default function PilotsList() {
     };
 
     const handleRowsPerPageChange = (event) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
+        const newRowsPerPage = parseInt(event.target.value, 10);
+        setRowsPerPage(newRowsPerPage);
         setPageNumber(1);
+        localStorage.setItem("rowsPerPage", newRowsPerPage);
     };
 
     return (

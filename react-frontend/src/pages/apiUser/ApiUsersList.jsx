@@ -21,7 +21,7 @@ export default function ApiUsersList() {
         return saved ? Number(saved) : 10;
     });
 
-    const { data, dataExist, error, isLoading, isError } = useFetch(ENTITIES.API_USERS, null, pageNumber, rowsPerPage, triggerFetch, searchParams)
+    const { data, error, isLoading, isError } = useFetch(ENTITIES.API_USERS, null, pageNumber, rowsPerPage, triggerFetch, searchParams)
 
     useEffect(() => {
         if (data) {

@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { deleteData } from '../../../utils/httpDelete.js';
 import { DataContext } from '../../../store/DataContext.jsx';
+import { getRole } from '../../../utils/auth.js';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
@@ -11,10 +12,9 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { CustomSnackbar } from '../feedback/CustomSnackbar.jsx';
 
-const TableActions = ({ entity, id, entityType, currentUserRole }) => {
+const TableActions = ({ entity, id, entityType }) => {
 
-    console.log("currentUserRole", currentUserRole);
-    
+    const currentUserRole = getRole();
     const [isDeleting, setIsDeleting] = useState(false);
     const [successMessage, setSuccessMessage] = useState(null);
     const [deleteError, setDeleteError] = useState(null);

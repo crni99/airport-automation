@@ -2,22 +2,16 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { ENTITIES } from '../../../utils/const';
+import { ENTITIES, ENTITY_PATHS } from '../../../utils/const';
 
 export default function BackToListAction({ dataType }) {
     
     const navigate = useNavigate();
 
-    var pathType = dataType;
-    if (dataType === ENTITIES.PLANE_TICKETS) {
-        pathType = 'plane-tickets';
-    }
-    else if (dataType === ENTITIES.API_USERS) {
-        pathType = 'api-users';
-    }
+    const pathType = ENTITY_PATHS[Object.keys(ENTITIES).find(k => ENTITIES[k] === dataType)];
 
     const handleBackToList = () => {
-        navigate(`/${pathType}`);
+        navigate(pathType);
     };
 
     return (

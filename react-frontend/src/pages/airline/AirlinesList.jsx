@@ -21,7 +21,7 @@ export default function AirlineList() {
         return saved ? Number(saved) : 10;
     });
 
-    const { data, dataExist, error, isLoading, isError } = useFetch(ENTITIES.AIRLINES, null, pageNumber, rowsPerPage, triggerFetch, searchParams)
+    const { data, error, isLoading, isError } = useFetch(ENTITIES.AIRLINES, null, pageNumber, rowsPerPage, triggerFetch, searchParams)
 
     useEffect(() => {
         if (data) {
@@ -48,8 +48,10 @@ export default function AirlineList() {
     };
 
     const handleRowsPerPageChange = (event) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
+        const newRowsPerPage = parseInt(event.target.value, 10);
+        setRowsPerPage(newRowsPerPage);
         setPageNumber(1);
+        localStorage.setItem("rowsPerPage", newRowsPerPage);
     };
 
     return (
