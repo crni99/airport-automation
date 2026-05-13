@@ -1,7 +1,7 @@
 ﻿using AirportAutomation.Api.Controllers;
-using AirportAutomation.Api.Interfaces;
 using AirportAutomation.Application.Dtos.ApiUser;
 using AirportAutomation.Core.Entities;
+using AirportAutomation.Core.Interfaces.IRepositories;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

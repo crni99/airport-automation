@@ -25,20 +25,12 @@ namespace AirportAutomation.Infrastructure.Repositories
 
 		public async Task<IList<AirlineEntity>> GetAirlines(CancellationToken cancellationToken, int page, int pageSize)
 		{
-			try
-			{
-				return await _context.Airline
-					.OrderBy(c => c.Id)
-					.Skip(pageSize * (page - 1))
-					.Take(pageSize)
-					.AsNoTracking()
-					.ToListAsync(cancellationToken);
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex);
-				return null;
-			}
+			return await _context.Airline
+				.OrderBy(c => c.Id)
+				.Skip(pageSize * (page - 1))
+				.Take(pageSize)
+				.AsNoTracking()
+				.ToListAsync(cancellationToken);
 		}
 
 		public async Task<AirlineEntity?> GetAirline(int id)

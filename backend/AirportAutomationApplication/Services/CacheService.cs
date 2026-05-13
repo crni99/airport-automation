@@ -43,6 +43,7 @@ namespace AirportAutomation.Application.Services
 			finally
 			{
 				semaphore.Release();
+				_locks.TryRemove(key, out _);
 			}
 		}
 

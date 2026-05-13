@@ -329,7 +329,6 @@ if (isOpenTelemetryEnabled)
 var app = builder.Build();
 
 app.UseStaticFiles();
-
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
@@ -348,7 +347,12 @@ if (!app.Environment.IsDevelopment())
 }
 app.UseHttpsRedirection();
 app.UseMiddleware<RequestLogContextMiddleware>();
+app.UseIpRateLimiting();
+app.UseCors("_AllowAll");
 app.UseSerilogRequestLogging();
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseMiddleware<GlobalExceptionHandler>();
 app.MapHealthChecks("/api/v{version:apiVersion}/HealthCheck", new()
 {
 	ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
@@ -359,12 +363,5 @@ app.MapHealthChecks("/api/v{version:apiVersion}/HealthCheck", new()
 		[HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable
 	}
 }).RequireAuthorization();
-app.UseIpRateLimiting();
-app.UseCors("_AllowAll");
-app.UseAuthentication();
-app.UseAuthorization();
-app.UseMiddleware<GlobalExceptionHandler>();
-
 app.MapControllers();
-
 app.Run();

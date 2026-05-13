@@ -1,6 +1,5 @@
 ﻿using AirportAutomation.Api.Interfaces;
 using AirportAutomation.Api.MappingProfiles;
-using AirportAutomation.Api.Repositories;
 using AirportAutomation.Api.Services;
 using AirportAutomation.Application.Services;
 using AirportAutomation.Core.Interfaces;
