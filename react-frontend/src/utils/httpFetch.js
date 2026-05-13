@@ -23,8 +23,6 @@ function buildURL(apiUrl, dataType, dataId, page, pageSize, searchParams = {}) {
         const paginationParams = `page=${page}&pageSize=${pageSize || 10}`;
         url += `?${paginationParams}`;
 
-        const hasSearch = Object.values(searchParams).some(v => v);
-
         switch (dataType) {
             case ENTITIES.AIRLINES: {
                 const { name } = searchParams;
