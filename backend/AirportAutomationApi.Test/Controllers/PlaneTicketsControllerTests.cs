@@ -165,7 +165,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task GetPlaneTickets_InvalidPaginationParameters_ReturnsBadRequest()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			int invalidPage = -1;
 			int invalidPageSize = 0;
 			var expectedBadRequestResult = new BadRequestObjectResult("Invalid pagination parameters.");
@@ -186,14 +185,13 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task GetPlaneTickets_ReturnsNoContent_WhenNoPlaneTicketsFound()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			int page = 1;
 			int pageSize = 10;
 
 			_paginationValidationServiceMock
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, pageSize, null));
-			_planeTicketServiceMock.Setup(service => service.GetPlaneTickets(cancellationToken, It.IsAny<int>(), It.IsAny<int>()))
+			_planeTicketServiceMock.Setup(service => service.GetPlaneTickets(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>()))
 				.ReturnsAsync(new List<PlaneTicketEntity>());
 
 			// Act
@@ -208,14 +206,13 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task GetPlaneTickets_ReturnsNoContent_WhenPlaneTicketsListIsNull()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			int page = 1;
 			int pageSize = 10;
 
 			_paginationValidationServiceMock
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, pageSize, null));
-			_planeTicketServiceMock.Setup(service => service.GetPlaneTickets(cancellationToken, It.IsAny<int>(), It.IsAny<int>()))
+			_planeTicketServiceMock.Setup(service => service.GetPlaneTickets(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>()))
 				.ReturnsAsync((List<PlaneTicketEntity>)null);
 
 			// Act
@@ -230,7 +227,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task GetPlaneTickets_ReturnsInternalServerError_WhenExceptionThrown()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			int page = 1;
 			int pageSize = 10;
 
@@ -244,7 +240,7 @@ namespace AirportAutomationApi.Test.Controllers
 					null, null))
 				.Returns<string, Func<Task<PagedResponse<PlaneTicketDto>?>>, TimeSpan?, TimeSpan?>(
 					async (key, factory, abs, sld) => await factory());
-			_planeTicketServiceMock.Setup(service => service.GetPlaneTickets(cancellationToken, It.IsAny<int>(), It.IsAny<int>()))
+			_planeTicketServiceMock.Setup(service => service.GetPlaneTickets(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>()))
 				.ThrowsAsync(new Exception("Simulated exception"));
 
 			// Act & Assert
@@ -256,7 +252,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task GetPlaneTickets_ReturnsOk_WithPaginatedPlaneTickets()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			int page = 1;
 			int pageSize = 10;
 			var planeTickets = new List<PlaneTicketEntity>
@@ -277,10 +272,10 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns<string, Func<Task<PagedResponse<PlaneTicketDto>?>>, TimeSpan?, TimeSpan?>(
 					async (key, factory, abs, sld) => await factory());
 			_planeTicketServiceMock
-				.Setup(service => service.GetPlaneTickets(cancellationToken, page, pageSize))
+				.Setup(service => service.GetPlaneTickets(It.IsAny<CancellationToken>(), page, pageSize))
 				.ReturnsAsync(planeTickets);
 			_planeTicketServiceMock
-				.Setup(service => service.PlaneTicketsCount(cancellationToken, null, null))
+				.Setup(service => service.PlaneTicketsCount(It.IsAny<CancellationToken>(), null, null))
 				.ReturnsAsync(totalItems);
 
 			var expectedData = new List<PlaneTicketDto>
@@ -310,7 +305,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task GetPlaneTickets_ReturnsCorrectPageData()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			int page = 2;
 			int pageSize = 5;
 			var allPlaneTickets = new List<PlaneTicketEntity>
@@ -339,10 +333,10 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns<string, Func<Task<PagedResponse<PlaneTicketDto>?>>, TimeSpan?, TimeSpan?>(
 					async (key, factory, abs, sld) => await factory());
 			_planeTicketServiceMock
-				.Setup(service => service.GetPlaneTickets(cancellationToken, page, pageSize))
+				.Setup(service => service.GetPlaneTickets(It.IsAny<CancellationToken>(), page, pageSize))
 				.ReturnsAsync(pagedPlaneTickets);
 			_planeTicketServiceMock
-				.Setup(service => service.PlaneTicketsCount(cancellationToken, null, null))
+				.Setup(service => service.PlaneTicketsCount(It.IsAny<CancellationToken>(), null, null))
 				.ReturnsAsync(allPlaneTickets.Count);
 
 			var expectedData = new List<PlaneTicketDto>
@@ -375,7 +369,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task GetPlaneTickets_ReturnsCachedData_WhenCacheHit()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			int page = 1;
 			int pageSize = 10;
 			var cachedResponse = new PagedResponse<PlaneTicketDto>(
@@ -406,7 +399,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task GetPlaneTickets_SetsCache_WhenCacheMiss()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			int page = 1;
 			int pageSize = 10;
 			var planeTickets = new List<PlaneTicketEntity> { new PlaneTicketEntity { Id = 1, Price = 200, PurchaseDate = new DateOnly(2023, 09, 20), SeatNumber = 1, PassengerId = 1, TravelClassId = 1, FlightId = 1 } };
@@ -422,10 +414,10 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns<string, Func<Task<PagedResponse<PlaneTicketDto>?>>, TimeSpan?, TimeSpan?>(
 					async (key, factory, abs, sld) => await factory());
 			_planeTicketServiceMock
-				.Setup(x => x.GetPlaneTickets(cancellationToken, page, pageSize))
+				.Setup(x => x.GetPlaneTickets(It.IsAny<CancellationToken>(), page, pageSize))
 				.ReturnsAsync(planeTickets);
 			_planeTicketServiceMock
-				.Setup(x => x.PlaneTicketsCount(cancellationToken, null, null))
+				.Setup(x => x.PlaneTicketsCount(It.IsAny<CancellationToken>(), null, null))
 				.ReturnsAsync(1);
 			_mapperMock
 				.Setup(m => m.Map<IEnumerable<PlaneTicketDto>>(It.IsAny<IEnumerable<PlaneTicketEntity>>()))
@@ -593,7 +585,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task SearchPlaneTickets_EmptyFilter_ReturnsBadRequest()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var emptyFilter = new PlaneTicketSearchFilter();
 			var expectedBadRequestResult = "At least one filter criterion must be provided.";
 
@@ -610,7 +601,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task SearchPlaneTickets_InvalidPaginationParameters_ReturnsBadRequest()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var filter = new PlaneTicketSearchFilter { SeatNumber = 16 };
 			int invalidPage = -1;
 			int invalidPageSize = 0;
@@ -632,7 +622,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task SearchPlaneTickets_PlaneTicketsNoContent_ReturnsNotFound()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var filter = new PlaneTicketSearchFilter { SeatNumber = 16 };
 			int page = 1;
 			int pageSize = 10;
@@ -642,7 +631,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.ValidatePaginationParameters(page, pageSize, It.IsAny<int>()))
 				.Returns((true, pageSize, null));
 			_planeTicketServiceMock
-				.Setup(service => service.SearchPlaneTickets(cancellationToken, page, pageSize, filter))
+				.Setup(service => service.SearchPlaneTickets(It.IsAny<CancellationToken>(), page, pageSize, filter))
 				.ReturnsAsync(emptyPlaneTicketsList);
 
 			// Act
@@ -657,7 +646,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task SearchPlaneTickets_ReturnsNoContent_WhenPlaneTicketsListIsNull()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var filter = new PlaneTicketSearchFilter { SeatNumber = 16 };
 			int page = 1;
 			int pageSize = 10;
@@ -666,7 +654,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.ValidatePaginationParameters(page, pageSize, It.IsAny<int>()))
 				.Returns((true, pageSize, null));
 			_planeTicketServiceMock
-				.Setup(service => service.SearchPlaneTickets(cancellationToken, page, pageSize, filter))
+				.Setup(service => service.SearchPlaneTickets(It.IsAny<CancellationToken>(), page, pageSize, filter))
 				.ReturnsAsync((List<PlaneTicketEntity>)null);
 
 			// Act
@@ -681,7 +669,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task SearchPlaneTickets_ReturnsOk_WithPaginatedPlaneTickets()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var filter = new PlaneTicketSearchFilter { SeatNumber = 16 };
 			int page = 1;
 			int pageSize = 10;
@@ -693,10 +680,10 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.ValidatePaginationParameters(page, pageSize, It.IsAny<int>()))
 				.Returns((true, pageSize, null));
 			_planeTicketServiceMock
-				.Setup(service => service.SearchPlaneTickets(cancellationToken, page, pageSize, filter))
+				.Setup(service => service.SearchPlaneTickets(It.IsAny<CancellationToken>(), page, pageSize, filter))
 				.ReturnsAsync(planeTicketEntities);
 			_planeTicketServiceMock
-				.Setup(service => service.PlaneTicketsCountFilter(cancellationToken, filter))
+				.Setup(service => service.PlaneTicketsCountFilter(It.IsAny<CancellationToken>(), filter))
 				.ReturnsAsync(totalItems);
 			_mapperMock
 				.Setup(m => m.Map<IEnumerable<PlaneTicketDto>>(planeTicketEntities))
@@ -1058,7 +1045,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task ExportToPdf_InvalidPaginationParameters_ReturnsBadRequest()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var filter = new PlaneTicketSearchFilter { SeatNumber = 16 };
 			int invalidPage = -1;
 			int invalidPageSize = 0;
@@ -1080,17 +1066,15 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task ExportToPdf_NoPilotsFound_ReturnsNoContent()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var filter = new PlaneTicketSearchFilter();
 			var pilots = new List<PlaneTicketEntity>();
-			var getAll = true;
 
 			_planeTicketServiceMock
-				.Setup(s => s.GetAllPlaneTickets(cancellationToken))
+				.Setup(s => s.GetAllPlaneTickets(It.IsAny<CancellationToken>()))
 				.ReturnsAsync(pilots);
 
 			// Act
-			var result = await _controller.ExportToPdf(filter, getAll: getAll);
+			var result = await _controller.ExportToPdf(filter, getAll: true);
 
 			// Assert
 			Assert.IsType<NoContentResult>(result);
@@ -1101,16 +1085,14 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task ExportToPdf_PilotsListIsNull_ReturnsNoContent()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var filter = new PlaneTicketSearchFilter();
-			var getAll = true;
 
 			_planeTicketServiceMock
-				.Setup(s => s.GetAllPlaneTickets(cancellationToken))
+				.Setup(s => s.GetAllPlaneTickets(It.IsAny<CancellationToken>()))
 				.ReturnsAsync((IList<PlaneTicketEntity>)null);
 
 			// Act
-			var result = await _controller.ExportToPdf(filter, getAll: getAll);
+			var result = await _controller.ExportToPdf(filter, getAll: true);
 
 			// Assert
 			Assert.IsType<NoContentResult>(result);
@@ -1147,20 +1129,18 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task ExportToExcel_GetAllIsTrue_ReturnsFileContent()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var planeTickets = new List<PlaneTicketEntity> { new PlaneTicketEntity(), new PlaneTicketEntity() };
 			var excelBytes = new byte[] { 1, 2, 3, 4 };
-			var getAll = true;
 
 			_planeTicketServiceMock
-				.Setup(s => s.GetAllPlaneTickets(cancellationToken))
+				.Setup(s => s.GetAllPlaneTickets(It.IsAny<CancellationToken>()))
 				.ReturnsAsync(planeTickets);
 			_exportServiceMock
 				.Setup(s => s.ExportToExcel("PlaneTickets", planeTickets))
 				.Returns(excelBytes);
 
 			// Act
-			var result = await _controller.ExportToExcel(new PlaneTicketSearchFilter(), getAll: getAll);
+			var result = await _controller.ExportToExcel(new PlaneTicketSearchFilter(), getAll: true);
 
 			// Assert
 			var fileResult = Assert.IsType<FileContentResult>(result);
@@ -1173,7 +1153,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task ExportToExcel_EmptyFilter_ReturnsFileContent()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var filter = new PlaneTicketSearchFilter { SeatNumber = null };
 			int page = 1;
 			int pageSize = 10;
@@ -1184,7 +1163,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(s => s.ValidatePaginationParameters(page, pageSize, It.IsAny<int>()))
 				.Returns((true, pageSize, null));
 			_planeTicketServiceMock
-				.Setup(s => s.GetPlaneTickets(cancellationToken, page, pageSize))
+				.Setup(s => s.GetPlaneTickets(It.IsAny<CancellationToken>(), page, pageSize))
 				.ReturnsAsync(planeTickets);
 			_exportServiceMock
 				.Setup(s => s.ExportToExcel("PlaneTickets", planeTickets))
@@ -1204,7 +1183,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task ExportToExcel_NonEmptyFilter_ReturnsFileContent()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var filter = new PlaneTicketSearchFilter { SeatNumber = 16 };
 			int page = 1;
 			int pageSize = 10;
@@ -1215,7 +1193,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(s => s.ValidatePaginationParameters(page, pageSize, It.IsAny<int>()))
 				.Returns((true, pageSize, null));
 			_planeTicketServiceMock
-				.Setup(s => s.SearchPlaneTickets(cancellationToken, page, pageSize, filter))
+				.Setup(s => s.SearchPlaneTickets(It.IsAny<CancellationToken>(), page, pageSize, filter))
 				.ReturnsAsync(planeTickets);
 			_exportServiceMock
 				.Setup(s => s.ExportToExcel("PlaneTickets", planeTickets))
@@ -1235,7 +1213,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task ExportToExcel_InvalidPaginationParameters_ReturnsBadRequest()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var filter = new PlaneTicketSearchFilter { SeatNumber = 16 };
 			int invalidPage = -1;
 			int invalidPageSize = 0;
@@ -1257,17 +1234,15 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task ExportToExcel_NoPlaneTicketsFound_ReturnsNoContent()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var filter = new PlaneTicketSearchFilter();
 			var planeTickets = new List<PlaneTicketEntity>();
-			var getAll = true;
 
 			_planeTicketServiceMock
-				.Setup(s => s.GetAllPlaneTickets(cancellationToken))
+				.Setup(s => s.GetAllPlaneTickets(It.IsAny<CancellationToken>()))
 				.ReturnsAsync(planeTickets);
 
 			// Act
-			var result = await _controller.ExportToExcel(filter, getAll: getAll);
+			var result = await _controller.ExportToExcel(filter, getAll: true);
 
 			// Assert
 			Assert.IsType<NoContentResult>(result);
@@ -1278,16 +1253,14 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task ExportToExcel_PlaneTicketsListIsNull_ReturnsNoContent()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var filter = new PlaneTicketSearchFilter();
-			var getAll = true;
 
 			_planeTicketServiceMock
-				.Setup(s => s.GetAllPlaneTickets(cancellationToken))
+				.Setup(s => s.GetAllPlaneTickets(It.IsAny<CancellationToken>()))
 				.ReturnsAsync((IList<PlaneTicketEntity>)null);
 
 			// Act
-			var result = await _controller.ExportToExcel(filter, getAll: getAll);
+			var result = await _controller.ExportToExcel(filter, getAll: true);
 
 			// Assert
 			Assert.IsType<NoContentResult>(result);
@@ -1298,19 +1271,17 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task ExportToExcel_ExcelGenerationFails_ReturnsInternalServerError()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var planeTickets = new List<PlaneTicketEntity> { new PlaneTicketEntity() };
-			var getAll = true;
 
 			_planeTicketServiceMock
-				.Setup(s => s.GetAllPlaneTickets(cancellationToken))
+				.Setup(s => s.GetAllPlaneTickets(It.IsAny<CancellationToken>()))
 				.ReturnsAsync(planeTickets);
 			_exportServiceMock
 				.Setup(s => s.ExportToExcel("PlaneTickets", planeTickets))
 				.Returns((byte[])null);
 
 			// Act
-			var result = await _controller.ExportToExcel(new PlaneTicketSearchFilter(), getAll: getAll);
+			var result = await _controller.ExportToExcel(new PlaneTicketSearchFilter(), getAll: true);
 
 			// Assert
 			var statusCodeResult = Assert.IsType<ObjectResult>(result);
@@ -1323,19 +1294,17 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task ExportToExcel_ExcelGenerationReturnsEmptyBytes_ReturnsInternalServerError()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var planeTickets = new List<PlaneTicketEntity> { new PlaneTicketEntity() };
-			var getAll = true;
 
 			_planeTicketServiceMock
-				.Setup(s => s.GetAllPlaneTickets(cancellationToken))
+				.Setup(s => s.GetAllPlaneTickets(It.IsAny<CancellationToken>()))
 				.ReturnsAsync(planeTickets);
 			_exportServiceMock
 				.Setup(s => s.ExportToExcel("PlaneTickets", planeTickets))
 				.Returns(Array.Empty<byte>());
 
 			// Act
-			var result = await _controller.ExportToExcel(new PlaneTicketSearchFilter(), getAll: getAll);
+			var result = await _controller.ExportToExcel(new PlaneTicketSearchFilter(), getAll: true);
 
 			// Assert
 			var statusCodeResult = Assert.IsType<ObjectResult>(result);

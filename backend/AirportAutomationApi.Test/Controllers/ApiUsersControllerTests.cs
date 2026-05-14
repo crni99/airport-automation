@@ -132,7 +132,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task GetApiUsers_InvalidPaginationParameters_ReturnsBadRequest()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			int invalidPage = -1;
 			int invalidPageSize = 0;
 			var expectedBadRequestResult = new BadRequestObjectResult("Invalid pagination parameters.");
@@ -153,14 +152,13 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task GetApiUsers_ReturnsNoContent_WhenNoApiUsersFound()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			int page = 1;
 			int pageSize = 10;
 
 			_paginationValidationServiceMock
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, pageSize, null));
-			_apiUserServiceMock.Setup(service => service.GetApiUsers(cancellationToken, It.IsAny<int>(), It.IsAny<int>()))
+			_apiUserServiceMock.Setup(service => service.GetApiUsers(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>()))
 				.ReturnsAsync(new List<ApiUserEntity>());
 
 			// Act
@@ -175,7 +173,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task GetApiUsers_ReturnsNoContent_WhenApiUsersIsNull()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			int page = 1;
 			int pageSize = 10;
 
@@ -183,7 +180,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, pageSize, null));
 			_apiUserServiceMock
-				.Setup(service => service.GetApiUsers(cancellationToken, It.IsAny<int>(), It.IsAny<int>()))
+				.Setup(service => service.GetApiUsers(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>()))
 				.ReturnsAsync((List<ApiUserEntity>)null);
 
 			// Act
@@ -198,14 +195,13 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task GetApiUsers_ReturnsInternalServerError_WhenExceptionThrown()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			int page = 1;
 			int pageSize = 10;
 
 			_paginationValidationServiceMock
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, pageSize, null));
-			_apiUserServiceMock.Setup(service => service.GetApiUsers(cancellationToken, It.IsAny<int>(), It.IsAny<int>()))
+			_apiUserServiceMock.Setup(service => service.GetApiUsers(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>()))
 				.ThrowsAsync(new Exception("Simulated exception"));
 
 			// Act & Assert
@@ -217,7 +213,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task GetApiUsers_ReturnsOk_WithPaginatedApiUsers()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			int page = 1;
 			int pageSize = 10;
 			var apiUsers = new List<ApiUserEntity>
@@ -231,10 +226,10 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, pageSize, null));
 			_apiUserServiceMock
-				.Setup(service => service.GetApiUsers(cancellationToken, page, pageSize))
+				.Setup(service => service.GetApiUsers(It.IsAny<CancellationToken>(), page, pageSize))
 				.ReturnsAsync(apiUsers);
 			_apiUserServiceMock
-				.Setup(service => service.ApiUsersCount(cancellationToken, null))
+				.Setup(service => service.ApiUsersCount(It.IsAny<CancellationToken>(), null))
 				.ReturnsAsync(totalItems);
 
 			var expectedData = new List<ApiUserRoleDto>
@@ -264,7 +259,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task GetApiUsers_ReturnsCorrectPageData()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			int page = 2;
 			int pageSize = 5;
 			var allApiUsers = new List<ApiUserEntity>
@@ -286,10 +280,10 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, pageSize, null));
 			_apiUserServiceMock
-				.Setup(service => service.GetApiUsers(cancellationToken, page, pageSize))
+				.Setup(service => service.GetApiUsers(It.IsAny<CancellationToken>(), page, pageSize))
 				.ReturnsAsync(pagedApiUsers);
 			_apiUserServiceMock
-				.Setup(service => service.ApiUsersCount(cancellationToken, null))
+				.Setup(service => service.ApiUsersCount(It.IsAny<CancellationToken>(), null))
 				.ReturnsAsync(allApiUsers.Count);
 
 			var expectedData = new List<ApiUserRoleDto>
