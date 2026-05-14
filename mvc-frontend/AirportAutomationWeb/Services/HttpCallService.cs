@@ -677,7 +677,7 @@ namespace AirportAutomation.Web.Services
 
 			var filterQuery = BuildFilterQueryString(modelName, filter);
 
-			string pluralSuffix = GetPluralSuffix(modelName)
+			string pluralSuffix = GetPluralSuffix(modelName);
 			requestUri = $"{apiUrl}/{modelName}{pluralSuffix}/search";
 			requestUri += $"?{filterQuery}&page={page}&pageSize={pageSize}";
 
