@@ -1,10 +1,12 @@
 ﻿using AirportAutomation.Web.Interfaces;
 using AirportAutomation.Web.Models.ApiUser;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AirportAutomation.Web.Controllers
 {
 	[Route("")]
+	[AllowAnonymous]
 	public class HomeController : BaseController
 	{
 		private readonly IHttpCallService _httpCallService;
@@ -34,11 +36,11 @@ namespace AirportAutomation.Web.Controllers
 		[HttpPost]
 		[Route("Authenticate")]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Authenticate(UserViewModel user)
+		public async Task<IActionResult> Authenticate(UserViewModel user, CancellationToken cancellationToken = default)
 		{
 			if (ModelState.IsValid)
 			{
-				var response = await _httpCallService.Authenticate(user);
+				var response = await _httpCallService.Authenticate(user, cancellationToken);
 				if (!response)
 				{
 					_alertService.SetAlertMessage(TempData, "login_failed", false);
@@ -51,9 +53,9 @@ namespace AirportAutomation.Web.Controllers
 
 		[HttpGet]
 		[Route("SignOut")]
-		public async Task<IActionResult> SignOut()
+		public async Task<IActionResult> SignOut(CancellationToken cancellationToken = default)
 		{
-			bool removed = await _httpCallService.RemoveToken();
+			bool removed = await _httpCallService.RemoveToken(cancellationToken);
 			return (removed) ? Json(new { success = true }) : Json(new { success = false });
 		}
 	}

@@ -1,9 +1,11 @@
 ﻿using AirportAutomation.Web.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace AirportAutomation.Web.Controllers
 {
+	[Authorize]
 	public class BaseController : Controller
 	{
 		public override void OnActionExecuting(ActionExecutingContext context)

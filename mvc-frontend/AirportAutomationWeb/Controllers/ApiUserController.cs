@@ -31,14 +31,14 @@ namespace AirportAutomation.Web.Controllers
 
 		[HttpGet]
 		[Route("GetApiUsers")]
-		public async Task<IActionResult> GetApiUsers(int page = 1, int pageSize = 10)
+		public async Task<IActionResult> GetApiUsers(int page = 1, int pageSize = 10, CancellationToken cancellationToken = default)
 		{
 			if (page < 1)
 			{
 				_alertService.SetAlertMessage(TempData, "invalid_page_number", false);
 				return Json(new { success = false, message = "Page number must be greater than or equal to 1." });
 			}
-			var response = await _httpCallService.GetDataList<ApiUserEntity>(page, pageSize);
+			var response = await _httpCallService.GetDataList<ApiUserEntity>(page, pageSize, cancellationToken);
 			if (response == null)
 			{
 				return Json(new { success = false, message = "No api users found." });
@@ -49,9 +49,9 @@ namespace AirportAutomation.Web.Controllers
 
 		[HttpGet]
 		[Route("{id}")]
-		public async Task<IActionResult> Details(int id)
+		public async Task<IActionResult> Details(int id, CancellationToken cancellationToken = default)
 		{
-			var response = await _httpCallService.GetData<ApiUserEntity>(id);
+			var response = await _httpCallService.GetData<ApiUserEntity>(id, cancellationToken);
 			if (response is null)
 			{
 				_alertService.SetAlertMessage(TempData, "data_not_found", false);
@@ -65,7 +65,7 @@ namespace AirportAutomation.Web.Controllers
 
 		[HttpGet]
 		[Route("SearchApiUsers")]
-		public async Task<IActionResult> SearchApiUsers([FromQuery] ApiUserSearchFilter filter, int page = 1, int pageSize = 10)
+		public async Task<IActionResult> SearchApiUsers([FromQuery] ApiUserSearchFilter filter, int page = 1, int pageSize = 10, CancellationToken cancellationToken = default)
 		{
 			if (page < 1)
 			{
@@ -77,7 +77,7 @@ namespace AirportAutomation.Web.Controllers
 				_alertService.SetAlertMessage(TempData, "missing_field", false);
 				return RedirectToAction("Index");
 			}
-			var response = await _httpCallService.GetDataByFilter<ApiUserEntity>(filter, page, pageSize);
+			var response = await _httpCallService.GetDataByFilter<ApiUserEntity>(filter, page, pageSize, cancellationToken);
 			if (response == null)
 			{
 				return Json(new { success = false, message = "No api users found." });
@@ -95,9 +95,9 @@ namespace AirportAutomation.Web.Controllers
 
 		[HttpGet]
 		[Route("Edit/{id}")]
-		public async Task<IActionResult> Edit(int id)
+		public async Task<IActionResult> Edit(int id, CancellationToken cancellationToken = default)
 		{
-			var response = await _httpCallService.GetData<ApiUserEntity>(id);
+			var response = await _httpCallService.GetData<ApiUserEntity>(id, cancellationToken);
 			if (response is null)
 			{
 				_alertService.SetAlertMessage(TempData, "data_not_found", false);
@@ -112,12 +112,12 @@ namespace AirportAutomation.Web.Controllers
 		[HttpPost]
 		[Route("EditApiUser")]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> EditApiUser(ApiUserViewModel apiUserDto)
+		public async Task<IActionResult> EditApiUser(ApiUserViewModel apiUserDto, CancellationToken cancellationToken = default)
 		{
 			if (ModelState.IsValid)
 			{
 				var apiUser = _mapper.Map<ApiUserEntity>(apiUserDto);
-				var response = await _httpCallService.EditData<ApiUserEntity>(apiUser, apiUser.ApiUserId);
+				var response = await _httpCallService.EditData<ApiUserEntity>(apiUser, apiUser.ApiUserId, cancellationToken);
 				if (response)
 				{
 					_alertService.SetAlertMessage(TempData, "edit_data_success", true);
@@ -134,9 +134,9 @@ namespace AirportAutomation.Web.Controllers
 
 		[HttpGet]
 		[Route("Delete/{id}")]
-		public async Task<IActionResult> Delete(int id)
+		public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken = default)
 		{
-			var response = await _httpCallService.DeleteData<ApiUserEntity>(id);
+			var response = await _httpCallService.DeleteData<ApiUserEntity>(id, cancellationToken);
 			if (response)
 			{
 				_alertService.SetAlertMessage(TempData, "delete_data_success", true);

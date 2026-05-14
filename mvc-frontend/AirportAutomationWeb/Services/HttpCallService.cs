@@ -3,11 +3,13 @@ using AirportAutomation.Web.Interfaces;
 using AirportAutomation.Web.Models.ApiUser;
 using AirportAutomation.Web.Models.Export;
 using AirportAutomation.Web.Models.Response;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.IdentityModel.JsonWebTokens;
-using System.Data;
 using System.Net;
 using System.Net.Http.Headers;
-using System.Net.Http.Json;
+using System.Security.Claims;
 using System.Web;
 
 namespace AirportAutomation.Web.Services
@@ -49,7 +51,7 @@ namespace AirportAutomation.Web.Services
 		/// <remarks>
 		/// If the authentication is successful, the access token is stored in the session.
 		/// </remarks>
-		public async Task<bool> Authenticate(UserViewModel user)
+		public async Task<bool> Authenticate(UserViewModel user, CancellationToken cancellationToken = default)
 		{
 			string token = GetToken();
 			if (!string.IsNullOrEmpty(token))
@@ -68,7 +70,7 @@ namespace AirportAutomation.Web.Services
 				Content = JsonContent.Create(user)
 			};
 
-			var response = await httpClient.SendAsync(request).ConfigureAwait(false);
+			var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
 			if (response.IsSuccessStatusCode)
 			{
@@ -83,6 +85,16 @@ namespace AirportAutomation.Web.Services
 					return false;
 				}
 				_httpContextAccessor.HttpContext.Session.SetString("AccessToken", bearerToken);
+				var role = _httpContextAccessor.HttpContext.Session.GetString("AccessRole") ?? string.Empty;
+
+				var claims = new List<Claim>
+				{
+					new Claim(ClaimTypes.Name, bearerToken),
+					new Claim(ClaimTypes.Role, role)
+				};
+				var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+				await _httpContextAccessor.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
+
 				return true;
 			}
 			else if (((int)response.StatusCode) == 400 || ((int)response.StatusCode) == 401)
@@ -144,14 +156,15 @@ namespace AirportAutomation.Web.Services
 		/// <remarks>
 		/// If the Bearer token is missing or invalid, the removal is not performed.
 		/// </remarks>
-		public async Task<bool> RemoveToken()
+		public async Task<bool> RemoveToken(CancellationToken cancellationToken = default)
 		{
 			string token = GetToken();
 			if (!string.IsNullOrEmpty(token))
 			{
 				_httpContextAccessor.HttpContext.Session.Remove("AccessToken");
 				_httpContextAccessor.HttpContext.Session.Remove("AccessRole");
-				await _httpContextAccessor.HttpContext.Session.CommitAsync();
+				await _httpContextAccessor.HttpContext.Session.CommitAsync(cancellationToken);
+				await _httpContextAccessor.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 				return true;
 			}
 			return false;
@@ -200,24 +213,17 @@ namespace AirportAutomation.Web.Services
 		/// If the data is not found, an empty response with a status code of 204 is returned.
 		/// If the retrieval fails, a null value is returned with an error logged.
 		/// </returns>
-		public async Task<PagedResponse<T>> GetDataList<T>(int page, int pageSize)
+		public async Task<PagedResponse<T>> GetDataList<T>(int page, int pageSize, CancellationToken cancellationToken = default)
 		{
 			var modelName = GetModelName<T>();
 			var requestUri = $"{apiUrl}/{modelName}";
-			if (modelName.Equals("TravelClass"))
-			{
-				requestUri += $"es/";
-			}
-			else
-			{
-				requestUri += $"s/";
-			}
+			requestUri += $"{GetPluralSuffix(modelName)}/";
 			requestUri += $"?page={page}&pageSize={pageSize}";
 
 			using var httpClient = _httpClientFactory.CreateClient("AirportAutomationApi");
 			ConfigureHttpClient(httpClient);
 
-			var response = await httpClient.GetAsync(requestUri).ConfigureAwait(false);
+			var response = await httpClient.GetAsync(requestUri, cancellationToken).ConfigureAwait(false);
 
 			if (response.StatusCode == HttpStatusCode.OK)
 			{
@@ -244,27 +250,20 @@ namespace AirportAutomation.Web.Services
 		/// Returns the data of type <typeparamref name="T"/> with the specified unique identifier.
 		/// If the retrieval fails, a default value for <typeparamref name="T"/> is returned with an error logged.
 		/// </returns>
-		public async Task<T> GetData<T>(int id)
+		public async Task<T> GetData<T>(int id, CancellationToken cancellationToken = default)
 		{
 			T data = default;
 			var modelName = GetModelName<T>();
 
 			string requestUri = $"{apiUrl}/{modelName}";
-			if (modelName.Equals("TravelClass"))
-			{
-				requestUri += $"es/{id}";
-			}
-			else
-			{
-				requestUri += $"s/{id}";
-			}
+			requestUri += $"{GetPluralSuffix(modelName)}/";
 
 			var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 
 			using var httpClient = _httpClientFactory.CreateClient("AirportAutomationApi");
 			ConfigureHttpClient(httpClient);
 
-			var response = await httpClient.SendAsync(httpRequestMessage);
+			var response = await httpClient.SendAsync(httpRequestMessage, cancellationToken);
 
 			if (response.IsSuccessStatusCode)
 			{
@@ -285,24 +284,17 @@ namespace AirportAutomation.Web.Services
 		/// Returns a paginated response containing a list of data of type <typeparamref name="T"/>.
 		/// If the retrieval fails, returns null with an error logged.
 		/// </returns>
-		public async Task<PagedResponse<T>> GetDataList<T>()
+		public async Task<PagedResponse<T>> GetDataList<T>(CancellationToken cancellationToken = default)
 		{
 			var modelName = GetModelName<T>();
 
 			string requestUri = $"{apiUrl}/{modelName}";
-			if (modelName.Equals("TravelClass"))
-			{
-				requestUri += "es";
-			}
-			else
-			{
-				requestUri += "s";
-			}
+			requestUri += $"{GetPluralSuffix(modelName)}/";
 
 			using var httpClient = _httpClientFactory.CreateClient("AirportAutomationApi");
 			ConfigureHttpClient(httpClient);
 
-			var response = await httpClient.GetAsync(requestUri).ConfigureAwait(false);
+			var response = await httpClient.GetAsync(requestUri, cancellationToken).ConfigureAwait(false);
 
 			if (response.IsSuccessStatusCode)
 			{
@@ -326,19 +318,12 @@ namespace AirportAutomation.Web.Services
 		/// Returns a JSON string containing the data of type <typeparamref name="T"/> filtered by the specified name.
 		/// If the retrieval fails, returns null with an error logged.
 		/// </returns>
-		public async Task<PagedResponse<T>> GetDataByName<T>(string name, int page, int pageSize)
+		public async Task<PagedResponse<T>> GetDataByName<T>(string name, int page, int pageSize, CancellationToken cancellationToken = default)
 		{
 			var modelName = GetModelName<T>();
 
 			string requestUri = $"{apiUrl}/{modelName}";
-			if (modelName.Equals("TravelClass"))
-			{
-				requestUri += $"es/search?name={name}";
-			}
-			else
-			{
-				requestUri += $"s/search?name={name}";
-			}
+			requestUri += $"{GetPluralSuffix(modelName)}/";
 			requestUri += $"&page={page}&pageSize={pageSize}";
 
 			var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
@@ -346,7 +331,7 @@ namespace AirportAutomation.Web.Services
 			using var httpClient = _httpClientFactory.CreateClient("AirportAutomationApi");
 			ConfigureHttpClient(httpClient);
 
-			var response = await httpClient.SendAsync(httpRequestMessage);
+			var response = await httpClient.SendAsync(httpRequestMessage, cancellationToken);
 
 			if (response.StatusCode == HttpStatusCode.OK)
 			{
@@ -376,19 +361,13 @@ namespace AirportAutomation.Web.Services
 		/// Returns a JSON string containing the data of type <typeparamref name="T"/> filtered by the specified date range.
 		/// If the retrieval fails, returns null with an error logged.
 		/// </returns>
-		public async Task<PagedResponse<T>> GetDataBetweenDates<T>(string startDate, string endDate, int page, int pageSize)
+		public async Task<PagedResponse<T>> GetDataBetweenDates<T>(string startDate, string endDate, int page, int pageSize, CancellationToken cancellationToken = default)
 		{
 			var modelName = GetModelName<T>();
 
 			string requestUri = $"{apiUrl}/{modelName}";
-			if (modelName.Equals("TravelClass"))
-			{
-				requestUri += $"es/search?";
-			}
-			else
-			{
-				requestUri += $"s/search?";
-			}
+			requestUri += $"{GetPluralSuffix(modelName)}/";
+
 			UriBuilder uriBuilder = new(requestUri);
 			var query = HttpUtility.ParseQueryString(uriBuilder.Query);
 
@@ -410,7 +389,7 @@ namespace AirportAutomation.Web.Services
 			using var httpClient = _httpClientFactory.CreateClient("AirportAutomationApi");
 			ConfigureHttpClient(httpClient);
 
-			var response = await httpClient.SendAsync(httpRequestMessage);
+			var response = await httpClient.SendAsync(httpRequestMessage, cancellationToken);
 
 			if (response.StatusCode == HttpStatusCode.OK)
 			{
@@ -428,7 +407,7 @@ namespace AirportAutomation.Web.Services
 			}
 		}
 
-		public async Task<PagedResponse<T>> GetDataByFilter<T>(object filter, int page, int pageSize)
+		public async Task<PagedResponse<T>> GetDataByFilter<T>(object filter, int page, int pageSize, CancellationToken cancellationToken = default)
 		{
 			var modelName = GetModelName<T>();
 
@@ -439,7 +418,7 @@ namespace AirportAutomation.Web.Services
 			using var httpClient = _httpClientFactory.CreateClient("AirportAutomationApi");
 			ConfigureHttpClient(httpClient);
 
-			var response = await httpClient.SendAsync(httpRequestMessage);
+			var response = await httpClient.SendAsync(httpRequestMessage, cancellationToken);
 
 			if (response.StatusCode == HttpStatusCode.OK)
 			{
@@ -467,7 +446,7 @@ namespace AirportAutomation.Web.Services
 		/// Returns the newly created data object of type <typeparamref name="T"/>.
 		/// If the creation fails, returns the default value of <typeparamref name="T"/> with an error logged.
 		/// </returns>
-		public async Task<T> CreateData<T>(T t)
+		public async Task<T> CreateData<T>(T t, CancellationToken cancellationToken = default)
 		{
 			T data = default;
 			var modelName = GetModelName<T>();
@@ -476,7 +455,7 @@ namespace AirportAutomation.Web.Services
 			using var httpClient = _httpClientFactory.CreateClient("AirportAutomationApi");
 			ConfigureHttpClient(httpClient);
 
-			var response = await httpClient.PostAsJsonAsync(requestUri, t).ConfigureAwait(false);
+			var response = await httpClient.PostAsJsonAsync(requestUri, t, cancellationToken).ConfigureAwait(false);
 
 			if (response.IsSuccessStatusCode)
 			{
@@ -499,7 +478,7 @@ namespace AirportAutomation.Web.Services
 		/// Returns true if the data entry is successfully edited (HTTP status code 204 - No Content).
 		/// Returns false if the edit fails or encounters an error, with an error message logged.
 		/// </returns>
-		public async Task<bool> EditData<T>(T t, int id)
+		public async Task<bool> EditData<T>(T t, int id, CancellationToken cancellationToken = default)
 		{
 			var modelName = GetModelName<T>();
 			string requestUri = $"{apiUrl}/{modelName}s/{id}";
@@ -507,7 +486,7 @@ namespace AirportAutomation.Web.Services
 			using var httpClient = _httpClientFactory.CreateClient("AirportAutomationApi");
 			ConfigureHttpClient(httpClient);
 
-			var response = await httpClient.PutAsJsonAsync(requestUri, t);
+			var response = await httpClient.PutAsJsonAsync(requestUri, t, cancellationToken);
 
 			if (response.StatusCode is HttpStatusCode.NoContent)
 			{
@@ -530,7 +509,7 @@ namespace AirportAutomation.Web.Services
 		/// Returns false if the deletion fails, encounters a conflict (HTTP status code 409 - Conflict),
 		/// or encounters any other error, with an error message logged.
 		/// </returns>
-		public async Task<bool> DeleteData<T>(int id)
+		public async Task<bool> DeleteData<T>(int id, CancellationToken cancellationToken = default)
 		{
 			var modelName = GetModelName<T>();
 			var requestUri = $"{apiUrl}/{modelName}s/{id}";
@@ -538,7 +517,7 @@ namespace AirportAutomation.Web.Services
 			using var httpClient = _httpClientFactory.CreateClient("AirportAutomationApi");
 			ConfigureHttpClient(httpClient);
 
-			var response = await httpClient.DeleteAsync(requestUri);
+			var response = await httpClient.DeleteAsync(requestUri, cancellationToken);
 
 			if (response.StatusCode is HttpStatusCode.NoContent)
 			{
@@ -560,11 +539,12 @@ namespace AirportAutomation.Web.Services
 			object filter = null,
 			int page = 1,
 			int pageSize = 10,
-			bool getAll = false)
+			bool getAll = false,
+			CancellationToken cancellationToken = default)
 		{
 			var modelName = GetModelName<T>();
 			var exportEndpoint = fileType.ToLower() == "pdf" ? "export/pdf" : "export/excel";
-			string pluralSuffix = modelName.Equals("TravelClass", StringComparison.OrdinalIgnoreCase) ? "es" : "s";
+			string pluralSuffix = GetPluralSuffix(modelName);
 
 			var baseUri = $"{apiUrl}/{modelName}{pluralSuffix}/{exportEndpoint}";
 
@@ -586,7 +566,7 @@ namespace AirportAutomation.Web.Services
 			using var httpClient = _httpClientFactory.CreateClient("AirportAutomationApi");
 			ConfigureHttpClient(httpClient);
 
-			var response = await httpClient.GetAsync(requestUri).ConfigureAwait(false);
+			var response = await httpClient.GetAsync(requestUri, cancellationToken).ConfigureAwait(false);
 
 			if (response.IsSuccessStatusCode)
 			{
@@ -653,7 +633,7 @@ namespace AirportAutomation.Web.Services
 		/// Returns the health check data of type <typeparamref name="T"/>.
 		/// If the retrieval fails, a default value for <typeparamref name="T"/> is returned with an error logged.
 		/// </returns>
-		public async Task<T> GetHealthCheck<T>()
+		public async Task<T> GetHealthCheck<T>(CancellationToken cancellationToken = default)
 		{
 			T data = default;
 			var modelName = GetModelName<T>();
@@ -665,7 +645,7 @@ namespace AirportAutomation.Web.Services
 			using var httpClient = _httpClientFactory.CreateClient("AirportAutomationApi");
 			ConfigureHttpClient(httpClient);
 
-			var response = await httpClient.SendAsync(httpRequestMessage);
+			var response = await httpClient.SendAsync(httpRequestMessage, cancellationToken);
 
 			if (response.IsSuccessStatusCode)
 			{
@@ -693,19 +673,11 @@ namespace AirportAutomation.Web.Services
 		{
 			string requestUri;
 
-			var specialModels = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-			{
-				"ApiUser",
-				"Destination",
-				"Passenger",
-				"Pilot",
-				"PlaneTicket"
-			};
 			requestUri = $"{apiUrl}/{modelName}/search";
 
 			var filterQuery = BuildFilterQueryString(modelName, filter);
 
-			string pluralSuffix = modelName.Equals("TravelClass", StringComparison.OrdinalIgnoreCase) ? "es" : "s";
+			string pluralSuffix = GetPluralSuffix(modelName)
 			requestUri = $"{apiUrl}/{modelName}{pluralSuffix}/search";
 			requestUri += $"?{filterQuery}&page={page}&pageSize={pageSize}";
 
@@ -808,6 +780,17 @@ namespace AirportAutomation.Web.Services
 			}
 			return string.Join("&", queryParameters);
 		}
+
+		private static readonly Dictionary<string, string> _pluralSuffixes = new()
+		{
+			{ "TravelClass", "es" }
+		};
+
+		private string GetPluralSuffix(string modelName)
+		{
+			return _pluralSuffixes.TryGetValue(modelName, out var suffix) ? suffix : "s";
+		}
+
 		#endregion
 
 	}

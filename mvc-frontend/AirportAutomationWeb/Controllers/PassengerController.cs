@@ -31,14 +31,14 @@ namespace AirportAutomation.Web.Controllers
 
 		[HttpGet]
 		[Route("GetPassengers")]
-		public async Task<IActionResult> GetPassengers(int page = 1, int pageSize = 10)
+		public async Task<IActionResult> GetPassengers(int page = 1, int pageSize = 10, CancellationToken cancellationToken = default)
 		{
 			if (page < 1)
 			{
 				_alertService.SetAlertMessage(TempData, "invalid_page_number", false);
 				return Json(new { success = false, message = "Page number must be greater than or equal to 1." });
 			}
-			var response = await _httpCallService.GetDataList<PassengerEntity>(page, pageSize);
+			var response = await _httpCallService.GetDataList<PassengerEntity>(page, pageSize, cancellationToken);
 			if (response == null)
 			{
 				return Json(new { success = false, message = "No passengers found." });
@@ -49,9 +49,9 @@ namespace AirportAutomation.Web.Controllers
 
 		[HttpGet]
 		[Route("Details/{id:int}")]
-		public async Task<IActionResult> Details(int id)
+		public async Task<IActionResult> Details(int id, CancellationToken cancellationToken = default)
 		{
-			var response = await _httpCallService.GetData<PassengerEntity>(id);
+			var response = await _httpCallService.GetData<PassengerEntity>(id, cancellationToken);
 			if (response is null)
 			{
 				_alertService.SetAlertMessage(TempData, "data_not_found", false);
@@ -65,7 +65,11 @@ namespace AirportAutomation.Web.Controllers
 
 		[HttpGet]
 		[Route("SearchPassengers")]
-		public async Task<IActionResult> SearchPassengers([FromQuery] PassengerSearchFilter filter, int page = 1, int pageSize = 10)
+		public async Task<IActionResult> SearchPassengers(
+			[FromQuery] PassengerSearchFilter filter,
+			int page = 1,
+			int pageSize = 10,
+			CancellationToken cancellationToken = default)
 		{
 			if (page < 1)
 			{
@@ -77,7 +81,7 @@ namespace AirportAutomation.Web.Controllers
 				_alertService.SetAlertMessage(TempData, "missing_field", false);
 				return RedirectToAction("Index");
 			}
-			var response = await _httpCallService.GetDataByFilter<PassengerEntity>(filter, page, pageSize);
+			var response = await _httpCallService.GetDataByFilter<PassengerEntity>(filter, page, pageSize, cancellationToken);
 			if (response == null)
 			{
 				return Json(new { success = false, message = "No passengers found." });
@@ -96,12 +100,12 @@ namespace AirportAutomation.Web.Controllers
 		[HttpPost]
 		[Route("CreatePassenger")]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> CreatePassenger(PassengerCreateViewModel passengerCreateDto)
+		public async Task<IActionResult> CreatePassenger(PassengerCreateViewModel passengerCreateDto, CancellationToken cancellationToken = default)
 		{
 			if (ModelState.IsValid)
 			{
 				var passenger = _mapper.Map<PassengerEntity>(passengerCreateDto);
-				var response = await _httpCallService.CreateData<PassengerEntity>(passenger);
+				var response = await _httpCallService.CreateData<PassengerEntity>(passenger, cancellationToken);
 				if (response is null)
 				{
 					_alertService.SetAlertMessage(TempData, "create_data_failed", false);
@@ -117,9 +121,9 @@ namespace AirportAutomation.Web.Controllers
 
 		[HttpGet]
 		[Route("Edit/{id}")]
-		public async Task<IActionResult> Edit(int id)
+		public async Task<IActionResult> Edit(int id, CancellationToken cancellationToken = default)
 		{
-			var response = await _httpCallService.GetData<PassengerEntity>(id);
+			var response = await _httpCallService.GetData<PassengerEntity>(id, cancellationToken);
 			if (response is null)
 			{
 				_alertService.SetAlertMessage(TempData, "data_not_found", false);
@@ -134,12 +138,12 @@ namespace AirportAutomation.Web.Controllers
 		[HttpPost]
 		[Route("EditPassenger")]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> EditPassenger(PassengerViewModel passengerDto)
+		public async Task<IActionResult> EditPassenger(PassengerViewModel passengerDto, CancellationToken cancellationToken = default)
 		{
 			if (ModelState.IsValid)
 			{
 				var passenger = _mapper.Map<PassengerEntity>(passengerDto);
-				var response = await _httpCallService.EditData<PassengerEntity>(passenger, passenger.Id);
+				var response = await _httpCallService.EditData<PassengerEntity>(passenger, passenger.Id, cancellationToken);
 				if (response)
 				{
 					_alertService.SetAlertMessage(TempData, "edit_data_success", true);
@@ -156,9 +160,9 @@ namespace AirportAutomation.Web.Controllers
 
 		[HttpGet]
 		[Route("Delete/{id}")]
-		public async Task<IActionResult> Delete(int id)
+		public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken = default)
 		{
-			var response = await _httpCallService.DeleteData<PassengerEntity>(id);
+			var response = await _httpCallService.DeleteData<PassengerEntity>(id, cancellationToken);
 			if (response)
 			{
 				_alertService.SetAlertMessage(TempData, "delete_data_success", true);
@@ -178,9 +182,10 @@ namespace AirportAutomation.Web.Controllers
 			[FromQuery] int page = 1,
 			[FromQuery] int pageSize = 10,
 			[FromQuery] bool getAll = false,
-			[FromQuery] string fileType = "pdf")
+			[FromQuery] string fileType = "pdf",
+			CancellationToken cancellationToken = default)
 		{
-			var result = await _httpCallService.DownloadFileAsync<PassengerEntity>(fileType, filter, page, pageSize, getAll);
+			var result = await _httpCallService.DownloadFileAsync<PassengerEntity>(fileType, filter, page, pageSize, getAll, cancellationToken);
 
 			if (result is null || result.HasError)
 			{

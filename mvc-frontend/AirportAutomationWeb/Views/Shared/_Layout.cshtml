@@ -9,7 +9,7 @@
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>AirportAutomationWeb</title>
+	<title>@ViewBag.Title - AirportAutomationWeb</title>
 	<meta name="description" content="AirportAutomationWeb - Manage airlines, destinations, flights, passengers, pilots, plane tickets, and more." />
 	<meta name="keywords" content="airport, automation, web, airlines, destinations, flights, passengers, pilots, plane tickets, travel, management" />
 	<meta name="author" content="Ognjen Andjelic" />
@@ -40,7 +40,7 @@
 									</button>
 									<ul class="dropdown-menu">
 										<li><a class="dropdown-item" asp-area="" asp-controller="Passenger" asp-action="Index">All Passengers</a></li>
-										@if (ViewBag.ApiUserRole != "User")
+										@if (ViewBag.ApiUserRole != Roles.User)
 										{
 											<li><a class="dropdown-item" asp-area="" asp-controller="Passenger" asp-action="Create">Add Passenger</a></li>
 										}
@@ -58,7 +58,7 @@
 									</button>
 									<ul class="dropdown-menu">
 										<li><a class="dropdown-item" asp-area="" asp-controller="Destination" asp-action="Index">All Destinations</a></li>
-										@if (ViewBag.ApiUserRole != "User")
+										@if (ViewBag.ApiUserRole != Roles.User)
 										{
 											<li><a class="dropdown-item" asp-area="" asp-controller="Destination" asp-action="Create">Add Destination</a></li>
 										}
@@ -73,7 +73,7 @@
 									</button>
 									<ul class="dropdown-menu">
 										<li><a class="dropdown-item" asp-area="" asp-controller="Pilot" asp-action="Index">All Pilots</a></li>
-										@if (ViewBag.ApiUserRole != "User")
+										@if (ViewBag.ApiUserRole != Roles.User)
 										{
 											<li><a class="dropdown-item" asp-area="" asp-controller="Pilot" asp-action="Create">Add Pilot</a></li>
 										}
@@ -88,7 +88,7 @@
 									</button>
 									<ul class="dropdown-menu">
 										<li><a class="dropdown-item" asp-area="" asp-controller="Airline" asp-action="Index">All Airlines</a></li>
-										@if (ViewBag.ApiUserRole != "User")
+										@if (ViewBag.ApiUserRole != Roles.User)
 										{
 											<li><a class="dropdown-item" asp-area="" asp-controller="Airline" asp-action="Create">Add Airline</a></li>
 										}
@@ -103,7 +103,7 @@
 									</button>
 									<ul class="dropdown-menu">
 										<li><a class="dropdown-item" asp-area="" asp-controller="Flight" asp-action="Index">All Flights</a></li>
-										@if (ViewBag.ApiUserRole != "User")
+										@if (ViewBag.ApiUserRole != Roles.User)
 										{
 											<li><a class="dropdown-item" asp-area="" asp-controller="Flight" asp-action="Create">Add Flight</a></li>
 										}
@@ -118,7 +118,7 @@
 									</button>
 									<ul class="dropdown-menu">
 										<li><a class="dropdown-item" asp-area="" asp-controller="PlaneTicket" asp-action="Index">All Plane Tickets</a></li>
-										@if (ViewBag.ApiUserRole != "User")
+										@if (ViewBag.ApiUserRole != Roles.User)
 										{
 											<li><a class="dropdown-item" asp-area="" asp-controller="PlaneTicket" asp-action="Create">Add Plane Ticket</a></li>
 										}
@@ -126,7 +126,7 @@
 								</div>
 							</li>
 						}
-						@if (ViewBag.ApiUserRole == "SuperAdmin")
+						@if (ViewBag.ApiUserRole == Roles.SuperAdmin)
 						{
 							<li class="nav-item">
 								<a class="nav-link" asp-area="" asp-controller="ApiUser" asp-action="Index">Api User</a>
@@ -216,6 +216,11 @@
 		});
 	</script>
 	<script>
+		const Roles = {
+			User: '@Roles.User',
+			Admin: '@Roles.Admin',
+			SuperAdmin: '@Roles.SuperAdmin'
+		};
 		const currentUserRole = '@ViewBag.ApiUserRole';
 	</script>
 	@await RenderSectionAsync("Scripts", required: false)

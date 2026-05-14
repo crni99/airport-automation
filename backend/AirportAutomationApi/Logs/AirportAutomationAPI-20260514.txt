@@ -1,4 +1,0 @@
-2026-05-14 02:22:24 [Error] 80000002-0000-fc00-b63f-84710c7967bb PDF generation failed for "Airlines".
-2026-05-14 02:22:24 [Error] 80000002-0000-fc00-b63f-84710c7967bb HTTP "GET" "/api/v1/Airlines/export/pdf" responded 500 in 284.4140 ms
-2026-05-14 02:23:25 [Error] 80000004-0006-fc00-b63f-84710c7967bb PDF generation failed for "Airlines".
-2026-05-14 02:23:32 [Error] 80000004-0006-fc00-b63f-84710c7967bb HTTP "GET" "/api/v1/Airlines/export/pdf" responded 500 in 34513.5897 ms

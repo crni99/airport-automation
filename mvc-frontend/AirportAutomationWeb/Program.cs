@@ -1,6 +1,7 @@
 ﻿using AirportAutomation.Core.Converters;
 using AirportAutomation.Infrastructure.Middlewares;
 using AirportAutomation.Web.Binders;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Http.Resilience;
 using Microsoft.IdentityModel.Logging;
 using Polly;
@@ -51,7 +52,22 @@ builder.Services.AddHttpClient("AirportAutomationApi")
 		});
 	});
 
-builder.Services.AddSession();
+builder.Services.AddSession(options =>
+{
+	options.IdleTimeout = TimeSpan.FromHours(1);
+	options.Cookie.HttpOnly = true;
+	options.Cookie.IsEssential = true;
+});
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+	.AddCookie(options =>
+	{
+		options.LoginPath = "/Home/Index";
+		options.AccessDeniedPath = "/Home/Index";
+		options.ExpireTimeSpan = TimeSpan.FromHours(1);
+		options.SlidingExpiration = true;
+	});
+
 builder.Services.AddAntiforgery();
 
 BinderConfiguration.Binders(builder.Services);
@@ -65,14 +81,16 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseMiddleware<ContentSecurityPolicyMiddleware>();
 app.UseMiddleware<RequestLogContextMiddleware>();
 app.UseSerilogRequestLogging();
 app.UseStaticFiles();
 app.UseCors("_AllowSpecificMethods");
 app.UseRouting();
+app.UseSession();
+app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<GlobalExceptionHandler>();
-app.UseSession();
 
 app.MapControllerRoute(
 	name: "default",

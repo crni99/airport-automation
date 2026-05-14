@@ -28,14 +28,14 @@ namespace AirportAutomation.Web.Controllers
 
 		[HttpGet]
 		[Route("GetTravelClasses")]
-		public async Task<IActionResult> GetTravelClasses(int page = 1, int pageSize = 10)
+		public async Task<IActionResult> GetTravelClasses(int page = 1, int pageSize = 10, CancellationToken cancellationToken = default)
 		{
 			if (page < 1)
 			{
 				_alertService.SetAlertMessage(TempData, "invalid_page_number", false);
 				return Json(new { success = false, message = "Page number must be greater than or equal to 1." });
 			}
-			var response = await _httpCallService.GetDataList<TravelClassEntity>(page, pageSize);
+			var response = await _httpCallService.GetDataList<TravelClassEntity>(page, pageSize, cancellationToken);
 			if (response == null)
 			{
 				return Json(new { success = false, message = "No travel classes found." });
@@ -49,9 +49,10 @@ namespace AirportAutomation.Web.Controllers
 		public async Task<IActionResult> DownloadFile(
 			[FromQuery] int page = 1,
 			[FromQuery] int pageSize = 10,
-			[FromQuery] string fileType = "pdf")
+			[FromQuery] string fileType = "pdf",
+			CancellationToken cancellationToken = default)
 		{
-			var result = await _httpCallService.DownloadFileAsync<TravelClassEntity>(fileType, null, page, pageSize, true);
+			var result = await _httpCallService.DownloadFileAsync<TravelClassEntity>(fileType, null, page, pageSize, true, cancellationToken);
 
 			if (result is null || result.HasError)
 			{

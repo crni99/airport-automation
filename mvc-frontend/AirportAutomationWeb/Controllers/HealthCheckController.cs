@@ -19,9 +19,9 @@ namespace AirportAutomation.Web.Controllers
 		}
 
 		[HttpGet]
-		public async Task<IActionResult> Index()
+		public async Task<IActionResult> Index(CancellationToken cancellationToken = default)
 		{
-			var response = await _httpCallService.GetHealthCheck<HealthCheckEntity>();
+			var response = await _httpCallService.GetHealthCheck<HealthCheckEntity>(cancellationToken);
 			if (response == null)
 			{
 				return View();

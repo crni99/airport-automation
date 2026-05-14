@@ -377,7 +377,7 @@ function updatePagination(currentPage, lastPage) {
 }
 
 function generateActionButtons(id, entityType) {
-    var openUrl = `/${entityType}/${id}`;
+    var openUrl = `/${entityType}/Details/${id}`;
     var editUrl = `/${entityType}/Edit/${id}`;
     var deleteUrl = `/${entityType}/Delete/${id}`;
 
@@ -393,7 +393,7 @@ function generateActionButtons(id, entityType) {
                 <i class="fa-solid fa-square-up-right fa-xl"></i>
             </a>`;
 
-    if (currentUserRole !== 'User') {
+    if (currentUserRole !== Roles.User) {
         buttons += `
              <a href="${editUrl}" 
                  class="btn btn-icon-edit me-3" 

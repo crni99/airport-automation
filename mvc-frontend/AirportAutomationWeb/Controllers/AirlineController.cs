@@ -29,14 +29,14 @@ namespace AirportAutomation.Web.Controllers
 
 		[HttpGet]
 		[Route("GetAirlines")]
-		public async Task<IActionResult> GetAirlines(int page = 1, int pageSize = 10)
+		public async Task<IActionResult> GetAirlines(int page = 1, int pageSize = 10, CancellationToken cancellationToken = default)
 		{
 			if (page < 1)
 			{
 				_alertService.SetAlertMessage(TempData, "invalid_page_number", false);
 				return Json(new { success = false, message = "Page number must be greater than or equal to 1." });
 			}
-			var response = await _httpCallService.GetDataList<AirlineEntity>(page, pageSize);
+			var response = await _httpCallService.GetDataList<AirlineEntity>(page, pageSize, cancellationToken);
 			if (response == null)
 			{
 				return Json(new { success = false, message = "No airlines found." });
@@ -47,9 +47,9 @@ namespace AirportAutomation.Web.Controllers
 
 		[HttpGet]
 		[Route("Details/{id:int}")]
-		public async Task<IActionResult> Details(int id)
+		public async Task<IActionResult> Details(int id, CancellationToken cancellationToken = default)
 		{
-			var response = await _httpCallService.GetData<AirlineEntity>(id);
+			var response = await _httpCallService.GetData<AirlineEntity>(id, cancellationToken);
 			if (response is null)
 			{
 				_alertService.SetAlertMessage(TempData, "data_not_found", false);
@@ -64,7 +64,7 @@ namespace AirportAutomation.Web.Controllers
 
 		[HttpGet]
 		[Route("GetAirlinesByName")]
-		public async Task<IActionResult> GetAirlinesByName([FromQuery] string name, int page = 1, int pageSize = 10)
+		public async Task<IActionResult> GetAirlinesByName([FromQuery] string name, int page = 1, int pageSize = 10, CancellationToken cancellationToken = default)
 		{
 			if (page < 1)
 			{
@@ -76,7 +76,7 @@ namespace AirportAutomation.Web.Controllers
 				_alertService.SetAlertMessage(TempData, "missing_field", false);
 				return RedirectToAction("Index");
 			}
-			var response = await _httpCallService.GetDataByName<AirlineEntity>(name, page, pageSize);
+			var response = await _httpCallService.GetDataByName<AirlineEntity>(name, page, pageSize, cancellationToken);
 			if (response == null)
 			{
 				return Json(new { success = false, message = "No airlines found." });
@@ -95,12 +95,12 @@ namespace AirportAutomation.Web.Controllers
 		[HttpPost]
 		[Route("CreateAirline")]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> CreateAirline(AirlineCreateViewModel airlineCreateDto)
+		public async Task<IActionResult> CreateAirline(AirlineCreateViewModel airlineCreateDto, CancellationToken cancellationToken = default)
 		{
 			if (ModelState.IsValid)
 			{
 				var airline = _mapper.Map<AirlineEntity>(airlineCreateDto);
-				var response = await _httpCallService.CreateData<AirlineEntity>(airline);
+				var response = await _httpCallService.CreateData<AirlineEntity>(airline, cancellationToken);
 				if (response is null)
 				{
 					_alertService.SetAlertMessage(TempData, "create_data_failed", false);
@@ -116,9 +116,9 @@ namespace AirportAutomation.Web.Controllers
 
 		[HttpGet]
 		[Route("Edit/{id}")]
-		public async Task<IActionResult> Edit(int id)
+		public async Task<IActionResult> Edit(int id, CancellationToken cancellationToken = default)
 		{
-			var response = await _httpCallService.GetData<AirlineEntity>(id);
+			var response = await _httpCallService.GetData<AirlineEntity>(id, cancellationToken);
 			if (response is null)
 			{
 				_alertService.SetAlertMessage(TempData, "data_not_found", false);
@@ -133,12 +133,12 @@ namespace AirportAutomation.Web.Controllers
 		[HttpPost]
 		[Route("EditAirline")]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> EditAirline(AirlineViewModel airlineDto)
+		public async Task<IActionResult> EditAirline(AirlineViewModel airlineDto, CancellationToken cancellationToken = default)
 		{
 			if (ModelState.IsValid)
 			{
 				var airline = _mapper.Map<AirlineEntity>(airlineDto);
-				var response = await _httpCallService.EditData<AirlineEntity>(airline, airline.Id);
+				var response = await _httpCallService.EditData<AirlineEntity>(airline, airline.Id, cancellationToken);
 				if (response)
 				{
 					_alertService.SetAlertMessage(TempData, "edit_data_success", true);
@@ -155,9 +155,9 @@ namespace AirportAutomation.Web.Controllers
 
 		[HttpGet]
 		[Route("Delete/{id}")]
-		public async Task<IActionResult> Delete(int id)
+		public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken = default)
 		{
-			var response = await _httpCallService.DeleteData<AirlineEntity>(id);
+			var response = await _httpCallService.DeleteData<AirlineEntity>(id, cancellationToken);
 			if (response)
 			{
 				_alertService.SetAlertMessage(TempData, "delete_data_success", true);
@@ -177,9 +177,10 @@ namespace AirportAutomation.Web.Controllers
 			[FromQuery] int page = 1,
 			[FromQuery] int pageSize = 10,
 			[FromQuery] bool getAll = false,
-			[FromQuery] string fileType = "pdf")
+			[FromQuery] string fileType = "pdf",
+			CancellationToken cancellationToken = default)
 		{
-			var result = await _httpCallService.DownloadFileAsync<AirlineEntity>(fileType, name, page, pageSize, getAll);
+			var result = await _httpCallService.DownloadFileAsync<AirlineEntity>(fileType, name, page, pageSize, getAll, cancellationToken);
 
 			if (result is null || result.HasError)
 			{
