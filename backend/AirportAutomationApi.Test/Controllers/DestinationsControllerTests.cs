@@ -156,7 +156,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task GetDestinations_InvalidPaginationParameters_ReturnsBadRequest()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			int invalidPage = -1;
 			int invalidPageSize = 0;
 			var expectedBadRequestResult = new BadRequestObjectResult("Invalid pagination parameters.");
@@ -166,7 +165,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns((false, 0, expectedBadRequestResult));
 
 			// Act
-			var result = await _controller.GetDestinations(cancellationToken, invalidPage, invalidPageSize);
+			var result = await _controller.GetDestinations(invalidPage, invalidPageSize);
 
 			// Assert
 			Assert.IsType<BadRequestObjectResult>(result.Result);
@@ -177,18 +176,17 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task GetDestinations_ReturnsNoContent_WhenNoDestinationsFound()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			int page = 1;
 			int pageSize = 10;
 
 			_paginationValidationServiceMock
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, pageSize, null));
-			_destinationServiceMock.Setup(service => service.GetDestinations(cancellationToken, It.IsAny<int>(), It.IsAny<int>()))
+			_destinationServiceMock.Setup(service => service.GetDestinations(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>()))
 				.ReturnsAsync(new List<DestinationEntity>());
 
 			// Act
-			var result = await _controller.GetDestinations(cancellationToken, page, pageSize);
+			var result = await _controller.GetDestinations(page, pageSize);
 
 			// Assert
 			Assert.IsType<NoContentResult>(result.Result);
@@ -199,18 +197,17 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task GetDestinations_ReturnsNoContent_WhenDestinationsIsNull()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			int page = 1;
 			int pageSize = 10;
 
 			_paginationValidationServiceMock
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, pageSize, null));
-			_destinationServiceMock.Setup(service => service.GetDestinations(cancellationToken, It.IsAny<int>(), It.IsAny<int>()))
+			_destinationServiceMock.Setup(service => service.GetDestinations(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>()))
 				.ReturnsAsync((List<DestinationEntity>)null);
 
 			// Act
-			var result = await _controller.GetDestinations(cancellationToken, page, pageSize);
+			var result = await _controller.GetDestinations(page, pageSize);
 
 			// Assert
 			Assert.IsType<NoContentResult>(result.Result);
@@ -221,7 +218,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task GetDestinations_ReturnsInternalServerError_WhenExceptionThrown()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			int page = 1;
 			int pageSize = 10;
 
@@ -235,11 +231,11 @@ namespace AirportAutomationApi.Test.Controllers
 					null, null))
 				.Returns<string, Func<Task<PagedResponse<DestinationDto>?>>, TimeSpan?, TimeSpan?>(
 					async (key, factory, abs, sld) => await factory());
-			_destinationServiceMock.Setup(service => service.GetDestinations(cancellationToken, It.IsAny<int>(), It.IsAny<int>()))
+			_destinationServiceMock.Setup(service => service.GetDestinations(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>()))
 				.ThrowsAsync(new Exception("Simulated exception"));
 
 			// Act & Assert
-			await Assert.ThrowsAsync<Exception>(async () => await _controller.GetDestinations(cancellationToken, page, pageSize));
+			await Assert.ThrowsAsync<Exception>(async () => await _controller.GetDestinations(page, pageSize));
 		}
 
 		[Fact]
@@ -247,7 +243,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task GetDestinations_ReturnsOk_WithPaginatedDestinations()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			int page = 1;
 			int pageSize = 10;
 			var destinations = new List<DestinationEntity>
@@ -268,10 +263,10 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns<string, Func<Task<PagedResponse<DestinationDto>?>>, TimeSpan?, TimeSpan?>(
 					async (key, factory, abs, sld) => await factory());
 			_destinationServiceMock
-				.Setup(service => service.GetDestinations(cancellationToken, page, pageSize))
+				.Setup(service => service.GetDestinations(It.IsAny<CancellationToken>(), page, pageSize))
 				.ReturnsAsync(destinations);
 			_destinationServiceMock
-				.Setup(service => service.DestinationsCount(cancellationToken, null, null))
+				.Setup(service => service.DestinationsCount(It.IsAny<CancellationToken>(), null, null))
 				.ReturnsAsync(totalItems);
 
 			var expectedData = new List<DestinationDto>
@@ -284,7 +279,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns(expectedData);
 
 			// Act
-			var result = await _controller.GetDestinations(cancellationToken, page, pageSize);
+			var result = await _controller.GetDestinations(page, pageSize);
 
 			// Assert
 			var actionResult = Assert.IsType<ActionResult<PagedResponse<DestinationDto>>>(result);
@@ -301,7 +296,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task GetDestinations_ReturnsCorrectPageData()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			int page = 2;
 			int pageSize = 5;
 			var allDestinations = new List<DestinationEntity>
@@ -330,10 +324,10 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns<string, Func<Task<PagedResponse<DestinationDto>?>>, TimeSpan?, TimeSpan?>(
 					async (key, factory, abs, sld) => await factory());
 			_destinationServiceMock
-				.Setup(service => service.GetDestinations(cancellationToken, page, pageSize))
+				.Setup(service => service.GetDestinations(It.IsAny<CancellationToken>(), page, pageSize))
 				.ReturnsAsync(pagedDestinations);
 			_destinationServiceMock
-				.Setup(service => service.DestinationsCount(cancellationToken, null, null))
+				.Setup(service => service.DestinationsCount(It.IsAny<CancellationToken>(), null, null))
 				.ReturnsAsync(allDestinations.Count);
 
 			var expectedData = new List<DestinationDto>
@@ -349,7 +343,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns(expectedData);
 
 			// Act
-			var result = await _controller.GetDestinations(cancellationToken, page, pageSize);
+			var result = await _controller.GetDestinations(page, pageSize);
 
 			// Assert
 			var actionResult = Assert.IsType<ActionResult<PagedResponse<DestinationDto>>>(result);
@@ -366,7 +360,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task GetDestinations_ReturnsCachedData_WhenCacheHit()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			int page = 1;
 			int pageSize = 10;
 			var cachedResponse = new PagedResponse<DestinationDto>(
@@ -384,7 +377,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.ReturnsAsync(cachedResponse);
 
 			// Act
-			var result = await _controller.GetDestinations(cancellationToken, page, pageSize);
+			var result = await _controller.GetDestinations(page, pageSize);
 
 			// Assert
 			var okResult = Assert.IsType<OkObjectResult>(result.Result);
@@ -397,7 +390,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task GetDestinations_SetsCache_WhenCacheMiss()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			int page = 1;
 			int pageSize = 10;
 			var destinations = new List<DestinationEntity> { new DestinationEntity { Id = 1, City = "Belgrade", Airport = "Belgrade Nikola Tesla Airport" } };
@@ -413,17 +405,17 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns<string, Func<Task<PagedResponse<DestinationDto>?>>, TimeSpan?, TimeSpan?>(
 					async (key, factory, abs, sld) => await factory());
 			_destinationServiceMock
-				.Setup(x => x.GetDestinations(cancellationToken, page, pageSize))
+				.Setup(x => x.GetDestinations(It.IsAny<CancellationToken>(), page, pageSize))
 				.ReturnsAsync(destinations);
 			_destinationServiceMock
-				.Setup(x => x.DestinationsCount(cancellationToken, null, null))
+				.Setup(x => x.DestinationsCount(It.IsAny<CancellationToken>(), null, null))
 				.ReturnsAsync(1);
 			_mapperMock
 				.Setup(m => m.Map<IEnumerable<DestinationDto>>(It.IsAny<IEnumerable<DestinationEntity>>()))
 				.Returns(new List<DestinationDto> { new DestinationDto { Id = 1, City = "Belgrade", Airport = "Belgrade Nikola Tesla Airport" } });
 
 			// Act
-			var result = await _controller.GetDestinations(cancellationToken, page, pageSize);
+			var result = await _controller.GetDestinations(page, pageSize);
 
 			// Assert
 			Assert.IsType<OkObjectResult>(result.Result);
@@ -588,7 +580,7 @@ namespace AirportAutomationApi.Test.Controllers
 			var filter = new DestinationSearchFilter();
 
 			// Act
-			var result = await _controller.SearchDestinations(CancellationToken.None, filter);
+			var result = await _controller.SearchDestinations(filter);
 
 			// Assert
 			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
@@ -609,7 +601,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns((false, 0, expectedBadRequestResult));
 
 			// Act
-			var result = await _controller.SearchDestinations(CancellationToken.None, filter, invalidPage);
+			var result = await _controller.SearchDestinations(filter, invalidPage);
 
 			// Assert
 			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
@@ -631,7 +623,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.ReturnsAsync(new List<DestinationEntity>());
 
 			// Act
-			var result = await _controller.SearchDestinations(CancellationToken.None, filter);
+			var result = await _controller.SearchDestinations(filter);
 
 			// Assert
 			Assert.IsType<NoContentResult>(result.Result);
@@ -652,7 +644,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.ReturnsAsync((List<DestinationEntity>)null);
 
 			// Act
-			var result = await _controller.SearchDestinations(CancellationToken.None, filter);
+			var result = await _controller.SearchDestinations(filter);
 
 			// Assert
 			Assert.IsType<NoContentResult>(result.Result);
@@ -690,7 +682,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns(destinationDtos);
 
 			// Act
-			var result = await _controller.SearchDestinations(CancellationToken.None, filter, page, pageSize);
+			var result = await _controller.SearchDestinations(filter, page, pageSize);
 
 			// Assert
 			var okResult = Assert.IsType<OkObjectResult>(result.Result);
@@ -716,7 +708,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.ThrowsAsync(new Exception("Simulated exception"));
 
 			// Act & Assert
-			await Assert.ThrowsAsync<Exception>(async () => await _controller.SearchDestinations(CancellationToken.None, filter));
+			await Assert.ThrowsAsync<Exception>(async () => await _controller.SearchDestinations(filter));
 		}
 
 		#endregion
@@ -991,7 +983,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.ReturnsAsync(new List<DestinationEntity>());
 
 			// Act
-			var result = await _controller.ExportToPdf(CancellationToken.None, filter, getAll: true);
+			var result = await _controller.ExportToPdf(filter, getAll: true);
 
 			// Assert
 			Assert.IsType<NoContentResult>(result);
@@ -1009,7 +1001,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.ReturnsAsync(new List<DestinationEntity>());
 
 			// Act
-			var result = await _controller.ExportToPdf(CancellationToken.None, filter);
+			var result = await _controller.ExportToPdf(filter);
 
 			// Assert
 			Assert.IsType<NoContentResult>(result);
@@ -1028,7 +1020,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.ReturnsAsync((IList<DestinationEntity>)null);
 
 			// Act
-			var result = await _controller.ExportToPdf(CancellationToken.None, filter);
+			var result = await _controller.ExportToPdf(filter);
 
 			// Assert
 			Assert.IsType<NoContentResult>(result);
@@ -1048,7 +1040,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns((false, 0, expectedBadRequestResult));
 
 			// Act
-			var result = await _controller.ExportToPdf(CancellationToken.None, filter, page: invalidPage);
+			var result = await _controller.ExportToPdf(filter, page: invalidPage);
 
 			// Assert
 			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
@@ -1062,25 +1054,22 @@ namespace AirportAutomationApi.Test.Controllers
 			// Arrange
 			var filter = new DestinationSearchFilter();
 			var destinations = new List<DestinationEntity> { new DestinationEntity { Id = 1, City = "Paris" } };
-			var pdfBytes = new byte[] { 1, 2, 3 };
+			var mockPdfBytes = new byte[] { 1, 2, 3 };
 
 			_paginationValidationServiceMock.Setup(s => s.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, 10, null));
 			_destinationServiceMock.Setup(s => s.GetDestinations(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>()))
 				.ReturnsAsync(destinations);
 			_exportServiceMock.Setup(s => s.ExportToPDF(It.IsAny<string>(), It.IsAny<IList<DestinationEntity>>()))
-				.Returns(pdfBytes);
-			_utilityServiceMock.Setup(s => s.GenerateUniqueFileName(It.IsAny<string>(), It.IsAny<FileExtension>()))
-				.Returns("TestFile.pdf");
+				.Returns(mockPdfBytes);
 
 			// Act
-			var result = await _controller.ExportToPdf(CancellationToken.None, filter);
+			var result = await _controller.ExportToPdf(filter);
 
 			// Assert
 			var fileResult = Assert.IsType<FileContentResult>(result);
 			Assert.Equal("application/pdf", fileResult.ContentType);
-			Assert.Equal("TestFile.pdf", fileResult.FileDownloadName);
-			Assert.Equal(pdfBytes, fileResult.FileContents);
+			Assert.Equal(mockPdfBytes, fileResult.FileContents);
 		}
 
 		[Fact]
@@ -1090,24 +1079,21 @@ namespace AirportAutomationApi.Test.Controllers
 			// Arrange
 			var filter = new DestinationSearchFilter { City = "Paris" };
 			var destinations = new List<DestinationEntity> { new DestinationEntity { Id = 1, City = "Paris" } };
-			var pdfBytes = new byte[] { 1, 2, 3 };
+			var mockPdfBytes = new byte[] { 1, 2, 3 };
 			_paginationValidationServiceMock.Setup(s => s.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, 10, null));
 			_destinationServiceMock.Setup(s => s.SearchDestinations(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>(), filter))
 				.ReturnsAsync(destinations);
 			_exportServiceMock.Setup(s => s.ExportToPDF(It.IsAny<string>(), It.IsAny<IList<DestinationEntity>>()))
-				.Returns(pdfBytes);
-			_utilityServiceMock.Setup(s => s.GenerateUniqueFileName(It.IsAny<string>(), It.IsAny<FileExtension>()))
-				.Returns("TestFile.pdf");
+				.Returns(mockPdfBytes);
 
 			// Act
-			var result = await _controller.ExportToPdf(CancellationToken.None, filter);
+			var result = await _controller.ExportToPdf(filter);
 
 			// Assert
 			var fileResult = Assert.IsType<FileContentResult>(result);
 			Assert.Equal("application/pdf", fileResult.ContentType);
-			Assert.Equal("TestFile.pdf", fileResult.FileDownloadName);
-			Assert.Equal(pdfBytes, fileResult.FileContents);
+			Assert.Equal(mockPdfBytes, fileResult.FileContents);
 		}
 
 		[Fact]
@@ -1116,23 +1102,20 @@ namespace AirportAutomationApi.Test.Controllers
 		{
 			// Arrange
 			var destinations = new List<DestinationEntity> { new DestinationEntity { Id = 1, City = "Paris" } };
-			var pdfBytes = new byte[] { 1, 2, 3 };
+			var mockPdfBytes = new byte[] { 1, 2, 3 };
 
 			_destinationServiceMock.Setup(s => s.GetAllDestinations(It.IsAny<CancellationToken>()))
 				.ReturnsAsync(destinations);
 			_exportServiceMock.Setup(s => s.ExportToPDF(It.IsAny<string>(), It.IsAny<IList<DestinationEntity>>()))
-				.Returns(pdfBytes);
-			_utilityServiceMock.Setup(s => s.GenerateUniqueFileName(It.IsAny<string>(), It.IsAny<FileExtension>()))
-				.Returns("TestFile.pdf");
+				.Returns(mockPdfBytes);
 
 			// Act
-			var result = await _controller.ExportToPdf(CancellationToken.None, new DestinationSearchFilter(), getAll: true);
+			var result = await _controller.ExportToPdf(new DestinationSearchFilter(), getAll: true);
 
 			// Assert
 			var fileResult = Assert.IsType<FileContentResult>(result);
 			Assert.Equal("application/pdf", fileResult.ContentType);
-			Assert.Equal("TestFile.pdf", fileResult.FileDownloadName);
-			Assert.Equal(pdfBytes, fileResult.FileContents);
+			Assert.Equal(mockPdfBytes, fileResult.FileContents);
 		}
 
 		[Fact]
@@ -1147,7 +1130,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns((byte[])null);
 
 			// Act
-			var result = await _controller.ExportToPdf(CancellationToken.None, new DestinationSearchFilter(), getAll: true);
+			var result = await _controller.ExportToPdf(new DestinationSearchFilter(), getAll: true);
 
 			// Assert
 			var statusCodeResult = Assert.IsType<ObjectResult>(result);
@@ -1169,7 +1152,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.ReturnsAsync(new List<DestinationEntity>());
 
 			// Act
-			var result = await _controller.ExportToExcel(CancellationToken.None, filter, getAll: true);
+			var result = await _controller.ExportToExcel(filter, getAll: true);
 
 			// Assert
 			Assert.IsType<NoContentResult>(result);
@@ -1187,7 +1170,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.ReturnsAsync(new List<DestinationEntity>());
 
 			// Act
-			var result = await _controller.ExportToExcel(CancellationToken.None, filter);
+			var result = await _controller.ExportToExcel(filter);
 
 			// Assert
 			Assert.IsType<NoContentResult>(result);
@@ -1207,7 +1190,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns((false, 0, expectedBadRequestResult));
 
 			// Act
-			var result = await _controller.ExportToExcel(CancellationToken.None, filter, page: invalidPage);
+			var result = await _controller.ExportToExcel(filter, page: invalidPage);
 
 			// Assert
 			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
@@ -1229,16 +1212,13 @@ namespace AirportAutomationApi.Test.Controllers
 				.ReturnsAsync(destinations);
 			_exportServiceMock.Setup(s => s.ExportToExcel(It.IsAny<string>(), It.IsAny<IList<DestinationEntity>>()))
 				.Returns(excelBytes);
-			_utilityServiceMock.Setup(s => s.GenerateUniqueFileName(It.IsAny<string>(), It.IsAny<FileExtension>()))
-				.Returns("TestFile.xlsx");
 
 			// Act
-			var result = await _controller.ExportToExcel(CancellationToken.None, filter);
+			var result = await _controller.ExportToExcel(filter);
 
 			// Assert
 			var fileResult = Assert.IsType<FileContentResult>(result);
 			Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileResult.ContentType);
-			Assert.Equal("TestFile.xlsx", fileResult.FileDownloadName);
 			Assert.Equal(excelBytes, fileResult.FileContents);
 		}
 
@@ -1256,16 +1236,13 @@ namespace AirportAutomationApi.Test.Controllers
 				.ReturnsAsync(destinations);
 			_exportServiceMock.Setup(s => s.ExportToExcel(It.IsAny<string>(), It.IsAny<IList<DestinationEntity>>()))
 				.Returns(excelBytes);
-			_utilityServiceMock.Setup(s => s.GenerateUniqueFileName(It.IsAny<string>(), It.IsAny<FileExtension>()))
-				.Returns("TestFile.xlsx");
 
 			// Act
-			var result = await _controller.ExportToExcel(CancellationToken.None, filter);
+			var result = await _controller.ExportToExcel(filter);
 
 			// Assert
 			var fileResult = Assert.IsType<FileContentResult>(result);
 			Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileResult.ContentType);
-			Assert.Equal("TestFile.xlsx", fileResult.FileDownloadName);
 			Assert.Equal(excelBytes, fileResult.FileContents);
 		}
 
@@ -1281,16 +1258,13 @@ namespace AirportAutomationApi.Test.Controllers
 				.ReturnsAsync(destinations);
 			_exportServiceMock.Setup(s => s.ExportToExcel(It.IsAny<string>(), It.IsAny<IList<DestinationEntity>>()))
 				.Returns(excelBytes);
-			_utilityServiceMock.Setup(s => s.GenerateUniqueFileName(It.IsAny<string>(), It.IsAny<FileExtension>()))
-				.Returns("TestFile.xlsx");
 
 			// Act
-			var result = await _controller.ExportToExcel(CancellationToken.None, new DestinationSearchFilter(), getAll: true);
+			var result = await _controller.ExportToExcel(new DestinationSearchFilter(), getAll: true);
 
 			// Assert
 			var fileResult = Assert.IsType<FileContentResult>(result);
 			Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileResult.ContentType);
-			Assert.Equal("TestFile.xlsx", fileResult.FileDownloadName);
 			Assert.Equal(excelBytes, fileResult.FileContents);
 		}
 
@@ -1306,7 +1280,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns((byte[])null);
 
 			// Act
-			var result = await _controller.ExportToExcel(CancellationToken.None, new DestinationSearchFilter(), getAll: true);
+			var result = await _controller.ExportToExcel(new DestinationSearchFilter(), getAll: true);
 
 			// Assert
 			var statusCodeResult = Assert.IsType<ObjectResult>(result);
@@ -1326,7 +1300,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns(Array.Empty<byte>());
 
 			// Act
-			var result = await _controller.ExportToExcel(CancellationToken.None, new DestinationSearchFilter(), getAll: true);
+			var result = await _controller.ExportToExcel(new DestinationSearchFilter(), getAll: true);
 
 			// Assert
 			var statusCodeResult = Assert.IsType<ObjectResult>(result);
@@ -1346,7 +1320,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.ReturnsAsync((IList<DestinationEntity>)null);
 
 			// Act
-			var result = await _controller.ExportToExcel(CancellationToken.None, filter);
+			var result = await _controller.ExportToExcel(filter);
 
 			// Assert
 			Assert.IsType<NoContentResult>(result);
@@ -1362,7 +1336,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.ReturnsAsync((IList<DestinationEntity>)null);
 
 			// Act
-			var result = await _controller.ExportToExcel(CancellationToken.None, filter, getAll: true);
+			var result = await _controller.ExportToExcel(filter, getAll: true);
 
 			// Assert
 			Assert.IsType<NoContentResult>(result);

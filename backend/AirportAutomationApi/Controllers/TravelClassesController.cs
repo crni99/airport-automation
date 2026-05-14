@@ -71,9 +71,9 @@ namespace AirportAutomation.Api.Controllers
 		/// <summary>
 		/// Endpoint for retrieving a paginated list of travel classes.
 		/// </summary>
-		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <param name="page">The page number for pagination (optional).</param>
 		/// <param name="pageSize">The number of items per page (optional).</param>
+		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <returns>A paginated list of travel classes.</returns>
 		/// <response code="200">Returns a list of travel classes wrapped in a <see cref="PagedResponse{TravelClassDto}"/>.</response>
 		/// <response code="204">If no travel classes are found.</response>
@@ -85,15 +85,15 @@ namespace AirportAutomation.Api.Controllers
 		[ProducesResponseType(400)]
 		[ProducesResponseType(401)]
 		public Task<ActionResult<PagedResponse<TravelClassDto>>> GetTravelClasses(
-			CancellationToken ct,
 			[FromQuery] int page = 1,
-			[FromQuery] int pageSize = 10)
+			[FromQuery] int pageSize = 10,
+			CancellationToken cancellationToken = default)
 			=> GetPagedAsync<TravelClassEntity, TravelClassDto>(
 				_cacheService, _paginationValidationService, _mapper, _logger,
 				page, pageSize, maxPageSize,
 				cacheKey: CacheKeys.TravelClasses(page, pageSize),
-				fetchItems: () => _travelClassService.GetTravelClasses(ct, page, pageSize),
-				fetchCount: () => _travelClassService.TravelClassesCount(ct));
+				fetchItems: () => _travelClassService.GetTravelClasses(cancellationToken, page, pageSize),
+				fetchCount: () => _travelClassService.TravelClassesCount(cancellationToken));
 
 		/// <summary>
 		/// Endpoint for retrieving a single travel class.
@@ -119,9 +119,9 @@ namespace AirportAutomation.Api.Controllers
 		/// <summary>
 		/// Endpoint for exporting travel class data to PDF.
 		/// </summary>
-		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <param name="page">The page number for pagination (optional, default is 1).</param>
 		/// <param name="pageSize">The page size for pagination (optional, default is 10).</param>
+		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <returns>Returns the generated PDF document.</returns>
 		/// <response code="200">Returns the generated PDF document.</response>
 		/// <response code="204">No travel classes found.</response>
@@ -138,38 +138,29 @@ namespace AirportAutomation.Api.Controllers
 		[ProducesResponseType(401)]
 		[ProducesResponseType(403)]
 		[ProducesResponseType(500)]
-		public async Task<ActionResult> ExportToPdf(
-			CancellationToken cancellationToken,
+		public Task<ActionResult> ExportToPdf(
 			[FromQuery] int page = 1,
-			[FromQuery] int pageSize = 10)
-		{
-			var (isValid, correctedPageSize, result) = _paginationValidationService.ValidatePaginationParameters(page, pageSize, maxPageSize);
-			if (!isValid)
-			{
-				return result;
-			}
-			var travelClasses = await _travelClassService.GetTravelClasses(cancellationToken, page, correctedPageSize);
-			if (travelClasses is null || !travelClasses.Any())
-			{
-				_logger.LogInformation("No travel classses found for page {Page}, pageSize {PageSize}.", page, pageSize);
-				return NoContent();
-			}
-			var pdf = _exportService.ExportToPDF("Travel Classes", travelClasses);
-			if (pdf == null)
-			{
-				_logger.LogError("PDF generation failed.");
-				return StatusCode(500, "Failed to generate PDF file.");
-			}
-			string fileName = _utilityService.GenerateUniqueFileName("TravelClasses", FileExtension.Pdf);
-			return File(pdf, "application/pdf", fileName);
-		}
+			[FromQuery] int pageSize = 10,
+			CancellationToken cancellationToken = default)
+			=> ExportAsync<TravelClassEntity>(
+				entityName: "TravelClasses",
+				fileType: FileExtension.Pdf,
+				exportService: _exportService,
+				paginationValidation: _paginationValidationService,
+				inputValidation: _inputValidationService,
+				logger: _logger,
+				page, pageSize, maxPageSize,
+				getAll: false,
+				fetchAll: () => Task.FromResult<IList<TravelClassEntity>>(new List<TravelClassEntity>()),
+				fetchPaged: (p, ps) => _travelClassService.GetTravelClasses(cancellationToken, p, ps),
+				fetchSearch: null);
 
 		/// <summary>
 		/// Endpoint for exporting travel class data to Excel.
 		/// </summary>
-		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <param name="page">The page number for pagination (optional, default is 1).</param>
 		/// <param name="pageSize">The page size for pagination (optional, default is 10).</param>
+		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <returns>Returns the generated Excel document.</returns>
 		/// <response code="200">Returns the generated Excel document.</response>
 		/// <response code="204">No travel classes found.</response>
@@ -186,31 +177,22 @@ namespace AirportAutomation.Api.Controllers
 		[ProducesResponseType(401)]
 		[ProducesResponseType(403)]
 		[ProducesResponseType(500)]
-		public async Task<ActionResult> ExportToExcel(
-			CancellationToken cancellationToken,
+		public Task<ActionResult> ExportToExcel(
 			[FromQuery] int page = 1,
-			[FromQuery] int pageSize = 10)
-		{
-			var (isValid, correctedPageSize, result) = _paginationValidationService.ValidatePaginationParameters(page, pageSize, maxPageSize);
-			if (!isValid)
-			{
-				return result;
-			}
-			var travelClasses = await _travelClassService.GetTravelClasses(cancellationToken, page, correctedPageSize);
-			if (travelClasses == null || !travelClasses.Any())
-			{
-				_logger.LogInformation("No travel classes found for page {Page}, pageSize {PageSize}.", page, pageSize);
-				return NoContent();
-			}
-			var excel = _exportService.ExportToExcel("TravelClasses", travelClasses);
-			if (excel == null || excel.Length == 0)
-			{
-				_logger.LogError("Excel generation failed.");
-				return StatusCode(500, "Failed to generate Excel file.");
-			}
-			string fileName = _utilityService.GenerateUniqueFileName("TravelClasses", FileExtension.Xlsx);
-			return File(excel, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
-		}
+			[FromQuery] int pageSize = 10,
+			CancellationToken cancellationToken = default)
+			=> ExportAsync<TravelClassEntity>(
+				entityName: "TravelClasses",
+				fileType: FileExtension.Xlsx,
+				exportService: _exportService,
+				paginationValidation: _paginationValidationService,
+				inputValidation: _inputValidationService,
+				logger: _logger,
+				page, pageSize, maxPageSize,
+				getAll: false,
+				fetchAll: () => Task.FromResult<IList<TravelClassEntity>>(new List<TravelClassEntity>()),
+				fetchPaged: (p, ps) => _travelClassService.GetTravelClasses(cancellationToken, p, ps),
+				fetchSearch: null);
 
 	}
 }

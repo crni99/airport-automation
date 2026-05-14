@@ -74,9 +74,9 @@ namespace AirportAutomation.Api.Controllers
 		/// <summary>
 		/// Endpoint for retrieving a paginated list of destinations.
 		/// </summary>
-		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <param name="page">The page number for pagination (optional).</param>
 		/// <param name="pageSize">The number of items per page (optional).</param>
+		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <returns>A paginated list of destinations.</returns>
 		/// <response code="200">Returns a list of destinations wrapped in a <see cref="PagedResponse{DestinationDto}"/>.</response>
 		/// <response code="204">If no destinations are found.</response>
@@ -88,15 +88,15 @@ namespace AirportAutomation.Api.Controllers
 		[ProducesResponseType(400)]
 		[ProducesResponseType(401)]
 		public Task<ActionResult<PagedResponse<DestinationDto>>> GetDestinations(
-			CancellationToken ct,
 			[FromQuery] int page = 1,
-			[FromQuery] int pageSize = 10)
+			[FromQuery] int pageSize = 10,
+			CancellationToken cancellationToken = default)
 			=> GetPagedAsync<DestinationEntity, DestinationDto>(
 				_cacheService, _paginationValidationService, _mapper, _logger,
 				page, pageSize, maxPageSize,
 				cacheKey: CacheKeys.Destinations(page, pageSize),
-				fetchItems: () => _destinationService.GetDestinations(ct, page, pageSize),
-				fetchCount: () => _destinationService.DestinationsCount(ct));
+				fetchItems: () => _destinationService.GetDestinations(cancellationToken, page, pageSize),
+				fetchCount: () => _destinationService.DestinationsCount(cancellationToken));
 
 		/// <summary>
 		/// Endpoint for retrieving a single destination.
@@ -122,10 +122,10 @@ namespace AirportAutomation.Api.Controllers
 		/// <summary>
 		/// Endpoint for retrieving a paginated list of destinations matching the specified search filter criteria.
 		/// </summary>
-		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <param name="filter">The search filter containing destination fields to filter by.</param>
 		/// <param name="page">The page number for pagination (optional, default is 1).</param>
 		/// <param name="pageSize">The number of items per page for pagination (optional, default is 10).</param>
+		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <returns>A paged response containing the list of destinations that match the filter criteria.</returns>
 		/// <response code="200">Returns a paged list of destinations if found.</response>
 		/// <response code="204">If no destinations matching the filter criteria are found.</response>
@@ -137,10 +137,10 @@ namespace AirportAutomation.Api.Controllers
 		[ProducesResponseType(400)]
 		[ProducesResponseType(401)]
 		public async Task<ActionResult<PagedResponse<DestinationDto>>> SearchDestinations(
-			CancellationToken cancellationToken,
 			[FromQuery] DestinationSearchFilter filter,
 			[FromQuery] int page = 1,
-			[FromQuery] int pageSize = 10)
+			[FromQuery] int pageSize = 10,
+			CancellationToken cancellationToken = default)
 		{
 			if (filter.IsEmpty())
 			{
@@ -324,11 +324,11 @@ namespace AirportAutomation.Api.Controllers
 		/// <summary>
 		/// Endpoint for exporting destination data to PDF.
 		/// </summary>
-		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <param name="filter">The search filter containing destination fields to filter by.</param>
 		/// <param name="page">The page number for pagination (optional, default is 1).</param>
 		/// <param name="pageSize">The page size for pagination (optional, default is 10).</param>
 		/// <param name="getAll">Flag indicating whether to retrieve all data (optional, default is false).</param>
+		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <returns>Returns the generated PDF document.</returns>
 		/// <response code="200">Returns the generated PDF document.</response>
 		/// <response code="204">No destinations found.</response>
@@ -345,58 +345,34 @@ namespace AirportAutomation.Api.Controllers
 		[ProducesResponseType(401)]
 		[ProducesResponseType(403)]
 		[ProducesResponseType(500)]
-		public async Task<ActionResult> ExportToPdf(
-			CancellationToken cancellationToken,
+		public Task<ActionResult> ExportToPdf(
 			[FromQuery] DestinationSearchFilter filter,
 			[FromQuery] int page = 1,
 			[FromQuery] int pageSize = 10,
-			[FromQuery] bool getAll = false)
-		{
-			IList<DestinationEntity> destinations;
-			if (getAll)
-			{
-				destinations = await _destinationService.GetAllDestinations(cancellationToken);
-			}
-			else
-			{
-				var (isValid, correctedPageSize, result) = _paginationValidationService.ValidatePaginationParameters(page, pageSize, maxPageSize);
-				if (!isValid)
-				{
-					return result;
-				}
-				if (filter.IsEmpty())
-				{
-					destinations = await _destinationService.GetDestinations(cancellationToken, page, correctedPageSize);
-				}
-				else
-				{
-					destinations = await _destinationService.SearchDestinations(cancellationToken, page, correctedPageSize, filter);
-				}
-			}
-			if (destinations is null || !destinations.Any())
-			{
-				_logger.LogInformation("No destinations found for page {Page}, pageSize {PageSize}, getAll {GetAll}, filter {Filter}.",
-					page, pageSize, getAll, JsonConvert.SerializeObject(filter));
-				return NoContent();
-			}
-			var pdf = _exportService.ExportToPDF("Destinations", destinations);
-			if (pdf == null)
-			{
-				_logger.LogError("PDF generation failed.");
-				return StatusCode(500, "Failed to generate PDF file.");
-			}
-			string fileName = _utilityService.GenerateUniqueFileName("Destinations", FileExtension.Pdf);
-			return File(pdf, "application/pdf", fileName);
-		}
+			[FromQuery] bool getAll = false,
+			CancellationToken cancellationToken = default)
+			=> ExportAsync<DestinationEntity>(
+				entityName: "Destinations",
+				fileType: FileExtension.Pdf,
+				exportService: _exportService,
+				paginationValidation: _paginationValidationService,
+				inputValidation: _inputValidationService,
+				logger: _logger,
+				page, pageSize, maxPageSize, getAll,
+				fetchAll: () => _destinationService.GetAllDestinations(cancellationToken),
+				fetchPaged: (p, ps) => _destinationService.GetDestinations(cancellationToken, p, ps),
+				fetchSearch: !filter.IsEmpty()
+					? (p, ps) => _destinationService.SearchDestinations(cancellationToken, p, ps, filter)
+					: null);
 
 		/// <summary>
 		/// Endpoint for exporting destination data to Excel.
 		/// </summary>
-		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <param name="filter">The search filter containing destination fields to filter by.</param>
 		/// <param name="page">The page number for pagination (optional, default is 1).</param>
 		/// <param name="pageSize">The page size for pagination (optional, default is 10).</param>
 		/// <param name="getAll">Flag indicating whether to retrieve all data (optional, default is false).</param>
+		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <returns>Returns the generated Excel document.</returns>
 		/// <response code="200">Returns the generated Excel document.</response>
 		/// <response code="204">No destinations found.</response>
@@ -413,49 +389,25 @@ namespace AirportAutomation.Api.Controllers
 		[ProducesResponseType(401)]
 		[ProducesResponseType(403)]
 		[ProducesResponseType(500)]
-		public async Task<ActionResult> ExportToExcel(
-			CancellationToken cancellationToken,
+		public Task<ActionResult> ExportToExcel(
 			[FromQuery] DestinationSearchFilter filter,
 			[FromQuery] int page = 1,
 			[FromQuery] int pageSize = 10,
-			[FromQuery] bool getAll = false)
-		{
-			IList<DestinationEntity> destinations;
-			if (getAll)
-			{
-				destinations = await _destinationService.GetAllDestinations(cancellationToken);
-			}
-			else
-			{
-				var (isValid, correctedPageSize, result) = _paginationValidationService.ValidatePaginationParameters(page, pageSize, maxPageSize);
-				if (!isValid)
-				{
-					return result;
-				}
-				if (filter.IsEmpty())
-				{
-					destinations = await _destinationService.GetDestinations(cancellationToken, page, correctedPageSize);
-				}
-				else
-				{
-					destinations = await _destinationService.SearchDestinations(cancellationToken, page, correctedPageSize, filter);
-				}
-			}
-			if (destinations is null || !destinations.Any())
-			{
-				_logger.LogInformation("No destinations found for page {Page}, pageSize {PageSize}, getAll {GetAll}, filter {Filter}.",
-					page, pageSize, getAll, JsonConvert.SerializeObject(filter));
-				return NoContent();
-			}
-			var excel = _exportService.ExportToExcel("Destinations", destinations);
-			if (excel == null || excel.Length == 0)
-			{
-				_logger.LogError("Excel generation failed.");
-				return StatusCode(500, "Failed to generate Excel file.");
-			}
-			string fileName = _utilityService.GenerateUniqueFileName("Destinations", FileExtension.Xlsx);
-			return File(excel, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
-		}
+			[FromQuery] bool getAll = false,
+			CancellationToken cancellationToken = default)
+			=> ExportAsync<DestinationEntity>(
+				entityName: "Destinations",
+				fileType: FileExtension.Xlsx,
+				exportService: _exportService,
+				paginationValidation: _paginationValidationService,
+				inputValidation: _inputValidationService,
+				logger: _logger,
+				page, pageSize, maxPageSize, getAll,
+				fetchAll: () => _destinationService.GetAllDestinations(cancellationToken),
+				fetchPaged: (p, ps) => _destinationService.GetDestinations(cancellationToken, p, ps),
+				fetchSearch: !filter.IsEmpty()
+					? (p, ps) => _destinationService.SearchDestinations(cancellationToken, p, ps, filter)
+					: null);
 
 	}
 }

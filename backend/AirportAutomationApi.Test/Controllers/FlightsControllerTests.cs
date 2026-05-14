@@ -162,7 +162,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task GetFlights_InvalidPaginationParameters_ReturnsBadRequest()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			int invalidPage = -1;
 			int invalidPageSize = 0;
 			var expectedBadRequestResult = new BadRequestObjectResult("Invalid pagination parameters.");
@@ -172,7 +171,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns((false, 0, expectedBadRequestResult));
 
 			// Act
-			var result = await _controller.GetFlights(cancellationToken, invalidPage, invalidPageSize);
+			var result = await _controller.GetFlights(invalidPage, invalidPageSize);
 
 			// Assert
 			Assert.IsType<BadRequestObjectResult>(result.Result);
@@ -183,18 +182,17 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task GetFlights_ReturnsNoContent_WhenNoFlightsFound()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			int page = 1;
 			int pageSize = 10;
 
 			_paginationValidationServiceMock
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, pageSize, null));
-			_flightServiceMock.Setup(service => service.GetFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>()))
+			_flightServiceMock.Setup(service => service.GetFlights(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>()))
 				.ReturnsAsync(new List<FlightEntity>());
 
 			// Act
-			var result = await _controller.GetFlights(cancellationToken, page, pageSize);
+			var result = await _controller.GetFlights(page, pageSize);
 
 			// Assert
 			Assert.IsType<NoContentResult>(result.Result);
@@ -205,18 +203,17 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task GetFlights_ReturnsNoContent_WhenFlightServiceReturnsNull()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			int page = 1;
 			int pageSize = 10;
 
 			_paginationValidationServiceMock
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, pageSize, null));
-			_flightServiceMock.Setup(service => service.GetFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>()))
+			_flightServiceMock.Setup(service => service.GetFlights(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>()))
 				.ReturnsAsync((List<FlightEntity>)null);
 
 			// Act
-			var result = await _controller.GetFlights(cancellationToken, page, pageSize);
+			var result = await _controller.GetFlights(page, pageSize);
 
 			// Assert
 			Assert.IsType<NoContentResult>(result.Result);
@@ -227,7 +224,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task GetFlights_ReturnsInternalServerError_WhenExceptionThrown()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			int page = 1;
 			int pageSize = 10;
 
@@ -241,11 +237,11 @@ namespace AirportAutomationApi.Test.Controllers
 					null, null))
 				.Returns<string, Func<Task<PagedResponse<FlightDto>?>>, TimeSpan?, TimeSpan?>(
 					async (key, factory, abs, sld) => await factory());
-			_flightServiceMock.Setup(service => service.GetFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>()))
+			_flightServiceMock.Setup(service => service.GetFlights(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>()))
 				.ThrowsAsync(new Exception("Simulated exception"));
 
 			// Act & Assert
-			await Assert.ThrowsAsync<Exception>(async () => await _controller.GetFlights(cancellationToken, page, pageSize));
+			await Assert.ThrowsAsync<Exception>(async () => await _controller.GetFlights(page, pageSize));
 		}
 
 		[Fact]
@@ -253,7 +249,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task GetFlights_ReturnsOk_WithPaginatedFlights()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			int page = 1;
 			int pageSize = 10;
 			var flights = new List<FlightEntity>
@@ -274,10 +269,10 @@ namespace AirportAutomationApi.Test.Controllers
 			.Returns<string, Func<Task<PagedResponse<FlightDto>?>>, TimeSpan?, TimeSpan?>(
 				async (key, factory, abs, sld) => await factory());
 			_flightServiceMock
-				.Setup(service => service.GetFlights(cancellationToken, page, pageSize))
+				.Setup(service => service.GetFlights(It.IsAny<CancellationToken>(), page, pageSize))
 				.ReturnsAsync(flights);
 			_flightServiceMock
-				.Setup(service => service.FlightsCount(cancellationToken, null, null))
+				.Setup(service => service.FlightsCount(It.IsAny<CancellationToken>(), null, null))
 				.ReturnsAsync(totalItems);
 
 			var expectedData = new List<FlightDto>
@@ -290,7 +285,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns(expectedData);
 
 			// Act
-			var result = await _controller.GetFlights(cancellationToken, page, pageSize);
+			var result = await _controller.GetFlights(page, pageSize);
 
 			// Assert
 			var actionResult = Assert.IsType<ActionResult<PagedResponse<FlightDto>>>(result);
@@ -307,7 +302,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task GetFlights_ReturnsCorrectPageData()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			int page = 2;
 			int pageSize = 5;
 			var allFlights = new List<FlightEntity>
@@ -336,10 +330,10 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns<string, Func<Task<PagedResponse<FlightDto>?>>, TimeSpan?, TimeSpan?>(
 					async (key, factory, abs, sld) => await factory());
 			_flightServiceMock
-				.Setup(service => service.GetFlights(cancellationToken, page, pageSize))
+				.Setup(service => service.GetFlights(It.IsAny<CancellationToken>(), page, pageSize))
 				.ReturnsAsync(pagedFlights);
 			_flightServiceMock
-				.Setup(service => service.FlightsCount(cancellationToken, null, null))
+				.Setup(service => service.FlightsCount(It.IsAny<CancellationToken>(), null, null))
 				.ReturnsAsync(allFlights.Count);
 
 			var expectedData = new List<FlightDto>
@@ -355,7 +349,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns(expectedData);
 
 			// Act
-			var result = await _controller.GetFlights(cancellationToken, page, pageSize);
+			var result = await _controller.GetFlights(page, pageSize);
 
 			// Assert
 			var actionResult = Assert.IsType<ActionResult<PagedResponse<FlightDto>>>(result);
@@ -372,7 +366,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task GetFlights_ReturnsCachedData_WhenCacheHit()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			int page = 1;
 			int pageSize = 10;
 			var cachedResponse = new PagedResponse<FlightDto>(
@@ -390,7 +383,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.ReturnsAsync(cachedResponse);
 
 			// Act
-			var result = await _controller.GetFlights(cancellationToken, page, pageSize);
+			var result = await _controller.GetFlights(page, pageSize);
 
 			// Assert
 			var okResult = Assert.IsType<OkObjectResult>(result.Result);
@@ -403,7 +396,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task GetFlights_SetsCache_WhenCacheMiss()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			int page = 1;
 			int pageSize = 10;
 			var flights = new List<FlightEntity> { new FlightEntity { Id = 1, DepartureDate = new DateOnly(2023, 09, 20), DepartureTime = new TimeOnly(09, 51, 00), AirlineId = 1, DestinationId = 1, PilotId = 1 } };
@@ -419,17 +411,17 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns<string, Func<Task<PagedResponse<FlightDto>?>>, TimeSpan?, TimeSpan?>(
 					async (key, factory, abs, sld) => await factory());
 			_flightServiceMock
-				.Setup(x => x.GetFlights(cancellationToken, page, pageSize))
+				.Setup(x => x.GetFlights(It.IsAny<CancellationToken>(), page, pageSize))
 				.ReturnsAsync(flights);
 			_flightServiceMock
-				.Setup(x => x.FlightsCount(cancellationToken, null, null))
+				.Setup(x => x.FlightsCount(It.IsAny<CancellationToken>(), null, null))
 				.ReturnsAsync(1);
 			_mapperMock
 				.Setup(m => m.Map<IEnumerable<FlightDto>>(It.IsAny<IEnumerable<FlightEntity>>()))
 				.Returns(new List<FlightDto> { new FlightDto { Id = 1, DepartureDate = new DateOnly(2023, 09, 20), DepartureTime = new TimeOnly(09, 51, 00), AirlineId = 1, DestinationId = 1, PilotId = 1 } });
 
 			// Act
-			var result = await _controller.GetFlights(cancellationToken, page, pageSize);
+			var result = await _controller.GetFlights(page, pageSize);
 
 			// Assert
 			Assert.IsType<OkObjectResult>(result.Result);
@@ -590,7 +582,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task SearchFlights_NoDatesProvided_ReturnsBadRequest()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			DateOnly? startDate = null;
 			DateOnly? endDate = null;
 			var expectedErrorMessage = "Both start date and end date are missing in the request.";
@@ -600,7 +591,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns((true, 10, new OkResult()));
 
 			// Act
-			var result = await _controller.SearchFlights(cancellationToken, startDate, endDate);
+			var result = await _controller.SearchFlights(startDate, endDate);
 
 			// Assert
 			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
@@ -612,7 +603,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task SearchFlights_InvalidStartDateProvided_ReturnsBadRequest()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var startDate = new DateOnly(1000, 1, 1);
 			var endDate = new DateOnly(2024, 12, 1);
 			var expectedErrorMessage = "Invalid input. The start and end dates must be valid dates.";
@@ -629,7 +619,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns(true);
 
 			// Act
-			var result = await _controller.SearchFlights(cancellationToken, startDate, endDate);
+			var result = await _controller.SearchFlights(startDate, endDate);
 
 			// Assert
 			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
@@ -641,7 +631,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task SearchFlights_InvalidEndDateProvided_ReturnsBadRequest()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var startDate = new DateOnly(2024, 1, 1);
 			var endDate = new DateOnly(1000, 12, 1);
 			var expectedErrorMessage = "Invalid input. The start and end dates must be valid dates.";
@@ -658,7 +647,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns(false);
 
 			// Act
-			var result = await _controller.SearchFlights(cancellationToken, startDate, endDate);
+			var result = await _controller.SearchFlights(startDate, endDate);
 
 			// Assert
 			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
@@ -670,7 +659,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task SearchFlights_InvalidPaginationParameters_ReturnsBadRequest()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			DateOnly startDate = new DateOnly();
 			int invalidPage = -1;
 			int invalidPageSize = 0;
@@ -684,7 +672,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns((false, 0, expectedBadRequestResult));
 
 			// Act
-			var result = await _controller.SearchFlights(cancellationToken, startDate, null, invalidPage, invalidPageSize);
+			var result = await _controller.SearchFlights(startDate, null, invalidPage, invalidPageSize);
 
 			// Assert
 			Assert.IsType<BadRequestObjectResult>(result.Result);
@@ -695,7 +683,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task SearchFlights_ValidDates_NoFlightsFound_ReturnsNoContent()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var startDate = new DateOnly(2024, 1, 1);
 			var endDate = new DateOnly(2024, 1, 31);
 
@@ -710,18 +697,18 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.IsValidDateOnly(endDate))
 				.Returns(true);
 			_flightServiceMock
-				.Setup(x => x.SearchFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
+				.Setup(x => x.SearchFlights(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
 				.ReturnsAsync(new List<FlightEntity>());
 			_flightServiceMock
-				.Setup(x => x.FlightsCount(cancellationToken, startDate, endDate))
+				.Setup(x => x.FlightsCount(It.IsAny<CancellationToken>(), startDate, endDate))
 				.ReturnsAsync(0);
 
 			// Act
-			var result = await _controller.SearchFlights(cancellationToken, startDate, endDate);
+			var result = await _controller.SearchFlights(startDate, endDate);
 
 			// Assert
 			var notFoundResult = Assert.IsType<NoContentResult>(result.Result);
-			var flights = await _flightServiceMock.Object.SearchFlights(cancellationToken, 1, 10, startDate, endDate);
+			var flights = await _flightServiceMock.Object.SearchFlights(It.IsAny<CancellationToken>(), 1, 10, startDate, endDate);
 			Assert.Empty(flights);
 		}
 
@@ -730,7 +717,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task SearchFlights_ServiceReturnsNull_ReturnsNoContent()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var startDate = new DateOnly(2024, 1, 1);
 			var endDate = new DateOnly(2024, 1, 31);
 
@@ -745,11 +731,11 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.IsValidDateOnly(endDate))
 				.Returns(true);
 			_flightServiceMock
-				.Setup(x => x.SearchFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
+				.Setup(x => x.SearchFlights(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
 				.ReturnsAsync((List<FlightEntity>)null);
 
 			// Act
-			var result = await _controller.SearchFlights(cancellationToken, startDate, endDate);
+			var result = await _controller.SearchFlights(startDate, endDate);
 
 			// Assert
 			Assert.IsType<NoContentResult>(result.Result);
@@ -760,7 +746,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task SearchFlights_ReturnsPagedListOfFlights_WhenFlightsFound()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			DateOnly startDate = new DateOnly();
 			DateOnly endDate = new DateOnly();
 			int validPage = 1;
@@ -779,17 +764,17 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.ValidatePaginationParameters(validPage, validPageSize, It.IsAny<int>()))
 				.Returns((true, validPageSize, null));
 			_flightServiceMock
-				.Setup(service => service.SearchFlights(cancellationToken, validPage, validPageSize, startDate, endDate))
+				.Setup(service => service.SearchFlights(It.IsAny<CancellationToken>(), validPage, validPageSize, startDate, endDate))
 				.ReturnsAsync(flightEntities);
 			_flightServiceMock
-				.Setup(service => service.FlightsCount(cancellationToken, startDate, endDate))
+				.Setup(service => service.FlightsCount(It.IsAny<CancellationToken>(), startDate, endDate))
 				.ReturnsAsync(totalItems);
 			_mapperMock
 				.Setup(m => m.Map<IEnumerable<FlightDto>>(flightEntities))
 				.Returns(flightDtos);
 
 			// Act
-			var result = await _controller.SearchFlights(cancellationToken, startDate, endDate, validPage, validPageSize);
+			var result = await _controller.SearchFlights(startDate, endDate, validPage, validPageSize);
 
 			// Assert
 			var actionResult = Assert.IsType<ActionResult<PagedResponse<FlightDto>>>(result);
@@ -1068,14 +1053,13 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task ExportToPdf_InvalidPaginationParameters_ReturnsBadRequest()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var expectedBadRequestResult = new BadRequestObjectResult("Invalid pagination parameters.");
 			_paginationValidationServiceMock
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((false, 0, expectedBadRequestResult));
 
 			// Act
-			var result = await _controller.ExportToPdf(cancellationToken, page: -1, pageSize: 0);
+			var result = await _controller.ExportToPdf(page: -1, pageSize: 0);
 
 			// Assert
 			Assert.IsType<BadRequestObjectResult>(result);
@@ -1083,30 +1067,21 @@ namespace AirportAutomationApi.Test.Controllers
 
 		[Fact]
 		[Trait("Category", "ExportToPdf")]
-		public async Task ExportToPdf_BothDatesInvalid_ReturnsNoContent()
+		public async Task ExportToPdf_BothDatesInvalid_ReturnsBadRequest()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var invalidStartDate = new DateOnly(1, 1, 1);
 			var invalidEndDate = new DateOnly(1, 1, 1);
-
-			_paginationValidationServiceMock
-				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
-				.Returns((true, 10, null));
-
 			_inputValidationServiceMock
-				.Setup(x => x.IsValidDateOnly(invalidStartDate))
-				.Returns(false);
-
-			_inputValidationServiceMock
-				.Setup(x => x.IsValidDateOnly(invalidEndDate))
+				.Setup(x => x.IsValidDateOnly(It.IsAny<DateOnly?>()))
 				.Returns(false);
 
 			// Act
-			var result = await _controller.ExportToPdf(cancellationToken, startDate: invalidStartDate, endDate: invalidEndDate);
+			var result = await _controller.ExportToPdf(startDate: invalidStartDate, endDate: invalidEndDate);
 
 			// Assert
-			Assert.IsType<NoContentResult>(result);
+			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+			Assert.Equal("Invalid date parameters.", badRequestResult.Value);
 		}
 
 		[Fact]
@@ -1114,22 +1089,18 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task ExportToPdf_GetAll_ReturnsFileResult()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var flights = new List<FlightEntity> { new FlightEntity() };
 			var pdfBytes = new byte[] { 1, 2, 3 };
-			var fileName = "Flights_test.pdf";
 
-			_flightServiceMock.Setup(x => x.GetAllFlights(cancellationToken)).ReturnsAsync(flights);
+			_flightServiceMock.Setup(x => x.GetAllFlights(It.IsAny<CancellationToken>())).ReturnsAsync(flights);
 			_exportServiceMock.Setup(x => x.ExportToPDF("Flights", flights)).Returns(pdfBytes);
-			_utilityServiceMock.Setup(x => x.GenerateUniqueFileName("Flights", FileExtension.Pdf)).Returns(fileName);
 
 			// Act
-			var result = await _controller.ExportToPdf(cancellationToken, getAll: true);
+			var result = await _controller.ExportToPdf(getAll: true);
 
 			// Assert
 			var fileResult = Assert.IsType<FileContentResult>(result);
 			Assert.Equal("application/pdf", fileResult.ContentType);
-			Assert.Equal(fileName, fileResult.FileDownloadName);
 			Assert.Equal(pdfBytes, fileResult.FileContents);
 		}
 
@@ -1138,12 +1109,10 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task ExportToPdf_BetweenDates_ReturnsFileResult()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var startDate = new DateOnly(2024, 1, 1);
 			var endDate = new DateOnly(2024, 1, 31);
 			var flights = new List<FlightEntity> { new FlightEntity() };
 			var pdfBytes = new byte[] { 1, 2, 3 };
-			var fileName = "Flights_test.pdf";
 
 			_paginationValidationServiceMock
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
@@ -1155,18 +1124,16 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.IsValidDateOnly(endDate))
 				.Returns(true);
 			_flightServiceMock
-				.Setup(x => x.SearchFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
+				.Setup(x => x.SearchFlights(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
 				.ReturnsAsync(flights);
 			_exportServiceMock.Setup(x => x.ExportToPDF("Flights", flights)).Returns(pdfBytes);
-			_utilityServiceMock.Setup(x => x.GenerateUniqueFileName("Flights", FileExtension.Pdf)).Returns(fileName);
 
 			// Act
-			var result = await _controller.ExportToPdf(cancellationToken, startDate: startDate, endDate: endDate);
+			var result = await _controller.ExportToPdf(startDate: startDate, endDate: endDate);
 
 			// Assert
 			var fileResult = Assert.IsType<FileContentResult>(result);
 			Assert.Equal("application/pdf", fileResult.ContentType);
-			Assert.Equal(fileName, fileResult.FileDownloadName);
 			Assert.Equal(pdfBytes, fileResult.FileContents);
 		}
 
@@ -1175,25 +1142,21 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task ExportToPdf_NoDates_ReturnsFileResult()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var flights = new List<FlightEntity> { new FlightEntity() };
 			var pdfBytes = new byte[] { 1, 2, 3 };
-			var fileName = "Flights_test.pdf";
 
 			_paginationValidationServiceMock
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, 10, null));
-			_flightServiceMock.Setup(x => x.GetFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(flights);
+			_flightServiceMock.Setup(x => x.GetFlights(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(flights);
 			_exportServiceMock.Setup(x => x.ExportToPDF("Flights", flights)).Returns(pdfBytes);
-			_utilityServiceMock.Setup(x => x.GenerateUniqueFileName("Flights", FileExtension.Pdf)).Returns(fileName);
 
 			// Act
-			var result = await _controller.ExportToPdf(cancellationToken);
+			var result = await _controller.ExportToPdf();
 
 			// Assert
 			var fileResult = Assert.IsType<FileContentResult>(result);
 			Assert.Equal("application/pdf", fileResult.ContentType);
-			Assert.Equal(fileName, fileResult.FileDownloadName);
 			Assert.Equal(pdfBytes, fileResult.FileContents);
 		}
 
@@ -1202,13 +1165,12 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task ExportToPdf_GetAll_NoFlightsFound_ReturnsNoContent()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var flights = new List<FlightEntity>();
 
-			_flightServiceMock.Setup(x => x.GetAllFlights(cancellationToken)).ReturnsAsync(flights);
+			_flightServiceMock.Setup(x => x.GetAllFlights(It.IsAny<CancellationToken>())).ReturnsAsync(flights);
 
 			// Act
-			var result = await _controller.ExportToPdf(cancellationToken, getAll: true);
+			var result = await _controller.ExportToPdf(getAll: true);
 
 			// Assert
 			Assert.IsType<NoContentResult>(result);
@@ -1219,12 +1181,10 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task ExportToPdf_GetAll_ServiceReturnsNull_ReturnsNoContent()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
-
-			_flightServiceMock.Setup(x => x.GetAllFlights(cancellationToken)).ReturnsAsync((List<FlightEntity>)null);
+			_flightServiceMock.Setup(x => x.GetAllFlights(It.IsAny<CancellationToken>())).ReturnsAsync((List<FlightEntity>)null);
 
 			// Act
-			var result = await _controller.ExportToPdf(cancellationToken, getAll: true);
+			var result = await _controller.ExportToPdf(getAll: true);
 
 			// Assert
 			Assert.IsType<NoContentResult>(result);
@@ -1235,7 +1195,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task ExportToPdf_BetweenDates_NoFlightsFound_ReturnsNoContent()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var startDate = new DateOnly(2024, 1, 1);
 			var endDate = new DateOnly(2024, 1, 31);
 			var flights = new List<FlightEntity>();
@@ -1250,11 +1209,11 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.IsValidDateOnly(endDate))
 				.Returns(true);
 			_flightServiceMock
-				.Setup(x => x.SearchFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
+				.Setup(x => x.SearchFlights(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
 				.ReturnsAsync(flights);
 
 			// Act
-			var result = await _controller.ExportToPdf(cancellationToken, startDate: startDate, endDate: endDate);
+			var result = await _controller.ExportToPdf(startDate: startDate, endDate: endDate);
 
 			// Assert
 			Assert.IsType<NoContentResult>(result);
@@ -1265,7 +1224,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task ExportToPdf_BetweenDates_ServiceReturnsNull_ReturnsNoContent()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var startDate = new DateOnly(2024, 1, 1);
 			var endDate = new DateOnly(2024, 1, 31);
 
@@ -1279,11 +1237,11 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.IsValidDateOnly(endDate))
 				.Returns(true);
 			_flightServiceMock
-				.Setup(x => x.SearchFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
+				.Setup(x => x.SearchFlights(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
 				.ReturnsAsync((List<FlightEntity>)null);
 
 			// Act
-			var result = await _controller.ExportToPdf(cancellationToken, startDate: startDate, endDate: endDate);
+			var result = await _controller.ExportToPdf(startDate: startDate, endDate: endDate);
 
 			// Assert
 			Assert.IsType<NoContentResult>(result);
@@ -1294,16 +1252,15 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task ExportToPdf_NoDates_NoFlightsFound_ReturnsNoContent()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var flights = new List<FlightEntity>();
 
 			_paginationValidationServiceMock
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, 10, null));
-			_flightServiceMock.Setup(x => x.GetFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(flights);
+			_flightServiceMock.Setup(x => x.GetFlights(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(flights);
 
 			// Act
-			var result = await _controller.ExportToPdf(cancellationToken);
+			var result = await _controller.ExportToPdf();
 
 			// Assert
 			Assert.IsType<NoContentResult>(result);
@@ -1314,15 +1271,13 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task ExportToPdf_NoDates_ServiceReturnsNull_ReturnsNoContent()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
-
 			_paginationValidationServiceMock
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, 10, null));
-			_flightServiceMock.Setup(x => x.GetFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync((List<FlightEntity>)null);
+			_flightServiceMock.Setup(x => x.GetFlights(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync((List<FlightEntity>)null);
 
 			// Act
-			var result = await _controller.ExportToPdf(cancellationToken);
+			var result = await _controller.ExportToPdf();
 
 			// Assert
 			Assert.IsType<NoContentResult>(result);
@@ -1333,17 +1288,16 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task ExportToPdf_PdfGenerationFails_ReturnsInternalServerError()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var flights = new List<FlightEntity> { new FlightEntity() };
 
 			_paginationValidationServiceMock
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, 10, null));
-			_flightServiceMock.Setup(x => x.GetFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(flights);
+			_flightServiceMock.Setup(x => x.GetFlights(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(flights);
 			_exportServiceMock.Setup(x => x.ExportToPDF("Flights", flights)).Returns((byte[])null);
 
 			// Act
-			var result = await _controller.ExportToPdf(cancellationToken);
+			var result = await _controller.ExportToPdf();
 
 			// Assert
 			var statusCodeResult = Assert.IsType<ObjectResult>(result);
@@ -1360,14 +1314,13 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task ExportToExcel_InvalidPaginationParameters_ReturnsBadRequest()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var expectedBadRequestResult = new BadRequestObjectResult("Invalid pagination parameters.");
 			_paginationValidationServiceMock
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((false, 0, expectedBadRequestResult));
 
 			// Act
-			var result = await _controller.ExportToExcel(cancellationToken, page: -1, pageSize: 0);
+			var result = await _controller.ExportToExcel(page: -1, pageSize: 0);
 
 			// Assert
 			Assert.IsType<BadRequestObjectResult>(result);
@@ -1378,7 +1331,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task ExportToExcel_BothDatesInvalid_ReturnsBadRequest()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var invalidStartDate = new DateOnly(1, 1, 1);
 			var invalidEndDate = new DateOnly(1, 1, 1);
 
@@ -1390,7 +1342,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns(false);
 
 			// Act
-			var result = await _controller.ExportToExcel(cancellationToken, startDate: invalidStartDate, endDate: invalidEndDate);
+			var result = await _controller.ExportToExcel(startDate: invalidStartDate, endDate: invalidEndDate);
 
 			// Assert
 			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
@@ -1402,22 +1354,18 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task ExportToExcel_GetAll_ReturnsFileResult()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var flights = new List<FlightEntity> { new FlightEntity() };
 			var excelBytes = new byte[] { 1, 2, 3 };
-			var fileName = "Flights_test.xlsx";
 
-			_flightServiceMock.Setup(x => x.GetAllFlights(cancellationToken)).ReturnsAsync(flights);
+			_flightServiceMock.Setup(x => x.GetAllFlights(It.IsAny<CancellationToken>())).ReturnsAsync(flights);
 			_exportServiceMock.Setup(x => x.ExportToExcel("Flights", flights)).Returns(excelBytes);
-			_utilityServiceMock.Setup(x => x.GenerateUniqueFileName("Flights", FileExtension.Xlsx)).Returns(fileName);
 
 			// Act
-			var result = await _controller.ExportToExcel(cancellationToken, getAll: true);
+			var result = await _controller.ExportToExcel(getAll: true);
 
 			// Assert
 			var fileResult = Assert.IsType<FileContentResult>(result);
 			Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileResult.ContentType);
-			Assert.Equal(fileName, fileResult.FileDownloadName);
 			Assert.Equal(excelBytes, fileResult.FileContents);
 		}
 
@@ -1426,12 +1374,10 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task ExportToExcel_BetweenDates_ReturnsFileResult()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var startDate = new DateOnly(2024, 1, 1);
 			var endDate = new DateOnly(2024, 1, 31);
 			var flights = new List<FlightEntity> { new FlightEntity() };
 			var excelBytes = new byte[] { 1, 2, 3 };
-			var fileName = "Flights_test.xlsx";
 
 			_paginationValidationServiceMock
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
@@ -1443,18 +1389,16 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.IsValidDateOnly(endDate))
 				.Returns(true);
 			_flightServiceMock
-				.Setup(x => x.SearchFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
+				.Setup(x => x.SearchFlights(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
 				.ReturnsAsync(flights);
 			_exportServiceMock.Setup(x => x.ExportToExcel("Flights", flights)).Returns(excelBytes);
-			_utilityServiceMock.Setup(x => x.GenerateUniqueFileName("Flights", FileExtension.Xlsx)).Returns(fileName);
 
 			// Act
-			var result = await _controller.ExportToExcel(cancellationToken, startDate: startDate, endDate: endDate);
+			var result = await _controller.ExportToExcel(startDate: startDate, endDate: endDate);
 
 			// Assert
 			var fileResult = Assert.IsType<FileContentResult>(result);
 			Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileResult.ContentType);
-			Assert.Equal(fileName, fileResult.FileDownloadName);
 			Assert.Equal(excelBytes, fileResult.FileContents);
 		}
 
@@ -1463,25 +1407,21 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task ExportToExcel_NoDates_ReturnsFileResult()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var flights = new List<FlightEntity> { new FlightEntity() };
 			var excelBytes = new byte[] { 1, 2, 3 };
-			var fileName = "Flights_test.xlsx";
 
 			_paginationValidationServiceMock
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, 10, null));
-			_flightServiceMock.Setup(x => x.GetFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(flights);
+			_flightServiceMock.Setup(x => x.GetFlights(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(flights);
 			_exportServiceMock.Setup(x => x.ExportToExcel("Flights", flights)).Returns(excelBytes);
-			_utilityServiceMock.Setup(x => x.GenerateUniqueFileName("Flights", FileExtension.Xlsx)).Returns(fileName);
 
 			// Act
-			var result = await _controller.ExportToExcel(cancellationToken);
+			var result = await _controller.ExportToExcel();
 
 			// Assert
 			var fileResult = Assert.IsType<FileContentResult>(result);
 			Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileResult.ContentType);
-			Assert.Equal(fileName, fileResult.FileDownloadName);
 			Assert.Equal(excelBytes, fileResult.FileContents);
 		}
 
@@ -1490,13 +1430,12 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task ExportToExcel_GetAll_NoFlightsFound_ReturnsNoContent()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var flights = new List<FlightEntity>();
 
-			_flightServiceMock.Setup(x => x.GetAllFlights(cancellationToken)).ReturnsAsync(flights);
+			_flightServiceMock.Setup(x => x.GetAllFlights(It.IsAny<CancellationToken>())).ReturnsAsync(flights);
 
 			// Act
-			var result = await _controller.ExportToExcel(cancellationToken, getAll: true);
+			var result = await _controller.ExportToExcel(getAll: true);
 
 			// Assert
 			Assert.IsType<NoContentResult>(result);
@@ -1507,12 +1446,10 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task ExportToExcel_GetAll_ServiceReturnsNull_ReturnsNoContent()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
-
-			_flightServiceMock.Setup(x => x.GetAllFlights(cancellationToken)).ReturnsAsync((List<FlightEntity>)null);
+			_flightServiceMock.Setup(x => x.GetAllFlights(It.IsAny<CancellationToken>())).ReturnsAsync((List<FlightEntity>)null);
 
 			// Act
-			var result = await _controller.ExportToExcel(cancellationToken, getAll: true);
+			var result = await _controller.ExportToExcel(getAll: true);
 
 			// Assert
 			Assert.IsType<NoContentResult>(result);
@@ -1523,7 +1460,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task ExportToExcel_BetweenDates_NoFlightsFound_ReturnsNoContent()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var startDate = new DateOnly(2024, 1, 1);
 			var endDate = new DateOnly(2024, 1, 31);
 			var flights = new List<FlightEntity>();
@@ -1538,11 +1474,11 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.IsValidDateOnly(endDate))
 				.Returns(true);
 			_flightServiceMock
-				.Setup(x => x.SearchFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
+				.Setup(x => x.SearchFlights(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
 				.ReturnsAsync(flights);
 
 			// Act
-			var result = await _controller.ExportToExcel(cancellationToken, startDate: startDate, endDate: endDate);
+			var result = await _controller.ExportToExcel(startDate: startDate, endDate: endDate);
 
 			// Assert
 			Assert.IsType<NoContentResult>(result);
@@ -1553,7 +1489,6 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task ExportToExcel_BetweenDates_ServiceReturnsNull_ReturnsNoContent()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var startDate = new DateOnly(2024, 1, 1);
 			var endDate = new DateOnly(2024, 1, 31);
 
@@ -1567,11 +1502,11 @@ namespace AirportAutomationApi.Test.Controllers
 				.Setup(x => x.IsValidDateOnly(endDate))
 				.Returns(true);
 			_flightServiceMock
-				.Setup(x => x.SearchFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
+				.Setup(x => x.SearchFlights(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>(), startDate, endDate))
 				.ReturnsAsync((List<FlightEntity>)null);
 
 			// Act
-			var result = await _controller.ExportToExcel(cancellationToken, startDate: startDate, endDate: endDate);
+			var result = await _controller.ExportToExcel(startDate: startDate, endDate: endDate);
 
 			// Assert
 			Assert.IsType<NoContentResult>(result);
@@ -1582,16 +1517,15 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task ExportToExcel_NoDates_NoFlightsFound_ReturnsNoContent()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var flights = new List<FlightEntity>();
 
 			_paginationValidationServiceMock
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, 10, null));
-			_flightServiceMock.Setup(x => x.GetFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(flights);
+			_flightServiceMock.Setup(x => x.GetFlights(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(flights);
 
 			// Act
-			var result = await _controller.ExportToExcel(cancellationToken);
+			var result = await _controller.ExportToExcel();
 
 			// Assert
 			Assert.IsType<NoContentResult>(result);
@@ -1602,15 +1536,13 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task ExportToExcel_NoDates_ServiceReturnsNull_ReturnsNoContent()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
-
 			_paginationValidationServiceMock
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, 10, null));
-			_flightServiceMock.Setup(x => x.GetFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync((List<FlightEntity>)null);
+			_flightServiceMock.Setup(x => x.GetFlights(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync((List<FlightEntity>)null);
 
 			// Act
-			var result = await _controller.ExportToExcel(cancellationToken);
+			var result = await _controller.ExportToExcel();
 
 			// Assert
 			Assert.IsType<NoContentResult>(result);
@@ -1621,18 +1553,17 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task ExportToExcel_ExcelGenerationFails_ReturnsInternalServerError()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var flights = new List<FlightEntity> { new FlightEntity() };
 			var emptyExcelBytes = Array.Empty<byte>();
 
 			_paginationValidationServiceMock
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, 10, null));
-			_flightServiceMock.Setup(x => x.GetFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(flights);
+			_flightServiceMock.Setup(x => x.GetFlights(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(flights);
 			_exportServiceMock.Setup(x => x.ExportToExcel("Flights", flights)).Returns(emptyExcelBytes);
 
 			// Act
-			var result = await _controller.ExportToExcel(cancellationToken);
+			var result = await _controller.ExportToExcel();
 
 			// Assert
 			var statusCodeResult = Assert.IsType<ObjectResult>(result);
@@ -1645,17 +1576,16 @@ namespace AirportAutomationApi.Test.Controllers
 		public async Task ExportToExcel_ExcelGenerationReturnsNull_ReturnsInternalServerError()
 		{
 			// Arrange
-			var cancellationToken = new CancellationToken();
 			var flights = new List<FlightEntity> { new FlightEntity() };
 
 			_paginationValidationServiceMock
 				.Setup(x => x.ValidatePaginationParameters(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
 				.Returns((true, 10, null));
-			_flightServiceMock.Setup(x => x.GetFlights(cancellationToken, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(flights);
+			_flightServiceMock.Setup(x => x.GetFlights(It.IsAny<CancellationToken>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(flights);
 			_exportServiceMock.Setup(x => x.ExportToExcel("Flights", flights)).Returns((byte[])null);
 
 			// Act
-			var result = await _controller.ExportToExcel(cancellationToken);
+			var result = await _controller.ExportToExcel();
 
 			// Assert
 			var statusCodeResult = Assert.IsType<ObjectResult>(result);

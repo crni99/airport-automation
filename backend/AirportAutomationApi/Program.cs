@@ -328,6 +328,8 @@ if (isOpenTelemetryEnabled)
 
 var app = builder.Build();
 
+app.UseMiddleware<GlobalExceptionHandler>();
+
 app.UseStaticFiles();
 app.UseSwagger();
 app.UseSwaggerUI(c =>
@@ -346,13 +348,12 @@ if (!app.Environment.IsDevelopment())
 	app.UseHsts();
 }
 app.UseHttpsRedirection();
-app.UseMiddleware<RequestLogContextMiddleware>();
 app.UseIpRateLimiting();
 app.UseCors("_AllowAll");
+app.UseMiddleware<RequestLogContextMiddleware>();
 app.UseSerilogRequestLogging();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseMiddleware<GlobalExceptionHandler>();
 app.MapHealthChecks("/api/v{version:apiVersion}/HealthCheck", new()
 {
 	ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,

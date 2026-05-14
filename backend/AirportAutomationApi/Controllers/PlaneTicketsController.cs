@@ -2,6 +2,7 @@
 using AirportAutomation.Api.Interfaces;
 using AirportAutomation.Application.Dtos.PlaneTicket;
 using AirportAutomation.Application.Dtos.Response;
+using AirportAutomation.Application.Services;
 using AirportAutomation.Core.Configuration;
 using AirportAutomation.Core.Entities;
 using AirportAutomation.Core.Enums;
@@ -74,9 +75,9 @@ namespace AirportAutomation.Api.Controllers
 		/// <summary>
 		/// Endpoint for retrieving a paginated list of plane tickets.
 		/// </summary>
-		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <param name="page">The page number for pagination (optional).</param>
 		/// <param name="pageSize">The number of items per page (optional).</param>
+		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <returns>A paginated list of plane tickets.</returns>
 		/// <response code="200">Returns a list of plane tickets wrapped in a <see cref="PagedResponse{PlaneTicketDto}"/>.</response>
 		/// <response code="204">If no plane tickets are found.</response>
@@ -88,15 +89,15 @@ namespace AirportAutomation.Api.Controllers
 		[ProducesResponseType(400)]
 		[ProducesResponseType(401)]
 		public Task<ActionResult<PagedResponse<PlaneTicketDto>>> GetPlaneTickets(
-			CancellationToken ct,
 			[FromQuery] int page = 1,
-			[FromQuery] int pageSize = 10)
+			[FromQuery] int pageSize = 10,
+			CancellationToken cancellationToken = default)
 			=> GetPagedAsync<PlaneTicketEntity, PlaneTicketDto>(
 				_cacheService, _paginationValidationService, _mapper, _logger,
 				page, pageSize, maxPageSize,
 				cacheKey: CacheKeys.PlaneTickets(page, pageSize),
-				fetchItems: () => _planeTicketService.GetPlaneTickets(ct, page, pageSize),
-				fetchCount: () => _planeTicketService.PlaneTicketsCount(ct));
+				fetchItems: () => _planeTicketService.GetPlaneTickets(cancellationToken, page, pageSize),
+				fetchCount: () => _planeTicketService.PlaneTicketsCount(cancellationToken));
 
 		/// <summary>
 		/// Endpoint for retrieving a single plane ticket.
@@ -122,10 +123,10 @@ namespace AirportAutomation.Api.Controllers
 		/// <summary>
 		/// Endpoint for retrieving a paginated list of plane tickets matching the specified search filter criteria.
 		/// </summary>
-		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <param name="filter">The search filter containing plane ticket fields to filter by.</param>
 		/// <param name="page">The page number for pagination (optional, default is 1).</param>
 		/// <param name="pageSize">The number of items per page for pagination (optional, default is 10).</param>
+		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <returns>A paged response containing the list of plane tickets that match the filter criteria.</returns>
 		/// <response code="200">Returns a paged list of plane tickets if found.</response>
 		/// <response code="204">If no plane tickets matching the filter criteria are found.</response>
@@ -137,10 +138,10 @@ namespace AirportAutomation.Api.Controllers
 		[ProducesResponseType(400)]
 		[ProducesResponseType(401)]
 		public async Task<ActionResult<PagedResponse<PlaneTicketDto>>> SearchPlaneTickets(
-			CancellationToken cancellationToken,
 			[FromQuery] PlaneTicketSearchFilter filter,
 			[FromQuery] int page = 1,
-			[FromQuery] int pageSize = 10)
+			[FromQuery] int pageSize = 10,
+			CancellationToken cancellationToken = default)
 		{
 			if (filter.IsEmpty())
 			{
@@ -324,11 +325,11 @@ namespace AirportAutomation.Api.Controllers
 		/// <summary>
 		/// Endpoint for exporting plane ticket data to PDF.
 		/// </summary>
-		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <param name="filter">The search filter containing destination fields to filter by.</param>
 		/// <param name="page">The page number for pagination (optional, default is 1).</param>
 		/// <param name="pageSize">The page size for pagination (optional, default is 10).</param>
 		/// <param name="getAll">Flag indicating whether to retrieve all data (optional, default is false).</param>
+		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <returns>Returns the generated PDF document.</returns>
 		/// <response code="200">Returns the generated PDF document.</response>
 		/// <response code="204">No plane tickets found.</response>
@@ -345,58 +346,34 @@ namespace AirportAutomation.Api.Controllers
 		[ProducesResponseType(401)]
 		[ProducesResponseType(403)]
 		[ProducesResponseType(500)]
-		public async Task<ActionResult> ExportToPdf(
-			CancellationToken cancellationToken,
+		public Task<ActionResult> ExportToPdf(
 			[FromQuery] PlaneTicketSearchFilter filter,
 			[FromQuery] int page = 1,
 			[FromQuery] int pageSize = 10,
-			[FromQuery] bool getAll = false)
-		{
-			IList<PlaneTicketEntity> planeTickets;
-			if (getAll)
-			{
-				planeTickets = await _planeTicketService.GetAllPlaneTickets(cancellationToken);
-			}
-			else
-			{
-				var (isValid, correctedPageSize, result) = _paginationValidationService.ValidatePaginationParameters(page, pageSize, maxPageSize);
-				if (!isValid)
-				{
-					return result;
-				}
-				if (filter.IsEmpty())
-				{
-					planeTickets = await _planeTicketService.GetPlaneTickets(cancellationToken, page, correctedPageSize);
-				}
-				else
-				{
-					planeTickets = await _planeTicketService.SearchPlaneTickets(cancellationToken, page, correctedPageSize, filter);
-				}
-			}
-			if (planeTickets is null || !planeTickets.Any())
-			{
-				_logger.LogInformation("No plane tickets found for page {Page}, pageSize {PageSize}, getAll {GetAll}, filter {Filter}.",
-					page, pageSize, getAll, JsonConvert.SerializeObject(filter));
-				return NoContent();
-			}
-			var pdf = _exportService.ExportToPDF("Plane Tickets", planeTickets);
-			if (pdf == null)
-			{
-				_logger.LogError("PDF generation failed.");
-				return StatusCode(500, "Failed to generate PDF file.");
-			}
-			string fileName = _utilityService.GenerateUniqueFileName("PlaneTickets", FileExtension.Pdf);
-			return File(pdf, "application/pdf", fileName);
-		}
+			[FromQuery] bool getAll = false,
+			CancellationToken cancellationToken = default)
+			=> ExportAsync<PlaneTicketEntity>(
+				entityName: "PlaneTickets",
+				fileType: FileExtension.Pdf,
+				exportService: _exportService,
+				paginationValidation: _paginationValidationService,
+				inputValidation: _inputValidationService,
+				logger: _logger,
+				page, pageSize, maxPageSize, getAll,
+				fetchAll: () => _planeTicketService.GetAllPlaneTickets(cancellationToken),
+				fetchPaged: (p, ps) => _planeTicketService.GetPlaneTickets(cancellationToken, p, ps),
+				fetchSearch: !filter.IsEmpty()
+					? (p, ps) => _planeTicketService.SearchPlaneTickets(cancellationToken, p, ps, filter)
+					: null);
 
 		/// <summary>
 		/// Endpoint for exporting plane ticket data to Excel.
 		/// </summary>
-		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <param name="filter">The search filter containing plane ticket fields to filter by.</param>
 		/// <param name="page">The page number for pagination (optional, default is 1).</param>
 		/// <param name="pageSize">The page size for pagination (optional, default is 10).</param>
 		/// <param name="getAll">Flag indicating whether to retrieve all data (optional, default is false).</param>
+		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <returns>Returns the generated Excel document.</returns>
 		/// <response code="200">Returns the generated Excel document.</response>
 		/// <response code="204">No plane tickets found.</response>
@@ -413,51 +390,25 @@ namespace AirportAutomation.Api.Controllers
 		[ProducesResponseType(401)]
 		[ProducesResponseType(403)]
 		[ProducesResponseType(500)]
-		public async Task<ActionResult> ExportToExcel(
-			CancellationToken cancellationToken,
+		public Task<ActionResult> ExportToExcel(
 			[FromQuery] PlaneTicketSearchFilter filter,
 			[FromQuery] int page = 1,
 			[FromQuery] int pageSize = 10,
-			[FromQuery] bool getAll = false)
-		{
-			IList<PlaneTicketEntity> planeTickets;
-
-			if (getAll)
-			{
-				planeTickets = await _planeTicketService.GetAllPlaneTickets(cancellationToken);
-			}
-			else
-			{
-				var (isValid, correctedPageSize, result) = _paginationValidationService.ValidatePaginationParameters(page, pageSize, maxPageSize);
-				if (!isValid)
-				{
-					return result;
-				}
-
-				if (filter.IsEmpty())
-				{
-					planeTickets = await _planeTicketService.GetPlaneTickets(cancellationToken, page, correctedPageSize);
-				}
-				else
-				{
-					planeTickets = await _planeTicketService.SearchPlaneTickets(cancellationToken, page, correctedPageSize, filter);
-				}
-			}
-			if (planeTickets == null || !planeTickets.Any())
-			{
-				_logger.LogInformation("No plane tickets found for page {Page}, pageSize {PageSize}, getAll {GetAll}, filter {Filter}.",
-					page, pageSize, getAll, JsonConvert.SerializeObject(filter));
-				return NoContent();
-			}
-			var excel = _exportService.ExportToExcel("PlaneTickets", planeTickets);
-			if (excel == null || excel.Length == 0)
-			{
-				_logger.LogError("Excel generation failed.");
-				return StatusCode(500, "Failed to generate Excel file.");
-			}
-			string fileName = _utilityService.GenerateUniqueFileName("PlaneTickets", FileExtension.Xlsx);
-			return File(excel, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
-		}
+			[FromQuery] bool getAll = false,
+			CancellationToken cancellationToken = default)
+			=> ExportAsync<PlaneTicketEntity>(
+				entityName: "PlaneTickets",
+				fileType: FileExtension.Xlsx,
+				exportService: _exportService,
+				paginationValidation: _paginationValidationService,
+				inputValidation: _inputValidationService,
+				logger: _logger,
+				page, pageSize, maxPageSize, getAll,
+				fetchAll: () => _planeTicketService.GetAllPlaneTickets(cancellationToken),
+				fetchPaged: (p, ps) => _planeTicketService.GetPlaneTickets(cancellationToken, p, ps),
+				fetchSearch: !filter.IsEmpty()
+					? (p, ps) => _planeTicketService.SearchPlaneTickets(cancellationToken, p, ps, filter)
+					: null);
 
 	}
 }

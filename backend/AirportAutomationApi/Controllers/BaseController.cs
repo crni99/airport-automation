@@ -18,7 +18,6 @@ namespace AirportAutomation.Api.Controllers
 	[Route("api/v{version:apiVersion}/[controller]")]
 	public abstract class BaseController : ControllerBase
 	{
-
 		protected async Task<ActionResult<PagedResponse<TDto>>> GetPagedAsync<TEntity, TDto>(
 			ICacheService cacheService,
 			IPaginationValidationService paginationValidation,
@@ -80,6 +79,84 @@ namespace AirportAutomation.Api.Controllers
 			});
 
 			return dto is null ? NotFound() : Ok(dto);
+		}
+
+		protected async Task<ActionResult> ExportAsync<TEntity>(
+			string entityName,
+			FileExtension fileType,
+			IExportService exportService,
+			IPaginationValidationService paginationValidation,
+			IInputValidationService inputValidation,
+			ILogger logger,
+			int page,
+			int pageSize,
+			int maxPageSize,
+			bool getAll,
+			Func<Task<IList<TEntity>>> fetchAll,
+			Func<int, int, Task<IList<TEntity>>> fetchPaged,
+			Func<int, int, Task<IList<TEntity>>>? fetchSearch = null)
+		{
+			IList<TEntity> items;
+
+			if (getAll)
+			{
+				items = await fetchAll();
+			}
+			else
+			{
+				var (isValid, correctedPageSize, result) =
+					paginationValidation.ValidatePaginationParameters(page, pageSize, maxPageSize);
+				if (!isValid) return result;
+
+				items = fetchSearch is not null
+					? await fetchSearch(page, correctedPageSize)
+					: await fetchPaged(page, correctedPageSize);
+			}
+
+			if (items is null || !items.Any())
+			{
+				logger.LogInformation("No {Entity} found for export.", entityName);
+				return NoContent();
+			}
+
+			return fileType switch
+			{
+				FileExtension.Pdf => ExportPdf(entityName, items, exportService, logger),
+				FileExtension.Xlsx => ExportExcel(entityName, items, exportService, logger),
+				_ => StatusCode(500, "Unsupported file type.")
+			};
+		}
+
+		private ActionResult ExportPdf<TEntity>(
+			string entityName,
+			IList<TEntity> items,
+			IExportService exportService,
+			ILogger logger)
+		{
+			var pdf = exportService.ExportToPDF(entityName, items);
+			if (pdf is null)
+			{
+				logger.LogError("PDF generation failed for {Entity}.", entityName);
+				return StatusCode(500, "Failed to generate PDF file.");
+			}
+			var fileName = $"{entityName}_{DateTime.UtcNow:yyyyMMdd_HHmmss}.pdf";
+			return File(pdf, "application/pdf", fileName);
+		}
+
+		private ActionResult ExportExcel<TEntity>(
+			string entityName,
+			IList<TEntity> items,
+			IExportService exportService,
+			ILogger logger)
+		{
+			var excel = exportService.ExportToExcel(entityName, items);
+			if (excel is null || excel.Length == 0)
+			{
+				logger.LogError("Excel generation failed for {Entity}.", entityName);
+				return StatusCode(500, "Failed to generate Excel file.");
+			}
+			var fileName = $"{entityName}_{DateTime.UtcNow:yyyyMMdd_HHmmss}.xlsx";
+			return File(excel, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
 		}
 
 	}
