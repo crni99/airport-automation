@@ -333,7 +333,7 @@ ___
   - HTTP status code
   - Trace identifier for debugging
   - Specific validation errors per field
-- Provide consistent error format across all API endpoints.
+- Provide consistent error format across all API endpoints via **GlobalExceptionHandler** middleware
 
 ### Dependency Injection and Service Layer
 - Leverage ASP.NET Core's built-in dependency injection container.
@@ -343,6 +343,9 @@ ___
 
 ### Searching, Filtering, and Paging Resources
 - Implement advanced features such as searching, filtering, and paging to improve the API’s usability and performance.
+- Support date range filtering for Flights (**startDate**, **endDate**)
+- Support multi-field search via dedicated filter classes (see Advanced Filtering section)
+- Return paginated responses wrapped in **PagedResponse<T>** with total item count
 
 ### Distributed Caching with Redis
 - Implement a hybrid caching strategy using **`Redis`** for distributed environments and **`In-Memory Cache`** as a secondary fallback.
@@ -381,9 +384,9 @@ ___
 
 ### Role-Based Authorization
 - Implement role-based access control with policies:
-  - **`RequireSuperAdminRole`**
-  - **`RequireAdminRole`**
-  - **`RequireUserRole`**
+  - **`RequireSuperAdminRole`** - Full access including user management
+  - **`RequireAdminRole`** - Access to create, update, patch, delete, and export operations
+  - **`RequireUserRole`** - Read-only access to standard resources
 - Enable fine-grained endpoint access control based on user roles to ensure secure handling of sensitive data.
 
 ### Versioning and Documenting API with Swagger
@@ -407,6 +410,8 @@ ___
 
 ### API Rate Limiting
 - Implement a rate limiter to protect API resources from abuse, mitigate DDoS attacks, and enhance overall API performance.
+- Configure request limits, time windows, and response behavior via appsettings.json
+- Rate limiter positioned early in the middleware pipeline to block excessive requests before logging or business logic is invoked
 
 ### Central Package Management
 - Maintain all NuGet package versions in **`Directory.Packages.props`** at solution root.
@@ -419,12 +424,15 @@ ___
 
 ### Unit Testing with xUnit
 - Write comprehensive unit tests using the xUnit framework to validate individual components in isolation.
+- Test coverage includes controllers, services, repositories, middleware, and shared BaseController logic
 - Ensure tests improve code reliability, support refactoring, and simplify debugging.
 
 ### Monitoring Application Health with HealthChecks
 - Monitor the health of critical components with **custom health check implementations**:
   - **`DatabaseHealthCheck`** - Verifies database connectivity and accessibility
   - **`ApiHealthCheck`** - Monitors API availability and responsiveness
+  - **`RedisHealthCheck`** - Conditionally enabled when Redis is configured
+  - **`OpenTelemetryHealthCheck`** - Conditionally enabled when OpenTelemetry is configured
 - Configure health check endpoints to provide visibility into system status and integrate them into Swagger documentation for easy access.
 - Return detailed health status with Healthy/Degraded/Unhealthy states and custom messages.
 ___
@@ -499,6 +507,7 @@ ___
 ### Data Fetching and Integration
 - Fully integrate with the backend API to retrieve and manage data such as flights, passengers, and airport operations.
 - Dynamically render components based on API responses and user interactions.
+- Guard list pages with a **`hasFetched`** flag to prevent premature empty-state messages before the first API response is received.
 
 ### Form Handling and Validation
 - Manage form inputs using custom hooks (useCreate, useUpdate) with built-in validation.
@@ -515,10 +524,15 @@ ___
    - Implement centralized error handling with **`CustomError`** class for consistent error messages.
    - Use **`errorUtils`** to differentiate between network errors, server errors, and validation errors.
    - Provide user-friendly error messages and graceful degradation for edge cases.
+   - Centralize all logging through a **`logger`** utility that outputs only in development mode and is silenced in production builds, replacing scattered **`console.error`** / **`console warn`** calls across hooks, utilities, and pages.
 
 ### Routing and Navigation
 - Handle navigation using **`React Router`**, including dynamic and nested routes for scalability.
 - Enable seamless page transitions without full reloads.
+- Implement three dedicated route guard components for granular access control:
+  - **`RequireAuth`**  - Redirects unauthenticated users to login; passes error message via React Router state instead of localStorage
+  - **`RequireAdminRole`**  - Restricts routes to Admin and SuperAdmin roles
+  - **`RequireSuperAdminRole`**  - Restricts routes to SuperAdmin role only
 
 ### Exporting Data to PDF and Excel
 - Integrate the frontend with API endpoints to allow users to export data to PDF and Excel formats.
@@ -528,9 +542,10 @@ ___
 
 ### Security and Authentication
 - Implement secure user login using **`JWT-based authentication`**.
-- Apply role-based access control with **`ProtectedRoute`** component to restrict features based on user permissions.
+- Apply role-based access control with three granular route guard components (**`RequireAuth`**, **`RequireAdminRole`**, **`RequireSuperAdminRole`**) to restrict features based on user permissions.
 - Automatically redirect unauthenticated users to login page.
 - Store authentication tokens securely and manage token expiration.
+- Keep **`isLoggedIn`** state reactive by listening to **`storage`** events, ensuring the UI reflects login/logout changes without requiring a page reload.
 
 ### Google Maps Integration
 - Integrate **Google Maps embedding** to display destination locations visually.
