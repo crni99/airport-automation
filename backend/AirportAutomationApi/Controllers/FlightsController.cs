@@ -72,9 +72,9 @@ namespace AirportAutomation.Api.Controllers
 		/// <summary>
 		/// Endpoint for retrieving a paginated list of flights.
 		/// </summary>
-		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <param name="page">The page number for pagination (optional).</param>
 		/// <param name="pageSize">The number of items per page (optional).</param>
+		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <returns>A paginated list of flights.</returns>
 		/// <response code="200">Returns a list of flights wrapped in a <see cref="PagedResponse{FlightDto}"/>.</response>
 		/// <response code="204">If no flights are found.</response>
@@ -86,15 +86,15 @@ namespace AirportAutomation.Api.Controllers
 		[ProducesResponseType(400)]
 		[ProducesResponseType(401)]
 		public Task<ActionResult<PagedResponse<FlightDto>>> GetFlights(
-			CancellationToken ct,
 			[FromQuery] int page = 1,
-			[FromQuery] int pageSize = 10)
+			[FromQuery] int pageSize = 10,
+			CancellationToken cancellationToken = default)
 			=> GetPagedAsync<FlightEntity, FlightDto>(
 				_cacheService, _paginationValidationService, _mapper, _logger,
 				page, pageSize, maxPageSize,
 				cacheKey: CacheKeys.Flights(page, pageSize),
-				fetchItems: () => _flightService.GetFlights(ct, page, pageSize),
-				fetchCount: () => _flightService.FlightsCount(ct));
+				fetchItems: () => _flightService.GetFlights(cancellationToken, page, pageSize),
+				fetchCount: () => _flightService.FlightsCount(cancellationToken));
 
 		/// <summary>
 		/// Endpoint for retrieving a single flight.
@@ -120,11 +120,11 @@ namespace AirportAutomation.Api.Controllers
 		/// <summary>
 		/// Endpoint for retrieving a paginated list of flights matching the specified search filter criteria.
 		/// </summary>
-		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <param name="startDate">The start date for the search.</param>
 		/// <param name = "endDate" > The end date for the search.</param>
 		/// <param name="page">The page number for pagination (optional).</param>
 		/// <param name="pageSize">The size of each page for pagination (optional).</param>
+		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <returns>A list of flights that match the specified name.</returns>
 		/// <response code="200">Returns a paged list of flights if found.</response>
 		/// <response code="204">If no flights matching the filter criteria are found.</response>
@@ -136,11 +136,11 @@ namespace AirportAutomation.Api.Controllers
 		[ProducesResponseType(400)]
 		[ProducesResponseType(401)]
 		public async Task<ActionResult<PagedResponse<FlightDto>>> SearchFlights(
-			CancellationToken cancellationToken,
 			[FromQuery] DateOnly? startDate = null,
 			[FromQuery] DateOnly? endDate = null,
 			[FromQuery] int page = 1,
-			[FromQuery] int pageSize = 10)
+			[FromQuery] int pageSize = 10,
+			CancellationToken cancellationToken = default)
 		{
 			var (isValid, correctedPageSize, result) = _paginationValidationService.ValidatePaginationParameters(page, pageSize, maxPageSize);
 			if (!isValid)
@@ -329,12 +329,12 @@ namespace AirportAutomation.Api.Controllers
 		/// <summary>
 		/// Endpoint for exporting flight data to PDF.
 		/// </summary>
-		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <param name="page">The page number for pagination (optional, default is 1).</param>
 		/// <param name="pageSize">The page size for pagination (optional, default is 10).</param>
 		/// <param name="getAll">Flag indicating whether to retrieve all data (optional, default is false).</param>
 		/// <param name="startDate">The start date for the search (optional, default is null).</param>
 		/// <param name = "endDate" > The end date for the search (optional, default is null).</param>
+		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <returns>Returns the generated PDF document.</returns>
 		/// <response code="204">No flights found.</response>
 		/// <response code="200">Returns the generated PDF document.</response>
@@ -351,63 +351,46 @@ namespace AirportAutomation.Api.Controllers
 		[ProducesResponseType(401)]
 		[ProducesResponseType(403)]
 		[ProducesResponseType(500)]
-		public async Task<ActionResult> ExportToPdf(
-			CancellationToken cancellationToken,
-			[FromQuery] int page = 1,
-			[FromQuery] int pageSize = 10,
-			[FromQuery] bool getAll = false,
-			[FromQuery] DateOnly? startDate = null,
-			[FromQuery] DateOnly? endDate = null)
+		public Task<ActionResult> ExportToPdf(
+	[FromQuery] int page = 1,
+	[FromQuery] int pageSize = 10,
+	[FromQuery] bool getAll = false,
+	[FromQuery] DateOnly? startDate = null,
+	[FromQuery] DateOnly? endDate = null,
+	CancellationToken cancellationToken = default)
 		{
-			IList<FlightEntity> flights = new List<FlightEntity>();
-			if (getAll)
+			if (startDate.HasValue && endDate.HasValue)
 			{
-				flights = await _flightService.GetAllFlights(cancellationToken);
+				if (!_inputValidationService.IsValidDateOnly(startDate) || !_inputValidationService.IsValidDateOnly(endDate))
+					return Task.FromResult<ActionResult>(BadRequest("Invalid date parameters."));
 			}
-			else
-			{
-				var (isValid, correctedPageSize, result) = _paginationValidationService.ValidatePaginationParameters(page, pageSize, maxPageSize);
-				if (!isValid)
-				{
-					return result;
-				}
-				if (startDate.HasValue && endDate.HasValue)
-				{
-					if (_inputValidationService.IsValidDateOnly(startDate) && _inputValidationService.IsValidDateOnly(endDate))
-					{
-						flights = await _flightService.SearchFlights(cancellationToken, page, correctedPageSize, startDate, endDate);
-					}
-				}
-				else
-				{
-					flights = await _flightService.GetFlights(cancellationToken, page, correctedPageSize);
-				}
-			}
-			if (flights is null || !flights.Any())
-			{
-				_logger.LogInformation("No flights found for page {Page}, pageSize {PageSize}, getAll {GetAll}, startDate {StartDate}, endDate {EndDate}.",
-					page, pageSize, getAll, startDate, endDate);
-				return NoContent();
-			}
-			var pdf = _exportService.ExportToPDF("Flights", flights);
-			if (pdf == null)
-			{
-				_logger.LogError("PDF generation failed.");
-				return StatusCode(500, "Failed to generate PDF file.");
-			}
-			string fileName = _utilityService.GenerateUniqueFileName("Flights", FileExtension.Pdf);
-			return File(pdf, "application/pdf", fileName);
+
+			Func<int, int, Task<IList<FlightEntity>>>? searchFunc = startDate.HasValue && endDate.HasValue
+				? (p, ps) => _flightService.SearchFlights(cancellationToken, p, ps, startDate, endDate)
+				: null;
+
+			return ExportAsync<FlightEntity>(
+				entityName: "Flights",
+				fileType: FileExtension.Pdf,
+				exportService: _exportService,
+				paginationValidation: _paginationValidationService,
+				inputValidation: _inputValidationService,
+				logger: _logger,
+				page, pageSize, maxPageSize, getAll,
+				fetchAll: () => _flightService.GetAllFlights(cancellationToken),
+				fetchPaged: (p, ps) => _flightService.GetFlights(cancellationToken, p, ps),
+				fetchSearch: searchFunc);
 		}
 
 		/// <summary>
 		/// Endpoint for exporting flight data to Excel.
 		/// </summary>
-		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <param name="page">The page number for pagination (optional, default is 1).</param>
 		/// <param name="pageSize">The page size for pagination (optional, default is 10).</param>
 		/// <param name="getAll">Flag indicating whether to retrieve all data (optional, default is false).</param>
 		/// <param name="startDate">The start date for the search (optional, default is null).</param>
 		/// <param name="endDate">The end date for the search (optional, default is null).</param>
+		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <returns>Returns the generated Excel document.</returns>
 		/// <response code="204">No flights found.</response>
 		/// <response code="200">Returns the generated Excel document.</response>
@@ -424,58 +407,35 @@ namespace AirportAutomation.Api.Controllers
 		[ProducesResponseType(401)]
 		[ProducesResponseType(403)]
 		[ProducesResponseType(500)]
-		public async Task<ActionResult> ExportToExcel(
-			CancellationToken cancellationToken,
+		public Task<ActionResult> ExportToExcel(
 			[FromQuery] int page = 1,
 			[FromQuery] int pageSize = 10,
 			[FromQuery] bool getAll = false,
 			[FromQuery] DateOnly? startDate = null,
-			[FromQuery] DateOnly? endDate = null)
+			[FromQuery] DateOnly? endDate = null,
+			CancellationToken cancellationToken = default)
 		{
-			IList<FlightEntity> flights = new List<FlightEntity>();
+			if (startDate.HasValue && endDate.HasValue)
+			{
+				if (!_inputValidationService.IsValidDateOnly(startDate) || !_inputValidationService.IsValidDateOnly(endDate))
+					return Task.FromResult<ActionResult>(BadRequest("Invalid date parameters."));
+			}
 
-			if (getAll)
-			{
-				flights = await _flightService.GetAllFlights(cancellationToken);
-			}
-			else
-			{
-				var (isValid, correctedPageSize, result) = _paginationValidationService.ValidatePaginationParameters(page, pageSize, maxPageSize);
-				if (!isValid)
-				{
-					return result;
-				}
+			Func<int, int, Task<IList<FlightEntity>>>? searchFunc = startDate.HasValue && endDate.HasValue
+				? (p, ps) => _flightService.SearchFlights(cancellationToken, p, ps, startDate, endDate)
+				: null;
 
-				if (startDate.HasValue && endDate.HasValue)
-				{
-					if (_inputValidationService.IsValidDateOnly(startDate) && _inputValidationService.IsValidDateOnly(endDate))
-					{
-						flights = await _flightService.SearchFlights(cancellationToken, page, correctedPageSize, startDate, endDate);
-					}
-					else
-					{
-						return BadRequest("Invalid date parameters.");
-					}
-				}
-				else
-				{
-					flights = await _flightService.GetFlights(cancellationToken, page, correctedPageSize);
-				}
-			}
-			if (flights == null || !flights.Any())
-			{
-				_logger.LogInformation("No flights found for page {Page}, pageSize {PageSize}, getAll {GetAll}, startDate {StartDate}, endDate {EndDate}.",
-					page, pageSize, getAll, startDate, endDate);
-				return NoContent();
-			}
-			var excel = _exportService.ExportToExcel("Flights", flights);
-			if (excel == null || excel.Length == 0)
-			{
-				_logger.LogError("Excel generation failed.");
-				return StatusCode(500, "Failed to generate Excel file.");
-			}
-			string fileName = _utilityService.GenerateUniqueFileName("Flights", FileExtension.Xlsx);
-			return File(excel, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+			return ExportAsync<FlightEntity>(
+				entityName: "Flights",
+				fileType: FileExtension.Xlsx,
+				exportService: _exportService,
+				paginationValidation: _paginationValidationService,
+				inputValidation: _inputValidationService,
+				logger: _logger,
+				page, pageSize, maxPageSize, getAll,
+				fetchAll: () => _flightService.GetAllFlights(cancellationToken),
+				fetchPaged: (p, ps) => _flightService.GetFlights(cancellationToken, p, ps),
+				fetchSearch: searchFunc);
 		}
 
 	}

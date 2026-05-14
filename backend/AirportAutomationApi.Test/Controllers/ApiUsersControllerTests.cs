@@ -142,7 +142,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns((false, 0, expectedBadRequestResult));
 
 			// Act
-			var result = await _controller.GetApiUsers(cancellationToken, invalidPage, invalidPageSize);
+			var result = await _controller.GetApiUsers(invalidPage, invalidPageSize);
 
 			// Assert
 			Assert.IsType<BadRequestObjectResult>(result.Result);
@@ -164,7 +164,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.ReturnsAsync(new List<ApiUserEntity>());
 
 			// Act
-			var result = await _controller.GetApiUsers(cancellationToken, page, pageSize);
+			var result = await _controller.GetApiUsers(page, pageSize);
 
 			// Assert
 			Assert.IsType<NoContentResult>(result.Result);
@@ -187,7 +187,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.ReturnsAsync((List<ApiUserEntity>)null);
 
 			// Act
-			var result = await _controller.GetApiUsers(cancellationToken, page, pageSize);
+			var result = await _controller.GetApiUsers(page, pageSize);
 
 			// Assert
 			Assert.IsType<NoContentResult>(result.Result);
@@ -209,7 +209,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.ThrowsAsync(new Exception("Simulated exception"));
 
 			// Act & Assert
-			await Assert.ThrowsAsync<Exception>(async () => await _controller.GetApiUsers(cancellationToken, page, pageSize));
+			await Assert.ThrowsAsync<Exception>(async () => await _controller.GetApiUsers(page, pageSize));
 		}
 
 		[Fact]
@@ -247,7 +247,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns(expectedData);
 
 			// Act
-			var result = await _controller.GetApiUsers(cancellationToken, page, pageSize);
+			var result = await _controller.GetApiUsers(page, pageSize);
 
 			// Assert
 			var actionResult = Assert.IsType<ActionResult<PagedResponse<ApiUserRoleDto>>>(result);
@@ -305,7 +305,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns(expectedData);
 
 			// Act
-			var result = await _controller.GetApiUsers(cancellationToken, page, pageSize);
+			var result = await _controller.GetApiUsers(page, pageSize);
 
 			// Assert
 			var actionResult = Assert.IsType<ActionResult<PagedResponse<ApiUserRoleDto>>>(result);
@@ -402,7 +402,7 @@ namespace AirportAutomationApi.Test.Controllers
 			var filter = new ApiUserSearchFilter();
 
 			// Act
-			var result = await _controller.SearchApiUsers(CancellationToken.None, filter);
+			var result = await _controller.SearchApiUsers(filter);
 
 			// Assert
 			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
@@ -423,7 +423,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns((false, 0, expectedBadRequestResult));
 
 			// Act
-			var result = await _controller.SearchApiUsers(CancellationToken.None, filter, invalidPage);
+			var result = await _controller.SearchApiUsers(filter, invalidPage);
 
 			// Assert
 			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
@@ -444,7 +444,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns((false, 0, expectedBadRequestResult));
 
 			// Act
-			var result = await _controller.SearchApiUsers(CancellationToken.None, filter, pageSize: invalidPageSize);
+			var result = await _controller.SearchApiUsers(filter, pageSize: invalidPageSize);
 
 			// Assert
 			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
@@ -466,7 +466,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.ReturnsAsync(new List<ApiUserEntity>());
 
 			// Act
-			var result = await _controller.SearchApiUsers(CancellationToken.None, filter);
+			var result = await _controller.SearchApiUsers(filter);
 
 			// Assert
 			Assert.IsType<NoContentResult>(result.Result);
@@ -487,7 +487,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.ReturnsAsync((List<ApiUserEntity>)null);
 
 			// Act
-			var result = await _controller.SearchApiUsers(CancellationToken.None, filter);
+			var result = await _controller.SearchApiUsers(filter);
 
 			// Assert
 			Assert.IsType<NoContentResult>(result.Result);
@@ -525,7 +525,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.Returns(apiUserDtos);
 
 			// Act
-			var result = await _controller.SearchApiUsers(CancellationToken.None, filter, page, pageSize);
+			var result = await _controller.SearchApiUsers(filter, page, pageSize);
 
 			// Assert
 			var okResult = Assert.IsType<OkObjectResult>(result.Result);
@@ -551,7 +551,7 @@ namespace AirportAutomationApi.Test.Controllers
 				.ThrowsAsync(new Exception("Simulated exception"));
 
 			// Act & Assert
-			await Assert.ThrowsAsync<Exception>(async () => await _controller.SearchApiUsers(CancellationToken.None, filter));
+			await Assert.ThrowsAsync<Exception>(async () => await _controller.SearchApiUsers(filter));
 		}
 
 		#endregion

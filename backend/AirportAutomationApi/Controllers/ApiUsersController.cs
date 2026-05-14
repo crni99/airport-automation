@@ -62,9 +62,9 @@ namespace AirportAutomation.Api.Controllers
 		/// <summary>
 		/// Endpoint for retrieving a paginated list of api users.
 		/// </summary>
-		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <param name="page">The page number for pagination (optional).</param>
 		/// <param name="pageSize">The number of items per page (optional).</param>
+		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <returns>A paginated list of api users.</returns>
 		/// <response code="200">Returns a list of api users wrapped in a <see cref="PagedResponse{ApiUserRoleDto}"/>.</response>
 		/// <response code="204">If no apiUsers are found.</response>
@@ -78,9 +78,9 @@ namespace AirportAutomation.Api.Controllers
 		[ProducesResponseType(401)]
 		[ProducesResponseType(403)]
 		public async Task<ActionResult<PagedResponse<ApiUserRoleDto>>> GetApiUsers(
-			CancellationToken cancellationToken,
 			[FromQuery] int page = 1,
-			[FromQuery] int pageSize = 10)
+			[FromQuery] int pageSize = 10,
+			CancellationToken cancellationToken = default)
 		{
 			var (isValid, correctedPageSize, result) = _paginationValidationService.ValidatePaginationParameters(page, pageSize, maxPageSize);
 			if (!isValid)
@@ -136,10 +136,10 @@ namespace AirportAutomation.Api.Controllers
 		/// <summary>
 		/// Endpoint for retrieving a paginated list of api users matching the specified search filter criteria.
 		/// </summary>
-		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <param name="filter">The search filter containing api user fields to filter by.</param>
 		/// <param name="page">The page number for pagination (optional, default is 1).</param>
 		/// <param name="pageSize">The number of items per page for pagination (optional, default is 10).</param>
+		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <returns>A paged response containing the list of api users that match the filter criteria.</returns>
 		/// <response code="200">Returns a paged list of api users if found.</response>
 		/// <response code="204">If no api users matching the filter criteria are found.</response>
@@ -153,10 +153,10 @@ namespace AirportAutomation.Api.Controllers
 		[ProducesResponseType(401)]
 		[ProducesResponseType(403)]
 		public async Task<ActionResult<PagedResponse<ApiUserRoleDto>>> SearchApiUsers(
-			CancellationToken cancellationToken,
 			[FromQuery] ApiUserSearchFilter filter,
 			[FromQuery] int page = 1,
-			[FromQuery] int pageSize = 10)
+			[FromQuery] int pageSize = 10,
+			CancellationToken cancellationToken = default)
 		{
 			if (filter.IsEmpty())
 			{

@@ -72,9 +72,9 @@ namespace AirportAutomation.Api.Controllers
 		/// <summary>
 		/// Endpoint for retrieving a paginated list of airlines.
 		/// </summary>
-		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <param name="page">The page number for pagination (optional).</param>
 		/// <param name="pageSize">The number of items per page (optional).</param>
+		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <returns>A paginated list of airlines.</returns>
 		/// <response code="200">Returns a list of airlines wrapped in a <see cref="PagedResponse{AirlineDto}"/>.</response>
 		/// <response code="204">If no airlines are found.</response>
@@ -86,15 +86,15 @@ namespace AirportAutomation.Api.Controllers
 		[ProducesResponseType(400)]
 		[ProducesResponseType(401)]
 		public Task<ActionResult<PagedResponse<AirlineDto>>> GetAirlines(
-			CancellationToken ct,
 			[FromQuery] int page = 1,
-			[FromQuery] int pageSize = 10)
+			[FromQuery] int pageSize = 10,
+			CancellationToken cancellationToken = default)
 			=> GetPagedAsync<AirlineEntity, AirlineDto>(
 				_cacheService, _paginationValidationService, _mapper, _logger,
 				page, pageSize, maxPageSize,
 				cacheKey: CacheKeys.Airlines(page, pageSize),
-				fetchItems: () => _airlineService.GetAirlines(ct, page, pageSize),
-				fetchCount: () => _airlineService.AirlinesCount(ct));
+				fetchItems: () => _airlineService.GetAirlines(cancellationToken, page, pageSize),
+				fetchCount: () => _airlineService.AirlinesCount(cancellationToken));
 
 		/// <summary>
 		/// Endpoint for retrieving a single airline.
@@ -120,10 +120,10 @@ namespace AirportAutomation.Api.Controllers
 		/// <summary>
 		/// Endpoint for retrieving a paginated list of airlines matching the specified search filter criteria.
 		/// </summary>
-		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <param name="name">The name to search for.</param>
 		/// <param name="page">The page number for pagination (optional).</param>
 		/// <param name="pageSize">The size of each page for pagination (optional).</param>
+		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <returns>A list of airlines that match the specified name.</returns>
 		/// <response code="200">Returns a paged list of airlines if found.</response>
 		/// <response code="204">If no airlines matching the filter criteria are found.</response>
@@ -135,10 +135,10 @@ namespace AirportAutomation.Api.Controllers
 		[ProducesResponseType(400)]
 		[ProducesResponseType(401)]
 		public async Task<ActionResult<PagedResponse<AirlineDto>>> SearchAirlines(
-			CancellationToken cancellationToken,
 			string name,
 			[FromQuery] int page = 1,
-			[FromQuery] int pageSize = 10)
+			[FromQuery] int pageSize = 10,
+			CancellationToken cancellationToken = default)
 		{
 			if (!_inputValidationService.IsValidString(name))
 			{
@@ -323,11 +323,11 @@ namespace AirportAutomation.Api.Controllers
 		/// <summary>
 		/// Endpoint for exporting airline data to PDF.
 		/// </summary>
-		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <param name="page">The page number for pagination (optional, default is 1).</param>
 		/// <param name="pageSize">The page size for pagination (optional, default is 10).</param>
 		/// <param name="getAll">Flag indicating whether to retrieve all data (optional, default is false).</param>
 		/// <param name="name">The name to search for (optional, default is null).</param>
+		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <returns>Returns the generated PDF document.</returns>
 		/// <response code="200">Returns the generated PDF document.</response>
 		/// <response code="204">No airlines found.</response>
@@ -344,58 +344,34 @@ namespace AirportAutomation.Api.Controllers
 		[ProducesResponseType(401)]
 		[ProducesResponseType(403)]
 		[ProducesResponseType(500)]
-		public async Task<ActionResult> ExportToPdf(
-			CancellationToken cancellationToken,
+		public Task<ActionResult> ExportToPdf(
 			[FromQuery] int page = 1,
 			[FromQuery] int pageSize = 10,
 			[FromQuery] bool getAll = false,
-			[FromQuery] string? name = null)
-		{
-			IList<AirlineEntity> airlines;
-			if (getAll)
-			{
-				airlines = await _airlineService.GetAllAirlines(cancellationToken);
-			}
-			else
-			{
-				var (isValid, correctedPageSize, result) = _paginationValidationService.ValidatePaginationParameters(page, pageSize, maxPageSize);
-				if (!isValid)
-				{
-					return result;
-				}
-				if (_inputValidationService.IsValidString(name))
-				{
-					airlines = await _airlineService.SearchAirlines(cancellationToken, page, correctedPageSize, name);
-				}
-				else
-				{
-					airlines = await _airlineService.GetAirlines(cancellationToken, page, correctedPageSize);
-				}
-			}
-			if (airlines is null || !airlines.Any())
-			{
-				_logger.LogInformation("No airlines found for page {Page}, pageSize {PageSize}, getAll {GetAll}, name {Name}.",
-					page, pageSize, getAll, name);
-				return NoContent();
-			}
-			var pdf = _exportService.ExportToPDF("Airlines", airlines);
-			if (pdf == null)
-			{
-				_logger.LogError("PDF generation failed.");
-				return StatusCode(500, "Failed to generate PDF file.");
-			}
-			string fileName = _utilityService.GenerateUniqueFileName("Airlines", FileExtension.Pdf);
-			return File(pdf, "application/pdf", fileName);
-		}
+			[FromQuery] string? name = null,
+			CancellationToken cancellationToken = default)
+			=> ExportAsync<AirlineEntity>(
+				entityName: "Airlines",
+				fileType: FileExtension.Pdf,
+				exportService: _exportService,
+				paginationValidation: _paginationValidationService,
+				inputValidation: _inputValidationService,
+				logger: _logger,
+				page, pageSize, maxPageSize, getAll,
+				fetchAll: () => _airlineService.GetAllAirlines(cancellationToken),
+				fetchPaged: (p, ps) => _airlineService.GetAirlines(cancellationToken, p, ps),
+				fetchSearch: _inputValidationService.IsValidString(name)
+					? (p, ps) => _airlineService.SearchAirlines(cancellationToken, p, ps, name!)
+					: null);
 
 		/// <summary>
 		/// Endpoint for exporting airline data to Excel.
 		/// </summary>
-		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <param name="page">The page number for pagination (optional, default is 1).</param>
 		/// <param name="pageSize">The page size for pagination (optional, default is 10).</param>
 		/// <param name="getAll">Flag indicating whether to retrieve all data (optional, default is false).</param>
 		/// <param name="name">The name to search for (optional, default is null).</param>
+		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <returns>Returns the generated Excel document.</returns>
 		/// <response code="200">Returns the generated Excel document.</response>
 		/// <response code="204">No airlines found.</response>
@@ -412,49 +388,25 @@ namespace AirportAutomation.Api.Controllers
 		[ProducesResponseType(401)]
 		[ProducesResponseType(403)]
 		[ProducesResponseType(500)]
-		public async Task<ActionResult> ExportToExcel(
-			CancellationToken cancellationToken,
+		public Task<ActionResult> ExportToExcel(
 			[FromQuery] int page = 1,
 			[FromQuery] int pageSize = 10,
 			[FromQuery] bool getAll = false,
-			[FromQuery] string? name = null)
-		{
-			IList<AirlineEntity> airlines;
-			if (getAll)
-			{
-				airlines = await _airlineService.GetAllAirlines(cancellationToken);
-			}
-			else
-			{
-				var (isValid, correctedPageSize, result) = _paginationValidationService.ValidatePaginationParameters(page, pageSize, maxPageSize);
-				if (!isValid)
-				{
-					return result;
-				}
-				if (_inputValidationService.IsValidString(name))
-				{
-					airlines = await _airlineService.SearchAirlines(cancellationToken, page, correctedPageSize, name);
-				}
-				else
-				{
-					airlines = await _airlineService.GetAirlines(cancellationToken, page, correctedPageSize);
-				}
-			}
-			if (airlines is null || !airlines.Any())
-			{
-				_logger.LogInformation("No airlines found for page {Page}, pageSize {PageSize}, getAll {GetAll}, name {Name}.",
-					page, pageSize, getAll, name);
-				return NoContent();
-			}
-			var excel = _exportService.ExportToExcel("Airlines", airlines);
-			if (excel == null || excel.Length == 0)
-			{
-				_logger.LogError("Excel generation failed.");
-				return StatusCode(500, "Failed to generate Excel file.");
-			}
-			string fileName = _utilityService.GenerateUniqueFileName("Airlines", FileExtension.Xlsx);
-			return File(excel, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
-		}
+			[FromQuery] string? name = null,
+			CancellationToken cancellationToken = default)
+			=> ExportAsync<AirlineEntity>(
+				entityName: "Airlines",
+				fileType: FileExtension.Xlsx,
+				exportService: _exportService,
+				paginationValidation: _paginationValidationService,
+				inputValidation: _inputValidationService,
+				logger: _logger,
+				page, pageSize, maxPageSize, getAll,
+				fetchAll: () => _airlineService.GetAllAirlines(cancellationToken),
+				fetchPaged: (p, ps) => _airlineService.GetAirlines(cancellationToken, p, ps),
+				fetchSearch: _inputValidationService.IsValidString(name)
+					? (p, ps) => _airlineService.SearchAirlines(cancellationToken, p, ps, name!)
+					: null);
 
 	}
 }
