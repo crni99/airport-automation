@@ -12,13 +12,15 @@ namespace AirportAutomation.Web.Controllers
 	[Route("[controller]")]
 	public class ApiUserController : BaseController
 	{
-		private readonly IHttpCallService _httpCallService;
+		private readonly IDataHttpService _dataHttpService;
+		private readonly ISearchHttpService _searchHttpService;
 		private readonly IAlertService _alertService;
 		private readonly IMapper _mapper;
 
-		public ApiUserController(IHttpCallService httpCallService, IAlertService alertService, IMapper mapper)
+		public ApiUserController(IDataHttpService dataHttpService, ISearchHttpService searchHttpService, IAlertService alertService, IMapper mapper)
 		{
-			_httpCallService = httpCallService;
+			_dataHttpService = dataHttpService;
+			_searchHttpService = searchHttpService;
 			_alertService = alertService;
 			_mapper = mapper;
 		}
@@ -38,7 +40,7 @@ namespace AirportAutomation.Web.Controllers
 				_alertService.SetAlertMessage(TempData, "invalid_page_number", false);
 				return Json(new { success = false, message = "Page number must be greater than or equal to 1." });
 			}
-			var response = await _httpCallService.GetDataList<ApiUserEntity>(page, pageSize, cancellationToken);
+			var response = await _dataHttpService.GetDataList<ApiUserEntity>(page, pageSize, cancellationToken);
 			if (response == null)
 			{
 				return Json(new { success = false, message = "No api users found." });
@@ -51,16 +53,13 @@ namespace AirportAutomation.Web.Controllers
 		[Route("{id}")]
 		public async Task<IActionResult> Details(int id, CancellationToken cancellationToken = default)
 		{
-			var response = await _httpCallService.GetData<ApiUserEntity>(id, cancellationToken);
+			var response = await _dataHttpService.GetData<ApiUserEntity>(id, cancellationToken);
 			if (response is null)
 			{
 				_alertService.SetAlertMessage(TempData, "data_not_found", false);
 				return RedirectToAction("Index");
 			}
-			else
-			{
-				return View(_mapper.Map<ApiUserViewModel>(response));
-			}
+			return View(_mapper.Map<ApiUserViewModel>(response));
 		}
 
 		[HttpGet]
@@ -77,7 +76,7 @@ namespace AirportAutomation.Web.Controllers
 				_alertService.SetAlertMessage(TempData, "missing_field", false);
 				return RedirectToAction("Index");
 			}
-			var response = await _httpCallService.GetDataByFilter<ApiUserEntity>(filter, page, pageSize, cancellationToken);
+			var response = await _searchHttpService.GetDataByFilter<ApiUserEntity>(filter, page, pageSize, cancellationToken);
 			if (response == null)
 			{
 				return Json(new { success = false, message = "No api users found." });
@@ -97,16 +96,13 @@ namespace AirportAutomation.Web.Controllers
 		[Route("Edit/{id}")]
 		public async Task<IActionResult> Edit(int id, CancellationToken cancellationToken = default)
 		{
-			var response = await _httpCallService.GetData<ApiUserEntity>(id, cancellationToken);
+			var response = await _dataHttpService.GetData<ApiUserEntity>(id, cancellationToken);
 			if (response is null)
 			{
 				_alertService.SetAlertMessage(TempData, "data_not_found", false);
 				return RedirectToAction("Details", new { id });
 			}
-			else
-			{
-				return View(_mapper.Map<ApiUserViewModel>(response));
-			}
+			return View(_mapper.Map<ApiUserViewModel>(response));
 		}
 
 		[HttpPost]
@@ -117,7 +113,7 @@ namespace AirportAutomation.Web.Controllers
 			if (ModelState.IsValid)
 			{
 				var apiUser = _mapper.Map<ApiUserEntity>(apiUserDto);
-				var response = await _httpCallService.EditData<ApiUserEntity>(apiUser, apiUser.ApiUserId, cancellationToken);
+				var response = await _dataHttpService.EditData<ApiUserEntity>(apiUser, apiUser.ApiUserId, cancellationToken);
 				if (response)
 				{
 					_alertService.SetAlertMessage(TempData, "edit_data_success", true);
@@ -132,11 +128,12 @@ namespace AirportAutomation.Web.Controllers
 			else { return RedirectToAction("Index"); }
 		}
 
-		[HttpGet]
+		[HttpPost]
 		[Route("Delete/{id}")]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken = default)
 		{
-			var response = await _httpCallService.DeleteData<ApiUserEntity>(id, cancellationToken);
+			var response = await _dataHttpService.DeleteData<ApiUserEntity>(id, cancellationToken);
 			if (response)
 			{
 				_alertService.SetAlertMessage(TempData, "delete_data_success", true);
@@ -148,6 +145,5 @@ namespace AirportAutomation.Web.Controllers
 				return RedirectToAction("Details", new { id });
 			}
 		}
-
 	}
 }

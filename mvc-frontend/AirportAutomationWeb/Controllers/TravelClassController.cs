@@ -10,13 +10,15 @@ namespace AirportAutomation.Web.Controllers
 	[Route("[controller]")]
 	public class TravelClassController : BaseController
 	{
-		private readonly IHttpCallService _httpCallService;
+		private readonly IDataHttpService _dataHttpService;
+		private readonly IExportHttpService _exportHttpService;
 		private readonly IAlertService _alertService;
 		private readonly IMapper _mapper;
 
-		public TravelClassController(IHttpCallService httpCallService, IAlertService alertService, IMapper mapper)
+		public TravelClassController(IDataHttpService dataHttpService, IExportHttpService exportHttpService, IAlertService alertService, IMapper mapper)
 		{
-			_httpCallService = httpCallService;
+			_dataHttpService = dataHttpService;
+			_exportHttpService = exportHttpService;
 			_alertService = alertService;
 			_mapper = mapper;
 		}
@@ -35,7 +37,7 @@ namespace AirportAutomation.Web.Controllers
 				_alertService.SetAlertMessage(TempData, "invalid_page_number", false);
 				return Json(new { success = false, message = "Page number must be greater than or equal to 1." });
 			}
-			var response = await _httpCallService.GetDataList<TravelClassEntity>(page, pageSize, cancellationToken);
+			var response = await _dataHttpService.GetDataList<TravelClassEntity>(page, pageSize, cancellationToken);
 			if (response == null)
 			{
 				return Json(new { success = false, message = "No travel classes found." });
@@ -52,34 +54,28 @@ namespace AirportAutomation.Web.Controllers
 			[FromQuery] string fileType = "pdf",
 			CancellationToken cancellationToken = default)
 		{
-			var result = await _httpCallService.DownloadFileAsync<TravelClassEntity>(fileType, null, page, pageSize, true, cancellationToken);
-
+			var result = await _exportHttpService.DownloadFileAsync<TravelClassEntity>(fileType, null, page, pageSize, true, cancellationToken);
 			if (result is null || result.HasError)
 			{
 				_alertService.SetAlertMessage(TempData, "download_failed", false);
 				return RedirectToAction("Index");
 			}
-
 			if (result.IsUnauthorized)
 			{
 				_alertService.SetAlertMessage(TempData, "unauthorized_access", false);
 				return RedirectToAction("Index", "Home");
 			}
-
 			if (result.IsForbidden)
 			{
 				_alertService.SetAlertMessage(TempData, "forbidden_access", false);
 				return RedirectToAction("Index", "TravelClass");
 			}
-
 			if (result.Content == null || result.Content.Length == 0)
 			{
 				_alertService.SetAlertMessage(TempData, "no_content_available", false);
 				return RedirectToAction("Index", "TravelClass");
 			}
-
 			return File(result.Content, result.ContentType, result.FileName);
 		}
-
 	}
 }

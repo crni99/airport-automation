@@ -9,12 +9,12 @@ namespace AirportAutomation.Web.Controllers
 	[AllowAnonymous]
 	public class HomeController : BaseController
 	{
-		private readonly IHttpCallService _httpCallService;
+		private readonly IAuthHttpService _authHttpService;
 		private readonly IAlertService _alertService;
 
-		public HomeController(IHttpCallService httpCallService, IAlertService alertService)
+		public HomeController(IAuthHttpService authHttpService, IAlertService alertService)
 		{
-			_httpCallService = httpCallService;
+			_authHttpService = authHttpService;
 			_alertService = alertService;
 		}
 
@@ -25,7 +25,7 @@ namespace AirportAutomation.Web.Controllers
 			{
 				_alertService.SetAlertMessage(TempData, "logout_success", true);
 			}
-			string token = _httpCallService.GetToken();
+			string token = _authHttpService.GetToken();
 			if (!string.IsNullOrEmpty(token))
 			{
 				return Redirect("HealthCheck");
@@ -40,7 +40,7 @@ namespace AirportAutomation.Web.Controllers
 		{
 			if (ModelState.IsValid)
 			{
-				var response = await _httpCallService.Authenticate(user, cancellationToken);
+				var response = await _authHttpService.Authenticate(user, cancellationToken);
 				if (!response)
 				{
 					_alertService.SetAlertMessage(TempData, "login_failed", false);
@@ -55,9 +55,8 @@ namespace AirportAutomation.Web.Controllers
 		[Route("SignOut")]
 		public async Task<IActionResult> SignOut(CancellationToken cancellationToken = default)
 		{
-			bool removed = await _httpCallService.RemoveToken(cancellationToken);
+			bool removed = await _authHttpService.RemoveToken(cancellationToken);
 			return (removed) ? Json(new { success = true }) : Json(new { success = false });
 		}
 	}
 }
-

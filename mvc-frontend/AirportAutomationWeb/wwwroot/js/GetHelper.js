@@ -376,6 +376,10 @@ function updatePagination(currentPage, lastPage) {
     $('.page-item:last a').data('page', lastPage);
 }
 
+function getAntiForgeryToken() {
+    return document.querySelector('input[name="__RequestVerificationToken"]')?.value ?? '';
+}
+
 function generateActionButtons(id, entityType) {
     var openUrl = `/${entityType}/Details/${id}`;
     var editUrl = `/${entityType}/Edit/${id}`;
@@ -407,15 +411,12 @@ function generateActionButtons(id, entityType) {
 
         if (entityType !== 'ApiUser') {
             buttons += `
-                <a href="${deleteUrl}" 
-                    class="btn btn-icon-delete" 
-                    target="_blank"
-                    data-bs-toggle="tooltip"
-			        data-bs-placement="right"
-                    title="Delete"
-                >
-                    <i class="fa-solid fa-trash-can fa-xl"></i>
-                </a>`;
+            <form method="post" action="${deleteUrl}" style="display:inline;margin-top: -4px;" onsubmit="return confirm('Are you sure you want to delete this item?')">
+                <input type="hidden" name="__RequestVerificationToken" value="${getAntiForgeryToken()}">
+                <button type="submit" class="btn btn-icon-delete" title="Delete">
+                    <i class="fa-solid fa-trash fa-lg"></i>
+                </button>
+            </form>`;
         }
     }
     buttons += `</div>`;

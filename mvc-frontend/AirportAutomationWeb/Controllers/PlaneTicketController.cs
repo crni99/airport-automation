@@ -12,13 +12,17 @@ namespace AirportAutomation.Web.Controllers
 	[Route("[controller]")]
 	public class PlaneTicketController : BaseController
 	{
-		private readonly IHttpCallService _httpCallService;
+		private readonly IDataHttpService _dataHttpService;
+		private readonly ISearchHttpService _searchHttpService;
+		private readonly IExportHttpService _exportHttpService;
 		private readonly IAlertService _alertService;
 		private readonly IMapper _mapper;
 
-		public PlaneTicketController(IHttpCallService httpCallService, IAlertService alertService, IMapper mapper)
+		public PlaneTicketController(IDataHttpService dataHttpService, ISearchHttpService searchHttpService, IExportHttpService exportHttpService, IAlertService alertService, IMapper mapper)
 		{
-			_httpCallService = httpCallService;
+			_dataHttpService = dataHttpService;
+			_searchHttpService = searchHttpService;
+			_exportHttpService = exportHttpService;
 			_alertService = alertService;
 			_mapper = mapper;
 		}
@@ -38,7 +42,7 @@ namespace AirportAutomation.Web.Controllers
 				_alertService.SetAlertMessage(TempData, "invalid_page_number", false);
 				return Json(new { success = false, message = "Page number must be greater than or equal to 1." });
 			}
-			var response = await _httpCallService.GetDataList<PlaneTicketEntity>(page, pageSize, cancellationToken);
+			var response = await _dataHttpService.GetDataList<PlaneTicketEntity>(page, pageSize, cancellationToken);
 			if (response == null)
 			{
 				return Json(new { success = false, message = "No plane tickets found." });
@@ -51,16 +55,13 @@ namespace AirportAutomation.Web.Controllers
 		[Route("Details/{id:int}")]
 		public async Task<IActionResult> Details(int id, CancellationToken cancellationToken = default)
 		{
-			var response = await _httpCallService.GetData<PlaneTicketEntity>(id, cancellationToken);
+			var response = await _dataHttpService.GetData<PlaneTicketEntity>(id, cancellationToken);
 			if (response is null)
 			{
 				_alertService.SetAlertMessage(TempData, "data_not_found", false);
 				return RedirectToAction("Index");
 			}
-			else
-			{
-				return View(_mapper.Map<PlaneTicketViewModel>(response));
-			}
+			return View(_mapper.Map<PlaneTicketViewModel>(response));
 		}
 
 		[HttpGet]
@@ -78,7 +79,7 @@ namespace AirportAutomation.Web.Controllers
 				_alertService.SetAlertMessage(TempData, "missing_field", false);
 				return RedirectToAction("Index");
 			}
-			var response = await _httpCallService.GetDataByFilter<PlaneTicketEntity>(filter, page, pageSize, cancellationToken);
+			var response = await _searchHttpService.GetDataByFilter<PlaneTicketEntity>(filter, page, pageSize, cancellationToken);
 			if (response == null)
 			{
 				return Json(new { success = false, message = "No plane tickets found." });
@@ -102,32 +103,26 @@ namespace AirportAutomation.Web.Controllers
 			CancellationToken cancellationToken = default)
 		{
 			var planeTicket = _mapper.Map<PlaneTicketEntity>(planeTicketCreateDto);
-			var response = await _httpCallService.CreateData<PlaneTicketEntity>(planeTicket, cancellationToken);
+			var response = await _dataHttpService.CreateData<PlaneTicketEntity>(planeTicket, cancellationToken);
 			if (response is null)
 			{
 				_alertService.SetAlertMessage(TempData, "create_data_failed", false);
 				return RedirectToAction("Create");
 			}
-			else
-			{
-				return RedirectToAction("Details", new { id = response.Id });
-			}
+			return RedirectToAction("Details", new { id = response.Id });
 		}
 
 		[HttpGet]
 		[Route("Edit/{id}")]
 		public async Task<IActionResult> Edit(int id, CancellationToken cancellationToken = default)
 		{
-			var response = await _httpCallService.GetData<PlaneTicketEntity>(id, cancellationToken);
+			var response = await _dataHttpService.GetData<PlaneTicketEntity>(id, cancellationToken);
 			if (response is null)
 			{
 				_alertService.SetAlertMessage(TempData, "data_not_found", false);
 				return RedirectToAction("Details", new { id });
 			}
-			else
-			{
-				return View(_mapper.Map<PlaneTicketViewModel>(response));
-			}
+			return View(_mapper.Map<PlaneTicketViewModel>(response));
 		}
 
 		[HttpPost]
@@ -138,7 +133,7 @@ namespace AirportAutomation.Web.Controllers
 			CancellationToken cancellationToken = default)
 		{
 			var planeTicket = _mapper.Map<PlaneTicketEntity>(planeTicketDto);
-			var response = await _httpCallService.EditData<PlaneTicketEntity>(planeTicket, planeTicket.Id, cancellationToken);
+			var response = await _dataHttpService.EditData<PlaneTicketEntity>(planeTicket, planeTicket.Id, cancellationToken);
 			if (response)
 			{
 				_alertService.SetAlertMessage(TempData, "edit_data_success", true);
@@ -151,11 +146,12 @@ namespace AirportAutomation.Web.Controllers
 			}
 		}
 
-		[HttpGet]
+		[HttpPost]
 		[Route("Delete/{id}")]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken = default)
 		{
-			var response = await _httpCallService.DeleteData<PlaneTicketEntity>(id, cancellationToken);
+			var response = await _dataHttpService.DeleteData<PlaneTicketEntity>(id, cancellationToken);
 			if (response)
 			{
 				_alertService.SetAlertMessage(TempData, "delete_data_success", true);
@@ -178,34 +174,28 @@ namespace AirportAutomation.Web.Controllers
 			[FromQuery] string fileType = "pdf",
 			CancellationToken cancellationToken = default)
 		{
-			var result = await _httpCallService.DownloadFileAsync<PlaneTicketEntity>(fileType, filter, page, pageSize, getAll, cancellationToken);
-
+			var result = await _exportHttpService.DownloadFileAsync<PlaneTicketEntity>(fileType, filter, page, pageSize, getAll, cancellationToken);
 			if (result is null || result.HasError)
 			{
 				_alertService.SetAlertMessage(TempData, "download_failed", false);
 				return RedirectToAction("Index");
 			}
-
 			if (result.IsUnauthorized)
 			{
 				_alertService.SetAlertMessage(TempData, "unauthorized_access", false);
 				return RedirectToAction("Index", "Home");
 			}
-
 			if (result.IsForbidden)
 			{
 				_alertService.SetAlertMessage(TempData, "forbidden_access", false);
 				return RedirectToAction("Index", "PlaneTicket");
 			}
-
 			if (result.Content == null || result.Content.Length == 0)
 			{
 				_alertService.SetAlertMessage(TempData, "no_content_available", false);
 				return RedirectToAction("Index", "PlaneTicket");
 			}
-
 			return File(result.Content, result.ContentType, result.FileName);
 		}
-
 	}
 }

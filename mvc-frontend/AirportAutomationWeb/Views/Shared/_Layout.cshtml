@@ -3,6 +3,7 @@
 @{
 	string token = _httpContextAccessor.HttpContext.Session.GetString("AccessToken");
 }
+@Html.AntiForgeryToken()
 
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="light">

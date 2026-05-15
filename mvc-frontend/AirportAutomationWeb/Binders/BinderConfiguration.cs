@@ -8,7 +8,11 @@ namespace AirportAutomation.Web.Binders
 	{
 		public static void Binders(IServiceCollection services)
 		{
-			services.AddScoped<IHttpCallService, HttpCallService>();
+			services.AddScoped<IAuthHttpService, AuthHttpService>();
+			services.AddScoped<IDataHttpService, DataHttpService>();
+			services.AddScoped<ISearchHttpService, SearchHttpService>();
+			services.AddScoped<IExportHttpService, ExportHttpService>();
+			services.AddScoped<IHealthHttpService, HealthHttpService>();
 			services.AddScoped<IAlertService, AlertService>();
 			services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 

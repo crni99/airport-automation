@@ -9,25 +9,24 @@ namespace AirportAutomation.Web.Controllers
 	[Route("[controller]")]
 	public class HealthCheckController : BaseController
 	{
-		private readonly IHttpCallService _httpCallService;
+		private readonly IHealthHttpService _healthHttpService;
 		private readonly IMapper _mapper;
 
-		public HealthCheckController(IHttpCallService httpCallService, IMapper mapper)
+		public HealthCheckController(IHealthHttpService healthHttpService, IMapper mapper)
 		{
-			_httpCallService = httpCallService;
+			_healthHttpService = healthHttpService;
 			_mapper = mapper;
 		}
 
 		[HttpGet]
 		public async Task<IActionResult> Index(CancellationToken cancellationToken = default)
 		{
-			var response = await _httpCallService.GetHealthCheck<HealthCheckEntity>(cancellationToken);
+			var response = await _healthHttpService.GetHealthCheck<HealthCheckEntity>(cancellationToken);
 			if (response == null)
 			{
 				return View();
 			}
 			return View(_mapper.Map<HealthCheckViewModel>(response));
 		}
-
 	}
 }

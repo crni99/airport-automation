@@ -10,13 +10,17 @@ namespace AirportAutomation.Web.Controllers
 	[Route("[controller]")]
 	public class FlightController : BaseController
 	{
-		private readonly IHttpCallService _httpCallService;
+		private readonly IDataHttpService _dataHttpService;
+		private readonly ISearchHttpService _searchHttpService;
+		private readonly IExportHttpService _exportHttpService;
 		private readonly IAlertService _alertService;
 		private readonly IMapper _mapper;
 
-		public FlightController(IHttpCallService httpCallService, IAlertService alertService, IMapper mapper)
+		public FlightController(IDataHttpService dataHttpService, ISearchHttpService searchHttpService, IExportHttpService exportHttpService, IAlertService alertService, IMapper mapper)
 		{
-			_httpCallService = httpCallService;
+			_dataHttpService = dataHttpService;
+			_searchHttpService = searchHttpService;
+			_exportHttpService = exportHttpService;
 			_alertService = alertService;
 			_mapper = mapper;
 		}
@@ -36,7 +40,7 @@ namespace AirportAutomation.Web.Controllers
 				_alertService.SetAlertMessage(TempData, "invalid_page_number", false);
 				return Json(new { success = false, message = "Page number must be greater than or equal to 1." });
 			}
-			var response = await _httpCallService.GetDataList<FlightEntity>(page, pageSize, cancellationToken);
+			var response = await _dataHttpService.GetDataList<FlightEntity>(page, pageSize, cancellationToken);
 			if (response == null)
 			{
 				return Json(new { success = false, message = "No flights found." });
@@ -49,16 +53,13 @@ namespace AirportAutomation.Web.Controllers
 		[Route("Details/{id:int}")]
 		public async Task<IActionResult> Details(int id, CancellationToken cancellationToken = default)
 		{
-			var response = await _httpCallService.GetData<FlightEntity>(id, cancellationToken);
+			var response = await _dataHttpService.GetData<FlightEntity>(id, cancellationToken);
 			if (response is null)
 			{
 				_alertService.SetAlertMessage(TempData, "data_not_found", false);
 				return RedirectToAction("Index");
 			}
-			else
-			{
-				return View(_mapper.Map<FlightViewModel>(response));
-			}
+			return View(_mapper.Map<FlightViewModel>(response));
 		}
 
 		[HttpGet]
@@ -80,7 +81,7 @@ namespace AirportAutomation.Web.Controllers
 				_alertService.SetAlertMessage(TempData, "missing_field", false);
 				return RedirectToAction("Index");
 			}
-			var response = await _httpCallService.GetDataBetweenDates<FlightEntity>(startDate, endDate, page, pageSize, cancellationToken);
+			var response = await _searchHttpService.GetDataBetweenDates<FlightEntity>(startDate, endDate, page, pageSize, cancellationToken);
 			if (response == null)
 			{
 				return Json(new { success = false, message = "No flights found." });
@@ -102,32 +103,26 @@ namespace AirportAutomation.Web.Controllers
 		public async Task<IActionResult> CreateFlight(FlightCreateViewModel flightCreateDto, CancellationToken cancellationToken = default)
 		{
 			var flight = _mapper.Map<FlightEntity>(flightCreateDto);
-			var response = await _httpCallService.CreateData<FlightEntity>(flight, cancellationToken);
+			var response = await _dataHttpService.CreateData<FlightEntity>(flight, cancellationToken);
 			if (response is null)
 			{
 				_alertService.SetAlertMessage(TempData, "create_data_failed", false);
 				return RedirectToAction("Create");
 			}
-			else
-			{
-				return RedirectToAction("Details", new { id = response.Id });
-			}
+			return RedirectToAction("Details", new { id = response.Id });
 		}
 
 		[HttpGet]
 		[Route("Edit/{id}")]
 		public async Task<IActionResult> Edit(int id, CancellationToken cancellationToken = default)
 		{
-			var response = await _httpCallService.GetData<FlightEntity>(id, cancellationToken);
+			var response = await _dataHttpService.GetData<FlightEntity>(id, cancellationToken);
 			if (response is null)
 			{
 				_alertService.SetAlertMessage(TempData, "data_not_found", false);
 				return RedirectToAction("Details", new { id });
 			}
-			else
-			{
-				return View(_mapper.Map<FlightViewModel>(response));
-			}
+			return View(_mapper.Map<FlightViewModel>(response));
 		}
 
 		[HttpPost]
@@ -136,7 +131,7 @@ namespace AirportAutomation.Web.Controllers
 		public async Task<IActionResult> EditFlight(FlightViewModel flightDto, CancellationToken cancellationToken = default)
 		{
 			var flight = _mapper.Map<FlightEntity>(flightDto);
-			var response = await _httpCallService.EditData<FlightEntity>(flight, flight.Id, cancellationToken);
+			var response = await _dataHttpService.EditData<FlightEntity>(flight, flight.Id, cancellationToken);
 			if (response)
 			{
 				_alertService.SetAlertMessage(TempData, "edit_data_success", true);
@@ -149,11 +144,12 @@ namespace AirportAutomation.Web.Controllers
 			}
 		}
 
-		[HttpGet]
+		[HttpPost]
 		[Route("Delete/{id}")]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken = default)
 		{
-			var response = await _httpCallService.DeleteData<FlightEntity>(id, cancellationToken);
+			var response = await _dataHttpService.DeleteData<FlightEntity>(id, cancellationToken);
 			if (response)
 			{
 				_alertService.SetAlertMessage(TempData, "delete_data_success", true);
@@ -178,43 +174,31 @@ namespace AirportAutomation.Web.Controllers
 			CancellationToken cancellationToken = default)
 		{
 			var filter = new Dictionary<string, string>();
-			if (!string.IsNullOrWhiteSpace(startDate))
-			{
-				filter["startDate"] = startDate;
-			}
-			if (!string.IsNullOrWhiteSpace(endDate))
-			{
-				filter["endDate"] = endDate;
-			}
+			if (!string.IsNullOrWhiteSpace(startDate)) filter["startDate"] = startDate;
+			if (!string.IsNullOrWhiteSpace(endDate)) filter["endDate"] = endDate;
 
-			var result = await _httpCallService.DownloadFileAsync<FlightEntity>(fileType, filter, page, pageSize, getAll, cancellationToken);
-
+			var result = await _exportHttpService.DownloadFileAsync<FlightEntity>(fileType, filter, page, pageSize, getAll, cancellationToken);
 			if (result is null || result.HasError)
 			{
 				_alertService.SetAlertMessage(TempData, "download_failed", false);
 				return RedirectToAction("Index");
 			}
-
 			if (result.IsUnauthorized)
 			{
 				_alertService.SetAlertMessage(TempData, "unauthorized_access", false);
 				return RedirectToAction("Index", "Home");
 			}
-
 			if (result.IsForbidden)
 			{
 				_alertService.SetAlertMessage(TempData, "forbidden_access", false);
 				return RedirectToAction("Index", "Flight");
 			}
-
 			if (result.Content == null || result.Content.Length == 0)
 			{
 				_alertService.SetAlertMessage(TempData, "no_content_available", false);
 				return RedirectToAction("Index", "Flight");
 			}
-
 			return File(result.Content, result.ContentType, result.FileName);
 		}
-
 	}
 }
