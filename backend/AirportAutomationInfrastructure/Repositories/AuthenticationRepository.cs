@@ -1,6 +1,7 @@
 ﻿using AirportAutomation.Core.Entities;
 using AirportAutomation.Core.Interfaces.IRepositories;
 using AirportAutomation.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace AirportAutomation.Infrastructure.Repositories
 {
@@ -13,9 +14,9 @@ namespace AirportAutomation.Infrastructure.Repositories
 			_context = context ?? throw new ArgumentNullException(nameof(context));
 		}
 
-		public ApiUserEntity GetUserByUsername(string username)
+		public async Task<ApiUserEntity?> GetUserByUsername(string username)
 		{
-			return _context.ApiUser.FirstOrDefault(user => user.UserName.Equals(username));
+			return await _context.ApiUser.AsNoTracking().FirstOrDefaultAsync(user => user.UserName == username);
 		}
 
 		public void Dispose()

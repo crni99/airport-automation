@@ -115,15 +115,21 @@ namespace AirportAutomation.Infrastructure.Middlewares
 
 			if (statusCode >= 500)
 			{
-				logger.LogError(exception, "An unhandled server exception occurred. Status: {StatusCode} | Path: {Path}", statusCode, context.Request.Path);
+				logger.LogError(
+					exception,
+					"An unhandled server exception occurred. Status: {StatusCode} | Path: {Path} | TraceId: {TraceId}",
+					statusCode, context.Request.Path, context.TraceIdentifier);
 			}
 			else
 			{
-				logger.LogWarning(exception, "A handled client-side exception occurred. Status: {StatusCode} | Path: {Path}", statusCode, context.Request.Path);
+				logger.LogWarning(exception,
+					"A handled client-side exception occurred. Status: {StatusCode} | Path: {Path} | TraceId: {TraceId}",
+					statusCode, context.Request.Path, context.TraceIdentifier);
 			}
 
 			model.Status = statusCode;
 			model.Instance = context.Request.Path;
+			model.Extensions["traceId"] = context.TraceIdentifier;
 			response.StatusCode = statusCode;
 
 			var result = JsonSerializer.Serialize(model);

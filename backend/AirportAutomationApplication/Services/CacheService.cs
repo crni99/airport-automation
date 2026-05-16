@@ -14,6 +14,7 @@ namespace AirportAutomation.Application.Services
 		private readonly RedisSettings _settings;
 		private readonly ILogger<CacheService> _logger;
 		private static readonly ConcurrentDictionary<string, SemaphoreSlim> _locks = new();
+		private static readonly ConcurrentDictionary<string, byte> _trackedKeys = new();
 
 		public CacheService(IDistributedCache cache, IOptions<RedisSettings> settings, ILogger<CacheService> logger)
 		{
@@ -72,6 +73,7 @@ namespace AirportAutomation.Application.Services
 				};
 				var jsonData = JsonConvert.SerializeObject(value);
 				await _cache.SetStringAsync(key, jsonData, options);
+				_trackedKeys.TryAdd(key, 0);
 			}
 			catch (Exception ex)
 			{
@@ -84,10 +86,29 @@ namespace AirportAutomation.Application.Services
 			try
 			{
 				await _cache.RemoveAsync(key);
+				_trackedKeys.TryRemove(key, out _);
 			}
 			catch (Exception ex)
 			{
 				_logger.LogWarning(ex, "Cache REMOVE failed for key {Key}", key);
+			}
+		}
+
+		public async Task RemoveByPrefixAsync(string prefix)
+		{
+			try
+			{
+				var keys = _trackedKeys.Keys.Where(k => k.StartsWith(prefix)).ToList();
+				var tasks = keys.Select(async key =>
+				{
+					await _cache.RemoveAsync(key);
+					_trackedKeys.TryRemove(key, out _);
+				});
+				await Task.WhenAll(tasks);
+			}
+			catch (Exception ex)
+			{
+				_logger.LogWarning(ex, "Cache REMOVE BY PREFIX failed for prefix {Prefix}", prefix);
 			}
 		}
 

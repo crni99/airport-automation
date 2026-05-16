@@ -79,7 +79,7 @@ namespace AirportAutomationApi.Test.Controllers
 
 		[Trait("Category", "Authenticate")]
 		[Fact]
-		public void Authenticate_ValidUser_ReturnsOkWithToken()
+		public async Task Authenticate_ValidUser_ReturnsOkWithToken()
 		{
 			// Arrange
 			var apiUserDto = new ApiUserDto { UserName = "testuser", Password = "password123" };
@@ -88,10 +88,10 @@ namespace AirportAutomationApi.Test.Controllers
 			var userFromRepo = new ApiUserEntity { UserName = "testuser", Password = hashedPassword, Roles = "Admin" };
 
 			_mapperMock.Setup(m => m.Map<ApiUserEntity>(It.IsAny<ApiUserDto>())).Returns(apiUserEntity);
-			_authenticationRepositoryMock.Setup(r => r.GetUserByUsername("testuser")).Returns(userFromRepo);
+			_authenticationRepositoryMock.Setup(r => r.GetUserByUsername("testuser")).ReturnsAsync(userFromRepo);
 
 			// Act
-			var result = _controller.Authenticate(apiUserDto);
+			var result = await _controller.Authenticate(apiUserDto);
 
 			// Assert
 			var okResult = Assert.IsType<OkObjectResult>(result.Result);
@@ -101,7 +101,7 @@ namespace AirportAutomationApi.Test.Controllers
 
 		[Trait("Category", "Authenticate")]
 		[Fact]
-		public void Authenticate_InvalidPassword_ReturnsUnauthorized()
+		public async Task Authenticate_InvalidPassword_ReturnsUnauthorized()
 		{
 			// Arrange
 			var apiUserDto = new ApiUserDto { UserName = "testuser", Password = "wrongpassword" };
@@ -110,10 +110,10 @@ namespace AirportAutomationApi.Test.Controllers
 			var userFromRepo = new ApiUserEntity { UserName = "testuser", Password = hashedPassword, Roles = "User" };
 
 			_mapperMock.Setup(m => m.Map<ApiUserEntity>(It.IsAny<ApiUserDto>())).Returns(apiUserEntity);
-			_authenticationRepositoryMock.Setup(r => r.GetUserByUsername("testuser")).Returns(userFromRepo);
+			_authenticationRepositoryMock.Setup(r => r.GetUserByUsername("testuser")).ReturnsAsync(userFromRepo);
 
 			// Act
-			var result = _controller.Authenticate(apiUserDto);
+			var result = await _controller.Authenticate(apiUserDto);
 
 			// Assert
 			var unauthorizedResult = Assert.IsType<UnauthorizedObjectResult>(result.Result);
@@ -123,17 +123,17 @@ namespace AirportAutomationApi.Test.Controllers
 
 		[Trait("Category", "Authenticate")]
 		[Fact]
-		public void Authenticate_InvalidUsername_ReturnsUnauthorized()
+		public async Task Authenticate_InvalidUsername_ReturnsUnauthorized()
 		{
 			// Arrange
 			var apiUserDto = new ApiUserDto { UserName = "nonexistentuser", Password = "password123" };
 			var apiUserEntity = new ApiUserEntity { UserName = "nonexistentuser", Password = "password123" };
 
 			_mapperMock.Setup(m => m.Map<ApiUserEntity>(It.IsAny<ApiUserDto>())).Returns(apiUserEntity);
-			_authenticationRepositoryMock.Setup(r => r.GetUserByUsername("nonexistentuser")).Returns((ApiUserEntity)null);
+			_authenticationRepositoryMock.Setup(r => r.GetUserByUsername("nonexistentuser")).ReturnsAsync((ApiUserEntity)null);
 
 			// Act
-			var result = _controller.Authenticate(apiUserDto);
+			var result = await _controller.Authenticate(apiUserDto);
 
 			// Assert
 			var unauthorizedResult = Assert.IsType<UnauthorizedObjectResult>(result.Result);
@@ -143,7 +143,7 @@ namespace AirportAutomationApi.Test.Controllers
 
 		[Trait("Category", "Authenticate")]
 		[Fact]
-		public void Authenticate_ValidUser_TokenContainsCorrectClaims()
+		public async Task Authenticate_ValidUser_TokenContainsCorrectClaims()
 		{
 			// Arrange
 			var apiUserDto = new ApiUserDto { UserName = "testuser", Password = "password123" };
@@ -152,10 +152,10 @@ namespace AirportAutomationApi.Test.Controllers
 			var userFromRepo = new ApiUserEntity { UserName = "testuser", Password = hashedPassword, Roles = "Admin" };
 
 			_mapperMock.Setup(m => m.Map<ApiUserEntity>(It.IsAny<ApiUserDto>())).Returns(apiUserEntity);
-			_authenticationRepositoryMock.Setup(r => r.GetUserByUsername("testuser")).Returns(userFromRepo);
+			_authenticationRepositoryMock.Setup(r => r.GetUserByUsername("testuser")).ReturnsAsync(userFromRepo);
 
 			// Act
-			var result = _controller.Authenticate(apiUserDto);
+			var result = await _controller.Authenticate(apiUserDto);
 			var okResult = Assert.IsType<OkObjectResult>(result.Result);
 			var tokenString = okResult.Value as string;
 

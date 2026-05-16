@@ -188,6 +188,7 @@ namespace AirportAutomation.Api.Controllers
 		{
 			var flight = _mapper.Map<FlightEntity>(flightCreateDto);
 			await _flightService.PostFlight(flight);
+			await _cacheService.RemoveByPrefixAsync(CacheKeys.FlightsPrefix);
 			var flightDto = _mapper.Map<FlightDto>(flight);
 			return CreatedAtAction("GetFlight", new { id = flightDto.Id }, flightDto);
 		}
@@ -230,8 +231,8 @@ namespace AirportAutomation.Api.Controllers
 			var flight = _mapper.Map<FlightEntity>(flightUpdateDto);
 			await _flightService.PutFlight(flight);
 
-			string cacheKey = CacheKeys.Flight(id);
-			await _cacheService.RemoveAsync(cacheKey);
+			await _cacheService.RemoveAsync(CacheKeys.Flight(id));
+			await _cacheService.RemoveByPrefixAsync(CacheKeys.FlightsPrefix);
 
 			return NoContent();
 		}
@@ -277,8 +278,8 @@ namespace AirportAutomation.Api.Controllers
 			}
 			var updatedFlight = await _flightService.PatchFlight(id, flightDocument);
 
-			string cacheKey = CacheKeys.Flight(id);
-			await _cacheService.RemoveAsync(cacheKey);
+			await _cacheService.RemoveAsync(CacheKeys.Flight(id));
+			await _cacheService.RemoveByPrefixAsync(CacheKeys.FlightsPrefix);
 
 			var flightDto = _mapper.Map<FlightDto>(updatedFlight);
 			return Ok(flightDto);
@@ -318,8 +319,8 @@ namespace AirportAutomation.Api.Controllers
 			bool deleted = await _flightService.DeleteFlight(id);
 			if (deleted)
 			{
-				string cacheKey = CacheKeys.Flight(id);
-				await _cacheService.RemoveAsync(cacheKey);
+				await _cacheService.RemoveAsync(CacheKeys.Flight(id));
+				await _cacheService.RemoveByPrefixAsync(CacheKeys.FlightsPrefix);
 				return NoContent();
 			}
 			_logger.LogInformation("Flight with id {Id} is being referenced by other entities and cannot be deleted.", id);

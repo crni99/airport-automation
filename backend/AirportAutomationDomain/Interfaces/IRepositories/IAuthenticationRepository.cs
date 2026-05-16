@@ -4,7 +4,7 @@ namespace AirportAutomation.Core.Interfaces.IRepositories
 {
 	public interface IAuthenticationRepository
 	{
-		public ApiUserEntity GetUserByUsername(string username);
+		public Task<ApiUserEntity?> GetUserByUsername(string username);
 
 	}
 }

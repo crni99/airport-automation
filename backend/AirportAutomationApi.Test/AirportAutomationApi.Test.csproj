@@ -11,6 +11,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Repositories\**" />
+    <EmbeddedResource Remove="Repositories\**" />
+    <None Remove="Repositories\**" />
+  </ItemGroup>
+
+  <ItemGroup>
 	<FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="AutoFixture" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
@@ -37,10 +43,6 @@
     <ProjectReference Include="..\AirportAutomationDomain\AirportAutomation.Core.csproj" />
     <ProjectReference Include="..\AirportAutomationInfrastructure\AirportAutomation.Infrastructure.csproj" />
     <ProjectReference Include="..\AirportAutomationApi\AirportAutomation.Api.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Repositories\" />
   </ItemGroup>
 
 </Project>

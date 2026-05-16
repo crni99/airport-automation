@@ -53,10 +53,10 @@ namespace AirportAutomation.Api.Controllers
 		[HttpPost]
 		[ProducesResponseType(typeof(JsonWebToken), 200)]
 		[ProducesResponseType(401)]
-		public ActionResult<string> Authenticate(ApiUserDto apiUserDto)
+		public async Task<ActionResult<string>> Authenticate(ApiUserDto apiUserDto)
 		{
 			var apiUser = _mapper.Map<ApiUserEntity>(apiUserDto);
-			var user = _authenticationRepository.GetUserByUsername(apiUser.UserName);
+			var user = await _authenticationRepository.GetUserByUsername(apiUser.UserName);
 
 			if (user is null || !BCrypt.Net.BCrypt.Verify(apiUser.Password, user.Password))
 			{

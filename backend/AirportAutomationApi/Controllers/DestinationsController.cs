@@ -183,6 +183,7 @@ namespace AirportAutomation.Api.Controllers
 		{
 			var destination = _mapper.Map<DestinationEntity>(destinationCreateDto);
 			await _destinationService.PostDestination(destination);
+			await _cacheService.RemoveByPrefixAsync(CacheKeys.DestinationsPrefix);
 			var destinationDto = _mapper.Map<DestinationDto>(destination);
 			return CreatedAtAction("GetDestination", new { id = destinationDto.Id }, destinationDto);
 		}
@@ -225,8 +226,8 @@ namespace AirportAutomation.Api.Controllers
 			var destination = _mapper.Map<DestinationEntity>(destinationDto);
 			await _destinationService.PutDestination(destination);
 
-			string cacheKey = CacheKeys.Destination(id);
-			await _cacheService.RemoveAsync(cacheKey);
+			await _cacheService.RemoveAsync(CacheKeys.Destination(id));
+			await _cacheService.RemoveByPrefixAsync(CacheKeys.DestinationsPrefix);
 
 			return NoContent();
 		}
@@ -272,8 +273,8 @@ namespace AirportAutomation.Api.Controllers
 			}
 			var updatedDestination = await _destinationService.PatchDestination(id, destinationDocument);
 
-			string cacheKey = CacheKeys.Destination(id);
-			await _cacheService.RemoveAsync(cacheKey);
+			await _cacheService.RemoveAsync(CacheKeys.Destination(id));
+			await _cacheService.RemoveByPrefixAsync(CacheKeys.DestinationsPrefix);
 
 			var destinationDto = _mapper.Map<DestinationDto>(updatedDestination);
 			return Ok(destinationDto);
@@ -313,8 +314,8 @@ namespace AirportAutomation.Api.Controllers
 			bool deleted = await _destinationService.DeleteDestination(id);
 			if (deleted)
 			{
-				string cacheKey = CacheKeys.Destination(id);
-				await _cacheService.RemoveAsync(cacheKey);
+				await _cacheService.RemoveAsync(CacheKeys.Destination(id));
+				await _cacheService.RemoveByPrefixAsync(CacheKeys.DestinationsPrefix);
 				return NoContent();
 			}
 			_logger.LogInformation("Destination with id {Id} is being referenced by other entities and cannot be deleted.", id);
