@@ -446,36 +446,55 @@ ___
   - Transient fault handling with exponential backoff
   - Circuit breaker for prolonged failures
   - Request timeout enforcement
-- Centralize HttpClient configuration for consistent headers.
+- Centralize HttpClient configuration for consistent headers and bearer token injection.
+- Support request cancellation via `CancellationToken` propagation through the full call chain.
 
-### Generic API Service Layer
-- Create generic CRUD methods (CreateData<T>, ReadData<T>, etc.) for type-safe communication.
-- Dynamically construct endpoints with custom pluralization rules.
+### Modular API Service Layer
+- Split HTTP communication into focused, single-responsibility services: `AuthHttpService`, `DataHttpService`, `SearchHttpService`, `ExportHttpService`, and `HealthHttpService`.
+- Share common logic (pluralization, endpoint construction, client configuration) through an abstract `BaseHttpService`.
+- Create generic CRUD methods (`CreateData<T>`, `GetData<T>`, etc.) for type-safe API communication.
+- Dynamically construct endpoints with custom pluralization rules via a centralized dictionary.
 - Support advanced filtering, pagination, and data export.
 
 ### View Layer
 - Handle data presentation with MVC templates and model binding.
 - Develop validated input forms with Bootstrap 5 styling.
-- Implement AJAX requests for asynchronous updates.
+- Implement AJAX requests for asynchronous updates without full page reloads.
+- Centralize role constants to eliminate magic strings across views and controllers.
 
 ### Client-Side Scripting and AJAX Requests
-- Leverage JavaScript, jQuery, and AJAX to build responsive and interactive user interfaces, enabling asynchronous data fetching and partial page updates without full reloads.
+- Leverage JavaScript, jQuery, and native `fetch` API to build responsive and interactive user interfaces, enabling asynchronous data fetching and partial page updates without full reloads.
+- Demonstrate proficiency in both jQuery and modern vanilla JS approaches within the same codebase.
 
 ### Centralized Message Management
 - Implement **Resource Files (.resx)** for centralized alert and error message management.
 - Create **`AlertService`** to retrieve localized messages from resource files.
-- Use ResourceManager to access messages dynamically based on message keys.
+- Use `ResourceManager` to access messages dynamically based on message keys.
 - Prepare foundation for future internationalization (i18n) support.
 
 ### Exporting Data to PDF and Excel
-- Integrate the export functionality from the API into the MVC frontend, allowing users to generate and download PDF and Excel reports directly from the web interface.
-- Provide options to reflect applied filters or search terms in the exported documents, ensuring consistency between the UI and downloaded data.
-- Ensure user-friendly interactions with appropriate UI components (e.g., export buttons, spinners, error handling) for a seamless reporting experience.
+- Integrate export functionality from the API into the MVC frontend, allowing users to generate and download PDF and Excel reports directly from the web interface.
+- Reflect applied filters and search terms in exported documents, ensuring consistency between the UI and downloaded data.
+- Provide user-friendly interactions with export buttons, spinners, and error handling for a seamless reporting experience.
 
 ### Ensuring Web Application Security
 - Enforce HTTPS to secure data transmission between client and server.
-- Implement protections against common vulnerabilities such as **`Cross-Site Scripting (XSS)`**, **`Cross-Site Request Forgery (CSRF)`**, and control **`Cross-Origin Resource Sharing (CORS)`**.
+- Implement **Content Security Policy (CSP)** middleware with environment-aware directives, restricting script, style, font, frame, and connection sources.
+- Protect all state-mutating operations against **Cross-Site Request Forgery (CSRF)** using `[ValidateAntiForgeryToken]` on POST actions, including delete operations.
+- Implement protections against **Cross-Site Scripting (XSS)** and control **Cross-Origin Resource Sharing (CORS)**.
 - Secure API calls with bearer token authorization headers automatically added to all HTTP requests.
+- Integrate ASP.NET Core cookie authentication alongside session-based token storage for layered access control.
+- Apply `[Authorize]` at the base controller level with `[AllowAnonymous]` on public endpoints.
+
+### Structured Logging
+- Integrate **Serilog** for structured, leveled logging across the application.
+- Configure dual-sink output: console for development visibility and daily rolling log files for production error tracking.
+- Enrich log entries with `CorrelationId`, machine name, and thread ID for traceability.
+- Use `RequestLogContextMiddleware` to attach request-scoped context to all log entries.
+
+### Object Mapping
+- Use **AutoMapper** to decouple API entities from view models across all domain types.
+- Implement custom `TypeConverters` for complex type transformations.
 ___
 <br />
 
