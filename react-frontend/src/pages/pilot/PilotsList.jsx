@@ -7,6 +7,7 @@ import { Box } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import CustomAlert from "../../components/common/feedback/CustomAlert.jsx";
 import Pagination from '../../components/common/pagination/Pagination.jsx'
+import useRowsPerPage from '../../hooks/useRowsPerPage';
 
 export default function PilotsList() {
 
@@ -16,11 +17,8 @@ export default function PilotsList() {
     const [triggerFetch, setTriggerFetch] = useState(false);
     const [searchParams, setSearchParams] = useState({});
     const [hasFetched, setHasFetched] = useState(false);
-    const [rowsPerPage, setRowsPerPage] = useState(() => {
-        const saved = localStorage.getItem("rowsPerPage");
-        return saved ? Number(saved) : 10;
-    });
-    const { data, error, isLoading, isError } = useFetch(ENTITIES.PILOTS, null, pageNumber, rowsPerPage, triggerFetch, searchParams)
+    const { rowsPerPage, handleRowsPerPageChange } = useRowsPerPage(setPageNumber);
+    const { data, error, isLoading, isSearchNoResult, isError } = useFetch(ENTITIES.PILOTS, null, pageNumber, rowsPerPage, triggerFetch, searchParams)
 
     useEffect(() => {
         if (data) {
@@ -44,13 +42,6 @@ export default function PilotsList() {
 
     const handlePageChange = (event, newPage) => {
         setPageNumber(newPage + 1);
-    };
-
-    const handleRowsPerPageChange = (event) => {
-        const newRowsPerPage = parseInt(event.target.value, 10);
-        setRowsPerPage(newRowsPerPage);
-        setPageNumber(1);
-        localStorage.setItem("rowsPerPage", newRowsPerPage);
     };
 
     return (
@@ -84,7 +75,11 @@ export default function PilotsList() {
                                 />
                             </>
                         ) : (
-                            hasFetched && <CustomAlert alertType='info' type='Info' message='No pilots available' />
+                            hasFetched && (
+                                isSearchNoResult
+                                    ? <CustomAlert alertType='info' type='Info' message='No results found for your search.' />
+                                    : <CustomAlert alertType='info' type='Info' message='No pilots available' />
+                            )
                         )}
                     </>
                 )}

@@ -7,6 +7,7 @@ import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import Pagination from '../../components/common/pagination/Pagination';
 import CustomAlert from "../../components/common/feedback/CustomAlert.jsx";
+import useRowsPerPage from '../../hooks/useRowsPerPage';
 
 export default function ApiUsersList() {
 
@@ -16,12 +17,8 @@ export default function ApiUsersList() {
     const [apiUsers, setApiUsers] = useState([]);
     const [totalPages, setTotalPages] = useState(1);
     const [hasFetched, setHasFetched] = useState(false);
-    const [rowsPerPage, setRowsPerPage] = useState(() => {
-        const saved = localStorage.getItem("rowsPerPage");
-        return saved ? Number(saved) : 10;
-    });
-
-    const { data, error, isLoading, isError } = useFetch(ENTITIES.API_USERS, null, pageNumber, rowsPerPage, triggerFetch, searchParams)
+    const { rowsPerPage, handleRowsPerPageChange } = useRowsPerPage(setPageNumber);
+    const { data, error, isLoading, isSearchNoResult, isError } = useFetch(ENTITIES.API_USERS, null, pageNumber, rowsPerPage, triggerFetch, searchParams)
 
     useEffect(() => {
         if (data) {
@@ -45,12 +42,6 @@ export default function ApiUsersList() {
 
     function handlePageChange(newPageNumber) {
         setPageNumber(newPageNumber);
-    }
-
-    function handleRowsPerPageChange(newRowsPerPage) {
-        localStorage.setItem("rowsPerPage", newRowsPerPage);
-        setRowsPerPage(newRowsPerPage);
-        setPageNumber(1);
     }
 
     return (
@@ -84,7 +75,11 @@ export default function ApiUsersList() {
                                 />
                             </>
                         ) : (
-                            hasFetched && <CustomAlert alertType='info' type='Info' message='No api users available' />
+                            hasFetched && (
+                                isSearchNoResult
+                                    ? <CustomAlert alertType='info' type='Info' message='No results found for your search.' />
+                                    : <CustomAlert alertType='info' type='Info' message='No api users available' />
+                            )
                         )}
                     </>
                 )}

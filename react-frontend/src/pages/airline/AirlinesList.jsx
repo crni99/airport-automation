@@ -7,6 +7,7 @@ import CustomAlert from "../../components/common/feedback/CustomAlert.jsx";
 import { Box } from '@mui/material';
 import Pagination from '../../components/common/pagination/Pagination.jsx'
 import CircularProgress from '@mui/material/CircularProgress';
+import useRowsPerPage from '../../hooks/useRowsPerPage';
 
 export default function AirlineList() {
     
@@ -16,12 +17,8 @@ export default function AirlineList() {
     const [triggerFetch, setTriggerFetch] = useState(false);
     const [searchParams, setSearchParams] = useState({});
     const [hasFetched, setHasFetched] = useState(false);
-    const [rowsPerPage, setRowsPerPage] = useState(() => {
-        const saved = localStorage.getItem("rowsPerPage");
-        return saved ? Number(saved) : 10;
-    });
-
-    const { data, error, isLoading, isError } = useFetch(ENTITIES.AIRLINES, null, pageNumber, rowsPerPage, triggerFetch, searchParams)
+    const { rowsPerPage, handleRowsPerPageChange } = useRowsPerPage(setPageNumber);
+    const { data, error, isLoading, isSearchNoResult, isError } = useFetch(ENTITIES.AIRLINES, null, pageNumber, rowsPerPage, triggerFetch, searchParams)
 
     useEffect(() => {
         if (data) {
@@ -45,13 +42,6 @@ export default function AirlineList() {
 
     const handlePageChange = (event, newPage) => {
         setPageNumber(newPage + 1);
-    };
-
-    const handleRowsPerPageChange = (event) => {
-        const newRowsPerPage = parseInt(event.target.value, 10);
-        setRowsPerPage(newRowsPerPage);
-        setPageNumber(1);
-        localStorage.setItem("rowsPerPage", newRowsPerPage);
     };
 
     return (
@@ -85,7 +75,11 @@ export default function AirlineList() {
                                 />
                             </>
                         ) : (
-                            hasFetched && <CustomAlert alertType='info' type='Info' message='No airlines available' />
+                            hasFetched && (
+                                isSearchNoResult
+                                    ? <CustomAlert alertType='info' type='Info' message='No results found for your search.' />
+                                    : <CustomAlert alertType='info' type='Info' message='No airlines available' />
+                            )
                         )}
                     </>
                 )}

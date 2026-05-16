@@ -1,24 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import AirlineRoutes from './routes/airlineRoutes.jsx';
-import DestinationsRoutes from './routes/destinationRoutes.jsx';
-import TravelClassesRoutes from './routes/travelClassesRoutes.jsx';
-import PassengersRoutes from './routes/passengersRoutes.jsx';
-import PilotsRoutes from './routes/pilotsRoutes.jsx';
-import FlightsRoutes from './routes/flightRoutes.jsx';
-import PlaneTicketsRoutes from './routes/planeTicketRoutes.jsx';
-import Home from './pages/Home.jsx';
-import HealthCheck from './pages/HealthCheck.jsx';
-import NotFound from './pages/NotFound.jsx';
-import Unauthorized from './pages/Unauthorized.jsx';
-import ApiUsersRoutes from './routes/apiUserRoutes.jsx';
 import RequireAuth from './routes/RequireAuth.jsx';
-import { Container, Box } from '@mui/material';
+import { Container, Box, CircularProgress } from '@mui/material';
 import Navbar from './components/common/header/Navbar.jsx';
 import Footer from './components/common/Footer.jsx';
 import { getAuthToken } from "./utils/auth.js";
 import { ENTITY_PATHS } from './utils/const.js';
 import { useSidebar } from './store/SidebarContext.jsx';
+
+import Home from './pages/Home.jsx';
+import NotFound from './pages/NotFound.jsx';
+import Unauthorized from './pages/Unauthorized.jsx';
+import HealthCheck from './pages/HealthCheck.jsx';
+
+const AirlineRoutes = lazy(() => import('./routes/airlineRoutes.jsx'));
+const DestinationsRoutes = lazy(() => import('./routes/destinationRoutes.jsx'));
+const TravelClassesRoutes = lazy(() => import('./routes/travelClassesRoutes.jsx'));
+const PassengersRoutes = lazy(() => import('./routes/passengersRoutes.jsx'));
+const PilotsRoutes = lazy(() => import('./routes/pilotsRoutes.jsx'));
+const FlightsRoutes = lazy(() => import('./routes/flightRoutes.jsx'));
+const PlaneTicketsRoutes = lazy(() => import('./routes/planeTicketRoutes.jsx'));
+const ApiUsersRoutes = lazy(() => import('./routes/apiUserRoutes.jsx'));
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(() => getAuthToken() !== null);
@@ -51,22 +53,24 @@ function App() {
         )}
         <Box component="main" sx={{ flexGrow: 1, overflowY: 'auto', pl: 3, pr: 3 }}>
           <Container maxWidth={false}>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path={ENTITY_PATHS.HEALTH_CHECKS} element={<HealthCheck />} />
-              <Route path="/unauthorized" element={<Unauthorized />} />
-              <Route element={<RequireAuth />}>
-                {AirlineRoutes}
-                {DestinationsRoutes}
-                {TravelClassesRoutes}
-                {PassengersRoutes}
-                {PilotsRoutes}
-                {ApiUsersRoutes}
-                {FlightsRoutes}
-                {PlaneTicketsRoutes}
-              </Route>
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <Suspense fallback={<Box sx={{ display: 'flex', justifyContent: 'center', mt: 10 }}><CircularProgress /></Box>}>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path={ENTITY_PATHS.HEALTH_CHECKS} element={<HealthCheck />} />
+                <Route path="/unauthorized" element={<Unauthorized />} />
+                <Route element={<RequireAuth />}>
+                  {AirlineRoutes}
+                  {DestinationsRoutes}
+                  {TravelClassesRoutes}
+                  {PassengersRoutes}
+                  {PilotsRoutes}
+                  {ApiUsersRoutes}
+                  {FlightsRoutes}
+                  {PlaneTicketsRoutes}
+                </Route>
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
           </Container>
           {!isLoggedIn && (
             <Footer />

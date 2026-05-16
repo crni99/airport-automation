@@ -12,7 +12,7 @@ export default function TravelClassesList() {
     const [travelClasses, settravelClasses] = useState([]);
     const [triggerFetch, setTriggerFetch] = useState(true);
     const [hasFetched, setHasFetched] = useState(false);
-    const { data, error, isLoading, isError } = useFetch(ENTITIES.TRAVEL_CLASSES, null, 1, 10, triggerFetch)
+    const { data, error, isLoading, isSearchNoResult, isError } = useFetch(ENTITIES.TRAVEL_CLASSES, null, 1, 10, triggerFetch)
 
     useEffect(() => {
         if (data) {
@@ -42,7 +42,11 @@ export default function TravelClassesList() {
                                 <TravelClassesListTable travelClasses={travelClasses} />
                             </>
                         ) : (
-                            hasFetched && <CustomAlert alertType='info' type='Info' message='No travel classes available' />
+                            hasFetched && (
+                                isSearchNoResult
+                                    ? <CustomAlert alertType='info' type='Info' message='No results found for your search.' />
+                                    : <CustomAlert alertType='info' type='Info' message='No travel classes available' />
+                            )
                         )}
                     </>
                 )}

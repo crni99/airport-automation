@@ -16,7 +16,6 @@ const urlsToCache = [
     '/images/icons/192x192.png',
     '/images/icons/384x384.png',
     '/images/icons/512x512.png'
-    // Add your bundled JavaScript and CSS files here (e.g., /static/js/main.js, /static/css/main.css)
 ];
 
 self.addEventListener('install', (event) => {

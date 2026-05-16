@@ -7,6 +7,7 @@ import { ENTITIES } from '../../utils/const.js';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import CustomAlert from "../../components/common/feedback/CustomAlert.jsx";
+import useRowsPerPage from '../../hooks/useRowsPerPage';
 
 export default function PlaneTicketsList() {
     
@@ -16,11 +17,8 @@ export default function PlaneTicketsList() {
     const [triggerFetch, setTriggerFetch] = useState(false);
     const [searchParams, setSearchParams] = useState({});
     const [hasFetched, setHasFetched] = useState(false);
-    const [rowsPerPage, setRowsPerPage] = useState(() => {
-        const saved = localStorage.getItem("rowsPerPage");
-        return saved ? Number(saved) : 10;
-    });
-    const { data, error, isLoading, isError } = useFetch(ENTITIES.PLANE_TICKETS, null, pageNumber, rowsPerPage, triggerFetch, searchParams)
+    const { rowsPerPage, handleRowsPerPageChange } = useRowsPerPage(setPageNumber);
+    const { data, error, isLoading, isSearchNoResult, isError } = useFetch(ENTITIES.PLANE_TICKETS, null, pageNumber, rowsPerPage, triggerFetch, searchParams)
 
     useEffect(() => {
         if (data) {
@@ -38,21 +36,14 @@ export default function PlaneTicketsList() {
         }
     }, [data]);
 
+    useEffect(() => {
+        setTriggerFetch(true);
+    }, [rowsPerPage]);
+
     const handlePageChange = (event, newPageNumber) => {
         setPageNumber(newPageNumber + 1);
         setTriggerFetch(true);
     };
-
-    const handleRowsPerPageChange = (event) => {
-        const newRowsPerPage = parseInt(event.target.value, 10);
-        setRowsPerPage(newRowsPerPage);
-        setPageNumber(1);
-        localStorage.setItem("rowsPerPage", newRowsPerPage);
-    };
-
-    useEffect(() => {
-        setTriggerFetch(true);
-    }, [rowsPerPage]);
 
     return (
         <>
@@ -85,7 +76,11 @@ export default function PlaneTicketsList() {
                                 />
                             </>
                         ) : (
-                            hasFetched && <CustomAlert alertType='info' type='Info' message='No tickets available' />
+                            hasFetched && (
+                                isSearchNoResult
+                                    ? <CustomAlert alertType='info' type='Info' message='No results found for your search.' />
+                                    : <CustomAlert alertType='info' type='Info' message='No tickets available' />
+                            )
                         )}
                     </>
                 )}
