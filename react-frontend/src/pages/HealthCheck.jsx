@@ -18,15 +18,17 @@ import TableRow from '@mui/material/TableRow';
 import CustomAlert from "../components/common/feedback/CustomAlert.jsx";
 
 export default function HealthCheck() {
-    
+
     const [triggerFetch, setTriggerFetch] = useState(true);
+    const [hasFetched, setHasFetched] = useState(false);
     const { data, dataExist, error, isLoading, isError } = useFetch(ENTITIES.HEALTH_CHECKS, null, null, null, triggerFetch)
 
     useEffect(() => {
-            if (data) {
-                setTriggerFetch(false);
-            }
-        }, [data]);
+        if (data) {
+            setTriggerFetch(false);
+            setHasFetched(true);
+        }
+    }, [data]);
 
     const extractErrorMessage = (error) => {
         if (error && error.message) {
@@ -99,7 +101,9 @@ export default function HealthCheck() {
                         </TableContainer>
                     </Box>
                 ) : (
-                    <CustomAlert alertType='info' type='Info' message='No data available' />
+                    hasFetched && (
+                        <CustomAlert alertType='info' type='Info' message='No data available' />
+                    )
                 )}
             </Box>
         </Container>

@@ -14,7 +14,6 @@ namespace AirportAutomation.Web.Binders
 			services.AddScoped<IExportHttpService, ExportHttpService>();
 			services.AddScoped<IHealthHttpService, HealthHttpService>();
 			services.AddScoped<IAlertService, AlertService>();
-			services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
 			services.AddAutoMapper(typeof(PassengerMappings));
 			services.AddAutoMapper(typeof(TravelClassMappings));

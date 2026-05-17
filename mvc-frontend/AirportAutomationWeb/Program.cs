@@ -70,6 +70,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 builder.Services.AddAntiforgery();
 
+builder.Services.AddHttpContextAccessor();
+
 BinderConfiguration.Binders(builder.Services);
 
 var app = builder.Build();

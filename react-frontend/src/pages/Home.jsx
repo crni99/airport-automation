@@ -119,6 +119,7 @@ export default function Home() {
                                                     label="Username"
                                                     id="UserName"
                                                     name="UserName"
+                                                    autoComplete="username"
                                                     slotProps={{ htmlInput: { maxLength: 50 } }}
                                                     fullWidth
                                                     required
@@ -130,6 +131,7 @@ export default function Home() {
                                                     id="Password"
                                                     name="Password"
                                                     type="password"
+                                                    autoComplete="current-password"
                                                     slotProps={{ htmlInput: { maxLength: 50 } }}
                                                     fullWidth
                                                     required

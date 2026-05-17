@@ -1,11 +1,12 @@
-import React from "react";
+import React, { lazy } from "react";
 import { Route } from "react-router-dom";
-import TravelClassesList from "../pages/travelClass/TravelClassesList";
+
+const TravelClassesList = lazy(() => import('../pages/travelClass/TravelClassesList'));
 
 const TravelClassesRoutes = (
-    <>
-        <Route path="/travel-classes" element={<TravelClassesList />} />
-    </>
+        <>
+            <Route path="/travel-classes" element={<TravelClassesList />} />
+        </>
 );
 
 export default TravelClassesRoutes;

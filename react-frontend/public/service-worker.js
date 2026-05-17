@@ -1,5 +1,5 @@
-const CACHE_NAME = 'airport-automation-v1';
-const urlsToCache = [
+const CACHE_NAME = 'airport-automation-v2';
+const APP_SHELL = [
     '/',
     '/index.html',
     '/manifest.json',
@@ -15,48 +15,90 @@ const urlsToCache = [
     '/images/icons/180x180.png',
     '/images/icons/192x192.png',
     '/images/icons/384x384.png',
-    '/images/icons/512x512.png'
+    '/images/icons/512x512.png',
 ];
 
+// Install - pre-cache app shell
 self.addEventListener('install', (event) => {
-    console.log('[Service Worker] Install');
     event.waitUntil(
-        caches.open(CACHE_NAME)
-            .then((cache) => {
-                console.log('[Service Worker] Pre-caching all app shell content');
-                return cache.addAll(urlsToCache);
-            })
+        caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL))
     );
     self.skipWaiting();
 });
 
+// Activate - clean up old caches
 self.addEventListener('activate', (event) => {
-    console.log('[Service Worker] Activate');
-    const cacheWhitelist = [CACHE_NAME];
     event.waitUntil(
-        caches.keys().then((cacheNames) => {
-            return Promise.all(
-                cacheNames.map((cacheName) => {
-                    if (cacheWhitelist.indexOf(cacheName) === -1) {
-                        console.log('[Service Worker] Deleting old cache:', cacheName);
-                        return caches.delete(cacheName);
-                    }
-                    return Promise.resolve();
-                })
-            );
-        })
+        caches.keys().then((cacheNames) =>
+            Promise.all(
+                cacheNames
+                    .filter((name) => name !== CACHE_NAME)
+                    .map((name) => caches.delete(name))
+            )
+        )
     );
-    return self.clients.claim();
+    self.clients.claim();
 });
 
+// Fetch strategy:
+// - API calls: network-only (never serve stale auth/data)
+// - Static assets: cache-first (JS, CSS, images, fonts)
+// - Navigation: network-first with cache fallback (SPA shell)
 self.addEventListener('fetch', (event) => {
-    event.respondWith(
-        caches.match(event.request)
-            .then((response) => {
-                if (response) {
+    const { request } = event;
+    const url = new URL(request.url);
+
+    // Skip non-GET and chrome-extension requests
+    if (request.method !== 'GET' || url.protocol === 'chrome-extension:') {
+        return;
+    }
+
+    // API calls - network only, never cache
+    if (url.pathname.startsWith('/api/')) {
+        event.respondWith(fetch(request));
+        return;
+    }
+
+    // Static assets (JS, CSS, images, fonts) - cache first
+    if (
+        url.pathname.startsWith('/static/') ||
+        url.pathname.match(/\.(js|css|png|jpg|jpeg|svg|ico|woff2?)$/)
+    ) {
+        event.respondWith(
+            caches.match(request).then((cached) => {
+                if (cached) return cached;
+                return fetch(request).then((response) => {
+                    if (response.ok) {
+                        const clone = response.clone();
+                        caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+                    }
                     return response;
-                }
-                return fetch(event.request);
+                });
             })
+        );
+        return;
+    }
+
+    // Navigation requests (SPA) - network first, fallback to cached index.html
+    if (request.mode === 'navigate') {
+        event.respondWith(
+            fetch(request).catch(() =>
+                caches.match('/index.html')
+            )
+        );
+        return;
+    }
+
+    // Default - network first with cache fallback
+    event.respondWith(
+        fetch(request)
+            .then((response) => {
+                if (response.ok) {
+                    const clone = response.clone();
+                    caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+                }
+                return response;
+            })
+            .catch(() => caches.match(request))
     );
 });

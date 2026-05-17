@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense, lazy } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import RequireAuth from './routes/RequireAuth.jsx';
 import { Container, Box, CircularProgress } from '@mui/material';
@@ -13,14 +13,14 @@ import NotFound from './pages/NotFound.jsx';
 import Unauthorized from './pages/Unauthorized.jsx';
 import HealthCheck from './pages/HealthCheck.jsx';
 
-const AirlineRoutes = lazy(() => import('./routes/airlineRoutes.jsx'));
-const DestinationsRoutes = lazy(() => import('./routes/destinationRoutes.jsx'));
-const TravelClassesRoutes = lazy(() => import('./routes/travelClassesRoutes.jsx'));
-const PassengersRoutes = lazy(() => import('./routes/passengersRoutes.jsx'));
-const PilotsRoutes = lazy(() => import('./routes/pilotsRoutes.jsx'));
-const FlightsRoutes = lazy(() => import('./routes/flightRoutes.jsx'));
-const PlaneTicketsRoutes = lazy(() => import('./routes/planeTicketRoutes.jsx'));
-const ApiUsersRoutes = lazy(() => import('./routes/apiUserRoutes.jsx'));
+import AirlinesRoutes from './routes/airlinesRoutes.jsx';
+import ApiUsersRoutes from './routes/apiUsersRoutes.jsx';
+import DestinationsRoutes from './routes/destinationsRoutes.jsx';
+import FlightsRoutes from './routes/flightsRoutes.jsx';
+import PassengersRoutes from './routes/passengersRoutes.jsx';
+import PilotsRoutes from './routes/pilotsRoutes.jsx';
+import PlaneTicketsRoutes from './routes/planeTicketsRoutes.jsx';
+import TravelClassesRoutes from './routes/travelClassesRoutes.jsx';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(() => getAuthToken() !== null);
@@ -59,14 +59,14 @@ function App() {
                 <Route path={ENTITY_PATHS.HEALTH_CHECKS} element={<HealthCheck />} />
                 <Route path="/unauthorized" element={<Unauthorized />} />
                 <Route element={<RequireAuth />}>
-                  {AirlineRoutes}
+                  {AirlinesRoutes}
+                  {ApiUsersRoutes}
                   {DestinationsRoutes}
-                  {TravelClassesRoutes}
+                  {FlightsRoutes}
                   {PassengersRoutes}
                   {PilotsRoutes}
-                  {ApiUsersRoutes}
-                  {FlightsRoutes}
                   {PlaneTicketsRoutes}
+                  {TravelClassesRoutes}
                 </Route>
                 <Route path="*" element={<NotFound />} />
               </Routes>
