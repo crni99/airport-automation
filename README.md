@@ -159,6 +159,8 @@ ___
 ___
 <br />
 
+<!--
+
 ## 📖 Table of Contents
 - [🛫 Getting Started](#-getting-started)
 
@@ -175,6 +177,10 @@ ___
 - [🔄 Mirroring](#-mirroring)
 ___
 <br />
+-->
+
+<details>
+<summary><b>🛫 Getting Started</b></summary>
 
 <a name="-getting-started"></a>
 ## 🛫 Getting Started
@@ -292,7 +298,11 @@ npm run start
 ```
 ___
 <br />
+</details>
 
+<details>
+<summary><b>🏗️ Architecture</b></summary>
+        
 <a name="-architecture"></a>
 ## 🏗️ Architecture
 
@@ -302,7 +312,11 @@ ___
 
 ___
 <br />
+</details>
 
+<details>
+<summary><b>📡 Backend - ASP.NET Core Web API</b></summary>
+        
 <a name="-backend-aspnet-core-web-api"></a>
 ## 📡 [Backend - ASP.NET Core Web API](https://github.com/crni99/airport-automation/tree/main/backend/AirportAutomationApi) 🡥
 
@@ -438,6 +452,10 @@ ___
 - Return detailed health status with Healthy/Degraded/Unhealthy states and custom messages.
 ___
 <br />
+</details>
+
+<details>
+<summary><b>🌐 MVC Web Frontend</b></summary>
 
 <a name="-mvc-web-frontend"></a>
 ## 🌐 [MVC Web Frontend](https://github.com/crni99/airport-automation/tree/main/mvc-frontend/AirportAutomationWeb) 🡥
@@ -498,6 +516,10 @@ ___
 - Implement custom `TypeConverters` for complex type transformations.
 ___
 <br />
+</details>
+
+<details>
+<summary><b>⚛️ React Frontend</b></summary>
 
 <a name="-react-frontend"></a>
 ## ⚛️ [React Frontend](https://github.com/crni99/airport-automation/tree/main/react-frontend/src) 🡥
@@ -583,6 +605,10 @@ ___
 - Ensure the application meets all core PWA installability criteria (served over HTTPS, valid manifest, and service worker) to allow users to install it as a native application on their devices.
 ___
 <br />
+</details>
+
+<details>
+<summary><b>🚀 Deployment</b></summary>
 
 <a name="-deployment"></a>
 ## 🚀 [Deployment](https://github.com/crni99/airport-automation/tree/main/.github/workflows) 🡥
@@ -594,6 +620,10 @@ ___
 - Integrate basic logging and monitoring solutions to track application health and capture errors in production environments.
 ___
 <br />
+</details>
+
+<details>
+<summary><b>🔄 Mirroring</b></summary>
 
 <a name="-mirroring"></a>
 ## 🔄 [Mirroring](https://github.com/crni99/airport-automation/blob/main/.github/workflows/mirror-to-gitlab-and-bitbucket.yml) 🡥
@@ -602,4 +632,4 @@ ___
 - Both GitLab and Bitbucket automatically pick up the changes pushed from GitHub, triggering their respective CI/CD pipelines for seamless integration and deployment.
 ___
 <br />
-
+</details>
