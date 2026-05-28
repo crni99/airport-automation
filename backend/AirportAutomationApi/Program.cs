@@ -329,7 +329,7 @@ if (isOpenTelemetryEnabled)
 var app = builder.Build();
 
 app.UseMiddleware<GlobalExceptionHandler>();
-
+app.UseMiddleware<ApiSecurityHeadersMiddleware>();
 app.UseStaticFiles();
 app.UseSwagger();
 app.UseSwaggerUI(c =>
