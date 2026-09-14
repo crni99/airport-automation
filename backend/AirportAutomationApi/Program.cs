@@ -354,6 +354,7 @@ app.UseMiddleware<RequestLogContextMiddleware>();
 app.UseSerilogRequestLogging();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<IdempotencyMiddleware>();
 app.MapHealthChecks("/api/v{version:apiVersion}/HealthCheck", new()
 {
 	ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,

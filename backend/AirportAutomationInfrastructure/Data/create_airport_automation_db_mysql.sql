@@ -85,6 +85,23 @@ CREATE TABLE ApiUser (
     PRIMARY KEY (ApiUserId)
 );
 
+CREATE TABLE IdempotencyRequest (
+    Id INT NOT NULL AUTO_INCREMENT,
+    IdempotencyKey VARCHAR(255) NOT NULL,
+    Endpoint VARCHAR(255) NOT NULL,
+    HttpMethod VARCHAR(10) NOT NULL,
+    RequestBody LONGTEXT NOT NULL,
+    ResponseBody LONGTEXT NOT NULL,
+    ResponseStatusCode INT NOT NULL,
+    CreatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ExpiresAt TIMESTAMP NOT NULL,
+    UserId VARCHAR(100),
+    PRIMARY KEY (Id),
+    UNIQUE KEY unique_idempotency (IdempotencyKey, Endpoint, UserId),
+    INDEX IX_IdempotencyRequest_Key (IdempotencyKey, UserId, Endpoint),
+    INDEX IX_IdempotencyRequest_ExpiresAt (ExpiresAt)
+);
+
 -- Insert data into the tables
 INSERT INTO Passenger (FirstName, LastName, UPRN, Passport, Address, Phone)
 VALUES

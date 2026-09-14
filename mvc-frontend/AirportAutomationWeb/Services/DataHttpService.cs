@@ -1,4 +1,5 @@
-﻿using AirportAutomation.Web.Interfaces;
+﻿using AirportAutomation.Web.Helpers;
+using AirportAutomation.Web.Interfaces;
 using AirportAutomation.Web.Models.Response;
 using System.Net;
 
@@ -76,8 +77,10 @@ namespace AirportAutomation.Web.Services
 			var modelName = GetModelName<T>();
 			var requestUri = $"{_apiUrl}/{modelName}{GetPluralSuffix(modelName)}";
 
+			var idempotencyKey = IdempotencyKeyGenerator.Generate(modelName, t);
+
 			using var httpClient = _httpClientFactory.CreateClient("AirportAutomationApi");
-			ConfigureHttpClient(httpClient);
+			ConfigureHttpClient(httpClient, idempotencyKey);
 
 			var response = await httpClient.PostAsJsonAsync(requestUri, t, cancellationToken).ConfigureAwait(false);
 
@@ -93,8 +96,10 @@ namespace AirportAutomation.Web.Services
 			var modelName = GetModelName<T>();
 			var requestUri = $"{_apiUrl}/{modelName}{GetPluralSuffix(modelName)}/{id}";
 
+			var idempotencyKey = IdempotencyKeyGenerator.GenerateForId(modelName, "edit", id);
+
 			using var httpClient = _httpClientFactory.CreateClient("AirportAutomationApi");
-			ConfigureHttpClient(httpClient);
+			ConfigureHttpClient(httpClient, idempotencyKey);
 
 			var response = await httpClient.PutAsJsonAsync(requestUri, t, cancellationToken);
 
@@ -109,8 +114,10 @@ namespace AirportAutomation.Web.Services
 			var modelName = GetModelName<T>();
 			var requestUri = $"{_apiUrl}/{modelName}{GetPluralSuffix(modelName)}/{id}";
 
+			var idempotencyKey = IdempotencyKeyGenerator.GenerateForId(modelName, "delete", id);
+
 			using var httpClient = _httpClientFactory.CreateClient("AirportAutomationApi");
-			ConfigureHttpClient(httpClient);
+			ConfigureHttpClient(httpClient, idempotencyKey);
 
 			var response = await httpClient.DeleteAsync(requestUri, cancellationToken);
 

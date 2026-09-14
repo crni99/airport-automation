@@ -92,6 +92,24 @@ Roles nvarchar(50) NOT NULL,
 PRIMARY KEY (ApiUserId )
 );
 
+CREATE TABLE IdempotencyRequest (
+Id INT NOT NULL IDENTITY(1,1),
+IdempotencyKey NVARCHAR(255) NOT NULL,
+Endpoint NVARCHAR(255) NOT NULL,
+HttpMethod NVARCHAR(10) NOT NULL,
+RequestBody NVARCHAR(MAX) NOT NULL,
+ResponseBody NVARCHAR(MAX) NOT NULL,
+ResponseStatusCode INT NOT NULL,
+CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+ExpiresAt DATETIME2 NOT NULL,
+UserId NVARCHAR(100),
+PRIMARY KEY (Id),
+UNIQUE (IdempotencyKey, Endpoint, UserId)
+);
+
+CREATE INDEX IX_IdempotencyRequest_Key ON IdempotencyRequest(IdempotencyKey, UserId, Endpoint);
+CREATE INDEX IX_IdempotencyRequest_ExpiresAt ON IdempotencyRequest(ExpiresAt);
+
 GO
 USE AirportAutomation;
 

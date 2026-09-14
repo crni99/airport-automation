@@ -69,6 +69,23 @@ CREATE TABLE "ApiUser" (
   "Roles" VARCHAR(50) NOT NULL
 );
 
+CREATE TABLE "IdempotencyRequest" (
+  "Id" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  "IdempotencyKey" VARCHAR(255) NOT NULL,
+  "Endpoint" VARCHAR(255) NOT NULL,
+  "HttpMethod" VARCHAR(10) NOT NULL,
+  "RequestBody" TEXT NOT NULL,
+  "ResponseBody" TEXT NOT NULL,
+  "ResponseStatusCode" INT NOT NULL,
+  "CreatedAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "ExpiresAt" TIMESTAMP NOT NULL,
+  "UserId" VARCHAR(100),
+  UNIQUE ("IdempotencyKey", "Endpoint", "UserId")
+);
+
+CREATE INDEX "IX_IdempotencyRequest_Key" ON "IdempotencyRequest"("IdempotencyKey", "UserId", "Endpoint");
+CREATE INDEX "IX_IdempotencyRequest_ExpiresAt" ON "IdempotencyRequest"("ExpiresAt");
+
 -- Insert data into the tables
 INSERT INTO "Passenger" ("FirstName", "LastName", "UPRN", "Passport", "Address", "Phone")
 VALUES

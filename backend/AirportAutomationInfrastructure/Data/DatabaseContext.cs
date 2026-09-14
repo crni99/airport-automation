@@ -29,5 +29,6 @@ namespace AirportAutomation.Infrastructure.Data
 		public DbSet<FlightEntity> Flight { get; set; }
 		public DbSet<PlaneTicketEntity> PlaneTicket { get; set; }
 		public DbSet<ApiUserEntity> ApiUser { get; set; }
+		public DbSet<IdempotencyRequestEntity> IdempotencyRequest { get; set; }
 	}
 }
