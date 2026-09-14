@@ -1,8 +1,9 @@
-import { useState, useContext, useCallback } from 'react';
+import { useRef, useState, useContext, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createData } from '../utils/httpCreate.js';
 import { DataContext } from '../store/DataContext.jsx';
 import { validateFields } from '../utils/validation/validateFields.js';
+import { generateContentIdempotencyKey } from '../utils/idempotency.js';
 
 export const useCreate = (dataType, dataPath, initialDataShape, requiredFields, transformDataForAPI) => {
     const dataCtx = useContext(DataContext);
@@ -33,40 +34,30 @@ export const useCreate = (dataType, dataPath, initialDataShape, requiredFields, 
     const handleSubmit = useCallback(async (event) => {
         event.preventDefault();
 
-        setFormData((prev) => {
-            const validationMessage = validateFields(dataType, prev, requiredFields);
-            if (validationMessage) {
-                return { ...prev, success: null, formError: null, validationError: validationMessage };
+        const validationMessage = validateFields(dataType, formData, requiredFields);
+        if (validationMessage) {
+            setFormData((prev) => ({ ...prev, success: null, formError: null, validationError: validationMessage }));
+            return;
+        }
+
+        setFormData((prev) => ({ ...prev, isPending: true, formError: null, validationError: null, success: null }));
+
+        const apiPayload = transformDataForAPI(formData);
+        const idempotencyKey = await generateContentIdempotencyKey(dataType, apiPayload);
+
+        try {
+            const result = await createData(apiPayload, dataType, dataCtx.apiUrl, idempotencyKey);
+            if (result?.success) {
+                const resetData = Object.keys(initialDataShape).reduce((acc, key) => ({ ...acc, [key]: '' }), {});
+                setFormData((s) => ({ ...s, ...resetData, success: result.message, isPending: false, formError: null, validationError: null }));
+                setTimeout(() => navigate(`${dataPath}/${result.newId}`), 2000);
+            } else {
+                setFormData((s) => ({ ...s, success: null, formError: result?.message || 'Creation failed with an unknown response.', validationError: null, isPending: false }));
             }
-
-            const apiPayload = transformDataForAPI(prev);
-
-            createData(apiPayload, dataType, dataCtx.apiUrl)
-                .then((result) => {
-                    if (result && result.success) {
-                        const resetData = Object.keys(initialDataShape).reduce((acc, key) => ({ ...acc, [key]: '' }), {});
-                        setFormData((s) => ({
-                            ...s,
-                            ...resetData,
-                            success: result.message,
-                            isPending: false,
-                            formError: null,
-                            validationError: null,
-                        }));
-                        setTimeout(() => navigate(`${dataPath}/${result.newId}`), 2000);
-                    } else {
-                        const errorMessage = result?.message || 'Creation failed with an unknown response.';
-                        setFormData((s) => ({ ...s, success: null, formError: errorMessage, validationError: null, isPending: false }));
-                    }
-                })
-                .catch((err) => {
-                    const errorMessage = err.message || `Failed to create ${dataType} due to an unexpected error.`;
-                    setFormData((s) => ({ ...s, success: null, formError: errorMessage, validationError: null, isPending: false }));
-                });
-
-            return { ...prev, isPending: true, formError: null, validationError: null, success: null };
-        });
-    }, [dataType, dataPath, requiredFields, transformDataForAPI, dataCtx.apiUrl, navigate, initialDataShape]);
+        } catch (err) {
+            setFormData((s) => ({ ...s, success: null, formError: err.message || `Failed to create ${dataType} due to an unexpected error.`, validationError: null, isPending: false }));
+        }
+    }, [dataType, dataPath, formData, requiredFields, transformDataForAPI, dataCtx.apiUrl, navigate, initialDataShape]);
 
     return {
         ...formData,

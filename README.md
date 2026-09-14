@@ -428,6 +428,16 @@ ___
 - Configure request limits, time windows, and response behavior via appsettings.json
 - Rate limiter positioned early in the middleware pipeline to block excessive requests before logging or business logic is invoked
 
+### Idempotency Support for Safe Retries
+- Implement **Idempotency-Key** header support to prevent duplicate resource creation on network retries.
+- Store all idempotent requests with their responses in **`IdempotencyRequest`** table for 24-hour cache window.
+- Automatically extract and validate `Idempotency-Key` header from all POST, PUT, PATCH, DELETE requests via dedicated middleware.
+- Extract user identity from JWT token and associate each idempotent request with the authenticated user for multi-tenant safety.
+- Return cached response (with original HTTP status code) when identical request is retried within expiration window.
+- Support across all state-mutating endpoints (create tickets, passengers, flights, etc.) without requiring explicit controller modifications.
+- Gracefully handle requests without `Idempotency-Key` header by processing normally without idempotency protection.
+- Include comprehensive logging of idempotent request hits and misses for debugging and monitoring purposes.
+
 ### Central Package Management
 - Maintain all NuGet package versions in **`Directory.Packages.props`** at solution root.
 - Enable `ManagePackageVersionsCentrally` for unified version control across all projects.
@@ -505,6 +515,15 @@ ___
 - Integrate ASP.NET Core cookie authentication alongside session-based token storage for layered access control.
 - Apply `[Authorize]` at the base controller level with `[AllowAnonymous]` on public endpoints.
 
+### Idempotent API Requests with Automatic Retry Protection
+- Implement **Idempotency-Key** header support to prevent duplicate resource creation on accidental form submissions or network retries.
+- Generate deterministic idempotency keys using **SHA256 hash of request data** for POST operations, ensuring identical payloads always produce the same key.
+- Generate operation-specific idempotency keys for PUT and DELETE operations using resource ID and operation type.
+- Centralize idempotency key generation in **`IdempotencyKeyGenerator`** helper class for consistent, reusable logic.
+- Automatically inject `Idempotency-Key` header into all state-mutating requests (POST, PUT, DELETE) via **`BaseHttpService`** without requiring controller modifications.
+- Apply idempotency protection exclusively to **`DataHttpService`** CRUD operations; GET-only services (`SearchHttpService`, `ExportHttpService`) require no idempotency support.
+- Provide users with robust protection against duplicate entity creation when network fails or they accidentally submit forms multiple times.
+
 ### Structured Logging
 - Integrate **Serilog** for structured, leveled logging across the application.
 - Configure dual-sink output: console for development visibility and daily rolling log files for production error tracking.
@@ -567,6 +586,15 @@ ___
    - Use **`errorUtils`** to differentiate between network errors, server errors, and validation errors.
    - Provide user-friendly error messages and graceful degradation for edge cases.
    - Centralize all logging through a **`logger`** utility that outputs only in development mode and is silenced in production builds, replacing scattered **`console.error`** / **`console warn`** calls across hooks, utilities, and pages.
+
+### Idempotent API Requests with Automatic Retry Protection
+- Implement **Idempotency-Key** header support to prevent duplicate resource creation from double-clicks, page refreshes, and network retries.
+- Generate content-based idempotency keys using the **Web Crypto API (SHA-256)** for CREATE operations, ensuring identical form payloads always produce the same key.
+- Generate a fresh random key per component instance for UPDATE and DELETE operations, avoiding false-positive duplicate detection across legitimate repeated edits of the same resource.
+- Centralize key generation in a dedicated **`idempotency.js`** utility (`generateContentIdempotencyKey`, `generateIdempotencyKey`) for consistent, reusable logic across the app.
+- Automatically inject the `Idempotency-Key` header into all state-mutating requests (POST, PUT, DELETE) via the shared `httpCreate.js`, `httpUpdate.js`, and `httpDelete.js` utilities.
+- Apply idempotency protection at the data-operation hook level (`useCreate`, `useUpdate`, `useDelete`), transparent to individual form components.
+- Provide users with protection against duplicate entity creation on network failures or accidental repeated form submissions, consistent with the idempotency guarantees already enforced by the API and MVC frontend.
 
 ### Routing and Navigation
 - Handle navigation using **`React Router`**, including dynamic and nested routes for scalability.

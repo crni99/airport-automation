@@ -38,7 +38,7 @@ namespace AirportAutomation.Web.Services
 			return string.Empty;
 		}
 
-		protected void ConfigureHttpClient(HttpClient httpClient)
+		protected void ConfigureHttpClient(HttpClient httpClient, string? idempotencyKey = null)
 		{
 			httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 			httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("HttpRequestsSample");
@@ -47,6 +47,11 @@ namespace AirportAutomation.Web.Services
 				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 			else
 				_logger.LogInformation("Bearer token is missing or invalid.");
+			if (!string.IsNullOrEmpty(idempotencyKey))
+			{
+				httpClient.DefaultRequestHeaders.Add("Idempotency-Key", idempotencyKey);
+				_logger.LogInformation("Idempotency-Key header added: {IdempotencyKey}", idempotencyKey);
+			}
 		}
 
 		protected string GetModelName<T>()

@@ -3,7 +3,7 @@ import logger from './logger.js'
 import { generateErrorMessage, handleNetworkError } from './errorUtils.js';
 import { CustomAPIError } from './CustomError.js';
 
-export async function updateData(data, dataType, dataId, apiUrl) {
+export async function updateData(data, dataType, dataId, apiUrl, idempotencyKey) {
     
     try {
         const authToken = getAuthToken();
@@ -12,6 +12,9 @@ export async function updateData(data, dataType, dataId, apiUrl) {
         };
         if (authToken) {
             headers['Authorization'] = `Bearer ${authToken}`;
+        }
+        if (idempotencyKey) {
+            headers['Idempotency-Key'] = idempotencyKey;
         }
 
         const response = await fetch(`${apiUrl}/${dataType}/${dataId}`, {

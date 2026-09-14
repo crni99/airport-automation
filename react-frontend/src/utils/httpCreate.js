@@ -3,8 +3,8 @@ import logger from './logger.js'
 import { generateErrorMessage, handleNetworkError } from './errorUtils.js';
 import { CustomAPIError } from './CustomError.js';
 
-export async function createData(data, dataType, apiUrl) {
-    
+export async function createData(data, dataType, apiUrl, idempotencyKey) {
+
     try {
         const authToken = getAuthToken();
         const headers = {
@@ -13,14 +13,20 @@ export async function createData(data, dataType, apiUrl) {
         if (authToken) {
             headers['Authorization'] = `Bearer ${authToken}`;
         }
+        if (idempotencyKey) {
+            headers['Idempotency-Key'] = idempotencyKey;
+        }
 
         const response = await fetch(`${apiUrl}/${dataType}`, {
             method: 'POST',
             headers: headers,
             body: JSON.stringify(data)
         });
+        console.log("RESPONSE httpCreate: ", response);
+        const responseData = await response.json();
+            console.log("responseData httpCreate: ", responseData);
         if (response.ok) {
-            const responseData = await response.json();
+            
             return {
                 success: true,
                 message: 'Data successfully created.',

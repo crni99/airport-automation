@@ -1,16 +1,18 @@
-import { useState, useEffect, useContext, useCallback } from 'react';
+import { useRef, useState, useEffect, useContext, useCallback } from 'react';
 import logger from '../utils/logger.js';
 import { useNavigate } from 'react-router-dom';
 import { DataContext } from '../store/DataContext.jsx';
 import { updateData } from '../utils/httpUpdate.js';
 import useFetch from './useFetch.jsx';
 import { validateFields } from '../utils/validation/validateFields.js';
+import { generateIdempotencyKey } from '../utils/idempotency.js';
 
 export const useUpdate = (dataType, dataPath, dataId, initialDataShape, requiredFields, transformDataForAPI, transformDataForForm) => {
     
     const dataCtx = useContext(DataContext);
     const [triggerFetch, setTriggerFetch] = useState(true);
     const navigate = useNavigate();
+    const idempotencyKeyRef = useRef(generateIdempotencyKey(`${dataType}-${dataId}`));
 
     const [formData, setFormData] = useState({
         ...initialDataShape,
@@ -73,7 +75,7 @@ export const useUpdate = (dataType, dataPath, dataId, initialDataShape, required
         setFormData((prevState) => ({ ...prevState, isPending: true, formError: null, validationError: null, success: null }));
 
         try {
-            const result = await updateData(apiPayload, dataType, dataId, dataCtx.apiUrl);
+            const result = await updateData(apiPayload, dataType, dataId, dataCtx.apiUrl, idempotencyKeyRef.current);
 
             if (result && result.success) {
                 setFormData((prevState) => ({
